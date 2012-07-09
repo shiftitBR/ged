@@ -6,9 +6,9 @@ import os
 PROJECT_ROOT_PATH= os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT_URL= 'http://localhost:8000/'
 
-LOCAL= False
-DEBUG = False
-EMAIL = True
+LOCAL= True
+DEBUG = True
+EMAIL = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -104,14 +104,25 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'PyProject_Ged.urls'
 
+INTERNAL_IPS = ('127.0.0.1',)
+
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_ROOT_PATH, 'templates'),
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
 )
 
 INSTALLED_APPS = (
@@ -119,12 +130,11 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.flatpages',
+    'flatpages',
 )
 
 # A sample logging configuration. The only tangible logging
