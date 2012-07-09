@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
 # Django settings for PyProject_Ged project.
 
-DEBUG = True
+import os
+
+PROJECT_ROOT_PATH= os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT_URL= 'http://localhost:8000/'
+
+LOCAL= False
+DEBUG = False
+EMAIL = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -9,17 +17,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/diego/git/GED/PyProject_Ged/src/sqlite.db',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -27,11 +24,15 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Sao_Paulo'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE ='pt-br'
+
+LANGUAGES = (('pt-br', u'Português'),
+             ('en', u'Inglês'),
+             ('es', u'Espanhol'),)
 
 SITE_ID = 1
 
@@ -39,18 +40,23 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -143,3 +149,12 @@ LOGGING = {
         },
     }
 }
+
+LOGIN_URL = '/'
+
+LOGOUT_URL = '/'
+
+EMAIL_HOST = 'smtp.webfaction.com'
+EMAIL_HOST_USER = 'shift'
+EMAIL_HOST_PASSWORD = 'shiftit@051011'
+EMAIL_SUBJECT_PREFIX = '[FreelaTI.com]'
