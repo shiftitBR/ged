@@ -135,6 +135,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.flatpages',
     'flatpages',
+    'autenticacao',
+    'documento',
+    'historico',
+    'indice',
+    'qualidade',
+    'seguranca',
 )
 
 # A sample logging configuration. The only tangible logging

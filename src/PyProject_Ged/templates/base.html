@@ -1,99 +1,37 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+  	{% block meta %}
     <meta charset="utf-8">
     <title>Sistema GED</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
+	{% endblock meta %}
+	
     <!-- Le styles -->
+    {% block style %}
     <link href="{{ MEDIA_URL }}css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
     <link href="{{ MEDIA_URL }}css/bootstrap-responsive.css" rel="stylesheet">
     <link href="{{ MEDIA_URL }}css/docs.css" rel="stylesheet">
     <link href="{{ MEDIA_URL }}js/google-code-prettify/prettify.css" rel="stylesheet">
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ MEDIA_URL }}img/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-57-precomposed.png">
-
-  </head>
-
-  <body data-spy="scroll" data-target=".subnav" data-offset="50">
-
-  <!-- Navbar
-    ================================================== -->
-    {% block topo %}
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button"class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="/">SISTEMA GED</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="">
-                <a href="/teste/">Teste_True</a>
-              </li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="">
-                <a href="/">Teste</a>
-              </li>
-              <li class="active">
-                <a href="/">Teste</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-	{% endblock topo %}
-	
-    <div class="container">
-
-<!-- Masthead
-================================================== -->
-
-	{% block conteudo %}{% endblock %}
-	
-	
-    {% include "rodape.html" %}
-
-    </div><!-- /container -->
-
-
-
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery.treeview.css" />
+    {% endblock style %}
+    	
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    {% block scripts %}
+	<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="{{ MEDIA_URL }}js/jquery.js"></script>
     <script src="{{ MEDIA_URL }}js/google-code-prettify/prettify.js"></script>
     <script src="{{ MEDIA_URL }}js/bootstrap-transition.js"></script>
@@ -109,7 +47,85 @@
     <script src="{{ MEDIA_URL }}js/bootstrap-carousel.js"></script>
     <script src="{{ MEDIA_URL }}js/bootstrap-typeahead.js"></script>
     <script src="{{ MEDIA_URL }}js/application.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.js" type="text/javascript"></script>
+	<script src="{{ MEDIA_URL }}js/jquery.cookie.js" type="text/javascript"></script>
+	<script src="{{ MEDIA_URL }}js/jquery.treeview.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$("#browser").treeview({
+			toggle: function() {
+				console.log("%s was toggled.", $(this).find(">span").text());
+			}
+		});
+		
+		$("#add").click(function() {
+			var branches = $("<li><span class='folder'>New Sublist</span><ul>" + 
+				"<li><span class='file'>Item1</span></li>" + 
+				"<li><span class='file'>Item2</span></li></ul></li>").appendTo("#browser");
+			$("#browser").treeview({
+				add: branches
+			});
+		});
+	});
+	</script>
+	{% endblock scripts %}
+    
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="{{ MEDIA_URL }}img/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL }}img/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">Sistema GED</a>
+          <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> Diego C.
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Perfil</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Sair</a></li>
+            </ul>
+          </div>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="/">Início</a></li>
+              <li><a href="/documentos">Documentos</a></li>
+              <li><a href="/busca">Busca</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+     
+    {% block conteudo %}{% endblock %}
+	
+	
+    {% include "rodape.html" %}
+
+    </div><!--/.fluid-container-->
 
   </body>
 </html>
+

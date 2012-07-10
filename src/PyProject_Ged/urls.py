@@ -10,6 +10,12 @@ urlpatterns = patterns('',
     (r'^media/(.*)$', 'django.views.static.serve',
      {'document_root': settings.MEDIA_ROOT}),
     (r'^', include('flatpages.urls')),
+    (r'^', include('documento.urls')),
+    (r'^', include('autenticacao.urls')),
+    (r'^', include('historico.urls')),
+    (r'^', include('indice.urls')),
+    (r'^', include('qualidade.urls')),
+    (r'^', include('seguranca.urls')),
 )
 
     

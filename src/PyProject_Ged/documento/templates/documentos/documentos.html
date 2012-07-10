@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block conteudo %}
+	
+<header class="jumbotron subhead" id="overview">
+  <h1>Documentos</h1>
+  <p class="lead">Listagem de Documentos bla bla bla</p>
+</header>
+	<!-- Add fancyBox main JS and CSS files -->
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/jquery.fancybox.js?v=2.0.6"></script>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/fancy/jquery.fancybox.css?v=2.0.6" media="screen" />
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/fancy_config.js"></script>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3">
+    <!--Sidebar content-->
+    
+    <ul id="browser" class="filetree treeview-famfamfam">
+		<li><span class="folder">Folder 1</span>
+			<ul>
+				<li><span class="folder">Item 1.1</span>
+				</li>
+				<li><span class="folder">Folder 2</span>
+					<ul>
+						<li><span class="folder">Subfolder 2.1</span>
+						</li>
+						<li><span class="folder">Subfolder 2.2</span>
+						</li>
+					</ul>
+				</li>
+				<li class="closed"><span class="folder">Folder 3</span>
+				</li>
+			</ul>
+		</li>
+	</ul>
+    
+    </div>
+    <div class="span9">
+    <!--Body content-->
+        
+    <div class="subnav">
+	    <ul class="nav nav-pills">
+	      <li class=""><a href="/">Check-in</a></li>
+	      <li class=""><a href="/">Digitalizar</a></li>
+	      <li class=""><a href="/">Relatório</a></li>
+	      <li class=""><a href="/">Importação em Lote</a></li>
+	      <li class=""><a href="/">Assinatura Digital em Lote</a></li>
+	    </ul>
+  	</div>   
+       
+    <br><br>
+       
+	<table class="table table-striped table-bordered table-condensed">
+		<thead>
+		  <tr>
+		    <th colspan="6"><center>Lista de Documentos</center></th>
+		  </tr>
+		  <tr>
+		  	<th> </th>
+		    <th><center>Protocolo</center></th>
+		    <th><center>Assunto</center></th>
+		    <th><center>Tipo de Documento</center></th>
+		    <th><center>Criador</center></th>
+		    <th><center>Versão</center></th>
+		    <th><center>Criado em</center></th>
+		    <th><center>Ação</center></th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr>
+		  </tr><tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a href="#">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a href="#">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  </tr><tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a href="#">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a href="#">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		    	<div class="btn-group">
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a href="#">Aprovar</a></li>
+		            <li><a href="#">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Histórico</a></li>
+		            <li><a href="#">Informações</a></li>
+		            <li class="divider"></li>
+		            <li><a href="#">Download</a></li>
+		            <li><a href="#">Enviar E-mail</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		</tbody>
+	</table>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock conteudo %}
