@@ -41,9 +41,9 @@
         
     <div class="subnav">
 	    <ul class="nav nav-pills">
-	      <li class=""><a href="/">Check-in</a></li>
-	      <li class=""><a href="/">Digitalizar</a></li>
-	      <li class=""><a href="/">Relatório</a></li>
+	      <li class=""><a href="/">Digitalizar Documento</a></li>
+	      <li class=""><a href="/">Relatórios</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/importar_documento">Importar Documento</a></li>
 	      <li class=""><a href="/">Importação em Lote</a></li>
 	      <li class=""><a href="/">Assinatura Digital em Lote</a></li>
 	    </ul>
@@ -61,6 +61,7 @@
 		    <th><center>Protocolo</center></th>
 		    <th><center>Assunto</center></th>
 		    <th><center>Tipo de Documento</center></th>
+		    <th><center>Estado</center></th>
 		    <th><center>Criador</center></th>
 		    <th><center>Versão</center></th>
 		    <th><center>Criado em</center></th>
@@ -69,7 +70,6 @@
 		</thead>
 		<tbody>
 		  <tr>
-		  </tr><tr>
 		  	<td>
 				<label class="checkbox">
 					<input type="checkbox" name="optionsCheckboxList1" value="option1">
@@ -78,24 +78,23 @@
 		    <td><center>123456</center></td>
 		    <td>Documento Teste</td>
 		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
 		    <td>Diego C.</td>
 		    <td><center>1</center></td>
 		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
 		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
@@ -109,24 +108,23 @@
 		    <td><center>123456</center></td>
 		    <td>Documento Teste</td>
 		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
 		    <td>Diego C.</td>
 		    <td><center>1</center></td>
 		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
 		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
@@ -140,56 +138,23 @@
 		    <td><center>123456</center></td>
 		    <td>Documento Teste</td>
 		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
 		    <td>Diego C.</td>
 		    <td><center>1</center></td>
 		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
 		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
-		  <tr>
-		  </tr><tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Diego C.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a href="#">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
@@ -203,24 +168,23 @@
 		    <td><center>123456</center></td>
 		    <td>Documento Teste</td>
 		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
 		    <td>Diego C.</td>
 		    <td><center>1</center></td>
 		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
 		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
@@ -234,31 +198,72 @@
 		    <td><center>123456</center></td>
 		    <td>Documento Teste</td>
 		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
 		    <td>Diego C.</td>
 		    <td><center>1</center></td>
 		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group">
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Ação <span class="caret"></span></button>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#">Aprovar</a></li>
-		            <li><a href="#">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
 		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#">Histórico</a></li>
-		            <li><a href="#">Informações</a></li>
-		            <li class="divider"></li>
-		            <li><a href="#">Download</a></li>
-		            <li><a href="#">Enviar E-mail</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
 		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  
+		  		  
 		</tbody>
 	</table>
-
+	
+	<div class="subnav">
+	    <ul class="nav nav-pills">
+	      <li class=""><a href="/">Check-in</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/checkin">Assinar Documento</a></li>
+	      <li class=""><a href="/">Associar Norma</a></li>
+	      <li class=""><a href="/">Enviar E-mail</a></li>
+	      <li class=""><a href="/">Enviar Mala Direta</a></li>
+	    </ul>
+  	</div> 
+  	
     </div>
   </div>
 </div>

@@ -9,64 +9,12 @@
     <meta name="author" content="">
 	{% endblock meta %}
 	
-    <!-- Le styles -->
     {% block style %}
-    <link href="{{ MEDIA_URL }}css/bootstrap/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-    <link href="{{ MEDIA_URL }}css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
-    <link href="{{ MEDIA_URL }}css/bootstrap/docs.css" rel="stylesheet">
-    <link href="{{ MEDIA_URL }}css/bootstrap/prettify.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/tree/jquery.treeview.css" />
+    {% include "./media/css.html" %}
     {% endblock style %}
     	
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     {% block scripts %}
-	<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/jquery.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/prettify.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-transition.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-alert.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-modal.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-dropdown.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-scrollspy.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-tab.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-tooltip.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-popover.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-button.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-collapse.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-carousel.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/bootstrap-typeahead.js"></script>
-    <script src="{{ MEDIA_URL }}js/bootstrap/application.js"></script>
-	<script src="{{ MEDIA_URL }}js/tree/jquery.cookie.js" type="text/javascript"></script>
-	<script src="{{ MEDIA_URL }}js/tree/jquery.treeview.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	$(document).ready(function(){
-		$("#browser").treeview({
-			toggle: function() {
-				console.log("%s was toggled.", $(this).find(">span").text());
-			}
-		});
-		
-		$("#add").click(function() {
-			var branches = $("<li><span class='folder'>New Sublist</span><ul>" + 
-				"<li><span class='file'>Item1</span></li>" + 
-				"<li><span class='file'>Item2</span></li></ul></li>").appendTo("#browser");
-			$("#browser").treeview({
-				add: branches
-			});
-		});
-	});
-	</script>
+	{% include "./media/js.html" %}
 	{% endblock scripts %}
     
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -74,7 +22,6 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ MEDIA_URL }}img/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ MEDIA_URL }}img/bootstrap/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ MEDIA_URL }}img/bootstrap/ico/apple-touch-icon-114-precomposed.png">
@@ -111,19 +58,18 @@
               <li><a href="/documentos">Documentos</a></li>
               <li><a href="/busca">Busca</a></li>
             </ul>
-          </div><!--/.nav-collapse -->
+          </div>
         </div>
       </div>
     </div>
-
+    
     <div class="container">
      
     {% block conteudo %}{% endblock %}
 	
-	
     {% include "rodape.html" %}
 
-    </div><!--/.fluid-container-->
+    </div>
 
   </body>
 </html>
