@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+  	
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Reprovar Documento</strong></h2>
+		  <p class="lead">Confirmar reprovação de documento.</p>
+		</header>
+		
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">Reprovar</button>
+			<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+		</div>
+
+	</div>
+</body>
+
+</html>
