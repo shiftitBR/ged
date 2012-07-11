@@ -30,3 +30,4 @@ pip-log.txt
 *.pyc
 /log
 /local_settings.py
+../../.settings
