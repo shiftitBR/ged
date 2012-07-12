@@ -34,11 +34,29 @@ class Controle(object):
         return self.oLogger
     
     def setBanco(self, vBanco):
-        self.oBanco= vBanco
-        MultiDBModelAdmin.using= vBanco
+        try:
+            self.oBanco= vBanco
+            MultiDBModelAdmin.using= vBanco
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel setar o Banco: ' + str(e))
+            return False
 
     def getBanco(self):
-        return self.oBanco
+        try:
+            return self.oBanco
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter o Banco: ' + str(e))
+            return False
+    
+    def criaEmpresa(self, vIDEmpresa):
+        try:
+            os.system('psql -U postgres -c "CREATE DATABASE GED_Empresa_%02d WITH OWNER=%s;"' 
+                      % (vIDEmpresa, constantes.cntConfiguracaoUsuarioBanco))
+            return True
+        except Exception, e:
+            print str(e)
+            self.getLogger().error('Nao foi possivel criar a Empresa: ' + str(e))
+            return False
     
     def criaLog(self):
         try:

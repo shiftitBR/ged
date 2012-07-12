@@ -8,8 +8,6 @@ from django.db                  import models
 from django.contrib.auth.models import User
 from controle                   import Controle #@UnresolvedImport
 
-import constantes #@UnresolvedImport
-
 #-----------------------------EMPRESA---------------------------------------
 
 class Empresa(models.Model):
@@ -42,6 +40,7 @@ class Empresa(models.Model):
             else:
                 self.id_empresa= 1
         super(Empresa, self).save(using=Controle().getBanco())
+        Controle().criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
