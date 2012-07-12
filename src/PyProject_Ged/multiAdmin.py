@@ -4,13 +4,12 @@ Created on Jul 10, 2012
 @author: Shift IT | wwww.shiftit.com.br
 '''
 from django.contrib                 import admin
+
 import constantes #@UnresolvedImport
 
 class MultiDBModelAdmin(admin.ModelAdmin):
     # A handy constant for the name of the alternate database.
     using = constantes.cntConfiguracaoBancoPadrao
-    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2'
-    print using
 
     def save_model(self, request, obj, form, change):
         # Tell Django to save objects to the 'other' database.

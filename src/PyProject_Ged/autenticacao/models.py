@@ -6,6 +6,7 @@ Created on Jul 11, 2012
 
 from django.db                  import models
 from django.contrib.auth.models import User
+from controle                   import Controle #@UnresolvedImport
 
 import constantes #@UnresolvedImport
 
@@ -33,16 +34,14 @@ class Empresa(models.Model):
     def __unicode__(self):
         return "%s - %s" % (str(self.id_empresa), self.nome)
     
-    def save(self, vBanco=constantes.cntConfiguracaoBancoPadrao):  
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1'
-        print vBanco
+    def save(self):  
         if self.id_empresa == None: 
-            if len(Empresa.objects.using(vBanco).order_by('-id_empresa')) > 0:   
-                iUltimoRegistro = Empresa.objects.using(vBanco).order_by('-id_empresa')[0] 
+            if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
+                iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
-        super(Empresa, self).save(using=vBanco)
+        super(Empresa, self).save(using=Controle().getBanco())
 
 #---------------------------USUARIO---------------------------------------
 
@@ -56,13 +55,13 @@ class Tipo_de_Usuario(models.Model):
     def __unicode__(self):
         return self.descricao
     
-    def save(self, vBanco):  
-        if len(Tipo_de_Usuario.objects.using(vBanco).order_by('-id_tipo_usuario')) > 0:   
-            iUltimoRegistro = Tipo_de_Usuario.objects.using(vBanco).order_by('-id_tipo_usuario')[0] 
+    def save(self):  
+        if len(Tipo_de_Usuario.objects.using(Controle().getBanco()).order_by('-id_tipo_usuario')) > 0:   
+            iUltimoRegistro = Tipo_de_Usuario.objects.using(Controle().getBanco()).order_by('-id_tipo_usuario')[0] 
             self.id_tipo_usuario= iUltimoRegistro.pk + 1
         else:
             self.id_tipo_usuario= 1
-        super(Tipo_de_Usuario, self).save(using=vBanco)
+        super(Tipo_de_Usuario, self).save(using=Controle().getBanco())
 
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
@@ -75,12 +74,12 @@ class Usuario(User):
     def __unicode__(self):
         return self.username
     
-    def save(self, vBanco): 
+    def save(self): 
         if self.username == '':
-            if len(User.objects.using(vBanco).order_by('-id')) > 0:   
-                iUltimoRegistro = User.objects.using(vBanco).order_by('-id')[0] 
+            if len(User.objects.using(Controle().getBanco()).order_by('-id')) > 0:   
+                iUltimoRegistro = User.objects.using(Controle().getBanco()).order_by('-id')[0] 
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
-        super(Usuario, self).save(using=vBanco)    
+        super(Usuario, self).save(using=Controle().getBanco())    
         
