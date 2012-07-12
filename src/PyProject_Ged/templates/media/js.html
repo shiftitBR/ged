@@ -16,6 +16,8 @@
 <script src="{{ MEDIA_URL }}js/bootstrap/application.js"></script>
 <script src="{{ MEDIA_URL }}js/tree/jquery.cookie.js" type="text/javascript"></script>
 <script src="{{ MEDIA_URL }}js/tree/jquery.treeview.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/jquery.fancybox.js?v=2.0.6"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/fancy_config.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#browser").treeview({
@@ -34,3 +36,59 @@ $(document).ready(function(){
 	});
 });
 </script>
+
+{% if iAcao == 2 %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $.fancybox({
+	            'autoScale': true,
+	            'transitionIn': 'fade',
+	            'transitionOut': 'fade',
+	            'type': 'iframe',
+	            'href': '/assinar/{{iVersao}}/'
+	        });
+	});
+</script>
+{% endif %}
+
+{% if iAcao == 3 %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $.fancybox({
+	            'autoScale': true,
+	            'transitionIn': 'fade',
+	            'transitionOut': 'fade',
+	            'type': 'iframe',
+	            'href': '/norma/{{iVersao}}/'
+	        });
+	});
+</script>
+{% endif %}
+
+{% if iAcao == 4 %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $.fancybox({
+	            'autoScale': true,
+	            'transitionIn': 'fade',
+	            'transitionOut': 'fade',
+	            'type': 'iframe',
+	            'href': '/email/{{iVersao}}/'
+	        });
+	});
+</script>
+{% endif %}
+
+{% if iAcao == 5 %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $.fancybox({
+	            'autoScale': true,
+	            'transitionIn': 'fade',
+	            'transitionOut': 'fade',
+	            'type': 'iframe',
+	            'href': '/maladireta/{{iVersao}}/'
+	        });
+	});
+</script>
+{% endif %}
