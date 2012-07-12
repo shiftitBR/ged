@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     'indice',
     'qualidade',
     'seguranca',
+    'treebeard',
 )
 
 # A sample logging configuration. The only tangible logging
