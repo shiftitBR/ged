@@ -30,3 +30,6 @@ pip-log.txt
 *.pyc
 /log
 /local_settings.py
+org.eclipse.core.resources.prefs
+../../.pydevproject
+../../.settings/

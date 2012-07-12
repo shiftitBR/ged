@@ -141,7 +141,16 @@ INSTALLED_APPS = (
     'indice',
     'qualidade',
     'seguranca',
+<<<<<<< HEAD
     'treebeard',
+=======
+    'south',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'autenticacao.backends.EmailAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+>>>>>>> cc3e92aa1de7c0bffe9965325bc17bd23da01830
 )
 
 # A sample logging configuration. The only tangible logging
