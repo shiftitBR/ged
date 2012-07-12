@@ -9250,3 +9250,10 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 
 })( window );
+
+
+function getsupport ( selectedtype )
+{
+  document.acao.supporttype.value = selectedtype ;
+  document.acao.submit() ;
+}

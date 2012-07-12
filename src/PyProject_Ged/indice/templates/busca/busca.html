@@ -1,91 +1,333 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block conteudo %}
+	
+<header class="jumbotron subhead" id="overview">
+  <h1>Buscar Documentos</h1>
+  <p class="lead">Listagem de Documentos bla bla bla</p>
+</header>
 
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span2">
-      <!--Sidebar content-->
-    </div>
-    <div class="span10">
-    <!--Body content-->
-    
+<div class="container">
+	
+	<form class="well form-inline">
+	 	<p>	
+			<input type="text" placeholder="Assunto">
+			<input type="text" placeholder="Responsável">
+			<input type="text" placeholder="Criador">
+			<input type="text" placeholder="Protocolo">
+			<input type="text" placeholder="Conteúdo">
+		</p>
+		<p>
+			<input type="text" placeholder="Data de Criação">
+			<input type="text" placeholder="Extensão">
+			<select class="select01">
+	      		<option>Normas</option>
+				<option>1.1 bla bla </option>
+				<option>1.2 bla bla</option>
+				<option>1.2.1 bla bla</option>
+				<option>1.2.2 bla bla</option>
+			</select>
+			<select class="select01">
+	      		<option>Tipo de Documento</option>
+				<option>Contrato</option>
+				<option>Balanço</option>
+				<option>Cronograma</option>
+				<option>Modelo</option>
+			</select>
+			<select class="select01">
+		  		<option>Estado</option>
+				<option>Disponível</option>
+				<option>Indisponível</option>
+				<option>Aprovado</option>
+				<option>Reprovado</option>
+			</select>
+		</p>
+		<p>
+			<button type="submit" class="btn btn-success">Busca Simples</button>
+			<a href="#avancado" class="btn btn-success" rel="popover" placement="left" data-toggle="modal" data-content="Busca por índices personalizados adicionados ao sistema." data-original-title="Buscar Avançado">Busca Avançada</a>
+		</p>
+    </form>
+
+    <div class="subnav">
+	    <ul class="nav nav-pills">
+	      <li class=""><a href="/">Digitalizar Documento</a></li>
+	      <li class=""><a href="/">Relatórios</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/importar_documento">Importar Documento</a></li>
+	      <li class=""><a href="/">Importação em Lote</a></li>
+	      <li class=""><a href="/">Assinatura Digital em Lote</a></li>
+	    </ul>
+  	</div>   
+       
+    <br><br>
+       
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		  <tr>
-		    <th colspan="4"><center>Full name</center></th>
+		    <th colspan="6"><center>Lista de Documentos</center></th>
 		  </tr>
 		  <tr>
-		    <th>#</th>
-		    <th>First Name</th>
-		    <th>Last Name</th>
-		    <th>Username</th>
-		    <th>Acao</th>
+		  	<th> </th>
+		    <th><center>Protocolo</center></th>
+		    <th><center>Assunto</center></th>
+		    <th><center>Tipo de Documento</center></th>
+		    <th><center>Estado</center></th>
+		    <th><center>Criador</center></th>
+		    <th><center>Responsável</center></th>
+		    <th><center>Versão</center></th>
+		    <th><center>Criado em</center></th>
+		    <th><center>Ação</center></th>
 		  </tr>
 		</thead>
 		<tbody>
-		  <tr>
-		  </tr><tr>
-		    <td>1</td>
-		    <td>Mark</td>
-		    <td>Otto</td>
-		    <td>@mdo</td>
+
+		<tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group open">
-		          <a class="btn btn-primary" href="#"><i class="icon-user icon-white"></i> User</a>
-		          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-		            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-		            <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/checkout">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#"><i class="i"></i> Make admin</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
 		  </tr>
 		  <tr>
-		    <td>2</td>
-		    <td>Jacob</td>
-		    <td>Thornton</td>
-		    <td>@fat</td>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group open">
-		          <a class="btn btn-primary" href="#"><i class="icon-user icon-white"></i> User</a>
-		          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-		            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-		            <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#"><i class="i"></i> Make admin</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
 		  </tr>
 		  <tr>
-		    <td>3</td>
-		    <td colspan="2">Larry the Bird</td>
-		    <td>@twitter</td>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
 		    <td>
-		    	<div class="btn-group open">
-		          <a class="btn btn-primary" href="#"><i class="icon-user icon-white"></i> User</a>
-		          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-		            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-		            <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
 		            <li class="divider"></li>
-		            <li><a href="#"><i class="i"></i> Make admin</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
 		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+		  <tr>
+		  	<td>
+				<label class="checkbox">
+					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+				</label>
+            </td>
+		    <td><center>123456</center></td>
+		    <td>Documento Teste</td>
+		    <td>Contrato de Serviço</td>
+		    <td>Disponível</td>
+		    <td>Diego C.</td>
+		    <td>Alexandre S.</td>
+		    <td><center>1</center></td>
+		    <td><center>02/09/1986</center></td>
+		    <td>
+		        <div class="btn-group">
+		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+		          <ul class="dropdown-menu">
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
+		            <li><a href="#">Check-out</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li class="divider"></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
+		          </ul>
+		        </div>
+        	</td>
+		  </tr>
+
 		</tbody>
 	</table>
-
-    </div>
-  </div>
+	
+	<div class="subnav">
+	    <ul class="nav nav-pills">
+	      <li class=""><a href="/">Check-in</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/checkin">Assinar Documento</a></li>
+	      <li class=""><a href="/">Associar Norma</a></li>
+	      <li class=""><a href="/">Enviar E-mail</a></li>
+	      <li class=""><a href="/">Enviar Mala Direta</a></li>
+	    </ul>
+  	</div> 
+  	
 </div>
+    
+    <div class="modal hide" id="avancado">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal">×</button>
+	    <h3>Busca Avançada - Índices Personalizados</h3>
+	  </div>
+	  <div class="modal-body">
+	    <div class="control-group">
+			<label class="control-label" for="input01">Quantidade</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="input01">
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="input01">Valor</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="input01">
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="input01">Tamanho</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="input01">
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="input01">Local</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="input01">
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="input01">Cliente</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="input01">
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+	    <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
+	    <a href="#" class="btn btn-success">Buscar</a>
+	  </div>
+	</div>
+
 
 {% endblock conteudo %}
