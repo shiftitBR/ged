@@ -84,6 +84,15 @@ def sincronizaBanco_remoto(vDiretorio):
     with cd(vDiretorio):
         run('python2.7 %s%s syncdb' % (vDiretorio, 'manage.py'))
 
+def sincronizaBanco_local(vDiretorio, vDataBase):
+    with cd(vDiretorio):
+        local('python2.7 %s%s syncdb --database="%s"' % (vDiretorio, '/manage.py', vDataBase))
+
+def migraBanco_local(vDiretorio, vDataBase):
+    with cd(vDiretorio):
+        iAplicacao= ''
+        local('python2.7 %s%s migrate %s --database="%s"' % (vDiretorio, '/manage.py', iAplicacao , vDataBase))
+
 def reiniciaApache_remoto(vDiretorio):
     with cd(vDiretorio):
         run('./restart')
@@ -103,10 +112,10 @@ def merge_branch():
     local('git push -u origin master')
         
 def deploy(vNovaVersao=False, vNomeTag=None):
-    iDiretorioProducao= '/home/shift/webapps/freelati/git/'
-    iDiretorioApache= '/home/shift/webapps/freelati/apache2/bin/'
-    iDiretorioApp= '/home/shift/webapps/freelati/git/PyProject_FreelaTI/src/PyProject_FreelaTI/'
-    iDiretorioArquivos= '/home/shift/webapps/freelati/arquivos/'
+    iDiretorioProducao= '/home/shift/webapps/ged/git/'
+    iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
+    iDiretorioApp= '/home/shift/webapps/ged/git/PyProject_GED/src/PyProject_GED/'
+    iDiretorioArquivos= '/home/shift/webapps/ged/arquivos/'
     if vNovaVersao:
         print '>>>>>>>>>>>>>>>>>>>> Nova versao'
         checkout('master')
@@ -132,3 +141,26 @@ def deploy(vNovaVersao=False, vNomeTag=None):
     #roda_teste_remoto(iDiretorioApp)
     sincronizaBanco_remoto(iDiretorioApp)
     reiniciaApache_remoto(iDiretorioApache)
+    
+def adiciona_conexao(vIDEmpresa, vDiretorio):
+    iArquivo= vDiretorio + '/local_settings.py'
+    lines = open(iArquivo).readlines()
+    open(iArquivo, 'w').writelines(lines[0:len(lines)-2])
+    iAlias= '''    
+        },
+        'empresa_%02d': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'GED_Empresa_%02d',                     
+            'USER': 'postgres',                      
+            'PASSWORD': 'db@shift',                  
+        }
+    }''' 
+    open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
+
+def cria_banco(vIDEmpresa, vIDUsuarioBanco, vDiretorio):
+    iDataBase= 'GED_Empresa_%02d' % int(vIDEmpresa)
+    local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
+    adiciona_conexao(vIDEmpresa, vDiretorio)
+    #reiniciaApache_remoto(iDiretorioApache)
+    sincronizaBanco_local(vDiretorio, iDataBase)
+    migraBanco_local(vDiretorio, iDataBase)

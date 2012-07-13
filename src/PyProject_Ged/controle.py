@@ -50,8 +50,10 @@ class Controle(object):
     
     def criaEmpresa(self, vIDEmpresa):
         try:
-            os.system('psql -U postgres -c "CREATE DATABASE GED_Empresa_%02d WITH OWNER=%s;"' 
-                      % (vIDEmpresa, constantes.cntConfiguracaoUsuarioBanco))
+            iDiretorioRaiz= settings.PROJECT_ROOT_PATH
+            os.system('fab cria_banco:%s,%s,%s' % (int(vIDEmpresa), 
+                                                   constantes.cntConfiguracaoUsuarioBanco, 
+                                                   iDiretorioRaiz))
             return True
         except Exception, e:
             print str(e)
