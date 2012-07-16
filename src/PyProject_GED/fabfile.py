@@ -3,6 +3,7 @@ from fabric.api import local, settings, abort, run, cd, env
 from fabric.contrib.console import confirm
 
 import datetime
+import xmlrpclib
 
 env.hosts = ['shift@shift.webfactional.com']
 
@@ -153,11 +154,20 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
     }''' 
     open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
 
-def cria_banco(vIDEmpresa, vIDUsuarioBanco, vDiretorio):
+def cria_banco(vDataBase):
+    iSenha= 'ged@db'
+    server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+    session_id, account = server.login('shift', 'shiftit@051011')
+    server.create_db(session_id, 'shift_%s' % vDataBase, 'postgres', iSenha)
+
+
+def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDataBase= 'GED_Empresa_%02d' % int(vIDEmpresa)
-    local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
+    cria_banco(iDataBase)
+    #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
     reiniciaApache_remoto(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iDataBase)
     #migraBanco_local(vDiretorio, iDataBase)
+
