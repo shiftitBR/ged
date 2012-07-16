@@ -7,32 +7,29 @@
   <p class="lead">Listagem de Documentos bla bla bla</p>
 </header>
 
+<script type="text/javascript">
+	$(document).ready( function() {
+	    $('#JQueryFTD_Demo').fileTree({
+	        root: '/',
+	        script: '{{ MEDIA_URL }}js/tree/jqueryFileTree.py',
+	        expandSpeed: 1000,
+	        collapseSpeed: 1000,
+	        multiFolder: false
+	    }, function(file) {
+	        alert(file);
+	    });
+	});
+</script>
+
 <div class="container-fluid">
   <div class="row-fluid">
   	
     <div class="span3">
-	  <div class="well">
-	    <ul id="browser" class="filetree treeview-famfamfam">
-			<li><span class="folder">Folder 1</span>
-				<ul>
-					<li><span class="folder">Item 1.1</span>
-					</li>
-					<li><span class="folder">Folder 2</span>
-						<ul>
-							<li><span class="folder">Subfolder 2.1</span>
-							</li>
-							<li><span class="folder">Subfolder 2.2</span>
-							</li>
-						</ul>
-					</li>
-					<li class="closed"><span class="folder">Folder 3</span>
-					</li>
-				</ul>
-			</li>
-		</ul>
-	  </div>
+		<div class="well">
+			<div id="JQueryFTD_Demo" class="JQueryFTD"></div>
+		</div>
     </div>
-    
+
     <div class="span9">
     	
 	<div class="subnav">
