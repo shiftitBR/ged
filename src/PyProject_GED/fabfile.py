@@ -108,7 +108,7 @@ def merge_branch():
     local('git push -u origin master')
         
 def deploy(vNovaVersao=False, vNomeTag=None):
-    iDiretorioProducao= '/home/shift/webapps/ged/git/'
+    iDiretorioProducao= '/home/shift/webapps/ged/git/PyProject_GED/'
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDiretorioApp= '/home/shift/webapps/ged/git/PyProject_GED/src/PyProject_GED/'
     iDiretorioArquivos= '/home/shift/webapps/ged/arquivos/'
