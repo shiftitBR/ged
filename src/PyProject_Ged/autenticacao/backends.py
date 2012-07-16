@@ -9,6 +9,8 @@ from django.contrib.auth.models import User, check_password
 from controle import Controle #@UnresolvedImport
 from models import Usuario
 
+import constantes #@UnresolvedImport
+
 class EmailAuthBackend(object):
     """
     Email Authentication Backend
@@ -24,8 +26,11 @@ class EmailAuthBackend(object):
         try:
             user = User.objects.get(email=username)
             if user.check_password(password):
-                iUsuario= Usuario.objects.filter(pk= user.pk)[0]
-                self.oControle.setBanco(iUsuario.empresa.banco)
+                iListaUsuario= Usuario.objects.filter(pk= user.pk)
+                if len(iListaUsuario) > 0:
+                    self.oControle.setBanco(iUsuario.empresa.banco)
+                else:
+                    self.oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
                 return user
         except User.DoesNotExist:
             return None 

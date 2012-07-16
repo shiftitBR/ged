@@ -9,12 +9,8 @@ env.hosts = ['shift@shift.webfactional.com']
 
 def roda_teste():
     with settings(warn_only=True):
-        result1 = local('python ./manage.py test busca', capture=True)
-        result2 = local('python ./manage.py test cadastro', capture=True)
-        result3 = local('python ./manage.py test pagamento', capture=True)
-        result4 = local('python ./manage.py test projeto', capture=True)
-        result5 = local('python ./manage.py test utilidades', capture=True)
-    if (result1.failed or result2.failed or result3.failed or result4.failed or result5.failed ) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
+        result1 = local('python ./manage.py test autenticacao', capture=True)
+    if (result1.failed ) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
         abort("Abortando...")
 
 def roda_teste_remoto(vDiretorio):
@@ -74,7 +70,7 @@ def clone_producao(vDiretorio):
         run('mkdir %s' % vDiretorio)
     except:
         pass
-    run("git clone https://shiftitBR@github.com/shiftitBR/FreelaTI.com.git %s" % vDiretorio)
+    run("git clone https://shiftitBR@github.com/shiftitBR/ged.git %s" % vDiretorio)
 
 def checkout_remoto(vDiretorio):
     with cd(vDiretorio):
@@ -158,9 +154,10 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
     open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
 
 def cria_banco(vIDEmpresa, vIDUsuarioBanco, vDiretorio):
+    iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDataBase= 'GED_Empresa_%02d' % int(vIDEmpresa)
     local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
-    #reiniciaApache_remoto(iDiretorioApache)
+    reiniciaApache_remoto(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iDataBase)
-    migraBanco_local(vDiretorio, iDataBase)
+    #migraBanco_local(vDiretorio, iDataBase)
