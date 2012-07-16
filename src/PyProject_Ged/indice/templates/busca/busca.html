@@ -50,14 +50,12 @@
 
     <div class="subnav">
 	    <ul class="nav nav-pills">
-	      <li class=""><a href="/">Digitalizar Documento</a></li>
-	      <li class=""><a href="/">Relatórios</a></li>
-	      <li class=""><a class="fancybox fancybox.iframe" href="/importar_documento">Importar Documento</a></li>
-	      <li class=""><a href="/">Importação em Lote</a></li>
-	      <li class=""><a href="/">Assinatura Digital em Lote</a></li>
+	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documentos em Lote</a></li>
+	      <li class=""><a href="javascript:getsupport('norma')">Associar Documento Norma</a></li>
+	      <li class=""><a href="javascript:getsupport('email')">Enviar Documento por E-mail</a></li>
 	    </ul>
-  	</div>   
-       
+  	</div> 
+  	
     <br><br>
        
 	<table class="table table-striped table-bordered table-condensed">
@@ -72,7 +70,6 @@
 		    <th><center>Tipo de Documento</center></th>
 		    <th><center>Estado</center></th>
 		    <th><center>Criador</center></th>
-		    <th><center>Responsável</center></th>
 		    <th><center>Versão</center></th>
 		    <th><center>Criado em</center></th>
 		    <th><center>Ação</center></th>
@@ -80,205 +77,44 @@
 		</thead>
 		<tbody>
 
-		<tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/checkout">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
+		{% for documento in iListaDocumentos %}
 		  <tr>
 		  	<td>
 				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
+					<input type="checkbox" name="versao_{{documento.id_versao}}" value="option1">
 				</label>
             </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
+		    <td><center>{{documento.protocolo}}</center></td>
+		    <td>{{documento.assunto}}</td>
+		    <td>{{documento.tipo_documento}}</td>
+		    <td>{{documento.estado}}</td>
+		    <td>{{documento.criador}}</td>
+		    <td><center>{{documento.versao}}</center></td>
+		    <td><center>{{documento.data_criacao}}</center></td>
 		    <td>
 		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
+		          <button class="btn btn-primary"><i class="icon-download-alt icon-white"></i>  Download</button>
 		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/checkout/{{documento.id_versao}}/"><i class="icon-edit"></i>  Check-out</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/checkin/{{documento.id_versao}}/"><i class="icon-share"></i>  Check-in</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/assinar/{{documento.id_versao}}/"><i class="icon-check"></i>  Assinar</a></li>
 		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento/{{documento.id_versao}}/"><i class="icon-trash"></i>  Excluir</a></li>
 		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/historico/{{documento.id_versao}}/"><i class="icon-book"></i>  Histórico</a></li>
+		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento/{{documento.id_versao}}/"><i class="icon-info-sign"></i>  Informações</a></li>
 		          </ul>
 		        </div>
         	</td>
 		  </tr>
-		  <tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
-		  <tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
-		  <tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
-		  <tr>
-		  	<td>
-				<label class="checkbox">
-					<input type="checkbox" name="optionsCheckboxList1" value="option1">
-				</label>
-            </td>
-		    <td><center>123456</center></td>
-		    <td>Documento Teste</td>
-		    <td>Contrato de Serviço</td>
-		    <td>Disponível</td>
-		    <td>Diego C.</td>
-		    <td>Alexandre S.</td>
-		    <td><center>1</center></td>
-		    <td><center>02/09/1986</center></td>
-		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary">Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento">Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento">Reprovar</a></li>
-		            <li><a href="#">Check-out</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento">Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico">Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento">Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
-		  </tr>
+		  {% empty %}
+		  {% endfor %}	
 
 		</tbody>
 	</table>
-	
-	<div class="subnav">
-	    <ul class="nav nav-pills">
-	      <li class=""><a href="/">Check-in</a></li>
-	      <li class=""><a class="fancybox fancybox.iframe" href="/checkin">Assinar Documento</a></li>
-	      <li class=""><a href="/">Associar Norma</a></li>
-	      <li class=""><a href="/">Enviar E-mail</a></li>
-	      <li class=""><a href="/">Enviar Mala Direta</a></li>
-	    </ul>
-  	</div> 
   	
 </div>
     

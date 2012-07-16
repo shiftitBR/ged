@@ -30,6 +30,8 @@
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
 // is copyright 2008 A Beautiful Site, LLC. 
 //
+
+
 if(jQuery) (function($){
 	
 	$.extend($.fn, {
@@ -37,7 +39,7 @@ if(jQuery) (function($){
 			// Defaults
 			if( !o ) var o = {};
 			if( o.root == undefined ) o.root = '/';
-			if( o.script == undefined ) o.script = 'jqueryFileTree.php';
+			if( o.script == undefined ) o.script = 'jqueryFileTree.py';
 			if( o.folderEvent == undefined ) o.folderEvent = 'click';
 			if( o.expandSpeed == undefined ) o.expandSpeed= 500;
 			if( o.collapseSpeed == undefined ) o.collapseSpeed= 500;
@@ -47,7 +49,6 @@ if(jQuery) (function($){
 			if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
 			
 			$(this).each( function() {
-				
 				function showTree(c, t) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
@@ -93,3 +94,26 @@ if(jQuery) (function($){
 	});
 	
 })(jQuery);
+
+
+$('html').ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+        // Only send the token to relative URLs i.e. locally.
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
