@@ -52,7 +52,6 @@ class Controle(object):
         try:
             iDiretorioRaiz= settings.PROJECT_ROOT_PATH
             iFabFile= '%s/fabfile.py' % iDiretorioRaiz
-            print iFabFile
             os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
             return True
         except Exception, e:

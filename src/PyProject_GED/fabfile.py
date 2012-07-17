@@ -158,7 +158,7 @@ def cria_banco(vDataBase):
     iSenha= 'ged@db'
     server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
     session_id, account = server.login('shift', 'shiftit@051011')
-    server.create_db(session_id, 'shift_%s' % vDataBase, 'postgres', iSenha)
+    server.create_db(session_id, 'shift_%s' % vDataBase, 'postgresql', iSenha)
 
 
 def cria_empresa(vIDEmpresa, vDiretorio):
