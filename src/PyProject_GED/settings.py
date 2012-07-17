@@ -141,7 +141,7 @@ INSTALLED_APPS = (
     'indice',
     'qualidade',
     'seguranca',
-    'south',
+#    'south',
 )
 
 AUTHENTICATION_BACKENDS = (
