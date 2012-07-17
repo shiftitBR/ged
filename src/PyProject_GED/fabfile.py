@@ -161,16 +161,16 @@ def cria_banco(vDataBase):
     iSenha= 'ged_db'
     server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
     session_id, account = server.login('shift', 'shiftit@051011')
-    server.create_db(session_id, 'shift_%s' % vDataBase, 'postgresql', iSenha)
+    server.create_db(session_id, 'shift_ged_%s' % vDataBase, 'postgresql', iSenha)
 
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
-    iDataBase= 'shift_ged_empresa_%02d' % int(vIDEmpresa)
-    cria_banco(iDataBase)
+    iAliasDataBase= 'empresa_%02d' % int(vIDEmpresa)
+    cria_banco(iAliasDataBase)
     #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
     reiniciaApache_local(iDiretorioApache)
-    sincronizaBanco_local(vDiretorio, iDataBase)
+    sincronizaBanco_local(vDiretorio, iAliasDataBase)
     #migraBanco_local(vDiretorio, iDataBase)
 
