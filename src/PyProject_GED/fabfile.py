@@ -166,14 +166,11 @@ def cria_banco(vDataBase):
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
-    iDataBase= 'ged_empresa_%02d' % int(vIDEmpresa)
+    iDataBase= 'shift_ged_empresa_%02d' % int(vIDEmpresa)
     cria_banco(iDataBase)
     #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
-    print '>>>>>>>>>>>>>1'
     reiniciaApache_local(iDiretorioApache)
-    print '>>>>>>>>>>>>>2'
     sincronizaBanco_local(vDiretorio, iDataBase)
-    print '>>>>>>>>>>>>>3'
     #migraBanco_local(vDiretorio, iDataBase)
 
