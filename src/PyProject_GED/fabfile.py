@@ -152,7 +152,7 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
             'PASSWORD': 'ged_db',                  
         }
     }''' 
-    open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
+    open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa), int(vIDEmpresa)))
 
 def cria_banco(vDataBase):
     iSenha= 'ged_db'
