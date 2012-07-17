@@ -100,6 +100,10 @@ def reiniciaApache_local(vDiretorio):
 def cria_pastaLog(vDiretorio):
     with cd(vDiretorio):
         run('mkdir %s%s' % (vDiretorio, 'log/')) 
+
+def cria_pastaEmpresa(vDiretorio, vAlias):
+    with cd(vDiretorio):
+        local('mkdir %s%s' % (vDiretorio, vAlias)) 
         
 def copia_settingsLocal(vDiretorioArquivos, vDiretorioApp):
     with cd(vDiretorioArquivos):
@@ -148,10 +152,10 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
     open(iArquivo, 'w').writelines(lines[0:len(lines)-2])
     iAlias= '''    
         },
-        'empresa_%02d': {
+        'empresa_%03d': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'shift_ged_empresa_%02d',                     
-            'USER': 'shift_ged_empresa_%02d',                      
+            'NAME': 'shift_ged_empresa_%03d',                     
+            'USER': 'shift_ged_empresa_%03d',                      
             'PASSWORD': 'ged_db',                  
         }
     }''' 
@@ -166,10 +170,12 @@ def cria_banco(vDataBase):
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
-    iAliasDataBase= 'empresa_%02d' % int(vIDEmpresa)
+    iDiretorioDocumentos= '/home/shift/webapps/ged/documentos/'
+    iAliasDataBase= 'empresa_%03d' % int(vIDEmpresa)
     cria_banco(iAliasDataBase)
     #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
+    cria_pastaEmpresa(iDiretorioDocumentos, iAliasDataBase)
     reiniciaApache_local(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iAliasDataBase)
     #migraBanco_local(vDiretorio, iDataBase)

@@ -7,6 +7,7 @@ Created on Jul 11, 2012
 from django.db                  import models
 from django.contrib.auth.models import User
 from controle                   import Controle #@UnresolvedImport
+from django.conf                import settings
 
 import constantes #@UnresolvedImport
 
@@ -26,6 +27,7 @@ class Empresa(models.Model):
     cidade          = models.CharField(max_length=30, null= True, blank=True)
     uf              = models.CharField(max_length=2, null= True, blank=True)
     banco           = models.CharField(max_length=20, null= False, blank=True)
+    pasta_raiz      = models.CharField(max_length=100, null= False, blank=True)
     eh_ativo        = models.BooleanField(null= False)
     
     class Meta:
@@ -35,30 +37,18 @@ class Empresa(models.Model):
         return "%s - %s" % (str(self.id_empresa), self.nome)
     
     def save(self):  
-        '''try:
-            if self.id_empresa == None: 
-                if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
-                    iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
-                    self.id_empresa= iUltimoRegistro.pk + 1
-                else:
-                    self.id_empresa= 1
-            self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)        
-            super(Empresa, self).save(using=Controle().getBanco())
-        finally:
-            Controle().criaEmpresa(self.id_empresa)'''
-        
-        self.salvaEmpresa()
-        Controle().criaEmpresa(self.id_empresa)
-    
-    def salvaEmpresa(self):
         if self.id_empresa == None: 
             if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
                 iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
-        self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)        
+        self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)   
+        self.pasta_raiz= '%s/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
+                                                 constantes.cntConfiguracaoPastaDocumentos, 
+                                                 int(self.id_empresa))     
         super(Empresa, self).save(using=Controle().getBanco())
+        Controle().criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
