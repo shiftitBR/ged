@@ -94,6 +94,10 @@ def reiniciaApache_remoto(vDiretorio):
     with cd(vDiretorio):
         run('./restart')
 
+def reiniciaApache_local(vDiretorio):
+    with cd(vDiretorio):
+        local('./restart')
+
 def cria_pastaLog(vDiretorio):
     with cd(vDiretorio):
         run('mkdir %s%s' % (vDiretorio, 'log/')) 
@@ -167,7 +171,10 @@ def cria_empresa(vIDEmpresa, vDiretorio):
     cria_banco(iDataBase)
     #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
-    reiniciaApache_remoto(iDiretorioApache)
+    print '>>>>>>>>>>>>>1'
+    reiniciaApache_local(iDiretorioApache)
+    print '>>>>>>>>>>>>>2'
     sincronizaBanco_local(vDiretorio, iDataBase)
+    print '>>>>>>>>>>>>>3'
     #migraBanco_local(vDiretorio, iDataBase)
 
