@@ -1,12 +1,12 @@
 import os
 import urllib
+from django.http import HttpResponse
 
 def dirlist(request):
-    print '>>>>>>>>>>>>>>>>>>>> entrou'
     r=['<ul class="jqueryFileTree" style="display: none;">']
     try:
         r=['<ul class="jqueryFileTree" style="display: none;">']
-        d=urllib.unquote(request.POST.get('dir','/home/diego/Dropbox/Shift/Agência'))
+        d=urllib.unquote(request.POST.get('dir','/home/diego/ged_documentos'))
         for f in os.listdir(d):
             ff=os.path.join(d,f)
             if os.path.isdir(ff):
@@ -18,6 +18,4 @@ def dirlist(request):
     except Exception,e:
         r.append('Could not load directory: %s' % str(e))
     r.append('</ul>')
-    print '>>>>>>>>>>>>>>>>>>>> r'
-    print r
     return HttpResponse(''.join(r))

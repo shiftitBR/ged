@@ -27,6 +27,7 @@ class EmailAuthBackend(object):
             user = User.objects.get(email=username)
             if user.check_password(password):
                 iListaUsuario= Usuario.objects.filter(pk= user.pk)
+                iUsuario= iListaUsuario[0]
                 if len(iListaUsuario) > 0:
                     self.oControle.setBanco(iUsuario.empresa.banco)
                 else:

@@ -49,6 +49,8 @@ def documentos(vRequest, vTitulo):
         iDocumento.protocolo=1234567
         iDocumento.assinado=False
         iListaDocumentos.append(iDocumento)
+    
+    iPasta = '/home/diego/ged_documentos'
             
     if vRequest.POST:
         

@@ -38,7 +38,7 @@ if(jQuery) (function($){
 		fileTree: function(o, h) {
 			// Defaults
 			if( !o ) var o = {};
-			if( o.root == undefined ) o.root = '/';
+			if( o.root == undefined ) o.root = '/home/diego/ged_documentos';
 			if( o.script == undefined ) o.script = 'jqueryFileTree.py';
 			if( o.folderEvent == undefined ) o.folderEvent = 'click';
 			if( o.expandSpeed == undefined ) o.expandSpeed= 500;

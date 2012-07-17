@@ -22,6 +22,7 @@ class Controle(object):
     
     oLogger = logging.getLogger(__name__)
     oBanco  = constantes.cntConfiguracaoBancoPadrao
+    oPasta  = '/home/diego/ged_documentos'
     
     def inicializaAplicacao(self):
         try:
@@ -51,6 +52,20 @@ class Controle(object):
             return self.oBanco
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter o Banco: ' + str(e))
+            return False
+        
+    def setPasta(self, vPasta):
+        try:
+            self.oPasta= vPasta
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel setar a Pasta: ' + str(e))
+            return False
+
+    def getPasta(self):
+        try:
+            return self.oPasta
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter a Pasta: ' + str(e))
             return False
     
     def criaEmpresa(self, vIDEmpresa):
