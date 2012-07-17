@@ -35,15 +35,17 @@ class Empresa(models.Model):
         return "%s - %s" % (str(self.id_empresa), self.nome)
     
     def save(self):  
-        if self.id_empresa == None: 
-            if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
-                iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
-                self.id_empresa= iUltimoRegistro.pk + 1
-            else:
-                self.id_empresa= 1
-        self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)        
-        super(Empresa, self).save(using=Controle().getBanco())
-        Controle().criaEmpresa(self.id_empresa)
+        try:
+            if self.id_empresa == None: 
+                if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
+                    iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
+                    self.id_empresa= iUltimoRegistro.pk + 1
+                else:
+                    self.id_empresa= 1
+            self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)        
+            super(Empresa, self).save(using=Controle().getBanco())
+        finally:
+            Controle().criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
