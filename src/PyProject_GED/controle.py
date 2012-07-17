@@ -51,9 +51,7 @@ class Controle(object):
     def criaEmpresa(self, vIDEmpresa):
         try:
             iDiretorioRaiz= settings.PROJECT_ROOT_PATH
-            os.system('fab cria_banco:%s,%s,%s' % (int(vIDEmpresa), 
-                                                   constantes.cntConfiguracaoUsuarioBanco, 
-                                                   iDiretorioRaiz))
+            os.system('fab cria_empresa:%s,%s' % (int(vIDEmpresa), iDiretorioRaiz))
             return True
         except Exception, e:
             print str(e)

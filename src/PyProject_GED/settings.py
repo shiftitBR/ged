@@ -107,7 +107,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
-ROOT_URLCONF = 'PyProject_Ged.urls'
+ROOT_URLCONF = 'PyProject_GED.urls'
 
 INTERNAL_IPS = ('127.0.0.1',)
 

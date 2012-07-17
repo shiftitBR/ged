@@ -3,18 +3,15 @@ from fabric.api import local, settings, abort, run, cd, env
 from fabric.contrib.console import confirm
 
 import datetime
+import xmlrpclib
 
 env.hosts = ['shift@shift.webfactional.com']
 
 
 def roda_teste():
     with settings(warn_only=True):
-        result1 = local('python ./manage.py test busca', capture=True)
-        result2 = local('python ./manage.py test cadastro', capture=True)
-        result3 = local('python ./manage.py test pagamento', capture=True)
-        result4 = local('python ./manage.py test projeto', capture=True)
-        result5 = local('python ./manage.py test utilidades', capture=True)
-    if (result1.failed or result2.failed or result3.failed or result4.failed or result5.failed ) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
+        result1 = local('python ./manage.py test autenticacao', capture=True)
+    if (result1.failed ) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
         abort("Abortando...")
 
 def roda_teste_remoto(vDiretorio):
@@ -74,7 +71,7 @@ def clone_producao(vDiretorio):
         run('mkdir %s' % vDiretorio)
     except:
         pass
-    run("git clone https://shiftitBR@github.com/shiftitBR/FreelaTI.com.git %s" % vDiretorio)
+    run("git clone https://shiftitBR@github.com/shiftitBR/ged.git %s" % vDiretorio)
 
 def checkout_remoto(vDiretorio):
     with cd(vDiretorio):
@@ -112,7 +109,7 @@ def merge_branch():
     local('git push -u origin master')
         
 def deploy(vNovaVersao=False, vNomeTag=None):
-    iDiretorioProducao= '/home/shift/webapps/ged/git/'
+    iDiretorioProducao= '/home/shift/webapps/ged/git/PyProject_GED/'
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDiretorioApp= '/home/shift/webapps/ged/git/PyProject_GED/src/PyProject_GED/'
     iDiretorioArquivos= '/home/shift/webapps/ged/arquivos/'
@@ -157,10 +154,20 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
     }''' 
     open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
 
-def cria_banco(vIDEmpresa, vIDUsuarioBanco, vDiretorio):
+def cria_banco(vDataBase):
+    iSenha= 'ged@db'
+    server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+    session_id, account = server.login('shift', 'shiftit@051011')
+    server.create_db(session_id, 'shift_%s' % vDataBase, 'postgres', iSenha)
+
+
+def cria_empresa(vIDEmpresa, vDiretorio):
+    iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDataBase= 'GED_Empresa_%02d' % int(vIDEmpresa)
-    local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
+    cria_banco(iDataBase)
+    #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)
-    #reiniciaApache_remoto(iDiretorioApache)
+    reiniciaApache_remoto(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iDataBase)
-    migraBanco_local(vDiretorio, iDataBase)
+    #migraBanco_local(vDiretorio, iDataBase)
+
