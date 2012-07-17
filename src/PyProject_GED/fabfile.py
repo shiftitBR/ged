@@ -95,8 +95,7 @@ def reiniciaApache_remoto(vDiretorio):
         run('./restart')
 
 def reiniciaApache_local(vDiretorio):
-    with cd(vDiretorio):
-        local('./restart')
+    local('%s./restart', vDiretorio)
 
 def cria_pastaLog(vDiretorio):
     with cd(vDiretorio):
