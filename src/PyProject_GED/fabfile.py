@@ -147,15 +147,15 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
         },
         'empresa_%02d': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'GED_Empresa_%02d',                     
-            'USER': 'postgres',                      
-            'PASSWORD': 'db@shift',                  
+            'NAME': 'shift_ged_empresa_%02d',                     
+            'USER': 'shift_ged_empresa_%02d',                      
+            'PASSWORD': 'ged_db',                  
         }
     }''' 
     open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa)))
 
 def cria_banco(vDataBase):
-    iSenha= 'ged@db'
+    iSenha= 'ged_db'
     server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
     session_id, account = server.login('shift', 'shiftit@051011')
     server.create_db(session_id, 'shift_%s' % vDataBase, 'postgresql', iSenha)
@@ -163,7 +163,7 @@ def cria_banco(vDataBase):
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
-    iDataBase= 'GED_Empresa_%02d' % int(vIDEmpresa)
+    iDataBase= 'ged_empresa_%02d' % int(vIDEmpresa)
     cria_banco(iDataBase)
     #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
     adiciona_conexao(vIDEmpresa, vDiretorio)

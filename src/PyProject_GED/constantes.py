@@ -7,4 +7,4 @@ Created on Jul 11, 2012
 #Configuracoes
 cntConfiguracaoBancoPadrao= 'default'
 cntConfiguracaoUsuarioBanco= 'postgres'
-cntConfiguracaoNomeBanco= 'GED_Empresa_%02d'
+cntConfiguracaoNomeBanco= 'shift_ged_empresa_%02d'
