@@ -13,6 +13,11 @@ import constantes
 from django.conf    import settings
 from multiAdmin     import MultiDBModelAdmin
 
+
+import threading
+import datetime
+
+   
 class Controle(object):
     
     oLogger = logging.getLogger(__name__)
@@ -49,10 +54,17 @@ class Controle(object):
             return False
     
     def criaEmpresa(self, vIDEmpresa):
+        class ThreadClass(threading.Thread):
+            def run(self):
+                iFabFile= '%s/fabfile.py' % iDiretorioRaiz
+                os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
+        
         try:
             iDiretorioRaiz= settings.PROJECT_ROOT_PATH
-            iFabFile= '%s/fabfile.py' % iDiretorioRaiz
-            os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
+            t = ThreadClass()
+            t.start()
+            #iFabFile= '%s/fabfile.py' % iDiretorioRaiz
+            #os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
             return True
         except Exception, e:
             print str(e)
