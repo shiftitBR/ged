@@ -102,14 +102,6 @@ def importar(vRequest, vTitulo):
         context_instance=RequestContext(vRequest),
         )
     
-def importar_lote(vRequest, vTitulo):
-        
-    return render_to_response(
-        'documentos/importar_lote.html',
-        locals(),
-        context_instance=RequestContext(vRequest),
-        )
-    
 def aprovar(vRequest, vTitulo, vIDVersao=None):
         
     return render_to_response(
