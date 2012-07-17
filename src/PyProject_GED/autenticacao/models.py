@@ -26,7 +26,7 @@ class Empresa(models.Model):
     bairro          = models.CharField(max_length=30, null= True, blank=True)
     cidade          = models.CharField(max_length=30, null= True, blank=True)
     uf              = models.CharField(max_length=2, null= True, blank=True)
-    banco           = models.CharField(max_length=20, null= False, blank=True)
+    banco           = models.CharField(max_length=100, null= False, blank=True)
     pasta_raiz      = models.CharField(max_length=100, null= False, blank=True)
     eh_ativo        = models.BooleanField(null= False)
     
