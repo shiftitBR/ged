@@ -18,7 +18,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/jquery.fancybox.js?v=2.0.6"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/fancy_config.js"></script>
 
-{% if iAcao == 2 %}
+{% if iAcao == 1 %}
 <script type="text/javascript">
 	$(document).ready(function () {
 	        $.fancybox({
@@ -32,7 +32,7 @@
 </script>
 {% endif %}
 
-{% if iAcao == 3 %}
+{% if iAcao == 2 %}
 <script type="text/javascript">
 	$(document).ready(function () {
 	        $.fancybox({
@@ -46,7 +46,7 @@
 </script>
 {% endif %}
 
-{% if iAcao == 4 %}
+{% if iAcao == 3 %}
 <script type="text/javascript">
 	$(document).ready(function () {
 	        $.fancybox({
@@ -55,20 +55,6 @@
 	            'transitionOut': 'fade',
 	            'type': 'iframe',
 	            'href': '/email/{{iVersao}}/'
-	        });
-	});
-</script>
-{% endif %}
-
-{% if iAcao == 5 %}
-<script type="text/javascript">
-	$(document).ready(function () {
-	        $.fancybox({
-	            'autoScale': true,
-	            'transitionIn': 'fade',
-	            'transitionOut': 'fade',
-	            'type': 'iframe',
-	            'href': '/maladireta/{{iVersao}}/'
 	        });
 	});
 </script>

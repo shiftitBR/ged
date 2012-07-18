@@ -2,10 +2,9 @@
 {% load i18n %}
 {% block conteudo %}
 
-<header class="jumbotron subhead" id="overview">
+<center><header class="jumbotron subhead" id="overview">
   <h1>Documentos</h1>
-  <p class="lead">Listagem de Documentos bla bla bla</p>
-</header>
+</header></center>
 
 <script type="text/javascript">
 	$(document).ready( function() {
@@ -40,7 +39,7 @@
 	    </ul>
   	</div> 
   	
-  	<br><br>
+  	<br>
     	
     <form name= "acao" action="" method="post">{% csrf_token %}
     	<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
