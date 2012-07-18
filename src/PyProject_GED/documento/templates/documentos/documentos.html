@@ -9,15 +9,12 @@
 
 <script type="text/javascript">
 	$(document).ready( function() {
-	    $('#JQueryFTD_Demo').fileTree({
-	        root: '/home/spengler/ged_documentos/',
-	        //script: '{{MEDIA_URL}}js/tree/jqueryFileTree.py',
+	    $('#arvore').fileTree({
+	        root: '{{iPasta}}',
 	        script: '/cria_arvore/',
-	        expandSpeed: 1000,
-	        collapseSpeed: 1000,
-	        multiFolder: false
-	    }, function(file) {
-	        alert(file);
+	        expandSpeed: 500,
+	        collapseSpeed: 500,
+	        multiFolder: true
 	    });
 	});
 </script>
@@ -27,7 +24,7 @@
   	
     <div class="span3">
 		<div class="well">
-			<div id="JQueryFTD_Demo" class="JQueryFTD"></div>
+			<div id="arvore" ></div>
 		</div>
     </div>
 

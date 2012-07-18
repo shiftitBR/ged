@@ -53,15 +53,12 @@ if(jQuery) (function($){
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
 					$.post(o.script, { dir: t }, function(data) {
-						console.log(t)
-						console.log(data)
-						console.log(c)
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
-						console.log(c)
 						bindTree(c);
 					});
+					$.post('/documentos/', { dir: t }, function() {   });
 				}
 				
 				function bindTree(t) {
@@ -69,7 +66,8 @@ if(jQuery) (function($){
 						if( $(this).parent().hasClass('directory') ) {
 							if( $(this).parent().hasClass('collapsed') ) {
 								// Expand
-								if( !o.multiFolder ) {
+								if( !o.multiFolder ) 
+								{
 									$(this).parent().parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
 									$(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed');
 								}

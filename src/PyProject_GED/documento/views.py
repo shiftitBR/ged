@@ -7,6 +7,9 @@ from django.http import HttpResponse
 
 
 def documentos(vRequest, vTitulo):
+    print '>>>>>>>>>>>>   documentos'
+    
+    print vRequest.session['id_pasta']
     
     class Documento():
         id= None
@@ -141,19 +144,20 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
         )
 
 def criaArvore(vRequest, vTitulo):
+    d=urllib.unquote(vRequest.POST.get('dir',''))
+    iDiretorio = d.replace(' ', '')[:-1] #retirar / do final
+    vRequest.session['id_pasta'] = os.path.basename(iDiretorio)
     r=['<ul class="jqueryFileTree" style="display: none;">']
     try:
         r=['<ul class="jqueryFileTree" style="display: none;">']
-        d=urllib.unquote(vRequest.POST.get('dir','/home/spengler/ged_documentos/'))
         for f in os.listdir(d):
             ff=os.path.join(d,f)
+            #f= nomePasta(f)
             if os.path.isdir(ff):
                 r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
-            else:
-                e=os.path.splitext(f)[1][1:] # get .ext and remove dot
-                r.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,f))
         r.append('</ul>')
     except Exception,e:
         r.append('Could not load directory: %s' % str(e))
     r.append('</ul>')
     return HttpResponse(''.join(r))
+    

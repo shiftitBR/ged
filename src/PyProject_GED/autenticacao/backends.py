@@ -30,6 +30,7 @@ class EmailAuthBackend(object):
                 iUsuario= iListaUsuario[0]
                 if len(iListaUsuario) > 0:
                     self.oControle.setBanco(iUsuario.empresa.banco)
+                    self.oControle.setPasta(iUsuario.empresa.pasta_raiz)
                 else:
                     self.oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
                 return user
