@@ -113,6 +113,8 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT_PATH, 'templates'),
+    os.path.join(PROJECT_ROOT_PATH, 'autenticacao/templates/login'),
+    os.path.join(PROJECT_ROOT_PATH, 'autenticacao/templates/logout'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -172,7 +174,7 @@ LOGGING = {
     }
 }
 
-LOGIN_URL = '/'
+LOGIN_URL = '/login_error/'
 
 LOGOUT_URL = '/'
 
@@ -180,3 +182,5 @@ EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'shift'
 EMAIL_HOST_PASSWORD = 'shiftit@051011'
 EMAIL_SUBJECT_PREFIX = '[FreelaTI.com]'
+
+LOGIN_REDIRECT_URL = '/documentos/'

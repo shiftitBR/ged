@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block conteudo %}
+
+	<div class="container-fluid">
+		<br><br><br><br><br>
+		<div class="row-fluid">
+			<div class="span2">
+		    </div>
+		    <div class="span8">
+		    	<center>
+			    	<header class="jumbotron subhead" id="overview">
+					  <h1><strong>Entrar</strong></h1>
+					  <p class="lead">Efetuar Login no Sistema</p>
+					</header>
+					
+					<form class="well form-inline"method="post" action="/login/">{% csrf_token %}
+						{% if form.errors %}
+								<script language="JavaScript">
+								       self.location="{% url login_error %}";
+								</script>
+						{% endif %}	
+						<fieldset>
+						  	<input type="text" id="username" name="username" class="input-xlarge" placeholder="Email">
+						  	<input type="password" id="password" name="password" class="input-xlarge" placeholder="Password">
+					  	  	<button type="submit" class="btn btn-primary"><span>Efetuar Login</span></button>
+					  	</fieldset>
+					</form>
+				</center>
+			</div>
+			<div class="span2">
+		    </div>
+		</div>
+		<br><br><br><br><br>
+	</div>
+
+{% endblock conteudo %}

@@ -34,7 +34,7 @@ def documentos(vRequest, vTitulo):
     
     iListaDocumentos=[]
     
-    for i in range(15):    
+    for i in range(10):    
         iDocumento= Documento()
         iDocumento.id= 1
         iDocumento.versao_atual= 5
@@ -57,7 +57,7 @@ def documentos(vRequest, vTitulo):
         iDocumento.assinado=False
         iListaDocumentos.append(iDocumento)
     
-    iPasta = '/home/diego/ged_documentos'
+    iPasta = '/home/diego/ged_documentos/'
             
     if vRequest.POST:
         
@@ -67,19 +67,6 @@ def documentos(vRequest, vTitulo):
             if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
                 iListaCheck.append(iListaDocumentos[i].id_versao)
                 iListaVersao = str(iListaDocumentos[i].id_versao) + iListaVersao
-            
-        if 'norma' in vRequest.POST['supporttype']:
-            if len(iListaCheck) > 0:
-                iAcao= 3
-                iVersao= iListaVersao
-            else :
-                iAcao= 0
-        elif 'email' in vRequest.POST['supporttype']:
-            if len(iListaCheck) > 0:
-                iAcao= 4
-                iVersao= iListaVersao
-            else :
-                iAcao= 0
     
     return render_to_response(
         'documentos/documentos.html',
@@ -144,20 +131,22 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
         )
 
 def criaArvore(vRequest, vTitulo):
-    d=urllib.unquote(vRequest.POST.get('dir',''))
-    iDiretorio = d.replace(' ', '')[:-1] #retirar / do final
-    vRequest.session['id_pasta'] = os.path.basename(iDiretorio)
-    r=['<ul class="jqueryFileTree" style="display: none;">']
+    iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
+    if iDiretorio[len(iDiretorio)-1] != '/': #sem / no final
+        vRequest.session['id_pasta'] = os.path.basename(iDiretorio)
+    else :
+        iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
+        vRequest.session['id_pasta'] = os.path.basename(iIDPasta)
     try:
-        r=['<ul class="jqueryFileTree" style="display: none;">']
-        for f in os.listdir(d):
-            ff=os.path.join(d,f)
-            #f= nomePasta(f)
-            if os.path.isdir(ff):
-                r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
-        r.append('</ul>')
+        iHtml=['<ul class="jqueryFileTree" style="display: none;">']
+        for iPasta in os.listdir(iDiretorio):
+            iDiretorioFilho=os.path.join(iDiretorio,iPasta)
+            #iPasta= nomePasta(iPasta)
+            if os.path.isdir(iDiretorioFilho):
+                iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
+        iHtml.append('</ul>')
     except Exception,e:
-        r.append('Could not load directory: %s' % str(e))
-    r.append('</ul>')
-    return HttpResponse(''.join(r))
+        iHtml.append('Could not load directory: %s' % str(e))
+    iHtml.append('</ul>')
+    return HttpResponse(''.join(iHtml))
     
