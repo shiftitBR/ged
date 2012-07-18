@@ -18,5 +18,7 @@ urlpatterns= patterns('documento.views',
                           {'vTitulo': trans(u'excluir')}, name='excluir'),
                       url('^informacoes_documento/(?P<vIDVersao>\d+)/$', 'informacoes',
                           {'vTitulo': trans(u'informacoes')}, name='informacoes'),
+                       url('^cria_arvore/$', 'criaArvore',
+                          {'vTitulo': trans(u'criaArvore')}, name='criaArvore'),
 
                       )

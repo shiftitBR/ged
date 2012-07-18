@@ -38,8 +38,8 @@ if(jQuery) (function($){
 		fileTree: function(o, h) {
 			// Defaults
 			if( !o ) var o = {};
-			if( o.root == undefined ) o.root = '/home/diego/ged_documentos';
-			if( o.script == undefined ) o.script = 'jqueryFileTree.py';
+			if( o.root == undefined ) o.root = '/home/spengler/ged_documentos/';
+			if( o.script == undefined ) o.script = '/documentos/arvore';
 			if( o.folderEvent == undefined ) o.folderEvent = 'click';
 			if( o.expandSpeed == undefined ) o.expandSpeed= 500;
 			if( o.collapseSpeed == undefined ) o.collapseSpeed= 500;
@@ -53,9 +53,13 @@ if(jQuery) (function($){
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
 					$.post(o.script, { dir: t }, function(data) {
+						console.log(t)
+						console.log(data)
+						console.log(c)
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+						console.log(c)
 						bindTree(c);
 					});
 				}
