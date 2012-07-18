@@ -6,7 +6,7 @@ Created on Jul 18, 2012
 from django.db                  import models
 from controle                   import Controle #@UnresolvedImport
 
-from dcoumento.models           import Versao #@UnresolvedImport
+from documento.models           import Versao #@UnresolvedImport
 
 #-----------------------------INDICE----------------------------------------
 
