@@ -53,7 +53,7 @@ class Empresa(models.Model):
 #---------------------------USUARIO---------------------------------------
 
 class Tipo_de_Usuario(models.Model):
-    id_tipo_usuario     = models.IntegerField(max_length=2, primary_key=True)
+    id_tipo_usuario     = models.IntegerField(max_length=3, primary_key=True)
     descricao           = models.CharField(max_length=30)
     
     class Meta:
