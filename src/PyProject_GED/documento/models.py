@@ -40,7 +40,7 @@ class Documento(models.Model):
     versao_atual    = models.IntegerField(max_length=3, null= False)
     data_validade   = models.DateTimeField(null= False)
     data_descarte   = models.DateTimeField(null= False)
-    eh_pulbico      = models.BooleanField(null= False)
+    eh_publico      = models.BooleanField(null= False)
     
     class Meta:
         db_table= 'tb_documento'
@@ -93,7 +93,7 @@ class Versao(models.Model):
         db_table= 'tb_versao'
     
     def __unicode__(self):
-        return self.id_versao
+        return str(self.id_versao)
     
     def save(self): 
         if self.id_versao == '':

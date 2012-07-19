@@ -5,18 +5,20 @@ from django.http                    import HttpResponse
 from PyProject_GED                  import oControle
 from controle                       import Controle as DocumentoControle
 
+from forms                          import FormUploadDeArquivo
+
 import os
 import urllib
 
 def documentos(vRequest, vTitulo):
     
     iPasta_Raiz = oControle.getPasta()
-    print '>>>>>>>>>>>>>>> documentos getBanco'
-    print oControle.getBanco()
-    
-    iListaDocumentos= []
+    iListaDocumentos=[]
     if oControle.getIDPasta() != '':
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+        print '>>>>>>>>>>>>>> ListaDocumentos - Documentos'
+        print iListaDocumentos
+    iTeste = len(iListaDocumentos)
     
     if vRequest.POST:
         
@@ -57,19 +59,23 @@ def importar(vRequest, vTitulo):
     iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento()
     iListaIndices       = DocumentoControle().obtemListaIndices()
     #gerarProtocolo
-    
-    if vRequest.POST:
-        print '>>>>>>>>>>> post'
-        iAssunto= vRequest.POST.get('assunto')
-        if vRequest.POST.get('eh_publico') != None:
-            iEh_Publico = True
-        else: 
-            iEh_Publico = False
-        iIDTipo_Documento = DocumentoControle().obtemIDTipoDocumento(vRequest.POST.get('tipo_documento'))
-                
-        print vRequest.POST.get('arquivo')
-        print vRequest.POST.get('datavalidade')
-        print vRequest.POST.get('inputDate')
+
+    if vRequest.method == 'POST':
+        print '>>>>>>>>>>.. entrouuuuu'
+        form = FormUploadDeArquivo(vRequest.POST)
+        if form.is_valid(): 
+            iAssunto= vRequest.POST.get('assunto')
+            if vRequest.POST.get('eh_publico') != None:
+                iEh_Publico = True
+            else: 
+                iEh_Publico = False
+            iIDTipo_Documento = DocumentoControle().obtemIDTipoDocumento(vRequest.POST.get('tipo_documento'))
+                    
+            print vRequest.POST.get('arquivo')
+            print vRequest.POST.get('datavalidade')
+            print vRequest.POST.get('inputDate')
+    else:
+        form = FormUploadDeArquivo()
         
     return render_to_response(
         'documentos/importar_doc.html',

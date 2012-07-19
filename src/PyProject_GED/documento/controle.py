@@ -12,6 +12,9 @@ from seguranca.models     import Pasta   #@UnresolvedImport
 from indice.models        import Indice   #@UnresolvedImport
 from objetos_auxiliares   import Documento as DocumentoAuxiliar
 
+from PyProject_GED        import oControle
+
+
 class Controle(object):
     
     oLogger= logging.getLogger('PyProject_GED.controle')
@@ -25,7 +28,7 @@ class Controle(object):
     def obtemListaDocumentos(self, vIDPasta):
         try:
             iListaDocumentosAuxiliar=[]
-            iListaVersao = Versao.objects.filter(documento__pasta= vIDPasta)
+            iListaVersao = Versao.objects.using(oControle.getBanco()).filter(documento__pasta = vIDPasta)
             for i in range(len(iListaVersao)):    
                 iDocumento= DocumentoAuxiliar()
                 iDocumento.id= iListaVersao[i].documento.id_documento
@@ -38,14 +41,14 @@ class Controle(object):
                 iDocumento.versao_atual= iListaVersao[i].documento.versao_atual
                 iDocumento.publico= iListaVersao[i].documento.eh_publico
                 iDocumento.responsavel= iListaVersao[i].documento.usr_responsavel
-                iDocumento.id_responsavel= iListaVersao[i].id_documento.usr_responsavel.id_usuario
+                iDocumento.id_responsavel= iListaVersao[i].documento.usr_responsavel.id
                 iDocumento.descarte= iListaVersao[i].documento.data_descarte
                 iDocumento.validade= iListaVersao[i].documento.data_validade
                 iDocumento.data_criacao= iListaVersao[i].data_criacao
                 iDocumento.num_versao= iListaVersao[i].versao
                 iDocumento.descricao= iListaVersao[i].dsc_modificacao
                 iDocumento.criador= iListaVersao[i].usr_criador
-                iDocumento.id_criador= iListaVersao[i].usr_criador.id_usuario
+                iDocumento.id_criador= iListaVersao[i].usr_criador.id
                 iDocumento.arquivo= iListaVersao[i].arquivo
                 iDocumento.estado= iListaVersao[i].estado
                 iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
@@ -59,7 +62,7 @@ class Controle(object):
         
     def obtemNomeDaPasta(self, vIDPasta):
         try:
-            iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
+            iPasta = Pasta.objects.using(oControle.getBanco()).filter(id_pasta= vIDPasta)[0]
             return iPasta.nome
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de documentos: ' + str(e))
@@ -67,7 +70,7 @@ class Controle(object):
         
     def obtemIDTipoDocumento(self, vDsc_Tipo_Documento):
         try:
-            iIDTipo_Documento = Tipo_de_Documento.objects.filter(descricao= vDsc_Tipo_Documento)[0]
+            iIDTipo_Documento = Tipo_de_Documento.objects.using(oControle.getBanco()).filter(descricao= vDsc_Tipo_Documento)[0]
             return iIDTipo_Documento
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter o ID do tipo de documento: ' + str(e))
@@ -75,7 +78,7 @@ class Controle(object):
     
     def obtemListaTipoDocumento(self):
         try:
-            iListaTipoDocumento = Tipo_de_Documento.objects.filter()
+            iListaTipoDocumento = Tipo_de_Documento.objects.using(oControle.getBanco()).filter()
             return iListaTipoDocumento
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de tipos de documentos: ' + str(e))
@@ -83,7 +86,7 @@ class Controle(object):
     
     def obtemListaIndices(self):
         try:
-            iListaIndices = Indice.objects.filter()
+            iListaIndices = Indice.objects.using(oControle.getBanco()).filter()
             return iListaIndices
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de indices: ' + str(e))
@@ -91,7 +94,7 @@ class Controle(object):
         
     def obtemUsuario(self, vUsuario):
         try:
-            iUsuario= Usuario.objects.filter(pk= vUsuario.pk)[0]
+            iUsuario= Usuario.objects.using(oControle.getBanco()).filter(pk= vUsuario.pk)[0]
             return iUsuario
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter o Usuario pelo user ' + str(e))

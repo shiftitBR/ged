@@ -58,7 +58,7 @@ if(jQuery) (function($){
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
 						bindTree(c);
 					});
-					$.post('/documentos/', { dir: t }, function() {   });
+					$.post('/documentos/', { dir: t }, function(data) { console.log(data)  });
 				}
 				
 				function bindTree(t) {

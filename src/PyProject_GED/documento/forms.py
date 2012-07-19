@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 19, 2012
 
@@ -13,20 +14,32 @@ from django.contrib.auth.models import User
 
 
 class FormUploadDeArquivo(forms.Form):
-    locals()['tipo_documento']  = forms.CharField(max_length=100)
+    iListaTipoDoc= []
+    iListaTipoDoc.append(('selected', '-----'))
+    iListaTipoDoc.append((1, 'Freelancer')) 
+    iListaTipoDoc.append((2, 'Ofertante')) 
+    iListaTipoDoc.append((3, 'Ambos')) 
+    
+    tipo_documento              = forms.ChoiceField(choices=iListaTipoDoc)
     locals()['usr_responsavel'] = forms.CharField(max_length=100)
     locals()['assunto']         = forms.CharField(max_length=100)
     locals()['data_validade']   = forms.DateField()
     locals()['data_descarte']   = forms.DateField()
     locals()['eh_publico']      = forms.BooleanField()
     locals()['arquivo']         = forms.FileField()
+    
+    def clean_senha_atual(self):
+        if self.cleaned_data['arquivo'] == '':
+            raise forms.ValidationError('O campo Arquivo é obrigatório')
+        return self.cleaned_data['arquivo']
    
     def __init__(self, *args, **kwargs):
         super(FormUploadDeArquivo, self).__init__(*args, **kwargs)  
-        self.fields['tipo_documento'].required = True   
+        self.fields['tipo_documento'].error_messages['required'] = u'O campo Tipo de Documento é obrigatório'   
         self.fields['usr_responsavel'].required = False
-        self.fields['assunto'].required = True
+        self.fields['assunto'].error_messages['required'] = u'O campo Assunto é obrigatório'
         self.fields['data_validade'].required = False
         self.fields['data_descarte'].required = False
         self.fields['eh_publico'].required = False
-        self.fields['arquivo'].required = True
+        self.fields['arquivo'].error_messages['required'] = u'O campo Arquivo é obrigatório'
+        
