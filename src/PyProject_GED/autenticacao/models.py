@@ -6,7 +6,8 @@ Created on Jul 11, 2012
 
 from django.db                  import models
 from django.contrib.auth.models import User
-from controle                   import Controle #@UnresolvedImport
+#from controle                   import Controle #@UnresolvedImport
+from PyProject_GED              import oControle
 from django.conf                import settings
 
 import constantes #@UnresolvedImport
@@ -38,8 +39,8 @@ class Empresa(models.Model):
     
     def save(self):  
         if self.id_empresa == None: 
-            if len(Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')) > 0:   
-                iUltimoRegistro = Empresa.objects.using(Controle().getBanco()).order_by('-id_empresa')[0] 
+            if len(Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')) > 0:   
+                iUltimoRegistro = Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
@@ -47,8 +48,11 @@ class Empresa(models.Model):
         self.pasta_raiz= '%s/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
                                                  constantes.cntConfiguracaoPastaDocumentos, 
                                                  int(self.id_empresa))     
-        super(Empresa, self).save(using=Controle().getBanco())
-        Controle().criaEmpresa(self.id_empresa)
+        #Banco Geral
+        super(Empresa, self).save(using=constantes.cntConfiguracaoBancoPadrao)
+        #Banco Empresa X
+        super(Empresa, self).save(using=oControle.getBanco())
+        oControle.criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
@@ -63,12 +67,12 @@ class Tipo_de_Usuario(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Usuario.objects.using(Controle().getBanco()).order_by('-id_tipo_usuario')) > 0:   
-            iUltimoRegistro = Tipo_de_Usuario.objects.using(Controle().getBanco()).order_by('-id_tipo_usuario')[0] 
+        if len(Tipo_de_Usuario.objects.using(oControle.getBanco()).order_by('-id_tipo_usuario')) > 0:   
+            iUltimoRegistro = Tipo_de_Usuario.objects.using(oControle.getBanco()).order_by('-id_tipo_usuario')[0] 
             self.id_tipo_usuario= iUltimoRegistro.pk + 1
         else:
             self.id_tipo_usuario= 1
-        super(Tipo_de_Usuario, self).save(using=Controle().getBanco())
+        super(Tipo_de_Usuario, self).save(using=oControle.getBanco())
 
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
@@ -83,10 +87,15 @@ class Usuario(User):
     
     def save(self): 
         if self.username == '':
-            if len(User.objects.using(Controle().getBanco()).order_by('-id')) > 0:   
-                iUltimoRegistro = User.objects.using(Controle().getBanco()).order_by('-id')[0] 
+            if len(User.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id')) > 0:   
+                iUltimoRegistro = User.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id')[0] 
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
-        super(Usuario, self).save(using=Controle().getBanco())    
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>> salvou GERAL'
+        #Banco Geral
+        super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
+        ##Banco da Empresa X
+        super(Usuario, self).save(using=oControle.getBanco())   
+        
         
