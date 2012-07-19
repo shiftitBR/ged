@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*- 
 
 import logging
+import datetime
 
 from models               import Versao
+from models               import Estado_da_Versao
+from models               import Tipo_de_Documento
+from models               import Documento
+from autenticacao.models  import Usuario #@UnresolvedImport  
 from seguranca.models     import Pasta   #@UnresolvedImport    
 from objetos_auxiliares   import Documento as DocumentoAuxiliar
 
@@ -57,4 +62,49 @@ class Controle(object):
             return iPasta.nome
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de documentos: ' + str(e))
+            return False
+        
+    def salvaDocumento(self, vIDTipo_Doc, vIDResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],
+                            vDataDescarte= str(datetime.datetime.today())[:19]):
+        try:
+            iTipo_Documento = Tipo_de_Documento.objects.filter(id_tipo_documento= vIDTipo_Doc)[0]
+            iUsuario        = Usuario.objects.filter(id= vIDResponsavel)[0]
+            iPasta          = Pasta.objects.filter(id_pasta= vIDPasta)[0]
+            
+            iDocumento                  = Documento()
+            iDocumento.tipo_documento   = iTipo_Documento
+            iDocumento.usr_responsavel  = iUsuario
+            iDocumento.pasta            = iPasta
+            iDocumento.assunto          = vAssunto
+            iDocumento.versao_atual     = 1
+            iDocumento.data_validade    = vDataValida
+            iDocumento.data_descarte    = vDataDescarte
+            iDocumento.eh_pulbico       = vEh_Publico
+            iDocumento.save()
+            return iDocumento
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel salvar o Documento: ' + str(e))
+            return False
+        
+    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vArquivo, vProtocolo, 
+                    vDataCriacao= str(datetime.datetime.today())[:19], vDsc_Modificacao=None, vEh_Assinado=False):
+        try:
+            iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
+            iCriador    = Usuario.objects.filter(id= vIDCriador)
+            iEstado     = Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)
+            
+            iVersao                 = Versao()
+            iVersao.documento       = iDocumento
+            iVersao.usr_criador     = iCriador
+            iVersao.estado          = iEstado
+            iVersao.versao          = vVersao
+            iVersao.dsc_modificacao = vDsc_Modificacao
+            iVersao.arquivo         = vArquivo
+            iVersao.protocolo       = vProtocolo
+            iVersao.data_criacao    = vDataCriacao
+            iVersao.eh_assinado     = vEh_Assinado
+            iVersao.save()
+            return iVersao
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel salvar a Versao do Documento: ' + str(e))
             return False

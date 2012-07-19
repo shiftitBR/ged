@@ -11,16 +11,12 @@ import urllib
 def documentos(vRequest, vTitulo):
     
     iPasta_Raiz = oControle.getPasta()
-    print '>>>>>>>>>>>>>>> documentos iPasta'
-    print iPasta_Raiz
+    print '>>>>>>>>>>>>>>> documentos getBanco'
     print oControle.getBanco()
     
     iListaDocumentos= []
-    iIDPasta = vRequest.session['id_pasta']
-    print '>>>>>>>>>>>>>>>> documentos iIDPasta'
-    print iIDPasta
-    if iIDPasta != '' or iIDPasta != 'ged_documentos':
-        iListaDocumentos = DocumentoControle().obtemListaDocumentos(1)
+    if oControle.getIDPasta() != '':
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
     
     if vRequest.POST:
         
@@ -54,6 +50,8 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         )
     
 def importar(vRequest, vTitulo):
+    
+    
         
     return render_to_response(
         'documentos/importar_doc.html',
@@ -96,10 +94,10 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
 def criaArvore(vRequest, vTitulo):
     iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
     if iDiretorio[len(iDiretorio)-1] != '/': #sem / no final
-        vRequest.session['id_pasta'] = os.path.basename(iDiretorio)
+        oControle.setIDPasta(os.path.basename(iDiretorio))
     else :
         iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
-        vRequest.session['id_pasta'] = os.path.basename(iIDPasta)
+        oControle.setIDPasta(os.path.basename(iIDPasta))
     try:
         iHtml=['<ul class="jqueryFileTree" style="display: none;">']
         for iPasta in os.listdir(iDiretorio):
