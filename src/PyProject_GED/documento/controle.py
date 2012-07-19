@@ -64,8 +64,8 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
         
-    def salvaDocumento(self, vIDTipo_Doc, vIDResponsavel, vIDPasta, vAssunto, vDataValida= str(datetime.datetime.today())[:19],
-                            vDataDescarte= str(datetime.datetime.today())[:19], vEh_Publico):
+    def salvaDocumento(self, vIDTipo_Doc, vIDResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],
+                            vDataDescarte= str(datetime.datetime.today())[:19]):
         try:
             iTipo_Documento = Tipo_de_Documento.objects.filter(id_tipo_documento= vIDTipo_Doc)[0]
             iUsuario        = Usuario.objects.filter(id= vIDResponsavel)[0]
