@@ -6,7 +6,7 @@ Created on Jan 30, 2012
 
 from django.contrib.auth.models import User, check_password
 
-from controle import Controle #@UnresolvedImport
+from PyProject_GED              import oControle
 from models import Usuario
 
 import constantes #@UnresolvedImport
@@ -18,8 +18,6 @@ class EmailAuthBackend(object):
     Allows a user to sign in using an email/password pair rather than
     a username/password pair.
     """
-
-    oControle= Controle()
     
     def authenticate(self, username=None, password=None):
         """ Authenticate a user based on email address as the user name. """
@@ -29,10 +27,10 @@ class EmailAuthBackend(object):
                 iListaUsuario= Usuario.objects.filter(pk= user.pk)
                 iUsuario= iListaUsuario[0]
                 if len(iListaUsuario) > 0:
-                    self.oControle.setBanco(iUsuario.empresa.banco)
-                    self.oControle.setPasta(iUsuario.empresa.pasta_raiz)
+                    oControle.setBanco(iUsuario.empresa.banco)
+                    oControle.setPasta(iUsuario.empresa.pasta_raiz)
                 else:
-                    self.oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
+                    oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
                 return user
         except User.DoesNotExist:
             return None 

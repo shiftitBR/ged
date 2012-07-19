@@ -5,7 +5,7 @@ Created on Jul 18, 2012
 '''
 
 from django.db                  import models
-from controle                   import Controle #@UnresolvedImport
+from PyProject_GED              import oControle
 
 from autenticacao.models        import Usuario #@UnresolvedImport
 from seguranca.models           import Pasta #@UnresolvedImport
@@ -24,12 +24,12 @@ class Tipo_de_Documento(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Documento.objects.using(Controle().getBanco()).order_by('-id_tipo_documento')) > 0:   
-            iUltimoRegistro = Tipo_de_Documento.objects.using(Controle().getBanco()).order_by('-id_tipo_documento')[0] 
+        if len(Tipo_de_Documento.objects.using(oControle.getBanco()).order_by('-id_tipo_documento')) > 0:   
+            iUltimoRegistro = Tipo_de_Documento.objects.using(oControle.getBanco()).order_by('-id_tipo_documento')[0] 
             self.id_tipo_documento= iUltimoRegistro.pk + 1
         else:
             self.id_tipo_documento= 1
-        super(Tipo_de_Documento, self).save(using=Controle().getBanco())
+        super(Tipo_de_Documento, self).save(using=oControle.getBanco())
 
 class Documento(models.Model):
     id_documento    = models.IntegerField(max_length=10, primary_key=True)
@@ -50,12 +50,12 @@ class Documento(models.Model):
     
     def save(self): 
         if self.id_documento == '':
-            if len(Documento.objects.using(Controle().getBanco()).order_by('-id_documento')) > 0:   
-                iUltimoRegistro = Documento.objects.using(Controle().getBanco()).order_by('-id_documento')[0] 
+            if len(Documento.objects.using(oControle.getBanco()).order_by('-id_documento')) > 0:   
+                iUltimoRegistro = Documento.objects.using(oControle.getBanco()).order_by('-id_documento')[0] 
                 self.id_documento= iUltimoRegistro.pk + 1
             else:
                 self.id_documento= 1
-        super(Documento, self).save(using=Controle().getBanco())   
+        super(Documento, self).save(using=oControle.getBanco())   
 
 #-----------------------------VERSAO----------------------------------------
         
@@ -70,12 +70,12 @@ class Estado_da_Versao(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Estado_da_Versao.objects.using(Controle().getBanco()).order_by('-id_estado_da_versao')) > 0:   
-            iUltimoRegistro = Estado_da_Versao.objects.using(Controle().getBanco()).order_by('-id_estado_da_versao')[0] 
+        if len(Estado_da_Versao.objects.using(oControle.getBanco()).order_by('-id_estado_da_versao')) > 0:   
+            iUltimoRegistro = Estado_da_Versao.objects.using(oControle.getBanco()).order_by('-id_estado_da_versao')[0] 
             self.id_estado_da_versao= iUltimoRegistro.pk + 1
         else:
             self.id_estado_da_versao= 1
-        super(Estado_da_Versao, self).save(using=Controle().getBanco())
+        super(Estado_da_Versao, self).save(using=oControle.getBanco())
         
 class Versao(models.Model):
     id_versao       = models.IntegerField(max_length=10, primary_key=True)
@@ -97,11 +97,11 @@ class Versao(models.Model):
     
     def save(self): 
         if self.id_versao == '':
-            if len(Versao.objects.using(Controle().getBanco()).order_by('-id_versao')) > 0:   
-                iUltimoRegistro = Versao.objects.using(Controle().getBanco()).order_by('-id_versao')[0] 
+            if len(Versao.objects.using(oControle.getBanco()).order_by('-id_versao')) > 0:   
+                iUltimoRegistro = Versao.objects.using(oControle.getBanco()).order_by('-id_versao')[0] 
                 self.id_versao= iUltimoRegistro.pk + 1
             else:
                 self.id_versao= 1
-        super(Versao, self).save(using=Controle().getBanco())   
+        super(Versao, self).save(using=oControle.getBanco())   
         
 

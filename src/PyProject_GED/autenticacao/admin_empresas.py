@@ -12,12 +12,11 @@ from django.contrib.auth.admin      import UserAdmin
 from models import Empresa
 from models import Tipo_de_Usuario
 from models import Usuario
-from controle                       import Controle #@UnresolvedImport
-
+from PyProject_GED                  import oControle
 from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 
-MultiDBModelAdmin.using= Controle().getBanco()
+MultiDBModelAdmin.using= oControle.getBanco()
  
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 

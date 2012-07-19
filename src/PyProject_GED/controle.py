@@ -22,7 +22,7 @@ class Controle(object):
     
     oLogger = logging.getLogger(__name__)
     oBanco  = constantes.cntConfiguracaoBancoPadrao
-    oPasta  = '/home/diego/ged_documentos'
+    oPasta  = ''
     
     def inicializaAplicacao(self):
         try:
@@ -78,8 +78,6 @@ class Controle(object):
             iDiretorioRaiz= settings.PROJECT_ROOT_PATH
             t = ThreadClass()
             t.start()
-            #iFabFile= '%s/fabfile.py' % iDiretorioRaiz
-            #os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
             return True
         except Exception, e:
             print str(e)

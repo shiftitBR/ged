@@ -11,7 +11,7 @@ from controle                   import Controle #@UnresolvedImport
 
 class Pasta(models.Model):
     id_pasta        = models.IntegerField(max_length=3, primary_key=True)
-    pasta_pai       = models.ForeignKey('self', null= False)
+    pasta_pai       = models.ForeignKey('self')
     nome            = models.CharField(max_length=30)
     diretorio       = models.CharField(max_length=200)
     

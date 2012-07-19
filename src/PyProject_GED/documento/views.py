@@ -1,64 +1,27 @@
-from django.shortcuts       import render_to_response
-from django.template        import RequestContext
+from django.shortcuts               import render_to_response
+from django.template                import RequestContext
+from django.http                    import HttpResponse
+
+from PyProject_GED                  import oControle
+from controle                       import Controle as DocumentoControle
 
 import os
 import urllib
-from django.http import HttpResponse
-
 
 def documentos(vRequest, vTitulo):
-    print '>>>>>>>>>>>>   documentos'
     
-    print vRequest.session['id_pasta']
+    iPasta_Raiz = oControle.getPasta()
+    print '>>>>>>>>>>>>>>> documentos iPasta'
+    print iPasta_Raiz
+    print oControle.getBanco()
     
-    class Documento():
-        id= None
-        id_versao=None
-        assunto= None
-        pasta= None
-        tipo_documento= None
-        versao_atual= None
-        publico= None
-        responsavel= None
-        descarte= None
-        validade= None
-        data_criacao=None
-        versao=None
-        descricao=None
-        criador=None
-        arquivo=None
-        estado=None
-        id_estado=None
-        protocolo=None
-        assinado=None
+    iListaDocumentos= []
+    iIDPasta = vRequest.session['id_pasta']
+    print '>>>>>>>>>>>>>>>> documentos iIDPasta'
+    print iIDPasta
+    if iIDPasta != '' or iIDPasta != 'ged_documentos':
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(1)
     
-    iListaDocumentos=[]
-    
-    for i in range(10):    
-        iDocumento= Documento()
-        iDocumento.id= 1
-        iDocumento.versao_atual= 5
-        iDocumento.publico= True
-        iDocumento.id_versao= i
-        iDocumento.assunto= 'teste_' + str(i)
-        iDocumento.pasta= '/documentos/'
-        iDocumento.tipo_documento= 'Modelo'
-        iDocumento.responsavel= 'Diego C.'
-        iDocumento.descarte= '01/01/2012'
-        iDocumento.validade= '21/12/2012'
-        iDocumento.data_criacao= '01/01/2012'
-        iDocumento.versao= i
-        iDocumento.descricao='Teste Documento'
-        iDocumento.criador='Alexandre S.'
-        iDocumento.arquivo='teste.odt'
-        iDocumento.estado='Disponivel'
-        iDocumento.id_estado=1
-        iDocumento.protocolo=1234567
-        iDocumento.assinado=False
-        iListaDocumentos.append(iDocumento)
-    
-    iPasta = '/home/diego/ged_documentos/'
-            
     if vRequest.POST:
         
         iListaCheck=[]
@@ -140,8 +103,8 @@ def criaArvore(vRequest, vTitulo):
     try:
         iHtml=['<ul class="jqueryFileTree" style="display: none;">']
         for iPasta in os.listdir(iDiretorio):
-            iDiretorioFilho=os.path.join(iDiretorio,iPasta)
-            #iPasta= nomePasta(iPasta)
+            iDiretorioFilho=os.path.join(iDiretorio, iPasta)
+            iPasta= DocumentoControle().obtemNomeDaPasta(iPasta)
             if os.path.isdir(iDiretorioFilho):
                 iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
         iHtml.append('</ul>')
