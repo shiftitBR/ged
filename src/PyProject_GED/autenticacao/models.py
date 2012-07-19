@@ -96,6 +96,8 @@ class Usuario(User):
         #Banco Geral
         super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
         ##Banco da Empresa X
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>> getBanco()'
+        print oControle.getBanco()
         super(Usuario, self).save(using=oControle.getBanco())   
         
         

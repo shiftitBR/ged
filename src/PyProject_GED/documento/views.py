@@ -50,8 +50,26 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         )
     
 def importar(vRequest, vTitulo):
+    iUser = vRequest.user
+    if iUser:
+        iUsuario= DocumentoControle().obtemUsuario(iUser)
     
+    iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento()
+    iListaIndices       = DocumentoControle().obtemListaIndices()
+    #gerarProtocolo
     
+    if vRequest.POST:
+        print '>>>>>>>>>>> post'
+        iAssunto= vRequest.POST.get('assunto')
+        if vRequest.POST.get('eh_publico') != None:
+            iEh_Publico = True
+        else: 
+            iEh_Publico = False
+        iIDTipo_Documento = DocumentoControle().obtemIDTipoDocumento(vRequest.POST.get('tipo_documento'))
+                
+        print vRequest.POST.get('arquivo')
+        print vRequest.POST.get('datavalidade')
+        print vRequest.POST.get('inputDate')
         
     return render_to_response(
         'documentos/importar_doc.html',
