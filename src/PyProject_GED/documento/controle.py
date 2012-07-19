@@ -9,6 +9,7 @@ from models               import Tipo_de_Documento
 from models               import Documento
 from autenticacao.models  import Usuario #@UnresolvedImport  
 from seguranca.models     import Pasta   #@UnresolvedImport    
+from indice.models        import Indice   #@UnresolvedImport
 from objetos_auxiliares   import Documento as DocumentoAuxiliar
 
 class Controle(object):
@@ -64,16 +65,47 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
         
+    def obtemIDTipoDocumento(self, vDsc_Tipo_Documento):
+        try:
+            iIDTipo_Documento = Tipo_de_Documento.objects.filter(descricao= vDsc_Tipo_Documento)[0]
+            return iIDTipo_Documento
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter o ID do tipo de documento: ' + str(e))
+            return False
+    
+    def obtemListaTipoDocumento(self):
+        try:
+            iListaTipoDocumento = Tipo_de_Documento.objects.filter()
+            return iListaTipoDocumento
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter a lista de tipos de documentos: ' + str(e))
+            return False
+    
+    def obtemListaIndices(self):
+        try:
+            iListaIndices = Indice.objects.filter()
+            return iListaIndices
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter a lista de indices: ' + str(e))
+            return False
+        
+    def obtemUsuario(self, vUsuario):
+        try:
+            iUsuario= Usuario.objects.filter(pk= vUsuario.pk)[0]
+            return iUsuario
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False
+        
     def salvaDocumento(self, vIDTipo_Doc, vIDResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],
                             vDataDescarte= str(datetime.datetime.today())[:19]):
         try:
-            iTipo_Documento = Tipo_de_Documento.objects.filter(id_tipo_documento= vIDTipo_Doc)[0]
-            iUsuario        = Usuario.objects.filter(id= vIDResponsavel)[0]
             iPasta          = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             
             iDocumento                  = Documento()
-            iDocumento.tipo_documento   = iTipo_Documento
-            iDocumento.usr_responsavel  = iUsuario
+            iDocumento.id_documento     = 1
+            iDocumento.tipo_documento   = vIDTipo_Doc
+            iDocumento.usr_responsavel  = vIDResponsavel
             iDocumento.pasta            = iPasta
             iDocumento.assunto          = vAssunto
             iDocumento.versao_atual     = 1

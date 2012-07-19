@@ -8,20 +8,33 @@
 {% include "./media/css.html" %}
 {% endblock style %}
 
+<!-- Date -->
+<script type="text/javascript" src="{{ MEDIA_URL }}js/date/jquery.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/date/datepicker.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/date/eye.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/date/utils.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/date/layout.js?ver=1.0.2"></script>
+<!-- Projeto -->
+<script type="text/javascript" src="{{ MEDIA_URL }}js/projeto/date.js"></script> 
+<!-- Date -->
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/date/datepicker.css" type="text/css" />
+
 <body>
 	<div class="container">
-  	
+  		<center>
 		<header class="jumbotron subhead" id="overview">
 		  <h2><strong>Importar Documento</strong></h2>
 		  <p class="lead">Importação de documento do arquivo.</p>
 		</header>
-		  	
-		<form class="form-horizontal">
+		</center>
+		 
+		
+		<form class="form-horizontal" name= "acao" action="" method="post">{% csrf_token %}
 			<fieldset>
 			  <div class="control-group">
 			    <label class="control-label" for="input01">Assunto</label>
 			    <div class="controls">
-			      <input type="text" class="input-xlarge" id="input01">
+			      <input type="text" class="input-xlarge" id="assunto" name="assunto">
 			      <p class="help-block">Assunto relacionado ao documento.</p>
 			    </div>
 			  </div>
@@ -29,7 +42,7 @@
 			    <label class="control-label" for="optionsCheckbox">Arquivo Público</label>
 			    <div class="controls">
 			      <label class="checkbox">
-			        <input type="checkbox" id="optionsCheckbox" value="option1">
+			        <input type="checkbox" id="optionsCheckbox" value="eh_publico" name="eh_publico">
 			        Este arquivo pode ser visualizado publicamente?
 			      </label>
 			    </div>
@@ -37,19 +50,19 @@
 			  <div class="control-group">
 			    <label class="control-label" for="select01">Tipo de Documento</label>
 			    <div class="controls">
-			      <select id="select01">
-			        <option>Selecione</option>
-			        <option>Contrato</option>
-			        <option>Balanço</option>
-			        <option>Cronograma</option>
-			        <option>Modelo</option>
+			      <select id="tipo_documento" name="tipo_documento">
+			      	<option>Selecione</option>
+			      	{% for tipo_doc in iListaTipoDocumento %}
+			        <option>{{tipo_doc.descricao}}</option>
+			        {% empty %}
+			  		{% endfor %}
 			      </select>
 			    </div>
 			  </div>
 			  <div class="control-group">
 	            <label class="control-label" for="fileInput">Adicionar Arquivo</label>
 	            <div class="controls">
-	              <input class="input-file" id="fileInput" type="file">
+	              <input class="input-file" id="arquivo" type="file" name="arquivo">
 	            </div>
 	          </div>
 			  <div class="control-group">
@@ -58,11 +71,43 @@
 	              <span class="input-xlarge uneditable-input">242342423</span>
 	            </div>
 	          </div>
-			  <div class="form-actions">
-			    <button type="submit" class="btn btn-primary">Importar</button>
-			    <button class="btn" onClick="parent.jQuery.fancybox.close();" >Cancelar</button>
+	          <div class="control-group">
+	            <label class="control-label">Data Validade</label>
+	            <div class="controls">
+	              <input type="text" class="inputDate" id="datavalidade" name="datavalidade" value="01/01/2012">
+	            </div>
+	          </div>
+	          <div class="control-group">
+	            <label class="control-label">Data Descarte</label>
+	            <div class="controls">
+	              <input type="text" class="inputDate" id="inputDate" name="inputDate" value="01/01/2012">
+	            </div>
+	          </div>
+	          <center>
+	          <div class="page-header">
+			    <h2><strong>Índices</strong></h2>
 			  </div>
+			  </center>
+	          
+	          {% for indice in iListaIndices %}
+	          
+	          <div class="control-group">
+			    <label class="control-label" for="input01">{{indice.descricao}}</label>
+			    <div class="controls">
+			      <input type="text" class="input-xlarge" id="assunto" name={{indice.id_indice}}>
+			    </div>
+			  </div>
+			  
+			  {% empty %}
+			  {% endfor %}
+
+	          <br />
+	          
 			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Importar</button>
+				<button class="btn" onClick="parent.jQuery.fancybox.close();" >Cancelar</button>
+			</div>
 		</form>
 	
   </div>
