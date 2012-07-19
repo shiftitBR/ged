@@ -9,6 +9,7 @@ from django.contrib.auth.models import User, check_password
 from PyProject_GED              import oControle
 from models                     import Usuario
 from multiAdmin                 import MultiDBModelAdmin #@UnresolvedImport
+from appRouter                  import MyAppRouter #@UnresolvedImport
 
 import constantes #@UnresolvedImport
 
@@ -32,9 +33,11 @@ class EmailAuthBackend(object):
                     oControle.setBanco(iUsuario.empresa.banco)
                     oControle.setPasta(iUsuario.empresa.pasta_raiz)
                     MultiDBModelAdmin.using= oControle.getBanco()
+                    MyAppRouter.using= oControle.getBanco()
                 else:
                     oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
                     MultiDBModelAdmin.using= constantes.cntConfiguracaoBancoPadrao
+                    MyAppRouter.using= constantes.cntConfiguracaoBancoPadrao
                 return user
         except User.DoesNotExist:
             return None 

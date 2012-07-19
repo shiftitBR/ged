@@ -11,9 +11,9 @@ from PyProject_GED              import oControle
 
 class Pasta(models.Model):
     id_pasta        = models.IntegerField(max_length=3, primary_key=True)
-    pasta_pai       = models.ForeignKey('self')
-    nome            = models.CharField(max_length=30)
-    diretorio       = models.CharField(max_length=200)
+    pasta_pai       = models.ForeignKey('self', null=True)
+    nome            = models.CharField(max_length=30, null=False)
+    diretorio       = models.CharField(max_length=200, null=False)
     
     class Meta:
         db_table= 'tb_pasta'

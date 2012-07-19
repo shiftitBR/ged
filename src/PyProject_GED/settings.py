@@ -178,6 +178,8 @@ LOGIN_URL = '/login_error/'
 
 LOGOUT_URL = '/'
 
+DATABASE_ROUTERS = ['appRouter.MyAppRouter'] 
+
 EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'shift'
 EMAIL_HOST_PASSWORD = 'shiftit@051011'
