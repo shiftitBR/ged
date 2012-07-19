@@ -7,9 +7,11 @@ Created on Jan 30, 2012
 from django.contrib.auth.models import User, check_password
 
 from PyProject_GED              import oControle
-from models import Usuario
+from models                     import Usuario
+from multiAdmin                 import MultiDBModelAdmin #@UnresolvedImport
 
 import constantes #@UnresolvedImport
+
 
 class EmailAuthBackend(object):
     """
@@ -29,8 +31,10 @@ class EmailAuthBackend(object):
                     iUsuario= iListaUsuario[0]
                     oControle.setBanco(iUsuario.empresa.banco)
                     oControle.setPasta(iUsuario.empresa.pasta_raiz)
+                    MultiDBModelAdmin.using= oControle.getBanco()
                 else:
                     oControle.setBanco(constantes.cntConfiguracaoBancoPadrao)
+                    MultiDBModelAdmin.using= constantes.cntConfiguracaoBancoPadrao
                 return user
         except User.DoesNotExist:
             return None 
