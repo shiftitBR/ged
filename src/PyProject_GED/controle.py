@@ -11,6 +11,7 @@ import constantes
 
 from django.conf    import settings
 from multiAdmin     import MultiDBModelAdmin
+from appRouter      import MyAppRouter
 
 import threading
 
@@ -41,6 +42,7 @@ class Controle(object):
         try:
             self.oBanco= vBanco
             MultiDBModelAdmin.using= vBanco
+            MyAppRouter.using= vBanco
         except Exception, e:
             self.getLogger().error('Nao foi possivel setar o Banco: ' + str(e))
             return False
