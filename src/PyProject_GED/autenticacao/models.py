@@ -48,9 +48,6 @@ class Empresa(models.Model):
         self.pasta_raiz= '%s/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
                                                  constantes.cntConfiguracaoPastaDocumentos, 
                                                  int(self.id_empresa))     
-        #Banco Geral
-        super(Empresa, self).save(using=constantes.cntConfiguracaoBancoPadrao)
-        #Banco Empresa X
         super(Empresa, self).save(using=oControle.getBanco())
         oControle.criaEmpresa(self.id_empresa)
 
