@@ -9,13 +9,10 @@ import os
 import locale
 import constantes
 
-
 from django.conf    import settings
 from multiAdmin     import MultiDBModelAdmin
 
-
 import threading
-import datetime
 
    
 class Controle(object):
@@ -23,6 +20,7 @@ class Controle(object):
     oLogger = logging.getLogger(__name__)
     oBanco  = constantes.cntConfiguracaoBancoPadrao
     oPasta  = ''
+    oIDPasta= ''
     
     def inicializaAplicacao(self):
         try:
@@ -66,6 +64,20 @@ class Controle(object):
             return self.oPasta
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a Pasta: ' + str(e))
+            return False
+        
+    def setIDPasta(self, vIDPasta):
+        try:
+            self.oIDPasta= vIDPasta
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel setar o ID da pasta: ' + str(e))
+            return False
+
+    def getIDPasta(self):
+        try:
+            return self.oIDPasta
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter o ID da pasta: ' + str(e))
             return False
     
     def criaEmpresa(self, vIDEmpresa):
