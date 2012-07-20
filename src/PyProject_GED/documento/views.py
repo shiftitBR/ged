@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 from django.shortcuts               import render_to_response, get_object_or_404
+=======
+# -*- coding: utf-8 -*-
+from django.shortcuts               import render_to_response
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
 from django.template                import RequestContext
 from django.http                    import HttpResponse
 
@@ -22,7 +27,10 @@ def documentos(vRequest, vTitulo):
     iListaDocumentos=[]
     if oControle.getIDPasta() != '':
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+<<<<<<< HEAD
     iTeste = len(iListaDocumentos)
+=======
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
     
     if vRequest.POST:
         
@@ -39,7 +47,30 @@ def documentos(vRequest, vTitulo):
         context_instance=RequestContext(vRequest),
         )
     
+<<<<<<< HEAD
 @login_required 
+=======
+def tabelaDocumentos(vRequest, vTitulo):
+    iPasta_Raiz = oControle.getPasta()
+    iListaDocumentos=[]
+    if oControle.getIDPasta() != '':
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+        iHtml= []
+        for i in range(len(iListaDocumentos)):     
+            iLinha= '<tr><td><label class="checkbox"><input type="checkbox" value="option1" name="versao_%(iVersao)s"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group"><button class="btn btn-primary"><i class="icon-download-alt icon-white"></i>  Download</button><button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><span class="caret"></span></button><ul class="dropdown-menu"><li><a href="/aprovar_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a href="/reprovar_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-down"></i>  Reprovar</a></li><li><a href="/checkout/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-edit"></i>  Check-out</a></li><li><a href="/checkin/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-share"></i>  Check-in</a></li><li class="divider"></li><li><a href="/excluir_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-trash"></i>  Excluir</a></li><li class="divider"></li><li><a href="/historico/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-book"></i>  Histórico</a></li><li><a href="/informacoes_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-info-sign"></i>  Informações</a></li></ul></div></td></tr>' % (
+                      {'iVersao': str(iListaDocumentos[i].id_versao), 
+                       'iProtocolo': str(iListaDocumentos[i].protocolo), 
+                       'iAssunto': str(iListaDocumentos[i].assunto),
+                       'iTipo': str(iListaDocumentos[i].tipo_documento), 
+                       'iEstado': str(iListaDocumentos[i].estado), 
+                       'iUsuario': str(iListaDocumentos[i].criador), 
+                       'iData': str(iListaDocumentos[i].data_criacao)
+                       })
+            iHtml.append(iLinha)
+    
+    return HttpResponse(''.join(iHtml))
+    
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
 def checkin(vRequest, vTitulo, vIDVersao=None):
         
     return render_to_response(
@@ -68,7 +99,10 @@ def importar(vRequest, vTitulo):
     #gerarProtocolo
 
     if vRequest.method == 'POST':
+<<<<<<< HEAD
         print '>>>>>>>>>>>>>>>>>> entrou_importar'
+=======
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
         form = FormUploadDeArquivo(vRequest.POST)
         if form.is_valid(): 
             iAssunto    = vRequest.POST.get('assunto')
@@ -76,6 +110,7 @@ def importar(vRequest, vTitulo):
                 iEh_Publico = True
             else:
                 iEh_Publico = False
+<<<<<<< HEAD
             iIDTipo_Documento = vRequest.POST.get('tipo_documento')
             iDocumento  = DocumentoControle().salvaDocumento(iIDTipo_Documento, iUsuario, 
                                             oControle.getIDPasta(), iAssunto, iEh_Publico)
@@ -87,6 +122,10 @@ def importar(vRequest, vTitulo):
                 iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
                 if iValor != '':
                     IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+=======
+            iIDTipo_Documento = DocumentoControle().obtemIDTipoDocumento(vRequest.POST.get('tipo_documento'))
+                    
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
     else:
         form = FormUploadDeArquivo()
         
@@ -148,7 +187,9 @@ def criaArvore(vRequest, vTitulo):
         oControle.setIDPasta(os.path.basename(iDiretorio))
     else :
         iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
-        oControle.setIDPasta(os.path.basename(iIDPasta))
+        oControle.setIDPasta(os.path.basename(iIDPasta)) 
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+        iTamListaDocumentos= len(iListaDocumentos)
     try:
         iHtml=['<ul class="jqueryFileTree" style="display: none;">']
         for iPasta in os.listdir(iDiretorio):
@@ -157,6 +198,7 @@ def criaArvore(vRequest, vTitulo):
             if os.path.isdir(iDiretorioFilho):
                 iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
         iHtml.append('</ul>')
+        #iHtml.append('<div class="teste">{{iListaDocumentos}}</div>')
     except Exception,e:
         iHtml.append('Could not load directory: %s' % str(e))
     iHtml.append('</ul>')

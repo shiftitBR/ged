@@ -20,7 +20,12 @@ urlpatterns= patterns('documento.views',
                             {'vTitulo': trans(u'informacoes')}, name='informacoes'),
                         url('^cria_arvore/$', 'criaArvore',
                             {'vTitulo': trans(u'criaArvore')}, name='criaArvore'),
+<<<<<<< HEAD
                         url('^download/(?P<vIDVersao>\d+)/$', 'download',
                             {'vTitulo': trans(u'download')}, name='download'),
+=======
+                        url('^tabela_documentos/$', 'tabelaDocumentos',
+                            {'vTitulo': trans(u'tabelaDocumentos')}, name='tabelaDocumentos')
+>>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
 
                       )

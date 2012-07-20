@@ -45,7 +45,7 @@ if(jQuery) (function($){
 			if( o.collapseSpeed == undefined ) o.collapseSpeed= 500;
 			if( o.expandEasing == undefined ) o.expandEasing = null;
 			if( o.collapseEasing == undefined ) o.collapseEasing = null;
-			if( o.multiFolder == undefined ) o.multiFolder = true;
+			if( o.multiFolder == undefined ) o.multiFolder = false;
 			if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
 			
 			$(this).each( function() {
@@ -57,8 +57,8 @@ if(jQuery) (function($){
 						$(c).removeClass('wait').append(data);
 						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
 						bindTree(c);
+						mostrarDocumetnos('');
 					});
-					$.post('/documentos/', { dir: t }, function(data) { console.log(data)  });
 				}
 				
 				function bindTree(t) {
@@ -119,3 +119,14 @@ $('html').ajaxSend(function(event, xhr, settings) {
         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
     }
 });
+
+
+function mostrarDocumetnos(vCampoID)
+{
+	console.log('Click!')
+	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+    {
+            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
+            $('#id_tabelaDocumentos tr:last').after(data);
+    });
+}
