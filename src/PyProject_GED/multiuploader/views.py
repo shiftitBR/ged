@@ -11,6 +11,7 @@ from sorl.thumbnail                 import get_thumbnail
 from django.views.decorators.csrf   import csrf_exempt
 #ControleDocumento
 from documento.controle             import Controle as DocumentoControle #@UnresolvedImport
+from PyProject_GED                  import oControle
 
 import logging
 log = logging
@@ -30,15 +31,18 @@ def multiuploader_delete(request, pk):
 
 @csrf_exempt
 def multiuploader(request):
-
+    print '>>>>>>>>>>>>>.. multiuploader'
     if request.method == 'POST':
         log.info('received POST to main multiuploader view')
         if request.FILES == None:
             return HttpResponseBadRequest('Adicione um arquivo')
         #getting file data for farther manipulations
         file = request.FILES[u'files[]']
+        print file
         wrapped_file = UploadedFile(file)
+        print wrapped_file
         filename = wrapped_file.name
+        print filename
         file_size = wrapped_file.file.size
         log.info ('Got file: "%s"' % str(filename))
         log.info('Content type: "$s" % file.content_type')
@@ -66,6 +70,9 @@ def multiuploader(request):
         except AttributeError:
             file_delete_url = 'multi_delete/'
             file_url = 'multi_image/'+image.key_data+'/'
+        print '>>>>>>>>>> image_url'
+        print settings.MULTI_IMAGE_URL
+        print settings.MULTI_IMAGES_FOLDER
         #generating json response array
         result = []
         result.append({"name":filename, 

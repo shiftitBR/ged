@@ -188,6 +188,6 @@ EMAIL_SUBJECT_PREFIX = '[FreelaTI.com]'
 
 MULTI_FILE_DELETE_URL = 'multi_delete'
 MULTI_IMAGE_URL = 'multi_image'
-MULTI_IMAGES_FOLDER = 'multiuploader_images'
+MULTI_IMAGES_FOLDER = 'documentos'
 
 
