@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-from django.shortcuts               import render_to_response, get_object_or_404
-=======
 # -*- coding: utf-8 -*-
-from django.shortcuts               import render_to_response
->>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
+from django.shortcuts               import render_to_response, get_object_or_404
 from django.template                import RequestContext
 from django.http                    import HttpResponse
 
@@ -27,10 +23,6 @@ def documentos(vRequest, vTitulo):
     iListaDocumentos=[]
     if oControle.getIDPasta() != '':
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
-<<<<<<< HEAD
-    iTeste = len(iListaDocumentos)
-=======
->>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
     
     if vRequest.POST:
         
@@ -47,9 +39,7 @@ def documentos(vRequest, vTitulo):
         context_instance=RequestContext(vRequest),
         )
     
-<<<<<<< HEAD
 @login_required 
-=======
 def tabelaDocumentos(vRequest, vTitulo):
     iPasta_Raiz = oControle.getPasta()
     iListaDocumentos=[]
@@ -70,7 +60,6 @@ def tabelaDocumentos(vRequest, vTitulo):
     
     return HttpResponse(''.join(iHtml))
     
->>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
 def checkin(vRequest, vTitulo, vIDVersao=None):
         
     return render_to_response(
@@ -99,10 +88,6 @@ def importar(vRequest, vTitulo):
     #gerarProtocolo
 
     if vRequest.method == 'POST':
-<<<<<<< HEAD
-        print '>>>>>>>>>>>>>>>>>> entrou_importar'
-=======
->>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
         form = FormUploadDeArquivo(vRequest.POST)
         if form.is_valid(): 
             iAssunto    = vRequest.POST.get('assunto')
@@ -110,7 +95,6 @@ def importar(vRequest, vTitulo):
                 iEh_Publico = True
             else:
                 iEh_Publico = False
-<<<<<<< HEAD
             iIDTipo_Documento = vRequest.POST.get('tipo_documento')
             iDocumento  = DocumentoControle().salvaDocumento(iIDTipo_Documento, iUsuario, 
                                             oControle.getIDPasta(), iAssunto, iEh_Publico)
@@ -122,10 +106,6 @@ def importar(vRequest, vTitulo):
                 iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
                 if iValor != '':
                     IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
-=======
-            iIDTipo_Documento = DocumentoControle().obtemIDTipoDocumento(vRequest.POST.get('tipo_documento'))
-                    
->>>>>>> 58fec14da884b8280f0c121dbe5e37ae94bbe7dc
     else:
         form = FormUploadDeArquivo()
         
