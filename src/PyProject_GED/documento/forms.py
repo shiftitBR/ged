@@ -11,14 +11,16 @@ from django                     import forms
 from django.utils.translation   import ugettext as trans
 from django.forms.widgets       import CheckboxInput
 from django.contrib.auth.models import User
+from models                     import Tipo_de_Documento
 
 
 class FormUploadDeArquivo(forms.Form):
+    iListaTipoDocumento= Tipo_de_Documento.objects.filter()
     iListaTipoDoc= []
     iListaTipoDoc.append(('selected', '-----'))
-    iListaTipoDoc.append((1, 'Freelancer')) 
-    iListaTipoDoc.append((2, 'Ofertante')) 
-    iListaTipoDoc.append((3, 'Ambos')) 
+    for i in range(len(iListaTipoDocumento)): 
+        iTipoDoc = iListaTipoDocumento[i]
+        iListaTipoDoc.append((iTipoDoc.id_tipo_documento, iTipoDoc.descricao)) 
     
     tipo_documento              = forms.ChoiceField(choices=iListaTipoDoc)
     locals()['usr_responsavel'] = forms.CharField(max_length=100)
@@ -26,12 +28,6 @@ class FormUploadDeArquivo(forms.Form):
     locals()['data_validade']   = forms.DateField()
     locals()['data_descarte']   = forms.DateField()
     locals()['eh_publico']      = forms.BooleanField()
-    locals()['arquivo']         = forms.FileField()
-    
-    def clean_senha_atual(self):
-        if self.cleaned_data['arquivo'] == '':
-            raise forms.ValidationError('O campo Arquivo é obrigatório')
-        return self.cleaned_data['arquivo']
    
     def __init__(self, *args, **kwargs):
         super(FormUploadDeArquivo, self).__init__(*args, **kwargs)  
@@ -41,5 +37,4 @@ class FormUploadDeArquivo(forms.Form):
         self.fields['data_validade'].required = False
         self.fields['data_descarte'].required = False
         self.fields['eh_publico'].required = False
-        self.fields['arquivo'].error_messages['required'] = u'O campo Arquivo é obrigatório'
         

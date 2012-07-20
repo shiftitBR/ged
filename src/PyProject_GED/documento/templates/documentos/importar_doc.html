@@ -38,14 +38,13 @@
 		    {% endfor %}
 	    {% endif %}
 		
-	  	<form class="form-horizontal" name= "acao" action="" method="post">{% csrf_token %}	
+	  	<form class="form-horizontal" name= "acao" action="/importar_documento/" method="post">{% csrf_token %}	
 	  	<fieldset>
 	  		
   		  <div class="control-group">
 		    <label class="control-label" for="input01">Assunto</label>
 		    <div class="controls">
 			  {{form.assunto}}
-		      <p class="help-block">Assunto relacionado ao documento.</p>
 		    </div>
 		  </div>
 		  <div class="control-group">
@@ -64,11 +63,11 @@
 		    </div>
 		  </div>
 		  <div class="control-group">
-            <label class="control-label" for="fileInput">Adicionar Arquivo</label>
-            <div class="controls">
-              	{{form.arquivo}}
-            </div>
-          </div>	      
+		    <label class="control-label" for="select01">Usuário Responsável</label>
+		    <div class="controls">
+		      	{{form.usr_responsavel}}
+		    </div>
+		  </div>
 	    
 	      <div class="control-group">
             <label class="control-label">Data Validade</label>
@@ -82,7 +81,7 @@
               	{{form.data_descarte}}
             </div>
           </div>
-	    
+          
 	    <center>
 			<div class="page-header">
 				<h2><strong>Índices</strong></h2>
@@ -93,7 +92,7 @@
 		<div class="control-group">
 			<label class="control-label" for="input01">{{indice.descricao}}</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="assunto" name={{indice.id_indice}}>
+				<input type="text" class="input-xlarge" id="assunto" name='indice_{{indice.id_indice}}'>
 			</div>
 		</div>
 		  
@@ -102,11 +101,19 @@
 	    </fieldset>
 	    <br>
 	    <div class="form-actions">
-			<button type="submit" class="btn btn-primary">Importar</button>
+			<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Importar</button>
 			<button type="button" class="btn" onClick="parent.jQuery.fancybox.close();" >Cancelar</button>
 		</div>
 	    
 		</form>
+		
+		<div class="control-group">
+			<label class="control-label">Upload:</label>
+			<div class="controls">
+				{% load multiuploader %}
+				{% multiupform %}
+			</div>
+		</div>
 	</div>
 		          
 </body>
