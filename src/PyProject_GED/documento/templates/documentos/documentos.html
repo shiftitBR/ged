@@ -7,15 +7,15 @@
 </header></center>
 
 <script type="text/javascript">
-	$(document).ready( function() {
-	    $('#arvore').fileTree({
-	        root: '{{iPasta_Raiz}}',
-	        script: '/cria_arvore/',
-	        expandSpeed: 500,
-	        collapseSpeed: 500,
-	        multiFolder: true
-	    });
-	});
+    $(document).ready( function() {
+        $('#arvore').fileTree({
+            root: '{{iPasta_Raiz}}',
+            script: '/cria_arvore/',
+            expandSpeed: 500,
+            collapseSpeed: 500,
+            multiFolder: false
+        });
+    });
 </script>
 
 <div class="container-fluid">
@@ -44,7 +44,7 @@
     <form name= "acao" action="" method="post">{% csrf_token %}
     	<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
                
-		<table class="table table-striped table-bordered table-condensed">
+		<table id= "id_tabelaDocumentos" class="table table-striped table-bordered table-condensed">
 			<thead>
 			  <tr>
 			    <th colspan="9"><center>Lista de Documentos</center></th>

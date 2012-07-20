@@ -20,5 +20,7 @@ urlpatterns= patterns('documento.views',
                             {'vTitulo': trans(u'informacoes')}, name='informacoes'),
                         url('^cria_arvore/$', 'criaArvore',
                             {'vTitulo': trans(u'criaArvore')}, name='criaArvore'),
+                        url('^tabela_documentos/$', 'tabelaDocumentos',
+                            {'vTitulo': trans(u'tabelaDocumentos')}, name='tabelaDocumentos')
 
                       )

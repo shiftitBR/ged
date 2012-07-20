@@ -38,8 +38,8 @@ class Documento(models.Model):
     pasta           = models.ForeignKey(Pasta, null= False)
     assunto         = models.CharField(max_length=100, null= False)
     versao_atual    = models.IntegerField(max_length=3, null= False)
-    data_validade   = models.DateTimeField(null= False)
-    data_descarte   = models.DateTimeField(null= False)
+    data_validade   = models.DateTimeField(null= True)
+    data_descarte   = models.DateTimeField(null= True)
     eh_publico      = models.BooleanField(null= False)
     
     class Meta:
@@ -83,9 +83,9 @@ class Versao(models.Model):
     usr_criador     = models.ForeignKey(Usuario, null= False)
     estado          = models.ForeignKey(Estado_da_Versao, null= False)
     versao          = models.IntegerField(max_length=3, null= False)
-    dsc_modificacao = models.CharField(max_length=200, null= False)
+    dsc_modificacao = models.CharField(max_length=200, null= True)
     arquivo         = models.CharField(max_length=200, null= False)
-    protocolo       = models.CharField(max_length=20)
+    protocolo       = models.CharField(max_length=20, null=True)
     data_criacao    = models.DateTimeField(null= False)
     eh_assinado     = models.BooleanField(null= False)
     
