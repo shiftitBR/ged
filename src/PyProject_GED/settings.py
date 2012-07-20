@@ -144,6 +144,8 @@ INSTALLED_APPS = (
     'qualidade',
     'seguranca',
     'south',
+    'multiuploader',
+    'sorl.thumbnail',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -173,10 +175,9 @@ LOGGING = {
         },
     }
 }
-
 LOGIN_URL = '/login_error/'
-
 LOGOUT_URL = '/'
+LOGIN_REDIRECT_URL = '/documentos/'
 
 DATABASE_ROUTERS = ['appRouter.MyAppRouter'] 
 
@@ -185,4 +186,8 @@ EMAIL_HOST_USER = 'shift'
 EMAIL_HOST_PASSWORD = 'shiftit@051011'
 EMAIL_SUBJECT_PREFIX = '[FreelaTI.com]'
 
-LOGIN_REDIRECT_URL = '/documentos/'
+MULTI_FILE_DELETE_URL = 'multi_delete'
+MULTI_IMAGE_URL = 'multi_image'
+MULTI_IMAGES_FOLDER = 'multiuploader_images'
+
+

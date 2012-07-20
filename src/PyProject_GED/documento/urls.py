@@ -20,5 +20,7 @@ urlpatterns= patterns('documento.views',
                             {'vTitulo': trans(u'informacoes')}, name='informacoes'),
                         url('^cria_arvore/$', 'criaArvore',
                             {'vTitulo': trans(u'criaArvore')}, name='criaArvore'),
+                        url('^download/(?P<vIDVersao>\d+)/$', 'download',
+                            {'vTitulo': trans(u'download')}, name='download'),
 
                       )

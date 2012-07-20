@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     (r'^', include('indice.urls')),
     (r'^', include('qualidade.urls')),
     (r'^', include('seguranca.urls')),
+    url(r'', include('multiuploader.urls')),
 )
 
     

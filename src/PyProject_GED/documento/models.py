@@ -32,7 +32,7 @@ class Tipo_de_Documento(models.Model):
         super(Tipo_de_Documento, self).save(using=oControle.getBanco())
 
 class Documento(models.Model):
-    id_documento    = models.IntegerField(max_length=10, primary_key=True)
+    id_documento    = models.IntegerField(max_length=10, primary_key=True, blank=True)
     tipo_documento  = models.ForeignKey(Tipo_de_Documento, null= False)
     usr_responsavel = models.ForeignKey(Usuario, null= False)
     pasta           = models.ForeignKey(Pasta, null= False)
@@ -49,7 +49,7 @@ class Documento(models.Model):
         return self.assunto
     
     def save(self): 
-        if self.id_documento == '':
+        if self.id_documento == '' or self.id_documento== None:
             if len(Documento.objects.using(oControle.getBanco()).order_by('-id_documento')) > 0:   
                 iUltimoRegistro = Documento.objects.using(oControle.getBanco()).order_by('-id_documento')[0] 
                 self.id_documento= iUltimoRegistro.pk + 1
@@ -78,7 +78,7 @@ class Estado_da_Versao(models.Model):
         super(Estado_da_Versao, self).save(using=oControle.getBanco())
         
 class Versao(models.Model):
-    id_versao       = models.IntegerField(max_length=10, primary_key=True)
+    id_versao       = models.IntegerField(max_length=10, primary_key=True, blank=True)
     documento       = models.ForeignKey(Documento, null= False)
     usr_criador     = models.ForeignKey(Usuario, null= False)
     estado          = models.ForeignKey(Estado_da_Versao, null= False)
@@ -96,7 +96,7 @@ class Versao(models.Model):
         return str(self.id_versao)
     
     def save(self): 
-        if self.id_versao == '':
+        if self.id_versao == '' or self.id_versao == None:
             if len(Versao.objects.using(oControle.getBanco()).order_by('-id_versao')) > 0:   
                 iUltimoRegistro = Versao.objects.using(oControle.getBanco()).order_by('-id_versao')[0] 
                 self.id_versao= iUltimoRegistro.pk + 1

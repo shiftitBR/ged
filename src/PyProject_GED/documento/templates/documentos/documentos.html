@@ -2,9 +2,11 @@
 {% load i18n %}
 {% block conteudo %}
 
-<center><header class="jumbotron subhead" id="overview">
-  <h1>Documentos</h1>
-</header></center>
+<center>
+	<header class="jumbotron subhead" id="overview">
+  		<h1>Documentos</h1>
+	</header>
+</center>
 
 <script type="text/javascript">
 	$(document).ready( function() {
@@ -78,7 +80,7 @@
 			    <td><center>{{documento.data_criacao}}</center></td>
 			    <td>
 			        <div class="btn-group">
-			          <button class="btn btn-primary"><i class="icon-download-alt icon-white"></i>  Download</button>
+			          <a class="btn btn-primary" href="/download/{{documento.id_versao}}/"><i class="icon-download-alt icon-white"></i>  Download</a>
 			          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 			          <ul class="dropdown-menu">
 			            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li>
