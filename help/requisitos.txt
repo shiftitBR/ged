@@ -1,0 +1,6 @@
+- Django 1.3
+- Python 2.7
+- South (easy-install south)
+- Fabric (easy-istall fabric)
+- Sorl-thumbnail (pip install sorl-thumbnail)
+- PIL
