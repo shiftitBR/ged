@@ -2,27 +2,22 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/base/jquery-ui.css" id="theme">
 <link rel="stylesheet" href="{{ static_url }}multiuploader/styles/jquery.fileupload-ui.css">
+
+   
 <div id="fileupload">
-    <form action="{% url multi %}" method="POST" enctype="multipart/form-data">
-        <div class="fileupload-buttonbar">
-            <label class="fileinput-button">
-                <span>Add files...</span>
-                <input type="file" name="files[]" multiple>
-            </label>
-            <button type="submit" class="start">Start upload</button>
-            <button type="reset" class="cancel">Cancel upload</button>
-            <button type="button" class="delete">Delete files</button>
-        </div>
-    </form>
+    <div class="fileupload-buttonbar">
+        <label class="fileinput-button">
+            <span>Adiocionar Arquivos</span>
+            <input type="file" name="files[]" multiple>
+        </label>
+        <button type="reset" 	class="cancel">Cancelar Upload</button>
+    </div>
     <div class="fileupload-content">
         <table class="files"></table>
         <div class="fileupload-progressbar"></div>
     </div>
 </div>
-<div id="help" style="color:gray;">
-<h2>
-    <p>You can select Multiple files at once using Ctrl(Win) or Command(Mac), or you can drag'n'drop your files on this form.</p>
-</h2>
+
 {% verbatim %}
 <script id="template-upload" type="text/x-jquery-tmpl">
     <tr class="template-upload{{if error}} ui-state-error{{/if}}">
@@ -40,9 +35,9 @@
             </td>
         {{else}}
             <td class="progress"><div></div></td>
-            <td class="start"><button>Start</button></td>
+            <td class="start"><button>Iniciar</button></td>
         {{/if}}
-        <td class="cancel"><button>Cancel</button></td>
+        <td class="cancel"><button>Cancelar</button></td>
     </tr>
 </script>
 <script id="template-download" type="text/x-jquery-tmpl">
@@ -80,9 +75,6 @@
             <td class="size">${sizef}</td>
             <td colspan="2"></td>
         {{/if}}
-        <td class="delete">
-            <button data-type="${delete_type}" data-url="${delete_url}">Delete</button>
-        </td>
     </tr>
 </script>
 {% endverbatim %}

@@ -107,6 +107,3 @@ class Controle(object):
             return True
         except:
             return False
-        
-    def obtemDiretorioUpload(self):
-        return settings.MULTI_IMAGES_FOLDER+'/'+self.getBanco()+'/'+self.getIDPasta()+ '/'

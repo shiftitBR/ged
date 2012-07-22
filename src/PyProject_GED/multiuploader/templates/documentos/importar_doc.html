@@ -37,8 +37,7 @@
 		    	{{ field.errors }}
 		    {% endfor %}
 	    {% endif %}
-		
-	  	<form class="form-horizontal" name= "acao" action="/importar_documento/" method="post">{% csrf_token %}	
+		<form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 	  	<fieldset>
 	  		
   		  <div class="control-group">
@@ -100,20 +99,17 @@
 		{% endfor %}
 	    </fieldset>
 	    <br>
-	    <div class="form-actions">
-			<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Importar</button>
-			<button type="button" class="btn" onClick="parent.jQuery.fancybox.close();" >Cancelar</button>
-		</div>
 	    
-		</form>
-		
-		<div class="control-group">
+	    <div class="control-group">
 			<label class="control-label">Upload:</label>
 			<div class="controls">
 				{% load multiuploader %}
 				{% multiupform %}
 			</div>
 		</div>
+	    
+		</form>
+		
 	</div>
 		          
 </body>

@@ -1,6 +1,7 @@
 from django.db import models
 import random
 from PyProject_GED                  import oControle
+from seguranca.controle             import Controle as SegurancaControle      #@UnresolvedImport 
 
 from django.conf import settings
 try:
@@ -11,7 +12,7 @@ except AttributeError:
 class MultiuploaderImage(models.Model):
     """Model for storing uploaded photos"""
     filename = models.CharField(max_length=60, blank=True, null=True)
-    image = models.FileField(upload_to=oControle.obtemDiretorioUpload())
+    image = models.FileField(upload_to=storage)
     key_data = models.CharField(max_length=90, unique=True, blank=True, null=True)
     upload_date = models.DateTimeField(auto_now_add=True)
 
@@ -29,9 +30,8 @@ class MultiuploaderImage(models.Model):
         return self.image.name
 
     def save(self):
-        print '>>>>>>>>>>>>>>> Models'
         for field in self._meta.fields:
             if field.name == 'image':
-                field.upload_to = oControle.obtemDiretorioUpload()
+                field.upload_to = SegurancaControle().obtemDiretorioUpload()
         super(MultiuploaderImage, self).save(using=oControle.getBanco())
 

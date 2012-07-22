@@ -9,6 +9,7 @@ from PyProject_GED              import oControle
 
 from autenticacao.models        import Usuario #@UnresolvedImport
 from seguranca.models           import Pasta #@UnresolvedImport
+from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
 
 #-----------------------------DOCUMENTO----------------------------------------
 
@@ -84,7 +85,7 @@ class Versao(models.Model):
     estado          = models.ForeignKey(Estado_da_Versao, null= False)
     versao          = models.IntegerField(max_length=3, null= False)
     dsc_modificacao = models.CharField(max_length=200, null= True)
-    arquivo         = models.CharField(max_length=200, null= False)
+    upload          = models.ForeignKey(MultiuploaderImage, null= False)
     protocolo       = models.CharField(max_length=20, null=True)
     data_criacao    = models.DateTimeField(null= False)
     eh_assinado     = models.BooleanField(null= False)
