@@ -5,12 +5,7 @@ Created on Jul 19, 2012
 @author: Shift IT | wwww.shiftit.com.br
 '''
 
-import constantes #@UnresolvedImport
-
 from django                     import forms
-from django.utils.translation   import ugettext as trans
-from django.forms.widgets       import CheckboxInput
-from django.contrib.auth.models import User
 from models                     import Tipo_de_Documento
 
 

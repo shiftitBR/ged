@@ -11,6 +11,8 @@ from autenticacao.models  import Usuario    #@UnresolvedImport
 from seguranca.models     import Pasta      #@UnresolvedImport    
 from indice.models        import Indice     #@UnresolvedImport
 from objetos_auxiliares   import Documento as DocumentoAuxiliar
+from multiuploader.models import MultiuploaderImage #@UnresolvedImport
+from PyProject_GED        import oControle
 
 class Controle(object):
     
@@ -46,7 +48,7 @@ class Controle(object):
                 iDocumento.descricao= iListaVersao[i].dsc_modificacao
                 iDocumento.criador= iListaVersao[i].usr_criador
                 iDocumento.id_criador= iListaVersao[i].usr_criador.id
-                iDocumento.arquivo= iListaVersao[i].arquivo
+                iDocumento.arquivo= str(iListaVersao[i].upload.image)
                 iDocumento.estado= iListaVersao[i].estado
                 iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
                 iDocumento.protocolo= iListaVersao[i].protocolo
@@ -99,11 +101,15 @@ class Controle(object):
     
     def obtemCaminhoArquivo(self, vIDVersao):
         try:
-            print '>>>>>>>>>>>>>>> obtemCaminhoArquivo'
-            return True
+            iVersao = Versao.objects.filter(id_versao = vIDVersao)[0]
+            return iVersao.upload.image
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False
+        
+    def obtemDiretorioUpload(self):
+        iPasta = Pasta.objects.filter(id_pasta= oControle.getIDPasta())[0]
+        return iPasta.diretorio
         
     def salvaDocumento(self, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],
                             vDataDescarte= str(datetime.datetime.today())[:19]):
@@ -126,20 +132,21 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel salvar o Documento: ' + str(e))
             return False
         
-    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vArquivo, vProtocolo, 
+    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUpload, vProtocolo, 
                     vDataCriacao= str(datetime.datetime.today())[:19], vDsc_Modificacao=None, vEh_Assinado=False):
         try:
             iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
             iCriador    = Usuario.objects.filter(id= vIDCriador)[0]
             iEstado     = Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)[0]
-            
+            iUpload     = MultiuploaderImage.objects.filter(key_data = vUpload)[0]
+
             iVersao                 = Versao()
             iVersao.documento       = iDocumento
             iVersao.usr_criador     = iCriador
             iVersao.estado          = iEstado
             iVersao.versao          = vVersao
             iVersao.dsc_modificacao = vDsc_Modificacao
-            iVersao.arquivo         = vArquivo
+            iVersao.upload          = iUpload
             iVersao.protocolo       = vProtocolo
             iVersao.data_criacao    = vDataCriacao
             iVersao.eh_assinado     = vEh_Assinado

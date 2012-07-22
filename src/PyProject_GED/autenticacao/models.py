@@ -89,12 +89,9 @@ class Usuario(User):
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>> salvou GERAL'
         #Banco Geral
         super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
         ##Banco da Empresa X
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>> getBanco()'
-        print oControle.getBanco()
         super(Usuario, self).save(using=oControle.getBanco())   
         
         

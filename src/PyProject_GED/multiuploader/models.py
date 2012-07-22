@@ -1,5 +1,7 @@
 from django.db import models
 import random
+from PyProject_GED                  import oControle
+from seguranca.controle             import Controle as SegurancaControle      #@UnresolvedImport 
 
 from django.conf import settings
 try:
@@ -26,4 +28,10 @@ class MultiuploaderImage(models.Model):
 
     def __unicode__(self):
         return self.image.name
+
+    def save(self):
+        for field in self._meta.fields:
+            if field.name == 'image':
+                field.upload_to = SegurancaControle().obtemDiretorioUpload()
+        super(MultiuploaderImage, self).save(using=oControle.getBanco())
 
