@@ -83,7 +83,7 @@ def sincronizaBanco_remoto(vDiretorio):
 
 def sincronizaBanco_local(vDiretorio, vDataBase):
     with cd(vDiretorio):
-        local('python2.7 %s%s syncdb --database="%s"' % (vDiretorio, '/manage.py', vDataBase))
+        local('python2.7 %s%s syncdb --database="%s" --noinput' % (vDiretorio, '/manage.py', vDataBase))
 
 def migraBanco_local(vDiretorio, vDataBase):
     with cd(vDiretorio):
@@ -173,6 +173,9 @@ def scriptInicial(vDiretorio, vIDEmpresa, vAliasDataBase):
     with cd(vDiretorio):
         local('python2.7 manage.py servicos 1 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
         local('python2.7 manage.py servicos 2 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
+        local('python2.7 manage.py servicos 3 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
+        local('python2.7 manage.py servicos 4 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
+        local('python2.7 manage.py servicos 5 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
