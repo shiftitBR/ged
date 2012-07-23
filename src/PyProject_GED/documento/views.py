@@ -43,8 +43,9 @@ def tabelaDocumentos(vRequest, vTitulo):
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
         iHtml= []
         for i in range(len(iListaDocumentos)):     
-            iLinha= '<tr><td><label class="checkbox"><input type="checkbox" value="option1" name="versao_%(iVersao)s"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group"><a class="btn btn-primary" href="/download/%(iVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a><button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><span class="caret"></span></button><ul class="dropdown-menu"><li><a href="/aprovar_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a href="/reprovar_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-down"></i>  Reprovar</a></li><li><a href="/checkout/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-edit"></i>  Check-out</a></li><li><a href="/checkin/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-share"></i>  Check-in</a></li><li class="divider"></li><li><a href="/excluir_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-trash"></i>  Excluir</a></li><li class="divider"></li><li><a href="/historico/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-book"></i>  Histórico</a></li><li><a href="/informacoes_documento/%(iVersao)s/" class="fancybox fancybox.iframe"><i class="icon-info-sign"></i>  Informações</a></li></ul></div></td></tr>' % (
+            iLinha= '<tr><td><label class="checkbox"><input type="checkbox" value="option1" name="versao_%(iIDVersao)s"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group"><a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a><button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><span class="caret"></span></button><ul class="dropdown-menu"><li><a href="/aprovar_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a href="/reprovar_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-down"></i>  Reprovar</a></li><li><a href="/checkout/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-edit"></i>  Check-out</a></li><li><a href="/checkin/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-share"></i>  Check-in</a></li><li class="divider"></li><li><a href="/excluir_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-trash"></i>  Excluir</a></li><li class="divider"></li><li><a href="/historico/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-book"></i>  Histórico</a></li><li><a href="/informacoes_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-info-sign"></i>  Informações</a></li></ul></div></td></tr>' % (
                       {'iVersao': str(iListaDocumentos[i].num_versao), 
+                       'iIDVersao': str(iListaDocumentos[i].id_versao),
                        'iProtocolo': str(iListaDocumentos[i].protocolo), 
                        'iAssunto': str(iListaDocumentos[i].assunto),
                        'iTipo': str(iListaDocumentos[i].tipo_documento), 
@@ -111,8 +112,7 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def download(vRequest, vTitulo, vIDVersao=None):
-    iCaminho= DocumentoControle().obtemCaminhoArquivo(vIDVersao)
-    iArquivo= "%s/"%(settings.MEDIA_ROOT, ) + str(iCaminho)
+    iArquivo= str(DocumentoControle().obtemCaminhoArquivo(vIDVersao))
     iFile = open(iArquivo,"r")
     response = HttpResponse(iFile.read())
     response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
@@ -127,13 +127,12 @@ def criaArvore(vRequest, vTitulo):
         iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
         oControle.setIDPasta(os.path.basename(iIDPasta)) 
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
-        iTamListaDocumentos= len(iListaDocumentos)
     try:
         iHtml=['<ul class="jqueryFileTree" style="display: none;">']
         for iPasta in os.listdir(iDiretorio):
             iDiretorioFilho=os.path.join(iDiretorio, iPasta)
-            iPasta= DocumentoControle().obtemNomeDaPasta(iPasta)
             if os.path.isdir(iDiretorioFilho):
+                iPasta= DocumentoControle().obtemNomeDaPasta(iPasta)
                 iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
         iHtml.append('</ul>')
         #iHtml.append('<div class="teste">{{iListaDocumentos}}</div>')

@@ -56,7 +56,7 @@ def multiuploader(vRequest):
                 wrapped_file = UploadedFile(file)
                 filename = wrapped_file.name
                 file_size = wrapped_file.file.size
-                #writing file manually into model
+                #writing file manually into  odel
                 #because we don't need form of any type.
                 image = MultiuploaderImage()
                 image.filename=str(filename)
@@ -114,12 +114,6 @@ def multiuploader(vRequest):
                     vRequest.POST['indice_%s' % iIndice.id_indice] = ''
                     if iValor != '':
                         IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
-                vRequest.POST['eh_publico'] = False
-                vRequest.POST['tipo_documento'] = 0
-                vRequest.POST['assunto'] = ''  
-                vRequest.POST['usr_responsavel'] = ''
-                vRequest.POST['data_validade'] = ''
-                vRequest.POST['data_descarte'] = ''
             return HttpResponse(response_data, mimetype=mimetype)    
         else: 
             form = FormUploadDeArquivo(vRequest.POST)
