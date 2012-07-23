@@ -9,3 +9,10 @@ cntConfiguracaoBancoPadrao= 'default'
 cntConfiguracaoUsuarioBanco= 'postgres'
 cntConfiguracaoNomeBanco= 'shift_ged_empresa_%03d'
 cntConfiguracaoPastaDocumentos= 'documentos'
+
+#Servicos
+cntServicosCriaEmpresa= 1
+cntServicosCriaTipoUsuario= 2
+cntServicosCriaPastas= 3
+cntServicosCriaTipoDeIndice= 4
+cntServicosCriaTipodeDocumento= 5

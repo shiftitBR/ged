@@ -37,7 +37,7 @@ class Empresa(models.Model):
     def __unicode__(self):
         return "%s - %s" % (str(self.id_empresa), self.nome)
     
-    def save(self):  
+    def save(self, vCriaEmpresa=True):  
         if self.id_empresa == None: 
             if len(Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')) > 0:   
                 iUltimoRegistro = Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')[0] 
@@ -49,7 +49,8 @@ class Empresa(models.Model):
                                                  constantes.cntConfiguracaoPastaDocumentos, 
                                                  int(self.id_empresa))     
         super(Empresa, self).save(using=oControle.getBanco())
-        oControle.criaEmpresa(self.id_empresa)
+        if vCriaEmpresa:
+            oControle.criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
@@ -89,9 +90,13 @@ class Usuario(User):
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
+        print self.set_password(self.password)   
+            
         #Banco Geral
         super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
         ##Banco da Empresa X
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+        print oControle.getBanco()
         super(Usuario, self).save(using=oControle.getBanco())   
         
         

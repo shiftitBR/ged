@@ -104,6 +104,8 @@ def cria_pastaLog(vDiretorio):
 def cria_pastaEmpresa(vDiretorio, vAlias):
     with cd(vDiretorio):
         local('mkdir %s%s' % (vDiretorio, vAlias)) 
+        local('mkdir %s%s/1' % (vDiretorio, vAlias)) 
+        local('mkdir %s%s/1/2' % (vDiretorio, vAlias)) 
         
 def copia_settingsLocal(vDiretorioArquivos, vDiretorioApp):
     with cd(vDiretorioArquivos):
@@ -152,7 +154,7 @@ def adiciona_conexao(vIDEmpresa, vDiretorio):
     open(iArquivo, 'w').writelines(lines[0:len(lines)-2])
     iAlias= '''    
         },
-        'empresa_%03d': {
+        'shift_ged_empresa_%03d': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'shift_ged_empresa_%03d',                     
             'USER': 'shift_ged_empresa_%03d',                      
@@ -167,16 +169,21 @@ def cria_banco(vDataBase):
     session_id, account = server.login('shift', 'shiftit@051011')
     server.create_db(session_id, 'shift_ged_%s' % vDataBase, 'postgresql', iSenha)
 
+def scriptInicial(vDiretorio, vIDEmpresa, vAliasDataBase):
+    with cd(vDiretorio):
+        local('python2.7 manage.py servicos 1 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
+        local('python2.7 manage.py servicos 2 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
 
 def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
-    iDiretorioDocumentos= '/home/shift/webapps/ged/documentos/'
-    iAliasDataBase= 'empresa_%03d' % int(vIDEmpresa)
+    iDiretorioDocumentos= '/home/shift/webapps/ged/PyProject_GED/media/documentos/'
+    iAliasDataBase= 'shift_ged_empresa_%03d' % int(vIDEmpresa)
     cria_banco(iAliasDataBase)
-    #local('psql -U postgres -c "CREATE DATABASE %s WITH OWNER=%s;"' % (iDataBase, vIDUsuarioBanco))
+    #local('psql -U postgres -c "CREATE DATABASE shift_ged_empresa_%s WITH OWNER=%03d;"' % (vIDEmpresa, 'postgres'))
     adiciona_conexao(vIDEmpresa, vDiretorio)
     cria_pastaEmpresa(iDiretorioDocumentos, iAliasDataBase)
     reiniciaApache_local(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iAliasDataBase)
     #migraBanco_local(vDiretorio, iDataBase)
+    scriptInicial(vDiretorio, vIDEmpresa, iAliasDataBase)
 

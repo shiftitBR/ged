@@ -123,7 +123,6 @@ $('html').ajaxSend(function(event, xhr, settings) {
 
 function mostrarDocumetnos(vCampoID)
 {
-	console.log('Click!')
 	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
     {
             $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
