@@ -12,7 +12,7 @@ except AttributeError:
 class MultiuploaderImage(models.Model):
     """Model for storing uploaded photos"""
     filename = models.CharField(max_length=60, blank=True, null=True)
-    image = models.FileField(upload_to=storage)
+    image = models.FileField(max_length=300, upload_to=storage)
     key_data = models.CharField(max_length=90, unique=True, blank=True, null=True)
     upload_date = models.DateTimeField(auto_now_add=True)
 
@@ -33,7 +33,5 @@ class MultiuploaderImage(models.Model):
         for field in self._meta.fields:
             if field.name == 'image':
                 field.upload_to = SegurancaControle().obtemDiretorioUpload()
-                print field.upload_to
-                print oControle.getBanco()
         super(MultiuploaderImage, self).save(using=oControle.getBanco())
 

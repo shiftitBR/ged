@@ -16,5 +16,9 @@ class Controle(object):
 
 
     def obtemDiretorioUpload(self):
-        iPasta = Pasta.objects.filter(id_pasta= oControle.getIDPasta())[0]
-        return iPasta.diretorio
+        try :
+            iPasta = Pasta.objects.filter(id_pasta= oControle.getIDPasta())[0]
+            return iPasta.diretorio
+        except Exception, e:
+                self.getLogger().error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
+                return False

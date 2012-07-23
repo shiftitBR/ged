@@ -17,33 +17,32 @@ from documento.forms                import FormUploadDeArquivo #@UnresolvedImpor
 from indice.controle                import Controle as IndiceControle   #@UnresolvedImport
 from django.template                import RequestContext
 from django.contrib.auth.decorators import login_required
-import logging
-log = logging
+
 
 @csrf_exempt
+@login_required 
 def multiuploader_delete(request, pk):
     
     if request.method == 'POST':
-        log.info('Called delete image. image id='+str(pk))
         image = get_object_or_404(MultiuploaderImage, pk=pk)
         image.delete()
-        log.info('DONE. Deleted photo id='+str(pk))
         return HttpResponse(str(pk))
     else:
-        log.info('Received not POST request to delete image view')
         return HttpResponseBadRequest('Only POST accepted')
 
 @csrf_exempt
 @login_required 
 def multiuploader(vRequest):
-    
-    iUser = vRequest.user
-    if iUser:
-        iUsuario= DocumentoControle().obtemUsuario(iUser)
-    
-    iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento()
-    iListaIndices       = DocumentoControle().obtemListaIndices()
-    #gerarProtocolo
+    try :
+        iUser = vRequest.user
+        if iUser:
+            iUsuario= DocumentoControle().obtemUsuario(iUser)
+        iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento()
+        iListaIndices       = DocumentoControle().obtemListaIndices()
+        #gerarProtocolo 
+    except Exception, e:
+            oControle.getLogger().error('Nao foi possivel get multiuploader: ' + str(e))
+            return False
     
     if vRequest.method == 'POST':
         form = FormUploadDeArquivo(vRequest.POST)
@@ -63,7 +62,6 @@ def multiuploader(vRequest):
                 image.image=file
                 image.key_data = image.key_generate
                 image.save()
-                log.info('File saving done')
                 #Adicionar na tabela versao image.image
                 #getting thumbnail url using sorl-thumbnail
                 if 'image' in file.content_type.lower():
@@ -93,27 +91,32 @@ def multiuploader(vRequest):
                     mimetype = 'application/json'
                 else:
                     mimetype = 'text/plain'
-            except:
-                form = FormUploadDeArquivo()
+            except Exception, e:
+                    oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
+                    return False
             else:
-                #Adicionar na tabela documeto e versao
-                iAssunto    = vRequest.POST.get('assunto')
-                if vRequest.POST.get('eh_publico') != None:
-                    iEh_Publico = True
-                else:
-                    iEh_Publico = False
-                iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                iDocumento  = DocumentoControle().salvaDocumento(iIDTipo_Documento, iUsuario, 
-                                                oControle.getIDPasta(), iAssunto, iEh_Publico)
-                iVersao     = DocumentoControle().salvaVersao(iDocumento.id_documento, iUsuario.id, 
-                                                1, 1, image.key_data, '1234567')
-                #Salvar Indices
-                for i in range(len(iListaIndices)):
-                    iIndice = iListaIndices[i]
-                    iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
-                    vRequest.POST['indice_%s' % iIndice.id_indice] = ''
-                    if iValor != '':
-                        IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                try:
+                    #Adicionar na tabela documeto e versao
+                    iAssunto    = vRequest.POST.get('assunto')
+                    if vRequest.POST.get('eh_publico') != None:
+                        iEh_Publico = True
+                    else:
+                        iEh_Publico = False
+                    iIDTipo_Documento = vRequest.POST.get('tipo_documento')
+                    iDocumento  = DocumentoControle().salvaDocumento(iIDTipo_Documento, iUsuario, 
+                                                    oControle.getIDPasta(), iAssunto, iEh_Publico)
+                    iVersao     = DocumentoControle().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                                                    1, 1, image.key_data, '1234567')
+                    #Salvar Indices
+                    for i in range(len(iListaIndices)):
+                        iIndice = iListaIndices[i]
+                        iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
+                        vRequest.POST['indice_%s' % iIndice.id_indice] = ''
+                        if iValor != '':
+                            IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                except Exception, e:
+                    oControle.getLogger().error('Nao foi possivel adicionar na tabela documento e versao - multiuploader: ' + str(e))
+                    return False
             return HttpResponse(response_data, mimetype=mimetype)    
         else: 
             form = FormUploadDeArquivo(vRequest.POST)
@@ -125,7 +128,8 @@ def multiuploader(vRequest):
         locals(),
         context_instance=RequestContext(vRequest),
         )
-
+    
+@login_required 
 def multi_show_uploaded(request, key):
     """Simple file view helper.
     Used to show uploaded file directly"""
