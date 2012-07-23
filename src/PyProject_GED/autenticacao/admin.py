@@ -5,8 +5,6 @@ Created on Jan 17, 2012
 '''
 
 from django.contrib                 import admin
-from django.contrib.admin.sites     import AdminSite
-from django.contrib.admin.options   import ModelAdmin
 from django.contrib.auth.admin      import UserAdmin 
 
 from models                         import Empresa
