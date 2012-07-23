@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         iCodigoServico, iIDEmpresa, iAliasBanco= args
         oControle.setBanco(iAliasBanco)
-        iDiretorioArquivos= '/home/shift/webapps/ged/PyProject_GED/media/documentos//shift_ged_empresa_%03d'
+        iDiretorioArquivos= '/home/shift/webapps/ged/PyProject_GED/media/documentos/shift_ged_empresa_%03d' % iIDEmpresa
         try:
             if int(iCodigoServico) == constantes.cntServicosCriaEmpresa:
                 self.stdout.write('Servico "%s" iniciado!\n' % iCodigoServico)

@@ -181,11 +181,11 @@ def cria_empresa(vIDEmpresa, vDiretorio):
     iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
     iDiretorioDocumentos= '/home/shift/webapps/ged/PyProject_GED/media/documentos/'
     iAliasDataBase= 'shift_ged_empresa_%03d' % int(vIDEmpresa)
-    cria_banco(iAliasDataBase)
-    #local('psql -U postgres -c "CREATE DATABASE shift_ged_empresa_%s WITH OWNER=%03d;"' % (vIDEmpresa, 'postgres'))
+    #cria_banco(iAliasDataBase)
+    local('psql -U postgres -c "CREATE DATABASE shift_ged_empresa_%s WITH OWNER=%03d;"' % (vIDEmpresa, 'postgres'))
     adiciona_conexao(vIDEmpresa, vDiretorio)
     cria_pastaEmpresa(iDiretorioDocumentos, iAliasDataBase)
-    reiniciaApache_local(iDiretorioApache)
+    #reiniciaApache_local(iDiretorioApache)
     sincronizaBanco_local(vDiretorio, iAliasDataBase)
     #migraBanco_local(vDiretorio, iDataBase)
     scriptInicial(vDiretorio, vIDEmpresa, iAliasDataBase)
