@@ -14,12 +14,14 @@ class Test(TestCase):
     def setUp(self):
         self.mokarEmpresa()
         self.mokarTipoIndice()
+        self.mokarIndice()
         pass
     
     
     def tearDown(self):
         Empresa.objects.all().delete()
         Tipo_de_Indice.objects.all().delete()
+        Indice.objects.all().delete()
         pass
     
     
@@ -29,10 +31,13 @@ class Test(TestCase):
         iEmpresa        = Empresa.objects.filter()[0]
         iIndice         = Indice(descricao= iDescricao, tipo_indice= iTipo, empresa= iEmpresa)
         iIndice.save()
-        self.assertEquals(iIndice.id_indice, (Indice.objects.filter(empresa= iEmpresa.id_empresa).filter(id_indice= 1)[0].id_indice))
+        self.assertEquals(iIndice.id_indice, (Indice.objects.filter(empresa= iEmpresa.id_empresa).filter(id_indice= 2)[0].id_indice))
     
     
-    
+#    def testCriarIndiceVersaoValor(self):
+#        iEmpresa        = Empresa.objects.filter()[0]
+#        iIndice         = Indice.objects.filter(empresa= iEmpresa.id_empresa)[0]
+#        Versao          = 
     
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -51,3 +56,12 @@ class Test(TestCase):
         iEh_Ativo       = True
         iEmpresa_1      = Empresa(nome= iNome, banco= iBanco, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
         iEmpresa_1.save()
+        
+    def mokarIndice(self):
+        iDescricao      = 'valor'
+        iTipo           = Tipo_de_Indice.objects.filter(empresa= 1)[0]
+        iEmpresa        = Empresa.objects.filter()[0]
+        iIndice         = Indice(descricao= iDescricao, tipo_indice= iTipo, empresa= iEmpresa)
+        iIndice.save()
+        
+        

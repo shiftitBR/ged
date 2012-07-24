@@ -5,7 +5,6 @@ from models                                     import Empresa
 from models                                     import Usuario
 from models                                     import Tipo_de_Usuario
 
-
 class Test(TestCase):
     
     def setUp(self):
@@ -13,7 +12,6 @@ class Test(TestCase):
         self.mokarTipoUsuario()
         self.mokarUsuario()
         pass
-
 
     def tearDown(self):
         Empresa.objects.all().delete()

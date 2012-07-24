@@ -126,7 +126,7 @@ class Firewall(models.Model):
         db_table= 'tb_firewall'
     
     def __unicode__(self):
-        return self.descricao
+        return self.descricacao
     
     def save(self):  
         if len(Firewall.objects.order_by('-id_firewall')) > 0:   
@@ -138,7 +138,7 @@ class Firewall(models.Model):
 
 class Firewall_Grupo(models.Model):
     id_firewall_grupo       = models.IntegerField(max_length=3, primary_key=True)
-    firewall                = models.ForeignKey(Funcao, null= False)
+    firewall                = models.ForeignKey(Firewall, null= False)
     grupo                   = models.ForeignKey(Grupo, null= False)
     
     class Meta:
