@@ -37,8 +37,8 @@ class Empresa(models.Model):
     
     def save(self, vCriaEmpresa=True):  
         if self.id_empresa == None: 
-            if len(Empresa.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id_empresa')) > 0:   
-                iUltimoRegistro = Empresa.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id_empresa')[0] 
+            if len(Empresa.objects.order_by('-id_empresa')) > 0:   
+                iUltimoRegistro = Empresa.objects.order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
@@ -46,7 +46,7 @@ class Empresa(models.Model):
         self.pasta_raiz= '%s/media/%s/shift_ged_empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
                                                  settings.MULTI_IMAGES_FOLDER, 
                                                  int(self.id_empresa))     
-        super(Empresa, self).save(using=constantes.cntConfiguracaoBancoPadrao)
+        super(Empresa, self).save()
 
 #---------------------------USUARIO---------------------------------------
 
@@ -87,11 +87,7 @@ class Usuario(User):
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
-        print self.set_password(self.password)   
-            
-        #Banco Geral
-        super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
-        #Banco da Empresa X
+        self.set_password(self.password)   
         super(Usuario, self).save()   
         
         
