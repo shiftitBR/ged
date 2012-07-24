@@ -160,11 +160,7 @@ def download(vRequest, vTitulo, vIDVersao=None):
 def criaArvore(vRequest, vTitulo):
     try :
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
-        if iDiretorio[len(iDiretorio)-1] != '/': #sem / no final
-            vRequest.session['IDPasta'] = os.path.basename(iDiretorio)
-        else :
-            iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
-            vRequest.session['IDPasta'] = os.path.basename(iIDPasta)
+        vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
         iListaDocumentos = DocumentoControle().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
