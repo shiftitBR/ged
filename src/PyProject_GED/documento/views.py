@@ -16,11 +16,11 @@ import urllib
 @login_required 
 def documentos(vRequest, vTitulo):
     try :
-        iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa.id_empresa
-        iPasta_Raiz = oControle.getPasta()
+        iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
+        vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
+        iPasta_Raiz = iEmpresa.pasta_raiz
         iListaDocumentos=[]
-        if oControle.getIDPasta() != '':
-            iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(iEmpresa.id_empresa, 1)
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False
@@ -45,10 +45,10 @@ def documentos(vRequest, vTitulo):
 @login_required 
 def tabelaDocumentos(vRequest, vTitulo):
     try :
-        iPasta_Raiz = oControle.getPasta()
+        iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
-        if oControle.getIDPasta() != '':
-            iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+        if vRequest.session['IDPasta'] != '':
+            iListaDocumentos = DocumentoControle().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):     
@@ -163,11 +163,11 @@ def criaArvore(vRequest, vTitulo):
     try :
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
         if iDiretorio[len(iDiretorio)-1] != '/': #sem / no final
-            oControle.setIDPasta(os.path.basename(iDiretorio))
+            vRequest.session['IDPasta'] = os.path.basename(iDiretorio)
         else :
             iIDPasta= iDiretorio.replace(' ', '')[:-1] #com / no final = retirar / do final
-            oControle.setIDPasta(os.path.basename(iIDPasta)) 
-            iListaDocumentos = DocumentoControle().obtemListaDocumentos(oControle.getIDPasta())
+            vRequest.session['IDPasta'] = os.path.basename(iIDPasta)
+        iListaDocumentos = DocumentoControle().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):

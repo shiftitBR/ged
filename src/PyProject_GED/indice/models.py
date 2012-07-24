@@ -4,15 +4,15 @@ Created on Jul 18, 2012
 @author: Shift IT | wwww.shiftit.com.br
 '''
 from django.db                  import models
-from PyProject_GED              import oControle
-
 from documento.models           import Versao #@UnresolvedImport
+from autenticacao.models        import Empresa #@UnresolvedImport
 
 #-----------------------------INDICE----------------------------------------
 
 class Tipo_de_Indice(models.Model):
     id_tipo_indice          = models.IntegerField(max_length=3, primary_key=True)
     descricao               = models.CharField(max_length=30)
+    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_tipo_de_indice'
@@ -32,6 +32,7 @@ class Indice(models.Model):
     id_indice       = models.IntegerField(max_length=3, primary_key=True)
     descricao       = models.CharField(max_length=30)
     tipo_indice     = models.ForeignKey(Tipo_de_Indice, null= False)
+    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_indice'
@@ -52,6 +53,7 @@ class Indice_Versao_Valor(models.Model):
     indice                  = models.ForeignKey(Indice, null= False)
     versao                  = models.ForeignKey(Versao, null= False)
     valor                   = models.CharField(max_length=50)
+    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_indice_versao_valor'

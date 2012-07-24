@@ -5,7 +5,7 @@ Created on Jul 18, 2012
 '''
 
 from django.db                  import models
-from PyProject_GED              import oControle
+from autenticacao.models        import Empresa #@UnresolvedImport
 
 #-----------------------------PASTA----------------------------------------
 
@@ -14,6 +14,7 @@ class Pasta(models.Model):
     pasta_pai       = models.ForeignKey('self', null=True)
     nome            = models.CharField(max_length=30, null=False)
     diretorio       = models.CharField(max_length=200, null=False)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_pasta'
@@ -35,6 +36,7 @@ class Grupo(models.Model):
     id_grupo        = models.IntegerField(max_length=3, primary_key=True)
     nome            = models.CharField(max_length=100)
     descricacao     = models.CharField(max_length=100)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_grupo'
@@ -54,6 +56,7 @@ class Grupo_Pasta(models.Model):
     id_grupo_pasta          = models.IntegerField(max_length=3, primary_key=True)
     grupo                   = models.ForeignKey(Grupo, null= False)
     pasta                   = models.ForeignKey(Pasta, null= False)
+    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_grupo_pasta'
@@ -75,6 +78,7 @@ class Funcao(models.Model):
     id_funcao       = models.IntegerField(max_length=3, primary_key=True)
     nome            = models.CharField(max_length=100)
     descricacao     = models.CharField(max_length=100)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_funcao'
@@ -94,6 +98,7 @@ class Funcao_Grupo(models.Model):
     id_funcao_grupo         = models.IntegerField(max_length=3, primary_key=True)
     funcao                  = models.ForeignKey(Funcao, null= False)
     grupo                   = models.ForeignKey(Grupo, null= False)
+    
     
     class Meta:
         db_table= 'tb_funcao_grupo'
@@ -115,6 +120,7 @@ class Firewall(models.Model):
     id_firewall     = models.IntegerField(max_length=3, primary_key=True)
     ip              = models.CharField(max_length=20)
     descricacao     = models.CharField(max_length=100)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_firewall'

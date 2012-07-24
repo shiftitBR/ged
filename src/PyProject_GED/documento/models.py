@@ -7,6 +7,7 @@ Created on Jul 18, 2012
 from django.db                  import models
 from PyProject_GED              import oControle
 
+from autenticacao.models        import Empresa #@UnresolvedImport
 from autenticacao.models        import Usuario #@UnresolvedImport
 from seguranca.models           import Pasta #@UnresolvedImport
 from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
@@ -17,6 +18,7 @@ class Tipo_de_Documento(models.Model):
     id_tipo_documento       = models.IntegerField(max_length=3, primary_key=True)
     descricao               = models.CharField(max_length=30)
     eh_nativo               = models.BooleanField(null= False)
+    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_tipo_de_documento'
@@ -42,6 +44,7 @@ class Documento(models.Model):
     data_validade   = models.DateTimeField(null= True)
     data_descarte   = models.DateTimeField(null= True)
     eh_publico      = models.BooleanField(null= False)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_documento'

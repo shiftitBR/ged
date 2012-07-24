@@ -143,7 +143,7 @@ INSTALLED_APPS = (
     'indice',
     'qualidade',
     'seguranca',
-    'south',
+#    'south',
     'multiuploader',
     'sorl.thumbnail',
     'utilidades',
@@ -179,8 +179,6 @@ LOGGING = {
 LOGIN_URL = '/login_error/'
 LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/documentos/'
-
-DATABASE_ROUTERS = ['appRouter.MyAppRouter'] 
 
 EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'shift'

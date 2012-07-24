@@ -1,6 +1,5 @@
 from django.db import models
 import random
-from PyProject_GED                  import oControle
 from seguranca.controle             import Controle as SegurancaControle      #@UnresolvedImport 
 
 from django.conf import settings
@@ -29,9 +28,9 @@ class MultiuploaderImage(models.Model):
     def __unicode__(self):
         return self.image.name
 
-    def save(self):
+    def save(self, vIDPasta):
         for field in self._meta.fields:
             if field.name == 'image':
-                field.upload_to = SegurancaControle().obtemDiretorioUpload()
+                field.upload_to = SegurancaControle().obtemDiretorioUpload(vIDPasta)
         super(MultiuploaderImage, self).save()
 

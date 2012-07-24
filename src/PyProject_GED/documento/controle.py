@@ -8,11 +8,11 @@ from models               import Estado_da_Versao
 from models               import Tipo_de_Documento
 from models               import Documento
 from autenticacao.models  import Usuario    #@UnresolvedImport  
+from autenticacao.models  import Empresa    #@UnresolvedImport 
 from seguranca.models     import Pasta      #@UnresolvedImport    
 from indice.models        import Indice     #@UnresolvedImport
 from objetos_auxiliares   import Documento as DocumentoAuxiliar
 from multiuploader.models import MultiuploaderImage #@UnresolvedImport
-from PyProject_GED        import oControle
 
 class Controle(object):
     
@@ -24,10 +24,10 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
     
-    def obtemListaDocumentos(self, vIDPasta):
+    def obtemListaDocumentos(self, vIDEmpresa, vIDPasta):
         try:
             iListaDocumentosAuxiliar=[]
-            iListaVersao = Versao.objects.filter(documento__pasta = vIDPasta)
+            iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(documento__pasta = vIDPasta)
             for i in range(len(iListaVersao)):    
                 iDocumento= DocumentoAuxiliar()
                 iDocumento.id= iListaVersao[i].documento.id_documento
@@ -67,25 +67,25 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
         
-    def obtemIDTipoDocumento(self, vDsc_Tipo_Documento):
+    def obtemIDTipoDocumento(self, vIDEmpresa, vDsc_Tipo_Documento):
         try:
-            iIDTipo_Documento = Tipo_de_Documento.objects.filter(descricao= vDsc_Tipo_Documento)[0]
+            iIDTipo_Documento = Tipo_de_Documento.objects.filter(empresa= vIDEmpresa).filter(descricao= vDsc_Tipo_Documento)[0]
             return iIDTipo_Documento
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter o ID do tipo de documento: ' + str(e))
             return False
     
-    def obtemListaTipoDocumento(self):
+    def obtemListaTipoDocumento(self, vIDEmpresa):
         try:
-            iListaTipoDocumento = Tipo_de_Documento.objects.filter()
+            iListaTipoDocumento = Tipo_de_Documento.objects.filter(empresa= vIDEmpresa)
             return iListaTipoDocumento
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de tipos de documentos: ' + str(e))
             return False
     
-    def obtemListaIndices(self):
+    def obtemListaIndices(self, vIDEmpresa):
         try:
-            iListaIndices = Indice.objects.filter()
+            iListaIndices = Indice.objects.filter(empresa= vIDEmpresa)
             return iListaIndices
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter a lista de indices: ' + str(e))
@@ -111,13 +111,15 @@ class Controle(object):
         iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
         return iPasta.diretorio
         
-    def salvaDocumento(self, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],
-                            vDataDescarte= str(datetime.datetime.today())[:19]):
+    def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico,
+                       vDataValida= str(datetime.datetime.today())[:19], vDataDescarte= str(datetime.datetime.today())[:19]):
         try:
             iPasta          = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             iTipoDoc        = Tipo_de_Documento.objects.filter(id_tipo_documento= vIDTipo_Doc)[0]
+            iEmpresa        = Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
             
             iDocumento                  = Documento()
+            iDocumento.empresa          = iEmpresa
             iDocumento.tipo_documento   = iTipoDoc
             iDocumento.usr_responsavel  = vResponsavel
             iDocumento.pasta            = iPasta

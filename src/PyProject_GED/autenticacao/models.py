@@ -6,8 +6,6 @@ Created on Jul 11, 2012
 
 from django.db                  import models
 from django.contrib.auth.models import User
-#from controle                   import Controle #@UnresolvedImport
-from PyProject_GED              import oControle
 from django.conf                import settings
 
 import constantes #@UnresolvedImport
@@ -45,18 +43,17 @@ class Empresa(models.Model):
             else:
                 self.id_empresa= 1
         self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)   
-        self.pasta_raiz= '%s/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
-                                                 constantes.cntConfiguracaoPastaDocumentos, 
+        self.pasta_raiz= '%s/media/%s/shift_ged_empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
+                                                 settings.MULTI_IMAGES_FOLDER, 
                                                  int(self.id_empresa))     
         super(Empresa, self).save(using=constantes.cntConfiguracaoBancoPadrao)
-        if vCriaEmpresa:
-            oControle.criaEmpresa(self.id_empresa)
 
 #---------------------------USUARIO---------------------------------------
 
 class Tipo_de_Usuario(models.Model):
     id_tipo_usuario     = models.IntegerField(max_length=3, primary_key=True)
     descricao           = models.CharField(max_length=30)
+    empresa             = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_tipo_de_usuario'

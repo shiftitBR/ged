@@ -17,13 +17,6 @@ class SignUpForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ('username', 'email',) 
-    
-    #def __init__(self, *args, **kwargs):        
-    #    self.base_fields['password']. = trans('Informe uma senha segura')
-     #   self.base_fields['password'].widget = forms.PasswordInput()
-        
-        #super(SignUpForm, self).__init__(*args, **kwargs)
-       # self.fields['email'].attrs['id']= 'email_teste'
 
     def clean_email(self):
         email = self.cleaned_data["email"]

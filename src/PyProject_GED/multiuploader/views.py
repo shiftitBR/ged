@@ -37,8 +37,9 @@ def multiuploader(vRequest):
         iUser = vRequest.user
         if iUser:
             iUsuario= DocumentoControle().obtemUsuario(iUser)
-        iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento()
-        iListaIndices       = DocumentoControle().obtemListaIndices()
+        iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
+        iListaIndices       = DocumentoControle().obtemListaIndices(vRequest.session['IDEmpresa'])
+        iTamListaIndices    = len(iListaIndices)
         #gerarProtocolo 
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get multiuploader: ' + str(e))
@@ -61,7 +62,7 @@ def multiuploader(vRequest):
                 image.filename=str(filename)
                 image.image=file
                 image.key_data = image.key_generate
-                image.save()
+                image.save(vRequest.session['IDPasta'])
                 #Adicionar na tabela versao image.image
                 #getting thumbnail url using sorl-thumbnail
                 if 'image' in file.content_type.lower():
@@ -103,8 +104,8 @@ def multiuploader(vRequest):
                     else:
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                    iDocumento  = DocumentoControle().salvaDocumento(iIDTipo_Documento, iUsuario, 
-                                                    oControle.getIDPasta(), iAssunto, iEh_Publico)
+                    iDocumento  = DocumentoControle().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
+                                                    vRequest.session['IDPasta'], iAssunto, iEh_Publico)
                     iVersao     = DocumentoControle().salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, image.key_data, '1234567')
                     #Salvar Indices
