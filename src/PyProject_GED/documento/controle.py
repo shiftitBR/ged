@@ -110,6 +110,18 @@ class Controle(object):
     def obtemDiretorioUpload(self, vIDPasta):
         iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
         return iPasta.diretorio
+    
+    def obtemIDPastaArvore(self, vCaminho):
+        try:
+            iLista = vCaminho.split('/')
+            if vCaminho[len(vCaminho)-1] != '/': #sem / no final
+                iIDPasta= iLista[len(iLista)-1]
+            else :  #com / no final 
+                iIDPasta= iLista[len(iLista)-2]
+            return iIDPasta
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemIDPastaArvore: ' + str(e))
+            return False
         
     def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico,
                        vDataValida= str(datetime.datetime.today())[:19], vDataDescarte= str(datetime.datetime.today())[:19]):

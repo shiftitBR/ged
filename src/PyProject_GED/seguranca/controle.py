@@ -13,7 +13,6 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
 
-
     def obtemDiretorioUpload(self, vIDPasta):
         try :
             iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
