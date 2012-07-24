@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import logging
+from PyProject_GED          import constantes
 from models                 import Pasta     
 
 class Controle(object):
@@ -19,5 +20,17 @@ class Controle(object):
             iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             return iPasta.diretorio
         except Exception, e:
-                self.getLogger().error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
-                return False
+            self.getLogger().error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
+            return False
+    
+    def montaDiretorioPasta(self, vIDEmpresa, vIDPasta, vIDPastaPai=None):
+        try :
+            if vIDPastaPai == None:
+                iDiretorio= '%s/%s' % ((constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa), vIDPasta)
+            else:
+                iPastaPai = Pasta.objects.filter(id_pasta= vIDPastaPai)[0]
+                iDiretorio= '%s/%s' % (iPastaPai, vIDPasta)
+            return iDiretorio
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel omontar o Diretorio da Pasta: ' + str(e))
+            return False

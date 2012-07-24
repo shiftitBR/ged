@@ -101,11 +101,14 @@ def cria_pastaLog(vDiretorio):
     with cd(vDiretorio):
         run('mkdir %s%s' % (vDiretorio, 'log/')) 
 
-def cria_pastaEmpresa(vDiretorio, vAlias):
+def cria_pasta(vDiretorio, vAlias, vIDPastaRaiz, vIDPastaModelo):
     with cd(vDiretorio):
         local('mkdir %s%s' % (vDiretorio, vAlias)) 
-        local('mkdir %s%s/1' % (vDiretorio, vAlias)) 
-        local('mkdir %s%s/1/2' % (vDiretorio, vAlias)) 
+        local('mkdir %s%s/%s' % (vDiretorio, vAlias, vIDPastaRaiz)) 
+        local('mkdir %s%s/%s/%s' % (vDiretorio, 
+                                    vAlias, 
+                                    str(vIDPastaRaiz), 
+                                    str(vIDPastaModelo)))
         
 def copia_settingsLocal(vDiretorioArquivos, vDiretorioApp):
     with cd(vDiretorioArquivos):
@@ -147,46 +150,18 @@ def deploy(vNovaVersao=False, vNomeTag=None):
     #roda_teste_remoto(iDiretorioApp)
     sincronizaBanco_remoto(iDiretorioApp)
     reiniciaApache_remoto(iDiretorioApache)
-    
-def adiciona_conexao(vIDEmpresa, vDiretorio):
-    iArquivo= vDiretorio + '/local_settings.py'
-    lines = open(iArquivo).readlines()
-    open(iArquivo, 'w').writelines(lines[0:len(lines)-2])
-    iAlias= '''    
-        },
-        'shift_ged_empresa_%03d': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'shift_ged_empresa_%03d',                     
-            'USER': 'shift_ged_empresa_%03d',                      
-            'PASSWORD': 'ged_db',                  
-        }
-    }''' 
-    open(iArquivo, "a").write(iAlias % (int(vIDEmpresa), int(vIDEmpresa), int(vIDEmpresa)))
 
-def cria_banco(vDataBase):
-    iSenha= 'ged_db'
-    server = xmlrpclib.ServerProxy('https://api.webfaction.com/')
-    session_id, account = server.login('shift', 'shiftit@051011')
-    server.create_db(session_id, '%s' % vDataBase, 'postgresql', iSenha)
-
-def scriptInicial(vDiretorio, vIDEmpresa, vAliasDataBase):
+def scriptInicial(vDiretorio, vIDEmpresa):
     with cd(vDiretorio):
-        local('python2.7 manage.py servicos 1 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
-        local('python2.7 manage.py servicos 2 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
-        local('python2.7 manage.py servicos 3 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
-        local('python2.7 manage.py servicos 4 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
-        local('python2.7 manage.py servicos 5 %s %s' % (str(vIDEmpresa), vAliasDataBase)) 
+        local('python2.7 manage.py servicos 1 %s' % str(vIDEmpresa)) 
+        local('python2.7 manage.py servicos 2 %s' % str(vIDEmpresa)) 
+        local('python2.7 manage.py servicos 3 %s' % str(vIDEmpresa)) 
+        local('python2.7 manage.py servicos 4 %s' % str(vIDEmpresa)) 
+        local('python2.7 manage.py servicos 5 %s' % str(vIDEmpresa)) 
 
-def cria_empresa(vIDEmpresa, vDiretorio):
-    iDiretorioApache= '/home/shift/webapps/ged/apache2/bin/'
+def cria_empresa(vIDEmpresa, vDiretorio, vIDPastaRaiz, vIDPastaModelo):
     iDiretorioDocumentos= '/home/shift/webapps/ged/PyProject_GED/media/documentos/'
-    iAliasDataBase= 'shift_ged_empresa_%03d' % int(vIDEmpresa)
-    #cria_banco(iAliasDataBase)
-    local('psql -U postgres -c "CREATE DATABASE shift_ged_empresa_%s WITH OWNER=%03d;"' % (vIDEmpresa, 'postgres'))
-    adiciona_conexao(vIDEmpresa, vDiretorio)
-    cria_pastaEmpresa(iDiretorioDocumentos, iAliasDataBase)
-    #reiniciaApache_local(iDiretorioApache)
-    sincronizaBanco_local(vDiretorio, iAliasDataBase)
-    #migraBanco_local(vDiretorio, iDataBase)
+    iAliasDataBase= 'empresa_%03d' % int(vIDEmpresa)
+    cria_pasta(iDiretorioDocumentos, iAliasDataBase, vIDPastaRaiz, vIDPastaModelo)
     scriptInicial(vDiretorio, vIDEmpresa, iAliasDataBase)
 

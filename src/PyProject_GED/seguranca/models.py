@@ -5,16 +5,20 @@ Created on Jul 18, 2012
 '''
 
 from django.db                  import models
+
 from autenticacao.models        import Empresa #@UnresolvedImport
+from controle                   import Controle as ControleSeguranca
+
+oControleSeguranca= ControleSeguranca()
 
 #-----------------------------PASTA----------------------------------------
 
 class Pasta(models.Model):
     id_pasta        = models.IntegerField(max_length=3, primary_key=True)
     pasta_pai       = models.ForeignKey('self', null=True)
+    empresa         = models.ForeignKey(Empresa, null= False)
     nome            = models.CharField(max_length=30, null=False)
     diretorio       = models.CharField(max_length=200, null=False)
-    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_pasta'
@@ -28,6 +32,9 @@ class Pasta(models.Model):
             self.id_pasta= iUltimoRegistro.pk + 1
         else:
             self.id_pasta= 1
+        self.diretorio= oControleSeguranca.montaDiretorioPasta(self.empresa.id_empresa, 
+                                                               self.id_pasta, 
+                                                               self.pasta_pai.id_pasta)
         super(Pasta, self).save()
 
 #-----------------------------GRUPO----------------------------------------

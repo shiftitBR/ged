@@ -10,7 +10,6 @@ from PyProject_GED.autenticacao.models          import Tipo_de_Usuario
 from PyProject_GED.seguranca.models             import Pasta
 from PyProject_GED.documento.models             import Tipo_de_Documento
 from PyProject_GED.indice.models                import Tipo_de_Indice
-from PyProject_GED                              import oControle  
 
 import constantes #@UnresolvedImport
 
@@ -20,13 +19,24 @@ class Command(BaseCommand):
     help = 'Executa Servicos'
 
     def handle(self, *args, **options):
-        iCodigoServico, iIDEmpresa, iAliasBanco= args
-        oControle.setBanco(iAliasBanco)
-        iDiretorioArquivos= '/home/shift/webapps/ged/PyProject_GED/media/documentos/shift_ged_empresa_%03d' % iIDEmpresa
+        iCodigoServico, iIDEmpresa= args
         try:
-            if int(iCodigoServico) == constantes.cntServicosCriaEmpresa:
+            iEmpresa= Empresa.objects.filter(id_empresa=iIDEmpresa)[0]
+            if int(iCodigoServico) == constantes.cntServicosCriaPastas:
                 self.stdout.write('Servico "%s" iniciado!\n' % iCodigoServico)
-                iEmpresa= Empresa.objects.using(constantes.cntConfiguracaoBancoPadrao).filter(id_empresa=iIDEmpresa)[0]
+                iPastaRaiz= Pasta()
+                iPastaRaiz.nome= 'Pasta Raiz'
+                iPastaRaiz.empresa= iEmpresa
+                iPastaRaiz.save()
+                iPastaModelo= Pasta()
+                iPastaModelo.nome= 'Modelos'
+                iPastaModelo.pasta_pai= iPastaRaiz
+                iPastaModelo.empresa= iEmpresa
+                iPastaModelo.save()
+                self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
+            elif int(iCodigoServico) == constantes.cntServicosAtualizaEmpresa:
+                self.stdout.write('Servico "%s" iniciado!\n' % iCodigoServico)
+                iEmpresa.pasta_raiz= Pasta.objects.filter(id_empresa= iIDEmpresa, pasta_pai= None)[0].diretorio
                 iEmpresa.save(False)
                 self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
             elif int(iCodigoServico) == constantes.cntServicosCriaTipoUsuario:
@@ -34,22 +44,14 @@ class Command(BaseCommand):
                 iTipoUsuario= Tipo_de_Usuario()
                 iTipoUsuario.id_tipo_usuario= 1
                 iTipoUsuario.descricao= 'Administrador'
+                iTipoUsuario.empresa= iEmpresa
                 iTipoUsuario.save()
-                self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
-            elif int(iCodigoServico) == constantes.cntServicosCriaPastas:
-                self.stdout.write('Servico "%s" iniciado!\n' % iCodigoServico)
-                iPastaRaiz= Pasta()
-                iPastaRaiz.nome= 'Pasta Raiz'
-                iPastaRaiz.diretorio= '%s/1' % iDiretorioArquivos
-                iPastaRaiz.save()
-                iPastaModelo= Pasta()
-                iPastaModelo.nome= 'Modelos'
-                iPastaModelo.diretorio= '%s/1/2' % iDiretorioArquivos
                 self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
             elif int(iCodigoServico) == constantes.cntServicosCriaTipoDeIndice:
                 self.stdout.write('Servico "%s" iniciado!\n' % iCodigoServico)
                 iTipoDeIndice= Tipo_de_Indice()
                 iTipoDeIndice.descricao= 'String'
+                iTipoDeIndice.empresa= iEmpresa
                 iTipoDeIndice.save()
                 self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
             elif int(iCodigoServico) == constantes.cntServicosCriaTipodeDocumento:
@@ -57,6 +59,7 @@ class Command(BaseCommand):
                 iTipoDeDocumento= Tipo_de_Documento()
                 iTipoDeDocumento.descricao= 'Modelo'
                 iTipoDeDocumento.eh_nativo= True
+                iTipoDeDocumento.empresa= iEmpresa
                 iTipoDeDocumento.save()
                 self.stdout.write('Servico "%s" finalizado!\n' % iCodigoServico)
         except Exception, e:
