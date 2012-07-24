@@ -6,6 +6,8 @@ from django.http                    import HttpResponse
 from PyProject_GED                  import oControle
 from controle                       import Controle as DocumentoControle
 
+from PyProject_GED.autenticacao.models  import  Usuario
+
 from django.contrib.auth.decorators import login_required
 
 import os
@@ -14,6 +16,7 @@ import urllib
 @login_required 
 def documentos(vRequest, vTitulo):
     try :
+        iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa.id_empresa
         iPasta_Raiz = oControle.getPasta()
         iListaDocumentos=[]
         if oControle.getIDPasta() != '':

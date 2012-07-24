@@ -33,5 +33,5 @@ class MultiuploaderImage(models.Model):
         for field in self._meta.fields:
             if field.name == 'image':
                 field.upload_to = SegurancaControle().obtemDiretorioUpload()
-        super(MultiuploaderImage, self).save(using=oControle.getBanco())
+        super(MultiuploaderImage, self).save()
 

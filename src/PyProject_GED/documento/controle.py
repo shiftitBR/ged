@@ -107,8 +107,8 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False
         
-    def obtemDiretorioUpload(self):
-        iPasta = Pasta.objects.filter(id_pasta= oControle.getIDPasta())[0]
+    def obtemDiretorioUpload(self, vIDPasta):
+        iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
         return iPasta.diretorio
         
     def salvaDocumento(self, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico, vDataValida= str(datetime.datetime.today())[:19],

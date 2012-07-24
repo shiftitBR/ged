@@ -21,12 +21,12 @@ class Tipo_de_Indice(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Indice.objects.using(oControle.getBanco()).order_by('-id_tipo_indice')) > 0:   
-            iUltimoRegistro = Tipo_de_Indice.objects.using(oControle.getBanco()).order_by('-id_tipo_indice')[0] 
+        if len(Tipo_de_Indice.objects.order_by('-id_tipo_indice')) > 0:   
+            iUltimoRegistro = Tipo_de_Indice.objects.order_by('-id_tipo_indice')[0] 
             self.id_tipo_indice= iUltimoRegistro.pk + 1
         else:
             self.id_tipo_indice= 1
-        super(Tipo_de_Indice, self).save(using=oControle.getBanco())
+        super(Tipo_de_Indice, self).save()
 
 class Indice(models.Model):
     id_indice       = models.IntegerField(max_length=3, primary_key=True)
@@ -40,12 +40,12 @@ class Indice(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Indice.objects.using(oControle.getBanco()).order_by('-id_indice')) > 0:   
-            iUltimoRegistro = Indice.objects.using(oControle.getBanco()).order_by('-id_indice')[0] 
+        if len(Indice.objects.order_by('-id_indice')) > 0:   
+            iUltimoRegistro = Indice.objects.order_by('-id_indice')[0] 
             self.id_indice= iUltimoRegistro.pk + 1
         else:
             self.id_indice= 1
-        super(Indice, self).save(using=oControle.getBanco())
+        super(Indice, self).save()
 
 class Indice_Versao_Valor(models.Model):
     id_indice_versao_valor  = models.IntegerField(max_length=3, primary_key=True)
@@ -60,9 +60,9 @@ class Indice_Versao_Valor(models.Model):
         return self.id_indice_versao_valor
     
     def save(self):  
-        if len(Indice_Versao_Valor.objects.using(oControle.getBanco()).order_by('-id_indice_versao_valor')) > 0:   
-            iUltimoRegistro = Indice_Versao_Valor.objects.using(oControle.getBanco()).order_by('-id_indice_versao_valor')[0] 
+        if len(Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')) > 0:   
+            iUltimoRegistro = Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')[0] 
             self.id_indice_versao_valor= iUltimoRegistro.pk + 1
         else:
             self.id_indice_versao_valor= 1
-        super(Indice_Versao_Valor, self).save(using=oControle.getBanco())
+        super(Indice_Versao_Valor, self).save()

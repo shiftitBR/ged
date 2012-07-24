@@ -22,12 +22,12 @@ class Pasta(models.Model):
         return self.nome
     
     def save(self):  
-        if len(Pasta.objects.using(oControle.getBanco()).order_by('-id_pasta')) > 0:   
-            iUltimoRegistro = Pasta.objects.using(oControle.getBanco()).order_by('-id_pasta')[0] 
+        if len(Pasta.objects.order_by('-id_pasta')) > 0:   
+            iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
             self.id_pasta= iUltimoRegistro.pk + 1
         else:
             self.id_pasta= 1
-        super(Pasta, self).save(using=oControle.getBanco())
+        super(Pasta, self).save()
 
 #-----------------------------GRUPO----------------------------------------
 
@@ -43,12 +43,12 @@ class Grupo(models.Model):
         return self.nome
     
     def save(self):  
-        if len(Grupo.objects.using(oControle.getBanco()).order_by('-id_grupo')) > 0:   
-            iUltimoRegistro = Grupo.objects.using(oControle.getBanco()).order_by('-id_grupo')[0] 
+        if len(Grupo.objects.order_by('-id_grupo')) > 0:   
+            iUltimoRegistro = Grupo.objects.order_by('-id_grupo')[0] 
             self.id_grupo= iUltimoRegistro.pk + 1
         else:
             self.id_grupo= 1
-        super(Grupo, self).save(using=oControle.getBanco())
+        super(Grupo, self).save()
         
 class Grupo_Pasta(models.Model):
     id_grupo_pasta          = models.IntegerField(max_length=3, primary_key=True)
@@ -62,12 +62,12 @@ class Grupo_Pasta(models.Model):
         return self.id_grupo_pasta
     
     def save(self):  
-        if len(Grupo_Pasta.objects.using(oControle.getBanco()).order_by('-id_grupo_pasta')) > 0:   
-            iUltimoRegistro = Grupo_Pasta.objects.using(oControle.getBanco()).order_by('-id_grupo_pasta')[0] 
+        if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
+            iUltimoRegistro = Grupo_Pasta.objects.order_by('-id_grupo_pasta')[0] 
             self.id_grupo_pasta= iUltimoRegistro.pk + 1
         else:
             self.id_grupo_pasta= 1
-        super(Grupo_Pasta, self).save(using=oControle.getBanco())
+        super(Grupo_Pasta, self).save()
         
 #-----------------------------FUNCAO----------------------------------------
 
@@ -83,12 +83,12 @@ class Funcao(models.Model):
         return self.nome
     
     def save(self):  
-        if len(Funcao.objects.using(oControle.getBanco()).order_by('-id_funcao')) > 0:   
-            iUltimoRegistro = Funcao.objects.using(oControle.getBanco()).order_by('-id_funcao')[0] 
+        if len(Funcao.objects.order_by('-id_funcao')) > 0:   
+            iUltimoRegistro = Funcao.objects.order_by('-id_funcao')[0] 
             self.id_funcao= iUltimoRegistro.pk + 1
         else:
             self.id_funcao= 1
-        super(Funcao, self).save(using=oControle.getBanco())
+        super(Funcao, self).save()
 
 class Funcao_Grupo(models.Model):
     id_funcao_grupo         = models.IntegerField(max_length=3, primary_key=True)
@@ -102,12 +102,12 @@ class Funcao_Grupo(models.Model):
         return self.id_funcao_grupo
     
     def save(self):  
-        if len(Funcao_Grupo.objects.using(oControle.getBanco()).order_by('-id_funcao_grupo')) > 0:   
-            iUltimoRegistro = Funcao_Grupo.objects.using(oControle.getBanco()).order_by('-id_funcao_grupo')[0] 
+        if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
+            iUltimoRegistro = Funcao_Grupo.objects.order_by('-id_funcao_grupo')[0] 
             self.id_funcao_grupo= iUltimoRegistro.pk + 1
         else:
             self.id_funcao_grupo= 1
-        super(Funcao_Grupo, self).save(using=oControle.getBanco())
+        super(Funcao_Grupo, self).save()
 
 #-----------------------------IPs_PERMETIDOS----------------------------------------
 
@@ -123,12 +123,12 @@ class Firewall(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Firewall.objects.using(oControle.getBanco()).order_by('-id_firewall')) > 0:   
-            iUltimoRegistro = Firewall.objects.using(oControle.getBanco()).order_by('-id_firewall')[0] 
+        if len(Firewall.objects.order_by('-id_firewall')) > 0:   
+            iUltimoRegistro = Firewall.objects.order_by('-id_firewall')[0] 
             self.id_firewall= iUltimoRegistro.pk + 1
         else:
             self.id_firewall= 1
-        super(Firewall, self).save(using=oControle.getBanco())
+        super(Firewall, self).save()
 
 class Firewall_Grupo(models.Model):
     id_firewall_grupo       = models.IntegerField(max_length=3, primary_key=True)
@@ -142,9 +142,9 @@ class Firewall_Grupo(models.Model):
         return self.id_firewall_grupo
     
     def save(self):  
-        if len(Firewall_Grupo.objects.using(oControle.getBanco()).order_by('-id_firewall_grupo')) > 0:   
-            iUltimoRegistro = Firewall_Grupo.objects.using(oControle.getBanco()).order_by('-id_firewall_grupo')[0] 
+        if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
+            iUltimoRegistro = Firewall_Grupo.objects.order_by('-id_firewall_grupo')[0] 
             self.id_firewall_grupo= iUltimoRegistro.pk + 1
         else:
             self.id_firewall_grupo= 1
-        super(Firewall_Grupo, self).save(using=oControle.getBanco())
+        super(Firewall_Grupo, self).save()

@@ -39,8 +39,8 @@ class Empresa(models.Model):
     
     def save(self, vCriaEmpresa=True):  
         if self.id_empresa == None: 
-            if len(Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')) > 0:   
-                iUltimoRegistro = Empresa.objects.using(oControle.getBanco()).order_by('-id_empresa')[0] 
+            if len(Empresa.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id_empresa')) > 0:   
+                iUltimoRegistro = Empresa.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
@@ -48,7 +48,7 @@ class Empresa(models.Model):
         self.pasta_raiz= '%s/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
                                                  constantes.cntConfiguracaoPastaDocumentos, 
                                                  int(self.id_empresa))     
-        super(Empresa, self).save(using=oControle.getBanco())
+        super(Empresa, self).save(using=constantes.cntConfiguracaoBancoPadrao)
         if vCriaEmpresa:
             oControle.criaEmpresa(self.id_empresa)
 
@@ -65,12 +65,12 @@ class Tipo_de_Usuario(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Usuario.objects.using(oControle.getBanco()).order_by('-id_tipo_usuario')) > 0:   
-            iUltimoRegistro = Tipo_de_Usuario.objects.using(oControle.getBanco()).order_by('-id_tipo_usuario')[0] 
+        if len(Tipo_de_Usuario.objects.order_by('-id_tipo_usuario')) > 0:   
+            iUltimoRegistro = Tipo_de_Usuario.objects.order_by('-id_tipo_usuario')[0] 
             self.id_tipo_usuario= iUltimoRegistro.pk + 1
         else:
             self.id_tipo_usuario= 1
-        super(Tipo_de_Usuario, self).save(using=oControle.getBanco())
+        super(Tipo_de_Usuario, self).save()
 
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
@@ -94,9 +94,7 @@ class Usuario(User):
             
         #Banco Geral
         super(Usuario, self).save(using=constantes.cntConfiguracaoBancoPadrao) 
-        ##Banco da Empresa X
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-        print oControle.getBanco()
-        super(Usuario, self).save(using=oControle.getBanco())   
+        #Banco da Empresa X
+        super(Usuario, self).save()   
         
         
