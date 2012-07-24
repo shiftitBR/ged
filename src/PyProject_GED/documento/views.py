@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts               import render_to_response
-from django.template                import RequestContext
-from django.http                    import HttpResponse
+from django.shortcuts                   import render_to_response
+from django.template                    import RequestContext
+from django.http                        import HttpResponse
+from django.contrib.auth.decorators     import login_required
 
-from PyProject_GED                  import oControle
-from controle                       import Controle as DocumentoControle
-
-from PyProject_GED.autenticacao.models  import  Usuario
-
-from django.contrib.auth.decorators import login_required
+from PyProject_GED                      import oControle
+from PyProject_GED.autenticacao.models  import Usuario
+from controle                           import Controle as DocumentoControle
 
 import os
 import urllib

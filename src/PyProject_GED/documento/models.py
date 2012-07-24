@@ -5,7 +5,6 @@ Created on Jul 18, 2012
 '''
 
 from django.db                  import models
-from PyProject_GED              import oControle
 
 from autenticacao.models        import Empresa #@UnresolvedImport
 from autenticacao.models        import Usuario #@UnresolvedImport
@@ -79,7 +78,7 @@ class Estado_da_Versao(models.Model):
             self.id_estado_da_versao= iUltimoRegistro.pk + 1
         else:
             self.id_estado_da_versao= 1
-        super(Estado_da_Versao, self).save(using=oControle.getBanco())
+        super(Estado_da_Versao, self).save()
         
 class Versao(models.Model):
     id_versao       = models.IntegerField(max_length=10, primary_key=True, blank=True)

@@ -2,22 +2,18 @@
 from django.shortcuts               import get_object_or_404, render_to_response
 from django.conf                    import settings
 from django.http                    import HttpResponse, HttpResponseBadRequest
-from models                         import MultiuploaderImage
-from django.core.files.uploadedfile import UploadedFile
-#importing json parser to generate jQuery plugin friendly json response
-from django.utils                   import simplejson
-#for generating thumbnails
-#sorl-thumbnails must be installed and properly configured
-from sorl.thumbnail                 import get_thumbnail
-from django.views.decorators.csrf   import csrf_exempt
-#ControleDocumento
-from documento.controle             import Controle as DocumentoControle #@UnresolvedImport
-from PyProject_GED                  import oControle
-from documento.forms                import FormUploadDeArquivo #@UnresolvedImport
-from indice.controle                import Controle as IndiceControle   #@UnresolvedImport
 from django.template                import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.core.files.uploadedfile import UploadedFile
+from django.utils                   import simplejson
+from django.views.decorators.csrf   import csrf_exempt
 
+from sorl.thumbnail                 import get_thumbnail
+from models                         import MultiuploaderImage
+from documento.controle             import Controle as DocumentoControle #@UnresolvedImport
+from documento.forms                import FormUploadDeArquivo #@UnresolvedImport
+from PyProject_GED                  import oControle
+from indice.controle                import Controle as IndiceControle   #@UnresolvedImport
 
 @csrf_exempt
 @login_required 

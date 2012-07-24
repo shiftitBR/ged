@@ -7,7 +7,6 @@ Created on Jan 20, 2012
 import logging
 import os
 import locale
-import constantes
 
 from django.conf    import settings
 
