@@ -4,12 +4,12 @@ Created on Jul 18, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                  import models
+from django.db                          import models
+from autenticacao.models                import Empresa #@UnresolvedImport
+from PyProject_GED                      import constantes
+from django.contrib.contenttypes.models import ContentType 
 
-from autenticacao.models        import Empresa #@UnresolvedImport
-from controle                   import Controle as ControleSeguranca
-
-oControleSeguranca= ControleSeguranca()
+import logging
 
 #-----------------------------PASTA----------------------------------------
 
@@ -27,22 +27,67 @@ class Pasta(models.Model):
         return self.nome
     
     def save(self):  
+        mPasta=ContentType.objects.get(model='Pasta').model_class()
         if len(Pasta.objects.order_by('-id_pasta')) > 0:   
             iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
             self.id_pasta= iUltimoRegistro.pk + 1
         else:
             self.id_pasta= 1
-        self.diretorio= oControleSeguranca.montaDiretorioPasta(self.empresa.id_empresa, 
+        self.diretorio= mPasta.montaDiretorioPasta(self.empresa.id_empresa, 
                                                                self.id_pasta, 
                                                                self.pasta_pai.id_pasta)
         super(Pasta, self).save()
+    
+    def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
+        try:
+            iPasta= Pasta()
+            iPasta.nome= vNomePasta
+            iPasta.empresa= vEmpresa
+            if vPastaPai != None:
+                iPasta.pasta_pai= vPastaPai
+            iPasta.save()
+            return iPasta
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar as pastas: ' + str(e))
+            return False
 
+    def obtemDiretorioUpload(self, vIDPasta):
+        try :
+            iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
+            return iPasta.diretorio
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
+            return False
+    
+    def montaDiretorioPasta(self, vIDEmpresa, vIDPasta, vIDPastaPai=None):
+        try :
+            if vIDPastaPai == None:
+                iDiretorio= '%s/%s' % ((constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa), vIDPasta)
+            else:
+                iPastaPai = Pasta.objects.filter(id_pasta= vIDPastaPai)[0]
+                iDiretorio= '%s/%s' % (iPastaPai, vIDPasta)
+            return iDiretorio
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel omontar o Diretorio da Pasta: ' + str(e))
+            return False
+    
+    def obtemNomeDaPasta(self, vIDPasta):
+        try:
+            iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
+            return iPasta.nome
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
+            return False
+    
+    
+        
 #-----------------------------GRUPO----------------------------------------
 
 class Grupo(models.Model):
     id_grupo        = models.IntegerField(max_length=3, primary_key=True)
     nome            = models.CharField(max_length=100)
-    descricacao     = models.CharField(max_length=100)
+    descricao       = models.CharField(max_length=100)
     empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
@@ -84,7 +129,7 @@ class Grupo_Pasta(models.Model):
 class Funcao(models.Model):
     id_funcao       = models.IntegerField(max_length=3, primary_key=True)
     nome            = models.CharField(max_length=100)
-    descricacao     = models.CharField(max_length=100)
+    descricao       = models.CharField(max_length=100)
     empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
@@ -126,7 +171,7 @@ class Funcao_Grupo(models.Model):
 class Firewall(models.Model):
     id_firewall     = models.IntegerField(max_length=3, primary_key=True)
     ip              = models.CharField(max_length=20)
-    descricacao     = models.CharField(max_length=100)
+    descricao       = models.CharField(max_length=100)
     empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:

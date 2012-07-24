@@ -8,12 +8,13 @@ from django.core.files.uploadedfile import UploadedFile
 from django.utils                   import simplejson
 from django.views.decorators.csrf   import csrf_exempt
 
-from sorl.thumbnail                 import get_thumbnail
-from models                         import MultiuploaderImage
-from documento.controle             import Controle as DocumentoControle #@UnresolvedImport
-from documento.forms                import FormUploadDeArquivo #@UnresolvedImport
-from PyProject_GED                  import oControle
-from indice.controle                import Controle as IndiceControle   #@UnresolvedImport
+from sorl.thumbnail                     import get_thumbnail
+from models                             import MultiuploaderImage
+from documento.forms                    import FormUploadDeArquivo #@UnresolvedImport
+from PyProject_GED                      import oControle
+from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
+from PyProject_GED.documento.models     import Tipo_de_Documento, Versao, Documento
+from PyProject_GED.autenticacao.models  import Usuario
 
 @csrf_exempt
 @login_required 
@@ -32,9 +33,9 @@ def multiuploader(vRequest):
     try :
         iUser = vRequest.user
         if iUser:
-            iUsuario= DocumentoControle().obtemUsuario(iUser)
-        iListaTipoDocumento = DocumentoControle().obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
-        iListaIndices       = DocumentoControle().obtemListaIndices(vRequest.session['IDEmpresa'])
+            iUsuario= Usuario.obtemUsuario(iUser)
+        iListaTipoDocumento = Tipo_de_Documento.obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
+        iListaIndices       = Indice.obtemListaIndices(vRequest.session['IDEmpresa'])
         iTamListaIndices    = len(iListaIndices)
         #gerarProtocolo 
     except Exception, e:
@@ -100,9 +101,9 @@ def multiuploader(vRequest):
                     else:
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                    iDocumento  = DocumentoControle().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
+                    iDocumento  = Documento.salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
                                                     vRequest.session['IDPasta'], iAssunto, iEh_Publico)
-                    iVersao     = DocumentoControle().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                    iVersao     = Versao.salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, image.key_data, '1234567')
                     #Salvar Indices
                     for i in range(len(iListaIndices)):
@@ -110,7 +111,7 @@ def multiuploader(vRequest):
                         iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
                         vRequest.POST['indice_%s' % iIndice.id_indice] = ''
                         if iValor != '':
-                            IndiceControle().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                            Indice_Versao_Valor.salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                 except Exception, e:
                     oControle.getLogger().error('Nao foi possivel adicionar na tabela documento e versao - multiuploader: ' + str(e))
                     return False

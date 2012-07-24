@@ -7,6 +7,8 @@ from django.db                  import models
 from documento.models           import Versao #@UnresolvedImport
 from autenticacao.models        import Empresa #@UnresolvedImport
 
+import logging
+
 #-----------------------------INDICE----------------------------------------
 
 class Tipo_de_Indice(models.Model):
@@ -27,6 +29,18 @@ class Tipo_de_Indice(models.Model):
         else:
             self.id_tipo_indice= 1
         super(Tipo_de_Indice, self).save()
+    
+    def criaTipoIndice(self, vEmpresa, vDescricao):
+        try:
+            iTipoDeIndice= Tipo_de_Indice()
+            iTipoDeIndice.descricao= vDescricao
+            iTipoDeIndice.empresa= vEmpresa
+            iTipoDeIndice.save()
+            return iTipoDeIndice
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de Indice: ' + str(e))
+            return False
 
 class Indice(models.Model):
     id_indice       = models.IntegerField(max_length=3, primary_key=True)
@@ -47,7 +61,15 @@ class Indice(models.Model):
         else:
             self.id_indice= 1
         super(Indice, self).save()
-
+    
+    def obtemListaIndices(self, vIDEmpresa):
+        try:
+            iListaIndices = Indice.objects.filter(empresa= vIDEmpresa)
+            return iListaIndices
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de indices: ' + str(e))
+            return False
+    
 class Indice_Versao_Valor(models.Model):
     id_indice_versao_valor  = models.IntegerField(max_length=3, primary_key=True)
     indice                  = models.ForeignKey(Indice, null= False)
@@ -68,3 +90,18 @@ class Indice_Versao_Valor(models.Model):
         else:
             self.id_indice_versao_valor= 1
         super(Indice_Versao_Valor, self).save()
+    
+    def salvaValorIndice(self, vValor, vIDIndice, vIDVersao):
+        try:
+            iIndice         = Indice.objects.filter(id_indice= vIDIndice)[0]
+            iVersao         = Versao.objects.filter(id_versao= vIDVersao)[0]
+            
+            iIndice_Versao_Valor        = Indice_Versao_Valor()
+            iIndice_Versao_Valor.indice = iIndice
+            iIndice_Versao_Valor.versao = iVersao
+            iIndice_Versao_Valor.valor  = vValor
+            iIndice_Versao_Valor.save()
+            return iVersao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar a Versao do Documento: ' + str(e))
+            return False

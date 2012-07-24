@@ -146,7 +146,6 @@ INSTALLED_APPS = (
     'south',
     'multiuploader',
     'sorl.thumbnail',
-    'utilidades',
 )
 
 AUTHENTICATION_BACKENDS = (

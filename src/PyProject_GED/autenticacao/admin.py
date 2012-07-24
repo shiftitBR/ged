@@ -15,7 +15,7 @@ from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
-                       'cidade', 'uf', 'banco', 'eh_ativo')
+                       'cidade', 'uf', 'eh_ativo')
     search_fields   = ('id_empresa', 'nome', 'cnpj', 'eh_ativo')
     list_filter     = ('id_empresa', 'nome', 'cnpj', 'eh_ativo')
     
