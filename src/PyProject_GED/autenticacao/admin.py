@@ -11,6 +11,7 @@ from models                         import Empresa
 from models                         import Tipo_de_Usuario
 from models                         import Usuario
 from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
+from django.contrib.admin.options   import ModelAdmin
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
@@ -28,6 +29,14 @@ class AdminUsuario(MultiDBModelAdmin):
     list_display    = UserAdmin.list_display + ('empresa', 'tipo_usuario', 'eh_ativo')
     search_fields   = UserAdmin.search_fields
     list_filter     = UserAdmin.list_filter
+    
+    """def queryset(self, vRequest):
+        qs = super(AdminUsuario, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            return qs.filter(empresa= iEmpresa)
+        else:
+            return qs.all()"""
     
     
 admin.site.register(Empresa, AdminEmpresa)
