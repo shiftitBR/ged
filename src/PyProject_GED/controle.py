@@ -10,8 +10,6 @@ import locale
 
 from django.conf    import settings
 
-import threading
-
    
 class Controle(object):
     
@@ -31,22 +29,6 @@ class Controle(object):
         
     def getLogger(self):
         return self.oLogger
-    
-    def criaEmpresa(self, vIDEmpresa):
-        class ThreadClass(threading.Thread):
-            def run(self):
-                iFabFile= '%s/fabfile.py' % iDiretorioRaiz
-                os.system('fab -f %s cria_empresa:%s,%s' % (iFabFile, int(vIDEmpresa), iDiretorioRaiz))
-        
-        try:
-            iDiretorioRaiz= settings.PROJECT_ROOT_PATH
-            t = ThreadClass()
-            t.start()
-            return True
-        except Exception, e:
-            print str(e)
-            self.getLogger().error('Nao foi possivel criar a Empresa: ' + str(e))
-            return False
     
     def criaLog(self):
         try:

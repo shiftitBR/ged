@@ -7,6 +7,8 @@ from django.contrib.auth.decorators     import login_required
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from controle                           import Controle as DocumentoControle
+from models                             import Versao
+from PyProject_GED.seguranca.models     import Pasta
 
 import os
 import urllib
@@ -18,7 +20,7 @@ def documentos(vRequest, vTitulo):
         vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
         iPasta_Raiz = iEmpresa.pasta_raiz
         iListaDocumentos=[]
-        iListaDocumentos = DocumentoControle().obtemListaDocumentos(iEmpresa.id_empresa, 1)
+        iListaDocumentos = Versao().obtemListaDocumentos(iEmpresa.id_empresa, 1)
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False
@@ -46,7 +48,7 @@ def tabelaDocumentos(vRequest, vTitulo):
         iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
-            iListaDocumentos = DocumentoControle().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+            iListaDocumentos = Versao.obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):     
@@ -147,7 +149,7 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
-        iArquivo= str(DocumentoControle().obtemCaminhoArquivo(vIDVersao))
+        iArquivo= str(Versao.obtemCaminhoArquivo(vIDVersao))
         iFile = open(iArquivo,"r")
         response = HttpResponse(iFile.read())
         response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
@@ -161,13 +163,13 @@ def criaArvore(vRequest, vTitulo):
     try :
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
-        iListaDocumentos = DocumentoControle().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+        iListaDocumentos = Versao.obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
                 if os.path.isdir(iDiretorioFilho):
-                    iPasta= DocumentoControle().obtemNomeDaPasta(iPasta)
+                    iPasta= Pasta.obtemNomeDaPasta(iPasta)
                     iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
             iHtml.append('</ul>')
             #iHtml.append('<div class="teste">{{iListaDocumentos}}</div>')

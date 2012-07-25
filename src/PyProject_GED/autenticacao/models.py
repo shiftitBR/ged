@@ -4,11 +4,18 @@ Created on Jul 11, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                  import models
-from django.contrib.auth.models import User
-from django.conf                import settings
+from django.db                          import models
+from django.contrib.auth.models         import User
+from django.conf                        import settings
+from django.db.models                   import get_model
+from controle                           import Controle as ControleAutenticacao
 
 import constantes #@UnresolvedImport
+import threading
+import logging
+import time
+
+from PyProject_GED.autenticacao.controle import Controle
 
 #-----------------------------EMPRESA---------------------------------------
 
@@ -25,7 +32,6 @@ class Empresa(models.Model):
     bairro          = models.CharField(max_length=30, null= True, blank=True)
     cidade          = models.CharField(max_length=30, null= True, blank=True)
     uf              = models.CharField(max_length=2, null= True, blank=True)
-    banco           = models.CharField(max_length=100, null= False, blank=True)
     pasta_raiz      = models.CharField(max_length=100, null= False, blank=True)
     eh_ativo        = models.BooleanField(null= False)
     
@@ -42,11 +48,36 @@ class Empresa(models.Model):
                 self.id_empresa= iUltimoRegistro.pk + 1
             else:
                 self.id_empresa= 1
-        self.banco= constantes.cntConfiguracaoNomeBanco % int(self.id_empresa)   
-        self.pasta_raiz= '%s/media/%s/shift_ged_empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
+        self.pasta_raiz= '%s/media/%s/empresa_%03d' % (settings.PROJECT_ROOT_PATH, 
                                                  settings.MULTI_IMAGES_FOLDER, 
                                                  int(self.id_empresa))     
         super(Empresa, self).save()
+        if vCriaEmpresa:
+            self.criaEmpresa(self)
+    
+    def criaEmpresa(self, vEmpresa):
+        class ThreadClass(threading.Thread):
+            def run(self):
+                time.sleep(1)
+                mPasta= get_model('seguranca', 'Pasta')
+                mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
+                mTipoDeIndice= get_model('indice', 'Tipo_de_Indice')
+                iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
+                iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
+                Tipo_de_Usuario().criaTipoUsuario(vEmpresa, 'Administrador')
+                mTipoDeIndice().criaTipoIndice(vEmpresa, 'String')
+                mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
+                ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
+                                                 iPastaRaiz.id_pasta, 
+                                                 iPastaModelo.id_pasta)
+        try:
+            iThread = ThreadClass()
+            iThread.start()
+            return True
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Empresa: ' + str(e))
+            return False
 
 #---------------------------USUARIO---------------------------------------
 
@@ -68,6 +99,18 @@ class Tipo_de_Usuario(models.Model):
         else:
             self.id_tipo_usuario= 1
         super(Tipo_de_Usuario, self).save()
+    
+    def criaTipoUsuario(self, vEmpresa, vDescricao):
+        try:
+            iTipoUsuario= Tipo_de_Usuario()
+            iTipoUsuario.descricao= vDescricao
+            iTipoUsuario.empresa= vEmpresa
+            iTipoUsuario.save()
+            return iTipoUsuario
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de usuario: ' + str(e))
+            return False
 
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
@@ -90,4 +133,10 @@ class Usuario(User):
         self.set_password(self.password)   
         super(Usuario, self).save()   
         
-        
+    def obtemUsuario(self, vUsuario):
+        try:
+            iUsuario= Usuario.objects.filter(pk= vUsuario.pk)[0]
+            return iUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False    
