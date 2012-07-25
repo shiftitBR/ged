@@ -48,7 +48,7 @@ def tabelaDocumentos(vRequest, vTitulo):
         iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
-            iListaDocumentos = Versao.obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+            iListaDocumentos = Versao().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):     
@@ -149,7 +149,7 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
-        iArquivo= str(Versao.obtemCaminhoArquivo(vIDVersao))
+        iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
         iFile = open(iArquivo,"r")
         response = HttpResponse(iFile.read())
         response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
@@ -163,18 +163,18 @@ def criaArvore(vRequest, vTitulo):
     try :
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
-        iListaDocumentos = Versao.obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+        iListaDocumentos = Versao().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
                 if os.path.isdir(iDiretorioFilho):
-                    iPasta= Pasta.obtemNomeDaPasta(iPasta)
+                    iPasta= Pasta().obtemNomeDaPasta(iPasta)
                     iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
             iHtml.append('</ul>')
             #iHtml.append('<div class="teste">{{iListaDocumentos}}</div>')
         except Exception,e:
-            iHtml.append('Could not load directory: %s' % str(e))
+            iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')
         return HttpResponse(''.join(iHtml))
     except Exception, e:

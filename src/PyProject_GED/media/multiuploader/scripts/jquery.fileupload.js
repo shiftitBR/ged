@@ -441,7 +441,6 @@
             options.textStatus = textStatus;
             options.jqXHR = jqXHR;
             this._trigger('done', null, options);
-            console.log('entrou_01')
         },
 
         _onFail: function (jqXHR, textStatus, errorThrown, options) {

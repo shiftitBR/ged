@@ -16,6 +16,8 @@ from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
 from PyProject_GED.documento.models     import Tipo_de_Documento, Versao, Documento
 from PyProject_GED.autenticacao.models  import Usuario
 
+import datetime
+
 @csrf_exempt
 @login_required 
 def multiuploader_delete(request, pk):
@@ -37,6 +39,17 @@ def multiuploader(vRequest):
         iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
         iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
         iTamListaIndices    = len(iListaIndices)
+        iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+        iListaNomes         = []
+        iListaNomesUsuarios = ''
+        for i in range (len(iListaUsuarios)):
+            iNome = iListaUsuarios[i].first_name + ' ' + iListaUsuarios[i].last_name
+            iListaNomes.append("teste_%d" %i)
+            iListaNomesUsuarios = '"'+iNome + '",'+ iListaNomesUsuarios
+        iListaNomesUsuarios = "[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]"
+        print '>>>>>>>>>>>>>>>>'
+        print iListaNomesUsuarios
+        print str(iListaNomes)
         #gerarProtocolo 
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get multiuploader: ' + str(e))
@@ -95,6 +108,10 @@ def multiuploader(vRequest):
             else:
                 try:
                     #Adicionar na tabela documeto e versao
+                    iListaDataValidade= vRequest.POST.get('data_validade').split('/')
+                    iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
+                    iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
+                    iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
                     iAssunto    = vRequest.POST.get('assunto')
                     if vRequest.POST.get('eh_publico') != None:
                         iEh_Publico = True
@@ -102,7 +119,7 @@ def multiuploader(vRequest):
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
                     iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
-                                                    vRequest.session['IDPasta'], iAssunto, iEh_Publico)
+                                                    vRequest.session['IDPasta'], iAssunto, iEh_Publico, iDataValidade, iDataDescarte)
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, image.key_data, '1234567')
                     #Salvar Indices
