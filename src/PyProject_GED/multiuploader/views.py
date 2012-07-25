@@ -33,9 +33,9 @@ def multiuploader(vRequest):
     try :
         iUser = vRequest.user
         if iUser:
-            iUsuario= Usuario.obtemUsuario(iUser)
-        iListaTipoDocumento = Tipo_de_Documento.obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
-        iListaIndices       = Indice.obtemListaIndices(vRequest.session['IDEmpresa'])
+            iUsuario= Usuario().obtemUsuario(iUser)
+        iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
+        iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
         iTamListaIndices    = len(iListaIndices)
         #gerarProtocolo 
     except Exception, e:
@@ -101,9 +101,9 @@ def multiuploader(vRequest):
                     else:
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                    iDocumento  = Documento.salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
+                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
                                                     vRequest.session['IDPasta'], iAssunto, iEh_Publico)
-                    iVersao     = Versao.salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                    iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, image.key_data, '1234567')
                     #Salvar Indices
                     for i in range(len(iListaIndices)):
@@ -111,7 +111,7 @@ def multiuploader(vRequest):
                         iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
                         vRequest.POST['indice_%s' % iIndice.id_indice] = ''
                         if iValor != '':
-                            Indice_Versao_Valor.salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                            Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                 except Exception, e:
                     oControle.getLogger().error('Nao foi possivel adicionar na tabela documento e versao - multiuploader: ' + str(e))
                     return False

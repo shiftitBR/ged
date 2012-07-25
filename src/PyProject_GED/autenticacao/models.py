@@ -7,11 +7,15 @@ Created on Jul 11, 2012
 from django.db                          import models
 from django.contrib.auth.models         import User
 from django.conf                        import settings
-from django.contrib.contenttypes.models import ContentType 
+from django.db.models                   import get_model
+from controle                           import Controle as ControleAutenticacao
 
 import constantes #@UnresolvedImport
 import threading
 import logging
+import time
+
+from PyProject_GED.autenticacao.controle import Controle
 
 #-----------------------------EMPRESA---------------------------------------
 
@@ -49,21 +53,23 @@ class Empresa(models.Model):
                                                  int(self.id_empresa))     
         super(Empresa, self).save()
         if vCriaEmpresa:
-            iTipoUsuario= Tipo_de_Usuario()
-            self.criaEmpresa(self.id_empresa, iTipoUsuario)
+            self.criaEmpresa(self)
     
-    def criaEmpresa(self, vEmpresa, vTipoUsuario):
+    def criaEmpresa(self, vEmpresa):
         class ThreadClass(threading.Thread):
             def run(self):
-                mPasta=ContentType.objects.get(model='Pasta').model_class()
-                mTipoDocumento=ContentType.objects.get(model='Tipo_de_Documento').model_class()
-                mTipoDeIndice=ContentType.objects.get(model='Tipo_de_Indice').model_class()
-                iPastaRaiz= self.criaPasta(vEmpresa, 'Pasta Raiz')
-                mPasta.criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
-                vTipoUsuario.criaTipoUsuario(vEmpresa, 'Administrador')
-                mTipoDeIndice.criaTipoIndice(vEmpresa, 'String')
-                mTipoDocumento.criaTipoDocumento(vEmpresa, 'Modelo')
-        
+                time.sleep(1)
+                mPasta= get_model('seguranca', 'Pasta')
+                mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
+                mTipoDeIndice= get_model('indice', 'Tipo_de_Indice')
+                iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
+                iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
+                Tipo_de_Usuario().criaTipoUsuario(vEmpresa, 'Administrador')
+                mTipoDeIndice().criaTipoIndice(vEmpresa, 'String')
+                mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
+                ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
+                                                 iPastaRaiz.id_pasta, 
+                                                 iPastaModelo.id_pasta)
         try:
             iThread = ThreadClass()
             iThread.start()

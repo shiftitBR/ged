@@ -20,7 +20,7 @@ def documentos(vRequest, vTitulo):
         vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
         iPasta_Raiz = iEmpresa.pasta_raiz
         iListaDocumentos=[]
-        iListaDocumentos = Versao.obtemListaDocumentos(iEmpresa.id_empresa, 1)
+        iListaDocumentos = Versao().obtemListaDocumentos(iEmpresa.id_empresa, 1)
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False

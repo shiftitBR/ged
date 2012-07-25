@@ -7,7 +7,7 @@ Created on Jul 18, 2012
 from django.db                          import models
 from autenticacao.models                import Empresa #@UnresolvedImport
 from PyProject_GED                      import constantes
-from django.contrib.contenttypes.models import ContentType 
+from django.db.models                   import get_model
 
 import logging
 
@@ -27,20 +27,20 @@ class Pasta(models.Model):
         return self.nome
     
     def save(self):  
-        mPasta=ContentType.objects.get(model='Pasta').model_class()
         if len(Pasta.objects.order_by('-id_pasta')) > 0:   
             iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
             self.id_pasta= iUltimoRegistro.pk + 1
         else:
             self.id_pasta= 1
-        self.diretorio= mPasta.montaDiretorioPasta(self.empresa.id_empresa, 
-                                                               self.id_pasta, 
-                                                               self.pasta_pai.id_pasta)
+        self.diretorio= self.montaDiretorioPasta(self.empresa.id_empresa, 
+                                                               self, 
+                                                               self.pasta_pai)
         super(Pasta, self).save()
     
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
         try:
             iPasta= Pasta()
+            iPasta.id_pasta= 1
             iPasta.nome= vNomePasta
             iPasta.empresa= vEmpresa
             if vPastaPai != None:
@@ -60,13 +60,13 @@ class Pasta(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
             return False
     
-    def montaDiretorioPasta(self, vIDEmpresa, vIDPasta, vIDPastaPai=None):
+    def montaDiretorioPasta(self, vIDEmpresa, vPasta, vPastaPai=None):
         try :
-            if vIDPastaPai == None:
-                iDiretorio= '%s/%s' % ((constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa), vIDPasta)
+            if vPastaPai == None:
+                iDiretorio= '%s/%s' % ((constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa), vPasta.id_pasta)
             else:
-                iPastaPai = Pasta.objects.filter(id_pasta= vIDPastaPai)[0]
-                iDiretorio= '%s/%s' % (iPastaPai, vIDPasta)
+                iPastaPai = Pasta.objects.filter(id_pasta= vPastaPai.id_pasta)[0]
+                iDiretorio= '%s/%s' % (iPastaPai.id_pasta, vPasta.id_pasta)
             return iDiretorio
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel omontar o Diretorio da Pasta: ' + str(e))

@@ -1,5 +1,5 @@
 from django.db                          import models
-from django.contrib.contenttypes.models import ContentType 
+from django.db.models                   import get_model
 import random
 
 from django.conf import settings
@@ -29,7 +29,7 @@ class MultiuploaderImage(models.Model):
         return self.image.name
 
     def save(self, vIDPasta):
-        mPasta=ContentType.objects.get(model='Pasta').model_class()
+        mPasta= get_model('seguranca', 'Pasta')()
         for field in self._meta.fields:
             if field.name == 'image':
                 field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta)
