@@ -19,20 +19,23 @@
 		</header>
 		</center>
 	</div>	
-		
-	<br><br> 
-	<div class="container">
-		{% if form.errors %}
-			<p><b>O seu cadastro não pode ser ralizado. Por favor, verifique os erros abaixo:</b></p>	
+	
+	{% if form.errors %}
+		<div class="well">
+			<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
 			{% for field in form %}
 		    	{{ field.errors }}
 		    {% endfor %}
-	    {% endif %}
+		</div>
+    {% endif %}
+		
+	<br><br> 
+	<div class="container">
 		<form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 	  	<fieldset>
 	  		
   		  <div class="control-group">
-		    <label class="control-label" for="input01">Assunto</label>
+		    <label class="control-label" for="input01">Assunto *</label>
 		    <div class="controls">
 			  {{form.assunto}}
 		    </div>
@@ -47,15 +50,15 @@
 		    </div>
 		  </div>
 		  <div class="control-group">
-		    <label class="control-label" for="select01">Tipo de Documento</label>
+		    <label class="control-label" for="select01">Tipo de Documento *</label>
 		    <div class="controls">
 		      	{{form.tipo_documento}}
 		    </div>
 		  </div>
 		  <div class="control-group">
-		    <label class="control-label" for="select01">Usuário Responsável</label>
+		    <label class="control-label" for="select01">Usuário Responsável *</label>
 		    <div class="controls">
-		      	{{form.usr_responsavel}}
+		    	{{form.usr_responsavel}}
 		    </div>
 		  </div>
 	    
@@ -72,11 +75,18 @@
             </div>
           </div>
           
+          <div>
+          	<p>(*) Campos Obrigatórios</p>
+          </div>
+        
+        {%if iTamListaIndices > 0%}
 	    <center>
 			<div class="page-header">
 				<h2><strong>Índices</strong></h2>
 			</div>
 		</center>
+		{%endif%}
+		
 		{% for indice in iListaIndices %}
 		  
 		<div class="control-group">
@@ -90,12 +100,13 @@
 		{% endfor %}
 	    </fieldset>
 	    <br>
-	    
-	    <div class="control-group">
-			<label class="control-label">Upload:</label>
-			<div class="controls">
-				{% load multiuploader %}
-				{% multiupform %}
+	    <div class="well">
+		    <div class="control-group">
+				<label class="control-label">Upload:</label>
+				<div class="controls">
+					{% load multiuploader %}
+					{% multiupform %}
+				</div>
 			</div>
 		</div>
 	    

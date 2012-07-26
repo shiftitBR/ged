@@ -139,7 +139,15 @@ class Usuario(User):
             return iUsuario
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
-            return False    
+            return False 
+    
+    def obtemUsuarioPeloID(self, vIDUsuario):
+        try:
+            iUsuario= Usuario.objects.filter(id= vIDUsuario)[0]
+            return iUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False   
 
     def obtemEmpresaDoUsuario(self, vIDUsario):
         try:

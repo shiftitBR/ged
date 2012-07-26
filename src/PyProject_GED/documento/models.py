@@ -93,7 +93,7 @@ class Documento(models.Model):
                 self.id_documento= 1
         super(Documento, self).save()  
     
-    def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vResponsavel, vIDPasta, vAssunto, vEh_Publico,
+    def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vIDPasta, vAssunto, vEh_Publico, vResponsavel= None,
                        vDataValida= str(datetime.datetime.today())[:19], vDataDescarte= str(datetime.datetime.today())[:19]):
         try:
             iPasta          = Pasta.objects.filter(id_pasta= vIDPasta)[0]
