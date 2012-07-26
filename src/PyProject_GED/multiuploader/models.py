@@ -35,3 +35,4 @@ class MultiuploaderImage(models.Model):
                 field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta)
         super(MultiuploaderImage, self).save()
 
+

@@ -8,13 +8,14 @@ from django.core.files.uploadedfile import UploadedFile
 from django.utils                   import simplejson
 from django.views.decorators.csrf   import csrf_exempt
 
-from sorl.thumbnail                     import get_thumbnail
 from models                             import MultiuploaderImage
 from documento.forms                    import FormUploadDeArquivo #@UnresolvedImport
 from PyProject_GED                      import oControle
 from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
 from PyProject_GED.documento.models     import Tipo_de_Documento, Versao, Documento
 from PyProject_GED.autenticacao.models  import Usuario
+from controle                           import Controle as UploaderControle
+
 
 import datetime
 
@@ -29,8 +30,9 @@ def multiuploader_delete(request, pk):
     else:
         return HttpResponseBadRequest('Only POST accepted')
 
-@csrf_exempt
+
 @login_required 
+@csrf_exempt
 def multiuploader(vRequest):
     try :
         iUser = vRequest.user
@@ -40,23 +42,16 @@ def multiuploader(vRequest):
         iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
         iTamListaIndices    = len(iListaIndices)
         iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
-        iListaNomes         = []
-        iListaNomesUsuarios = ''
-        for i in range (len(iListaUsuarios)):
-            iNome = iListaUsuarios[i].first_name + ' ' + iListaUsuarios[i].last_name
-            iListaNomes.append("teste_%d" %i)
-            iListaNomesUsuarios = '"'+iNome + '",'+ iListaNomesUsuarios
-        iListaNomesUsuarios = "[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]"
-        print '>>>>>>>>>>>>>>>>'
-        print iListaNomesUsuarios
-        print str(iListaNomes)
+        iListaNomes         = UploaderControle().obtemListaNomesUsuarios(iListaUsuarios)
         #gerarProtocolo 
+        
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get multiuploader: ' + str(e))
             return False
     
     if vRequest.method == 'POST':
-        form = FormUploadDeArquivo(vRequest.POST)
+        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+        print vRequest.POST.get('data_descarte')
         if form.is_valid():
             try : 
                 if vRequest.FILES == None:
@@ -66,35 +61,14 @@ def multiuploader(vRequest):
                 wrapped_file = UploadedFile(file)
                 filename = wrapped_file.name
                 file_size = wrapped_file.file.size
-                #writing file manually into  odel
-                #because we don't need form of any type.
+                #salver imagem - tabela multiuploader
                 image = MultiuploaderImage()
-                image.filename=str(filename)
+                image.filename=filename.encode('utf-8')
                 image.image=file
                 image.key_data = image.key_generate
                 image.save(vRequest.session['IDPasta'])
-                #Adicionar na tabela versao image.image
-                #getting thumbnail url using sorl-thumbnail
-                if 'image' in file.content_type.lower():
-                    im = get_thumbnail(image, "80x80", quality=50)
-                    thumb_url = im.url
-                else:
-                    thumb_url = ''
-                #settings imports
-                try:
-                    file_delete_url = settings.MULTI_FILE_DELETE_URL+'/'
-                    file_url = settings.MULTI_IMAGE_URL+'/'+image.key_data+'/'
-                except AttributeError:
-                    file_delete_url = 'multi_delete/'
-                    file_url = 'multi_image/'+image.key_data+'/'
-                #generating json response array
                 result = []
-                result.append({"name":filename, 
-                               "size":file_size, 
-                               "url":file_url, 
-                               "thumbnail_url":thumb_url,
-                               "delete_url":file_delete_url+str(image.pk)+'/', 
-                               "delete_type":"POST",})
+                result.append({"name":filename})
                 response_data = simplejson.dumps(result)
                 #checking for json data type
                 #big thanks to Guy Shapiro
@@ -108,18 +82,26 @@ def multiuploader(vRequest):
             else:
                 try:
                     #Adicionar na tabela documeto e versao
-                    iListaDataValidade= vRequest.POST.get('data_validade').split('/')
-                    iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
-                    iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
-                    iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
+                    if len(vRequest.POST.get('data_validade')) != 10:
+                        iDataValidade= datetime.datetime.now()
+                    else:
+                        iListaDataValidade= vRequest.POST.get('data_validade').split('/')
+                        iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
+                    if len(vRequest.POST.get('data_descarte')) != 10:
+                        iDataDescarte= datetime.datetime.now()
+                    else:
+                        iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
+                        iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
                     iAssunto    = vRequest.POST.get('assunto')
+                    iIDResponsavel= vRequest.POST.get('usr_responsavel')
+                    iResponsavel= Usuario().obtemUsuarioPeloID(iIDResponsavel)
                     if vRequest.POST.get('eh_publico') != None:
                         iEh_Publico = True
                     else:
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, iUsuario, 
-                                                    vRequest.session['IDPasta'], iAssunto, iEh_Publico, iDataValidade, iDataDescarte)
+                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
+                                                             iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, image.key_data, '1234567')
                     #Salvar Indices
@@ -134,9 +116,9 @@ def multiuploader(vRequest):
                     return False
             return HttpResponse(response_data, mimetype=mimetype)    
         else: 
-            form = FormUploadDeArquivo(vRequest.POST)
+            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else:
-        form = FormUploadDeArquivo()
+        form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
         
     return render_to_response(
         'documentos/importar_doc.html',
