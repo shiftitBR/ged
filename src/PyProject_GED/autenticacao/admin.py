@@ -34,28 +34,22 @@ class AdminEmpresa(MultiDBModelAdmin):
 class AdminTipo_de_Usuario(MultiDBModelAdmin): 
     list_display    = ('id_tipo_usuario', 'descricao')
     search_fields   = ('id_tipo_usuario',)
-    exclude         = ('empresa',) 
+#    exclude         = ('empresa',) 
 
-    def save_model(self, request, obj, form, change):
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(request.user.id)
-        obj.empresa = iEmpresa
-        obj.save()
+#    def save_model(self, request, obj, form, change):
+#        iEmpresa= Usuario().obtemEmpresaDoUsuario(request.user.id)
+#        obj.empresa = iEmpresa
+#        obj.save()
 
 class AdminUsuario(MultiDBModelAdmin): 
     list_display    = UserAdmin.list_display + ('empresa', 'tipo_usuario', 'eh_ativo')
     search_fields   = UserAdmin.search_fields
-    exclude         = ('empresa',) 
     
-    def get_form(self, request, iBla, obj=None, **kwargs):
-        form = super(AdminUsuario,self).get_form(request, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(request.user.id)
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(empresa=iEmpresa)
         return form 
-
-    def save_model(self, request, obj, form, change):
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(request.user.id)
-        obj.empresa = iEmpresa
-        obj.save()
 
 admin.site.unregister(User)
 admin.site.unregister(Group)
