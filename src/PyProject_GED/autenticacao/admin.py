@@ -48,7 +48,12 @@ class AdminUsuario(MultiDBModelAdmin):
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(empresa=iEmpresa)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+            form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(empresa=iEmpresa)
+        else:
+            iListaAdministradores= Tipo_de_Usuario().obtemListaDeAdministradores() 
+            form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(id_tipo_usuario__in= iListaAdministradores)
         return form 
 
 admin.site.unregister(User)

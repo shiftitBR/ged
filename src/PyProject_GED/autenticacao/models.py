@@ -90,7 +90,7 @@ class Tipo_de_Usuario(models.Model):
         db_table= 'tb_tipo_de_usuario'
     
     def __unicode__(self):
-        return self.descricao
+        return '%s [%s]' % (self.descricao, self.empresa.nome)
     
     def save(self):  
         if len(Tipo_de_Usuario.objects.order_by('-id_tipo_usuario')) > 0:   
@@ -110,6 +110,20 @@ class Tipo_de_Usuario(models.Model):
         except Exception, e:
             print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de usuario: ' + str(e))
+            return False
+    
+    def obtemListaDeAdministradores(self):
+        try:
+            iListaEmpresa= Empresa.objects.all()
+            iListaIDAdministradores= []
+            for i in range(len(iListaEmpresa)):
+                iListaTiposDaEmpresa= Tipo_de_Usuario.objects.filter(empresa= iListaEmpresa[i]).order_by('empresa')
+                if len(iListaTiposDaEmpresa) > 0:
+                    iListaIDAdministradores.append(iListaTiposDaEmpresa[0].id_tipo_usuario) 
+            return iListaIDAdministradores
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de Administradores: ' + str(e))
             return False
 
 class Usuario(User):
