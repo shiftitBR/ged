@@ -20,8 +20,6 @@ def documentos(vRequest, vTitulo):
         vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
-        iListaDocumentos=[]
-        iListaDocumentos = Versao().obtemListaDocumentos(iEmpresa.id_empresa, 1)
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False
@@ -30,6 +28,7 @@ def documentos(vRequest, vTitulo):
         try :
             iListaCheck=[]
             iListaVersao = ''
+            iListaDocumentos= vRequest.session['iListaDocumento']
             for i in range(len(iListaDocumentos)): 
                 if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
                     iListaCheck.append(iListaDocumentos[i].id_versao)
@@ -50,6 +49,7 @@ def tabelaDocumentos(vRequest, vTitulo):
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
             iListaDocumentos = Versao().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+            vRequest.session['iListaDocumento']= iListaDocumentos
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):     
