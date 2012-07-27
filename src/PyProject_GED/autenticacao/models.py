@@ -43,7 +43,9 @@ class Empresa(models.Model):
         return "%s - %s" % (str(self.id_empresa), self.nome)
     
     def save(self, vCriaEmpresa=True):  
+        iEmpresaNova= False
         if self.id_empresa == None: 
+            iEmpresaNova= True
             if len(Empresa.objects.order_by('-id_empresa')) > 0:   
                 iUltimoRegistro = Empresa.objects.order_by('-id_empresa')[0] 
                 self.id_empresa= iUltimoRegistro.pk + 1
@@ -53,7 +55,7 @@ class Empresa(models.Model):
                                                  settings.MULTI_IMAGES_FOLDER, 
                                                  int(self.id_empresa))     
         super(Empresa, self).save()
-        if vCriaEmpresa:
+        if vCriaEmpresa and iEmpresaNova:
             self.criaEmpresa(self)
     
     def criaEmpresa(self, vEmpresa):
@@ -88,7 +90,7 @@ class Empresa(models.Model):
 #---------------------------USUARIO---------------------------------------
 
 class Tipo_de_Usuario(models.Model):
-    id_tipo_usuario     = models.IntegerField(max_length=3, primary_key=True)
+    id_tipo_usuario     = models.IntegerField(max_length=3, primary_key=True, blank=True)
     descricao           = models.CharField(max_length=30)
     empresa             = models.ForeignKey(Empresa, null= False)
     

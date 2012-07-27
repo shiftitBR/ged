@@ -12,7 +12,7 @@ import logging
 #-----------------------------INDICE----------------------------------------
 
 class Tipo_de_Indice(models.Model):
-    id_tipo_indice          = models.IntegerField(max_length=3, primary_key=True)
+    id_tipo_indice          = models.IntegerField(max_length=3, primary_key=True, blank=True)
     descricao               = models.CharField(max_length=30)
     empresa                 = models.ForeignKey(Empresa, null= False)
     
@@ -43,10 +43,10 @@ class Tipo_de_Indice(models.Model):
             return False
 
 class Indice(models.Model):
-    id_indice       = models.IntegerField(max_length=3, primary_key=True)
+    id_indice       = models.IntegerField(max_length=3, primary_key=True, blank=True)
     descricao       = models.CharField(max_length=30)
     tipo_indice     = models.ForeignKey(Tipo_de_Indice, null= False)
-    empresa                 = models.ForeignKey(Empresa, null= False)
+    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_indice'
