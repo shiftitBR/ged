@@ -26,13 +26,13 @@
             
             <tr><td>
                 {% if entry.is_addition %}
-                  <span class="label success">
+                  <span>
                 {% endif %}
                 {% if entry.is_change %}
-                  <span class="label warning">
+                  <span>
                 {% endif %}
                 {% if entry.is_deletion %}
-                  <span class="label important">
+                  <span>
                 {% endif %}
 
                 {% if entry.is_deletion or not entry.get_admin_url %}
@@ -77,8 +77,8 @@
 
             {% if model.perms.add %}
                 <td class="span2">
-                  <a href="{{ model.admin_url }}add/" class="addlink">
-                    <span class="label success">{% trans 'Add' %}</span>
+                  <a href="{{ model.admin_url }}add/" class="btn success">
+                    <span>{% trans 'Add' %}</span>
                   </a>
                 </td>
             {% else %}
@@ -87,8 +87,8 @@
 
             {% if model.perms.change %}
                 <td class="span2">
-                  <a href="{{ model.admin_url }}" class="changelink">
-                    <span class="label warning">{% trans 'Change' %}</span>
+                  <a href="{{ model.admin_url }}" class="btn primary">
+                    <span>{% trans 'Change' %}</span>
                   </a>
                 </td>
             {% else %}

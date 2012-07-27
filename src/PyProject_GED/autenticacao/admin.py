@@ -83,6 +83,7 @@ class AdminIndice(MultiDBModelAdmin):
 
 admin.site.unregister(User)
 admin.site.unregister(Group)
+
 admin.site.register(Empresa, AdminEmpresa)
 admin.site.register(Tipo_de_Usuario, AdminTipo_de_Usuario)
 admin.site.register(Usuario, AdminUsuario)
