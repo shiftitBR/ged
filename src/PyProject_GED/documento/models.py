@@ -136,6 +136,19 @@ class Estado_da_Versao(models.Model):
             self.id_estado_da_versao= 1
         super(Estado_da_Versao, self).save()
         
+    def criaEstadoVersao(self, vDescricao):
+        try:
+            iEstadoVersao = Estado_da_Versao(descricao= vDescricao)
+            iEstadoVersao.save()
+            return iEstadoVersao
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar o estado da versao: ' + str(e))
+            return False
+        
+        
+        
+        
 class Versao(models.Model):
     id_versao       = models.IntegerField(max_length=10, primary_key=True, blank=True)
     documento       = models.ForeignKey(Documento, null= False)

@@ -28,11 +28,11 @@ class MultiuploaderImage(models.Model):
     def __unicode__(self):
         return self.image.name
 
-    def save(self, vIDPasta):
+    def save(self, vIDPasta, vIDEmpresa):
         mPasta= get_model('seguranca', 'Pasta')()
         for field in self._meta.fields:
             if field.name == 'image':
-                field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta)
+                field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
         super(MultiuploaderImage, self).save()
 
 

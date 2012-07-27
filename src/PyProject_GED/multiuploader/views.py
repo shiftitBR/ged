@@ -66,7 +66,7 @@ def multiuploader(vRequest):
                 image.filename=filename.encode('utf-8')
                 image.image=file
                 image.key_data = image.key_generate
-                image.save(vRequest.session['IDPasta'])
+                image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
                 result = []
                 result.append({"name":filename})
                 response_data = simplejson.dumps(result)

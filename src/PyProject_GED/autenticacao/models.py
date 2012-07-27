@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 11, 2012
 
@@ -62,6 +63,11 @@ class Empresa(models.Model):
                 mPasta= get_model('seguranca', 'Pasta')
                 mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
                 mTipoDeIndice= get_model('indice', 'Tipo_de_Indice')
+                mEstadoVersao= get_model('documento', 'Estado_da_Versao')
+                mEstadoVersao().criaEstadoVersao('Disponível')
+                mEstadoVersao().criaEstadoVersao('Bloqueado')
+                mEstadoVersao().criaEstadoVersao('Aprovado')
+                mEstadoVersao().criaEstadoVersao('Reprovado')
                 iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
                 iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
                 Tipo_de_Usuario().criaTipoUsuario(vEmpresa, 'Administrador')

@@ -18,7 +18,8 @@ def documentos(vRequest, vTitulo):
     try :
         iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
         vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
-        iPasta_Raiz = iEmpresa.pasta_raiz
+        iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
+        iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
         iListaDocumentos=[]
         iListaDocumentos = Versao().obtemListaDocumentos(iEmpresa.id_empresa, 1)
     except Exception, e:
