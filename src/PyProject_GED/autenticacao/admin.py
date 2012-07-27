@@ -4,16 +4,17 @@ Created on Jan 17, 2012
 @author: spengler
 '''
 
-from django.contrib                 import admin
+from django.contrib                 import admin, sites
 from django.contrib.auth.admin      import UserAdmin 
 from django.contrib.auth.models     import User, Group
+from django.contrib.sites.models    import Site
 
 from models                         import Empresa
-from models                         import Tipo_de_Usuario
 from models                         import Usuario
 from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
+from PyProject_GED import multiuploader
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
@@ -34,57 +35,38 @@ class AdminEmpresa(MultiDBModelAdmin):
         else:
             return qs.all()
     
-class AdminTipo_de_Usuario(MultiDBModelAdmin): 
-    list_display    = ('id_tipo_usuario', 'descricao')
-    search_fields   = ('id_tipo_usuario',)
-    exclude         = ('id_tipo_usuario',) 
-
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminTipo_de_Usuario,self).get_form(vRequest, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-        return form
-
-#    def save_model(self, request, obj, form, change):
-#        iEmpresa= Usuario().obtemEmpresaDoUsuario(request.user.id)
-#        obj.empresa = iEmpresa
-#        obj.save()
-
 class AdminUsuario(MultiDBModelAdmin): 
-    list_display    = UserAdmin.list_display + ('empresa', 'tipo_usuario', 'eh_ativo')
+    list_display    = UserAdmin.list_display + ('empresa', 'is_active')
     search_fields   = UserAdmin.search_fields
-    exclude         = ('last_login', 'date_joined') 
+    exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions') 
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-            form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(empresa=iEmpresa)
-        else:
-            iListaAdministradores= Tipo_de_Usuario().obtemListaDeAdministradores() 
-            form.base_fields['tipo_usuario'].queryset = Tipo_de_Usuario.objects.filter(id_tipo_usuario__in= iListaAdministradores)
         return form 
 
    
 class AdminIndice(MultiDBModelAdmin): 
     list_display    = ('id_indice', 'descricao')
     search_fields   = ('id_indice',)
-    exclude         = ('id_indice',)
+    exclude         = ('id_indice', 'tipo_indice')
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminIndice,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-            form.base_fields['tipo_indice'].queryset = Tipo_de_Indice.objects.filter(empresa=iEmpresa)
+            #form.base_fields['tipo_indice'].queryset = Tipo_de_Indice.objects.filter(empresa=iEmpresa)
         return form
+    
+    def save_model(self, request, obj, form, change):
+        obj.tipo_indice = Tipo_de_Indice.objects.all()[0]
+        obj.save()
 
 admin.site.unregister(User)
-admin.site.unregister(Group)
-
+admin.site.unregister(Site)
 admin.site.register(Empresa, AdminEmpresa)
-admin.site.register(Tipo_de_Usuario, AdminTipo_de_Usuario)
 admin.site.register(Usuario, AdminUsuario)
 admin.site.register(Indice, AdminIndice)

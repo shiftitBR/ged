@@ -67,7 +67,6 @@ class Empresa(models.Model):
                 mTipoDeIndice= get_model('indice', 'Tipo_de_Indice')
                 iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
                 iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
-                Tipo_de_Usuario().criaTipoUsuario(vEmpresa, 'Administrador')
                 mTipoDeIndice().criaTipoIndice(vEmpresa, 'String')
                 mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
                 ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
@@ -83,56 +82,8 @@ class Empresa(models.Model):
             return False
 
 #---------------------------USUARIO---------------------------------------
-
-class Tipo_de_Usuario(models.Model):
-    id_tipo_usuario     = models.IntegerField(max_length=3, primary_key=True, blank=True)
-    descricao           = models.CharField(max_length=30)
-    empresa             = models.ForeignKey(Empresa, null= False)
-    
-    class Meta:
-        db_table= 'tb_tipo_de_usuario'
-    
-    def __unicode__(self):
-        return '%s [%s]' % (self.descricao, self.empresa.nome)
-    
-    def save(self):  
-        if len(Tipo_de_Usuario.objects.order_by('-id_tipo_usuario')) > 0:   
-            iUltimoRegistro = Tipo_de_Usuario.objects.order_by('-id_tipo_usuario')[0] 
-            self.id_tipo_usuario= iUltimoRegistro.pk + 1
-        else:
-            self.id_tipo_usuario= 1
-        super(Tipo_de_Usuario, self).save()
-    
-    def criaTipoUsuario(self, vEmpresa, vDescricao):
-        try:
-            iTipoUsuario= Tipo_de_Usuario()
-            iTipoUsuario.descricao= vDescricao
-            iTipoUsuario.empresa= vEmpresa
-            iTipoUsuario.save()
-            return iTipoUsuario
-        except Exception, e:
-            print str(e)
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de usuario: ' + str(e))
-            return False
-    
-    def obtemListaDeAdministradores(self):
-        try:
-            iListaEmpresa= Empresa.objects.all()
-            iListaIDAdministradores= []
-            for i in range(len(iListaEmpresa)):
-                iListaTiposDaEmpresa= Tipo_de_Usuario.objects.filter(empresa= iListaEmpresa[i]).order_by('empresa')
-                if len(iListaTiposDaEmpresa) > 0:
-                    iListaIDAdministradores.append(iListaTiposDaEmpresa[0].id_tipo_usuario) 
-            return iListaIDAdministradores
-        except Exception, e:
-            print str(e)
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de Administradores: ' + str(e))
-            return False
-
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
-    tipo_usuario    = models.ForeignKey(Tipo_de_Usuario, null= False)
-    eh_ativo        = models.BooleanField(null= False)
     
     class Meta:
         db_table= 'tb_usuario'
