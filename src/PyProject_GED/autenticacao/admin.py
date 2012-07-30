@@ -45,6 +45,7 @@ class AdminUsuario(MultiDBModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        form.base_fields['email'].required= True
         return form 
 
    
