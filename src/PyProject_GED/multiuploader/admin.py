@@ -6,4 +6,4 @@ class MultiuploaderImageAdmin(admin.ModelAdmin):
     list_display = ["filename", "image", "key_data"]
     list_filter = ["filename", "image", "key_data"]
 
-admin.site.register(MultiuploaderImage, MultiuploaderImageAdmin)
+#admin.site.register(MultiuploaderImage, MultiuploaderImageAdmin)
