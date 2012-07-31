@@ -26,3 +26,18 @@ class Controle(object):
             return False
         
         
+    def obtemPermissao(self, vIDUsuario, vIDFuncao):
+        try:
+            return True
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
+            return False
+        
+    def ehVisualizavel(self, vNome):
+        try:
+            return True
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
+            return False
+            
+    

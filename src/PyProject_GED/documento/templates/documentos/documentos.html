@@ -80,9 +80,16 @@
 			    <td><center>{{documento.data_criacao}}</center></td>
 			    <td>
 			        <div class="btn-group">
-			          <a class="btn btn-primary" href="/download/{{documento.id_versao}}/"><i class="icon-download-alt icon-white"></i>  Download</a>
+			          {% if documento.visualizavel %}
+			          	<a class="btn btn-primary" href="/visualizar/{{documento.id_versao}}/"><i class="icon-camera icon-white"></i>  Visualizar</a>
+			          {% else %}
+			          	<a class="btn btn-primary" href="/download/{{documento.id_versao}}/"><i class="icon-download-alt"></i>  Download</a>
+			          {% endif %}
 			          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
 			          <ul class="dropdown-menu">
+			          	{% if documento.visualizavel %}
+			          		<li><a class="btn btn-primary" href="/download/{{documento.id_versao}}/"><i class="icon-download-alt"></i>  Download</a></li>
+			          	{% endif %}
 			            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li>
 			            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
 			            <li><a class="fancybox fancybox.iframe" href="/checkout/{{documento.id_versao}}/"><i class="icon-edit"></i>  Check-out</a></li>

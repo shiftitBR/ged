@@ -24,3 +24,4 @@ class Documento():
         id_estado=None
         protocolo=None
         assinado=None
+        visualizavel=None

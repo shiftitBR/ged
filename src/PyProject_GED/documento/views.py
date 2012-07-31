@@ -8,10 +8,12 @@ from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from controle                           import Controle as DocumentoControle
 from models                             import Versao
+from PyProject_GED.historico.models     import Historico
 from PyProject_GED.seguranca.models     import Pasta
 
 import os
 import urllib
+import constantes #@UnresolvedImport
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -72,9 +74,17 @@ def tabelaDocumentos(vRequest, vTitulo):
 @login_required     
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
-        print ''
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        vIDFuncao = 0
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoDisponivel)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckin, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
+        else:
+            print '>>>>>>>>> nao possui permissao'
+        return True
     except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela checkin: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel abrir tela checkout: ' + str(e))
             return False
     return render_to_response(
         'documentos/checkin.html',
@@ -84,11 +94,26 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def checkout(vRequest, vTitulo, vIDVersao=None):
-    try :
-        print ''
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela checkout: ' + str(e))
-            return False
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    
+    if vRequest.POST:
+        try :
+            vIDFuncao = 0
+            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+                iFile = open(iArquivo,"r")
+                response = HttpResponse(iFile.read())
+                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+                return response
+            else:
+                print '>>>>>>>>> nao possui permissao'
+                return True
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel abrir tela checkout: ' + str(e))
+                return False
     return render_to_response(
         'documentos/checkout.html',
         locals(),
@@ -97,11 +122,20 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def aprovar(vRequest, vTitulo, vIDVersao=None):
-    try :
-        print ''
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela aprovar: ' + str(e))
-            return False
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    
+    if vRequest.POST:
+        try :
+            vIDFuncao = 0
+            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+            else:
+                print '>>>>>>>>> nao possui permissao'
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel abrir tela aprovar: ' + str(e))
+                return False
     return render_to_response(
         'acao/aprovar.html',
         locals(),
@@ -110,11 +144,20 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def reprovar(vRequest, vTitulo, vIDVersao=None):
-    try :
-        print ''
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela reprovar: ' + str(e))
-            return False
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    
+    if vRequest.POST:
+        try :
+            vIDFuncao = 0
+            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+            else:
+                print '>>>>>>>>> nao possui permissao'
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel abrir tela reprovar: ' + str(e))
+                return False
     return render_to_response(
         'acao/reprovar.html',
         locals(),
@@ -123,11 +166,20 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def excluir(vRequest, vTitulo, vIDVersao=None):
-    try :
-        print ''
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela excluir: ' + str(e))
-            return False
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    
+    if vRequest.POST:
+        try :
+            vIDFuncao = 0
+            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoExcluida)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExcluir, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+            else:
+                print '>>>>>>>>> nao possui permissao'
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel abrir tela excluir: ' + str(e))
+                return False
     return render_to_response(
         'acao/excluir.html',
         locals(),
@@ -150,15 +202,45 @@ def informacoes(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
-        iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-        iFile = open(iArquivo,"r")
-        response = HttpResponse(iFile.read())
-        response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-        return response
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        vIDFuncao  = 0
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+            iFile = open(iArquivo,"r")
+            response = HttpResponse(iFile.read())
+            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+            return response
+        else: 
+            print '>>>>>>>>>>>> nao possui permissao'
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
             return False
+
+@login_required 
+def visualizar(vRequest, vTitulo, vIDVersao=None):
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
     
+    if vRequest.POST:
+        try :
+            vIDFuncao  = 0
+            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+               
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
+                                           iUsuario.id, vRequest.session['IDEmpresa'])
+                return True
+            else: 
+                print '>>>>>>>>>>>> nao possui permissao'
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
+                return False
+    return render_to_response(
+        'acao/visualizar.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+        
 @login_required 
 def criaArvore(vRequest, vTitulo):
     try :
@@ -173,7 +255,6 @@ def criaArvore(vRequest, vTitulo):
                     iPasta= Pasta().obtemNomeDaPasta(iPasta)
                     iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
             iHtml.append('</ul>')
-            #iHtml.append('<div class="teste">{{iListaDocumentos}}</div>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')

@@ -15,7 +15,13 @@
 		  <h2><strong>Check-out</strong></h2>
 		  <p class="lead">Documento ficará indisponível para os outros usuários.</p>
 		</header>
-
+		
+		<form action="" method="POST">{% csrf_token %}
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Check-out</button>
+				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+			</div>
+		</form>
   </div>
 </body>
 

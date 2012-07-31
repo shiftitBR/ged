@@ -16,10 +16,12 @@
 		  <p class="lead">Confirmar reprovação de documento.</p>
 		</header>
 		
-		<div class="form-actions">
-			<button type="submit" class="btn btn-primary">Reprovar</button>
-			<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
-		</div>
+		<form action="" method="POST">{% csrf_token %}
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Reprovar</button>
+				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+			</div>
+		</form>
 
 	</div>
 </body>

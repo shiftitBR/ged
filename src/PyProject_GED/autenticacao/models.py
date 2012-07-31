@@ -150,9 +150,9 @@ class Usuario(User):
         self.set_password(self.password)   
         super(Usuario, self).save()   
         
-    def obtemUsuario(self, vUsuario):
+    def obtemUsuario(self, vUser):
         try:
-            iUsuario= Usuario.objects.filter(pk= vUsuario.pk)[0]
+            iUsuario= Usuario.objects.filter(pk= vUser.pk)[0]
             return iUsuario
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
