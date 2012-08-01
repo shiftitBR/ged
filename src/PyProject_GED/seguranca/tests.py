@@ -44,17 +44,17 @@ class Test(TestCase):
         self.assertEquals(iNomePastaFilha, iPastaFilha.nome)
         self.assertEquals(iNomePastaRaiz, iPastaRaiz.nome)
     
-#    def testObtemDiretorioUpload(self):
-#        iIDPasta= Pasta.objects.all()[0].id_pasta
-#        iIDEmpresa= Empresa.objects.all()[0].id_empresa
-#        iDiretorio= Pasta().obtemDiretorioUpload(iIDPasta, iIDEmpresa)
-#        self.assertEquals('/home/spengler/Git/GED/PyProject_GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
+    def testObtemDiretorioUpload(self):
+        iIDPasta= Pasta.objects.all()[0].id_pasta
+        iIDEmpresa= Empresa.objects.all()[0].id_empresa
+        iDiretorio= Pasta().obtemDiretorioUpload(iIDPasta, iIDEmpresa)
+        self.assertEquals('/home/spengler/Git/GED/PyProject_GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
 
     def testMontaDiretorioPasta(self):
         iPasta= Pasta.objects.all()[0]
         iIDEmpresa= Empresa.objects.all()[0].id_empresa
         iDiretorio= Pasta().montaDiretorioPasta(iIDEmpresa, iPasta)
-        self.assertEquals('/home/spengler/Git/GED/PyProject_GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
+        self.assertEquals('1', iDiretorio)
     
     def testObtemNomePasta(self):
         iIDPasta= Pasta.objects.all()[0].id_pasta

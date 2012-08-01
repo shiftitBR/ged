@@ -1,12 +1,13 @@
-from django.shortcuts       import render_to_response
-from django.template        import RequestContext
+from django.shortcuts               import render_to_response
+from django.template                import RequestContext
 
-from models                 import Historico
+from models                         import Historico
+from PyProject_GED.documento.models import Versao
 
 def historico(vRequest, vTitulo, vIDVersao=None):
     
     iDocumento      = Historico().obtemInformacoesDocumento(vIDVersao)
-    iListaVersao    = Historico().obtemListaVersao(vIDVersao)
+    iListaVersao    = Versao().obtemListaDeVersoesDoDocumento(vIDVersao)
     iListaEventos   = Historico().obtemListaEventos(vIDVersao)
     
     iUltimaVersao   = iListaVersao[len(iListaVersao)-1].num_versao

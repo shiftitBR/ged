@@ -62,6 +62,11 @@ class Test(TestCase):
         self.assertEquals(len(iLista), len(iListaTipoDocumento))
         self.assertEquals(iLista[0].empresa, iListaTipoDocumento[0].empresa)
     
+    def testObtemInformacoesDoDocumento(self):
+        iIDVersao= Versao.objects.all()[0].id_versao
+        iDocumento= Documento().obtemInformacoesDocumento(iIDVersao)
+        self.assertEquals('Teste', iDocumento.assunto)
+    
     def testCriarEstadoVersao(self):
         iDescricao      = 'Disponivel'
         iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
@@ -73,13 +78,18 @@ class Test(TestCase):
         iEstadoDaVersao= Estado_da_Versao().criaEstadoVersao(iDescricao)
         self.assertEquals(iDescricao, iEstadoDaVersao.descricao)
     
-    def testObtemListaDeDocumentos(self):
+    def testObtemListaDeDocumentosDaPasta(self):
         iIDEmpresa= Empresa.objects.filter(id_empresa=1)[0].id_empresa
         iIDPasta= Pasta.objects.filter(empresa= iIDEmpresa)[0].id_pasta
-        iLista= Versao().obtemListaDocumentos(iIDEmpresa, iIDPasta)
+        iLista= Versao().obtemListaDeDocumentosDaPasta(iIDEmpresa, iIDPasta)
         
         self.assertEquals(1, len(iLista))
     
+    def testObtemListaDeVersoesDoDocumento(self):
+        iIDVersao= Versao.objects.all()[0].id_versao
+        iLista= Versao().obtemListaDeVersoesDoDocumento(iIDVersao)
+        self.assertEquals(1, len(iLista))
+        
     def testSalvaVersao(self):
         iIDDocumento= Documento.objects.all()[0].id_documento
         iIDCriador= Usuario.objects.all()[0].id

@@ -56,7 +56,7 @@ class Pasta(models.Model):
         try :
             iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             iEmpresa= Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
-            iCaminho= iEmpresa.pasta_raiz + '/' + iPasta.diretorio
+            iCaminho= '%s/%s' % (iEmpresa.pasta_raiz, iPasta.diretorio) 
             return iCaminho
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemDiretorioUpload: ' + str(e))
@@ -65,7 +65,7 @@ class Pasta(models.Model):
     def montaDiretorioPasta(self, vIDEmpresa, vPasta, vPastaPai=None):
         try :
             if vPastaPai == None:
-                iDiretorio= '%s/%s' % ((constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa), vPasta.id_pasta)
+                iDiretorio= '%s' % vPasta.id_pasta
             else:
                 iPastaPai = Pasta.objects.filter(id_pasta= vPastaPai.id_pasta)[0]
                 iDiretorio= '%s/%s' % (iPastaPai.id_pasta, vPasta.id_pasta)

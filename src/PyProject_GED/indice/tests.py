@@ -51,11 +51,10 @@ class Test(TestCase):
         
     def mokarEmpresa(self):
         iNome           = 'empresa_001'
-        iBanco          = 'shift_ged'
         iPastaRaiz      = '/documentos/empresa_001/1'
         iEh_Ativo       = True
-        iEmpresa_1      = Empresa(nome= iNome, banco= iBanco, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
-        iEmpresa_1.save()
+        iEmpresa_1      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
+        iEmpresa_1.save(False)
         
     def mokarIndice(self):
         iDescricao      = 'valor'
