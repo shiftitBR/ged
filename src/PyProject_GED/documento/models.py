@@ -11,6 +11,7 @@ from autenticacao.models        import Usuario #@UnresolvedImport
 from seguranca.models           import Pasta #@UnresolvedImport
 from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
 from objetos_auxiliares         import Documento as DocumentoAuxiliar
+from controle                   import Controle as DocumentoControle
 
 import datetime
 import logging
@@ -145,9 +146,8 @@ class Estado_da_Versao(models.Model):
             print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar o estado da versao: ' + str(e))
             return False
-        
-        
-        
+
+
         
 class Versao(models.Model):
     id_versao       = models.IntegerField(max_length=10, primary_key=True, blank=True)
@@ -205,6 +205,7 @@ class Versao(models.Model):
                 iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
                 iDocumento.protocolo= iListaVersao[i].protocolo
                 iDocumento.assinado= iListaVersao[i].eh_assinado
+                iDocumento.visualizavel= DocumentoControle().ehVisualizavel(str(iListaVersao[i].upload.filename))
                 iListaDocumentosAuxiliar.append(iDocumento)
             return iListaDocumentosAuxiliar
         except Exception, e:
@@ -217,6 +218,17 @@ class Versao(models.Model):
             return iVersao.upload.image
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False
+        
+    def alterarEstadoVersao(self, vIDVersao, vIDEstado):
+        try:
+            iEstadoVersao= Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)[0]
+            iVersao = Versao.objects.filter(id_versao = vIDVersao)[0]
+            iVersao.estado= iEstadoVersao
+            iVersao.save()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterarEstadoVersao ' + str(e))
             return False
     
     def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUpload, vProtocolo, 

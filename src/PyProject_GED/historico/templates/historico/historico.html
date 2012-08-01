@@ -9,16 +9,161 @@
 {% endblock style %}
 
 <body>
-	<div class="container">
-  	
-		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Histórico</strong></h2>
-		  <p class="lead">Informações sobre o histórico do documento.</p>
-		</header>
-		  	
-
 	
-  </div>
+	<div class="container">
+		<center>
+			<header class="jumbotron subhead" id="overview">
+			  <h2><strong>Histórico</strong></h2>
+			</header>
+		</center>
+  	</div>
+  	
+	<div class="container-fluid">
+				
+		<div class="alert alert-info">
+	    <center><strong>Informações Gerais sobre o Documento</strong></center>
+	  	</div>
+		<div class="row-fluid">
+			<div class="span1">
+			</div>
+			<div class="span5">
+				<p><b>Assunto:</b> {{iDocumento.assunto}}</p>
+				<p><b>Tipo de Documento:</b>  {{iDocumento.dscTipoDoc}}</p>
+				<p><b>Versao Atual:</b>  {{iDocumento.versaoAtual}}</p>
+				<p><b>Responsável:</b>  {{iDocumento.nomeResponsavel}}</p>
+				<p><b>Pasta:</b>  {{iDocumento.nomePasta}}</p>
+			</div>
+			<div class="span6">
+				<p><b>Data Validade:</b>  {{iDocumento.dataValidade}}</p>
+				<p><b>Data Descarte:</b>  {{iDocumento.dataDescarte}}</p>
+				{% if iDocumento.ehPublico%}
+					<p><b>Documento Público:</b> Sim</p>
+				{% else %}
+					<p><b>Documento Público:</b> Não</p>
+				{% endif %}
+				<p><b>Total Downloads:</b>  {{iDocumento.totalDownloads}}</p>
+				<p><b>Total Visualizações:</b>  {{iDocumento.totalVisualizacao}}</p>
+			</div>
+		</div>
+		  
+	</div>
+	
+	<div class="page-header"> </div>
+	
+	<div class="container">
+		<div class="alert alert-info">
+			
+        <center><strong>Informações Gerais sobre a Versão:</strong></center>
+      	</div>
+		<ul id="info_versao" class="nav nav-pills">
+			{% for iVersao in iListaVersao %}
+				{% if iUltimaVersao == iVersao.num_versao %}
+			    <li class="active"><a href="#versao_{{iVersao.num_versao}}" data-toggle="tab">{{iVersao.num_versao}}</a></li>
+			    {% else %}
+			    <li class=""><a href="#versao_{{iVersao.num_versao}}" data-toggle="tab">{{iVersao.num_versao}}</a></li>
+			    {% endif %}
+		    {% empty %}
+			{% endfor %}
+		</ul>
+		<div id="tabela_01" class="tab-content">
+			{% for iVersao in iListaVersao %}
+			{% if iUltimaVersao == iVersao.num_versao %}
+			<div class="tab-pane fade active in" id="versao_{{iVersao.num_versao}}">
+			{% else %}
+		    <div class="tab-pane fade" id="versao_{{iVersao.num_versao}}">
+		    {% endif %}
+			   	<div class="container-fluid">
+				  <div class="row-fluid">
+				    <div class="span8">
+						<p><b>Criador:</b> {{iVersao.nomeCriador}}</p>
+						<p><b>Nome do Arquivo:</b>  {{iVersao.nomeArquivo}}</p>
+						<p><b>Descrição da Modificação:</b>  {{iVersao.dsc_modificacao}}</p>
+				    </div>
+				    <div class="span4">
+						<p><b>Estado:</b>  {{iVersao.estado}}</p>
+						<p><b>Protocolo:</b>  {{iVersao.protocolo}}</p>
+						{% if iVersao.ehAssinado %}
+							<p><b>Documento Assinado:</b> Sim</p>
+						{% else %}
+							<p><b>Documento Assinado:</b> Não</p>
+						{% endif %}
+				    </div>
+				  </div>
+				</div>
+			</div>
+			{% empty %}
+			{% endfor %}
+			
+    	</div>
+  	</div>
+  	
+	<div class="page-header"> </div>
+	
+	<div class="container">
+		<div class="alert alert-info">
+        <center><strong>Informações sobre Acessos e Ações</strong></center>
+      	</div>
+		<ul id="acessos" class="nav nav-pills">
+		    <li class="active"><a href="#acesso" data-toggle="tab">Acessos ao Documento</a></li>
+		    <li class=""><a href="#acao" data-toggle="tab">Ações sobre Versão</a></li>
+		</ul>
+		<div id="tabela_02" class="tab-content">
+			
+			<div class="tab-pane fade active in" id="acesso">
+			   	<table class="table table-striped">
+			        <thead>
+			          <tr>
+			          	<th>Versão</th>
+			            <th>Usuário</th>
+			            <th>Data e Hora</th>
+			            <th>Tipo de Acesso</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        {% for iEvento in iListaEventos %}
+						{% if iEvento.idTipoEvento > 5 %}
+				          <tr>
+				          	<td>{{iEvento.num_versao}}</td>
+				            <td>{{iEvento.nomeUsuario}}</td>
+				            <td>{{iEvento.dataEvento}}</td>
+				            <td>{{iEvento.dscEvento}}</td>
+				          </tr>
+			        	{% endif %}
+					{% empty %}
+					{% endfor %}
+			        </tbody>
+				</table>
+			</div>
+			
+            <div class="tab-pane fade" id="acao">
+	            <table class="table table-striped">
+			        <thead>
+			          <tr>
+			          	<th>Versão</th>
+			            <th>Usuário</th>
+			            <th>Data e Hora</th>
+		            	<th>Ação</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+					{% for iEvento in iListaEventos %}
+						{% if iEvento.idTipoEvento <= 5 %}
+				          <tr>
+				          	<td>{{iEvento.num_versao}}</td>
+				            <td>{{iEvento.nomeUsuario}}</td>
+				            <td>{{iEvento.dataEvento}}</td>
+				            <td>{{iEvento.dscEvento}}</td>
+				          </tr>
+			        	{% endif %}
+		  			{% empty %}
+					{% endfor %}
+			        </tbody>
+		 		</table>
+            </div>
+            
+    	</div>
+  	</div>
+
 </body>
 
 </html>
