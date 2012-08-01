@@ -52,10 +52,10 @@ class Pasta(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar as pastas: ' + str(e))
             return False
 
-    def obtemDiretorioUpload(self, vIDPasta, VIDEmpresa):
+    def obtemDiretorioUpload(self, vIDPasta, vIDEmpresa):
         try :
             iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
-            iEmpresa= Empresa.objects.filter(id_empresa= VIDEmpresa)[0]
+            iEmpresa= Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
             iCaminho= iEmpresa.pasta_raiz + '/' + iPasta.diretorio
             return iCaminho
         except Exception, e:
