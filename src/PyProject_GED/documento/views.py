@@ -55,7 +55,7 @@ def tabelaDocumentos(vRequest, vTitulo):
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):     
-                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" value="option1" name="versao_%(iIDVersao)s"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group"><a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a><button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><span class="caret"></span></button><ul class="dropdown-menu"><li><a href="/aprovar_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a href="/reprovar_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-thumbs-down"></i>  Reprovar</a></li><li><a href="/checkout/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-edit"></i>  Check-out</a></li><li><a href="/checkin/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-share"></i>  Check-in</a></li><li class="divider"></li><li><a href="/excluir_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-trash"></i>  Excluir</a></li><li class="divider"></li><li><a href="/historico/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-book"></i>  Histórico</a></li><li><a href="/informacoes_documento/%(iIDVersao)s/" class="fancybox fancybox.iframe"><i class="icon-info-sign"></i>  Informações</a></li></ul></div></td></tr>' % (
+                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group">' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
                                'iProtocolo': str(iListaDocumentos[i].protocolo), 
@@ -63,8 +63,36 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iTipo': str(iListaDocumentos[i].tipo_documento), 
                                'iEstado': str(iListaDocumentos[i].estado), 
                                'iUsuario': str(iListaDocumentos[i].criador), 
-                               'iData': str(iListaDocumentos[i].data_criacao)
-                               })
+                               'iData': str(iListaDocumentos[i].data_criacao)})
+                    if iListaDocumentos[i].visualizavel :
+                        iLinha= iLinha + '<a class="btn btn-primary" href="/visualizar/%(iIDVersao)s/"><i class="icon-camera icon-white"></i>  Visualizar</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    else:
+                        iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a>'
+                    
+                    iLinha= iLinha + '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu">'
+                    
+                    if iListaDocumentos[i].visualizavel :
+                        iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    
+                    iEstado = iListaDocumentos[i].id_estado
+                    
+                    if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    
+                    if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        
+                    if iEstado == constantes.cntEstadoVersaoDisponivel : #Encaminhar
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/encaminhar/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
+                        
+                    if iEstado == constantes.cntEstadoVersaoBloqueado  : #CheckIn
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkin/%(iIDVersao)s/"><i class="icon-share"></i>  Check-in</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        
+                    if iEstado == constantes.cntEstadoVersaoDisponivel : #Excluir
+                        iLinha= iLinha + '<li class="divider"></li>'
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/excluir_documento/%(iIDVersao)s/"><i class="icon-trash"></i>  Excluir</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        
+                    iLinha= iLinha + '<li class="divider"></li><li><a class="fancybox fancybox.iframe" href="/historico/%(iIDVersao)s/"><i class="icon-book"></i>  Histórico</a></li></ul></div></td></tr>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     iHtml.append(iLinha)
             return HttpResponse(''.join(iHtml))
     except Exception, e:
@@ -75,16 +103,23 @@ def tabelaDocumentos(vRequest, vTitulo):
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
         vIDFuncao = 0
         if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPossuiPermissao= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get checkin: ' + str(e))
+        return False
+    
+    if vRequest.POST:
+        try:
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoDisponivel)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckin, 
                                    iUsuario.id, vRequest.session['IDEmpresa'])
-        else:
-            print '>>>>>>>>> nao possui permissao'
-        return True
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela checkout: ' + str(e))
+            return True
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
             return False
     return render_to_response(
         'documentos/checkin.html',
@@ -94,25 +129,29 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def checkout(vRequest, vTitulo, vIDVersao=None):
-    iUsuario= Usuario().obtemUsuario(vRequest.user)
-    
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        vIDFuncao = 0
+        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPermissaoNegada= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get checkout: ' + str(e))
+        return False
+        
     if vRequest.POST:
         try :
-            vIDFuncao = 0
-            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-                iFile = open(iArquivo,"r")
-                response = HttpResponse(iFile.read())
-                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-                return response
-            else:
-                print '>>>>>>>>> nao possui permissao'
-                return True
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
+            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+            iFile = open(iArquivo,"r")
+            response = HttpResponse(iFile.read())
+            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            return response
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel abrir tela checkout: ' + str(e))
+                oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
                 return False
     return render_to_response(
         'documentos/checkout.html',
@@ -122,19 +161,24 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def aprovar(vRequest, vTitulo, vIDVersao=None):
-    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        vIDFuncao = 0
+        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPermissaoNegada= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
+        return False
     
     if vRequest.POST:
         try :
-            vIDFuncao = 0
-            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-            else:
-                print '>>>>>>>>> nao possui permissao'
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel abrir tela aprovar: ' + str(e))
+                oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
                 return False
     return render_to_response(
         'acao/aprovar.html',
@@ -144,19 +188,24 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def reprovar(vRequest, vTitulo, vIDVersao=None):
-    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        vIDFuncao = 0
+        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPermissaoNegada= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
+        return False
     
     if vRequest.POST:
         try :
-            vIDFuncao = 0
-            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-            else:
-                print '>>>>>>>>> nao possui permissao'
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel abrir tela reprovar: ' + str(e))
+                oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
                 return False
     return render_to_response(
         'acao/reprovar.html',
@@ -166,7 +215,16 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     
 @login_required 
 def excluir(vRequest, vTitulo, vIDVersao=None):
-    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        vIDFuncao = 0
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPermissaoNegada= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get excluir: ' + str(e))
+        return False
     
     if vRequest.POST:
         try :
@@ -176,25 +234,12 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
                 Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExcluir, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             else:
-                print '>>>>>>>>> nao possui permissao'
+                iPermissaoNegada= True
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel abrir tela excluir: ' + str(e))
+                oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
                 return False
     return render_to_response(
         'acao/excluir.html',
-        locals(),
-        context_instance=RequestContext(vRequest),
-        )
-    
-@login_required 
-def informacoes(vRequest, vTitulo, vIDVersao=None):
-    try :
-        print ''
-    except Exception, e:
-            oControle.getLogger().error('Nao foi possivel abrir tela informacoes: ' + str(e))
-            return False
-    return render_to_response(
-        'documentos/informacoes.html',
         locals(),
         context_instance=RequestContext(vRequest),
         )
@@ -213,27 +258,36 @@ def download(vRequest, vTitulo, vIDVersao=None):
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             return response
         else: 
-            print '>>>>>>>>>>>> nao possui permissao'
+            iPossuiPermissao= False
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
             return False
 
+    return render_to_response(
+        'acao/download.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+    
 @login_required 
 def visualizar(vRequest, vTitulo, vIDVersao=None):
-    iUsuario= Usuario().obtemUsuario(vRequest.user)
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        vIDFuncao = 0
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPermissaoNegada= True
+            
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel get visualizar: ' + str(e))
+        return False
     
     if vRequest.POST:
         try :
-            vIDFuncao  = 0
-            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-               
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
-                                           iUsuario.id, vRequest.session['IDEmpresa'])
-                return True
-            else: 
-                print '>>>>>>>>>>>> nao possui permissao'
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
+                oControle.getLogger().error('Nao foi possivel post visualizar: ' + str(e))
                 return False
     return render_to_response(
         'acao/visualizar.html',

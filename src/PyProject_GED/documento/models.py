@@ -220,6 +220,14 @@ class Versao(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False
         
+    def obtemVersao(self, vIDVersao):
+        try:
+            iVersao = Versao.objects.filter(id_versao = vIDVersao)[0]
+            return iVersao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False
+        
     def alterarEstadoVersao(self, vIDVersao, vIDEstado):
         try:
             iEstadoVersao= Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)[0]
