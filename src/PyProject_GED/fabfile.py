@@ -11,7 +11,12 @@ env.hosts = ['shift@shift.webfactional.com']
 def roda_teste():
     with settings(warn_only=True):
         result1 = local('python ./manage.py test autenticacao', capture=True)
-    if (result1.failed ) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
+        result2 = local('python ./manage.py test documento', capture=True)
+        result3 = local('python ./manage.py test historico', capture=True)
+        result4 = local('python ./manage.py test indice', capture=True)
+        result5 = local('python ./manage.py test seguranca', capture=True)
+        
+    if (result1.failed or result2.failed or result3.failed  or result4.failed  or result5.failed) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
         abort("Abortando...")
 
 def roda_teste_remoto(vDiretorio):

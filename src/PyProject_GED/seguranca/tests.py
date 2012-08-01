@@ -34,6 +34,33 @@ class Test(TestCase):
         iPasta.save()
         self.assertEquals(iPasta.id_pasta, Pasta.objects.filter(id_pasta= 2)[0].id_pasta)
     
+    def testCriaPasta(self):
+        iEmpresa= Empresa.objects.all()[0]
+        iNomePastaFilha= 'Teste Filha'
+        iNomePastaRaiz= 'Teste Raiz'
+        iPastaPai= Pasta.objects.all()[0]
+        iPastaRaiz= Pasta().criaPasta(iEmpresa, iNomePastaRaiz)
+        iPastaFilha= Pasta().criaPasta(iEmpresa, iNomePastaFilha, iPastaPai)
+        self.assertEquals(iNomePastaFilha, iPastaFilha.nome)
+        self.assertEquals(iNomePastaRaiz, iPastaRaiz.nome)
+    
+    def testObtemDiretorioUpload(self):
+        iIDPasta= Pasta.objects.all()[0].id_pasta
+        iIDEmpresa= Empresa.objects.all()[0].id_empresa
+        iDiretorio= Pasta().obtemDiretorioUpload(iIDPasta, iIDEmpresa)
+        self.assertEquals('/home/spengler/Git/GED/PyProject_GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
+
+    def testMontaDiretorioPasta(self):
+        iPasta= Pasta.objects.all()[0]
+        iIDEmpresa= Empresa.objects.all()[0].id_empresa
+        iDiretorio= Pasta().montaDiretorioPasta(iIDEmpresa, iPasta)
+        self.assertEquals('1', iDiretorio)
+    
+    def testObtemNomePasta(self):
+        iIDPasta= Pasta.objects.all()[0].id_pasta
+        iNome= Pasta().obtemNomeDaPasta(iIDPasta)
+        self.assertEquals('Modelo', iNome)
+    
     def testCriarGrupoPasta(self):
         iGrupo           = Grupo.objects.filter(empresa= 1)[0]
         iPasta           = Pasta.objects.filter(empresa= 1)[0]
@@ -60,11 +87,10 @@ class Test(TestCase):
     
     def mokarEmpresa(self):
         iNome           = 'empresa_001'
-        iBanco          = 'shift_ged'
         iPastaRaiz      = '/documentos/empresa_001/1'
         iEh_Ativo       = True
-        iEmpresa_1      = Empresa(nome= iNome, banco= iBanco, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
-        iEmpresa_1.save()
+        iEmpresa_1      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
+        iEmpresa_1.save(False)
     
     def mokarPasta(self):
         iNome            = 'Modelo'
@@ -77,19 +103,19 @@ class Test(TestCase):
         iNome            = 'Teste'
         iDescricao       = 'Colaboradores'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
-        iGrupo           = Grupo(nome= iNome, descricacao= iDescricao, empresa= iEmpresa)
+        iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
         iGrupo.save()
     
     def mokarFuncao(self):
         iNome            = 'teste'
         iDescricao       = 'teste'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
-        iFuncao          = Funcao(nome= iNome, descricacao= iDescricao, empresa= iEmpresa)
+        iFuncao          = Funcao(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
         iFuncao.save()
         
     def mokarFirewall(self):
         iIp              = '1939393939'
         iDescricao       = 'teste'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
-        iFirewal         = Firewall(ip= iIp, descricacao= iDescricao, empresa= iEmpresa)
+        iFirewal         = Firewall(ip= iIp, descricao= iDescricao, empresa= iEmpresa)
         iFirewal.save()

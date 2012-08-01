@@ -25,3 +25,14 @@ class Documento():
         protocolo=None
         assinado=None
         visualizavel=None
+
+class Versoes():
+    idVersao=None
+    num_versao=None
+    dsc_modificacao=None
+    nomeCriador=None
+    nomeArquivo=None
+    estado=None
+    idEstado=None
+    protocolo=None
+    ehAssinado=None

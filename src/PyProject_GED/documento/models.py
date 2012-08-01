@@ -11,7 +11,9 @@ from autenticacao.models        import Usuario #@UnresolvedImport
 from seguranca.models           import Pasta #@UnresolvedImport
 from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
 from objetos_auxiliares         import Documento as DocumentoAuxiliar
+from objetos_auxiliares         import Versoes as VersaoAuxiliar
 from controle                   import Controle as DocumentoControle
+from django.db.models           import get_model
 
 import datetime
 import logging
@@ -94,8 +96,8 @@ class Documento(models.Model):
                 self.id_documento= 1
         super(Documento, self).save()  
     
-    def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vIDPasta, vAssunto, vEh_Publico, vResponsavel= None,
-                       vDataValida= str(datetime.datetime.today())[:19], vDataDescarte= str(datetime.datetime.today())[:19]):
+    def salvaDocumento(self, vIDEmpresa, vIDTipo_Doc, vIDPasta, vAssunto, vEh_Publico, vResponsavel,
+                       vDataValida= None, vDataDescarte= None):
         try:
             iPasta          = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             iTipoDoc        = Tipo_de_Documento.objects.filter(id_tipo_documento= vIDTipo_Doc)[0]
@@ -115,6 +117,30 @@ class Documento(models.Model):
             return iDocumento
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar o Documento: ' + str(e))
+            return False 
+    
+    def obtemInformacoesDocumento(self, vIDVersao):
+        try: 
+            mHistorico= get_model('historico', 'Historico')
+            iVersao = Versao.objects.filter(id_versao= vIDVersao)[0]
+            iResponsavel= iVersao.documento.usr_responsavel
+            iNomeResponsavel= iResponsavel.first_name + ' ' + iResponsavel.last_name 
+            iDocumento= DocumentoAuxiliar()
+            iDocumento.idDocumento      = iVersao.documento.id_documento
+            iDocumento.assunto          = iVersao.documento.assunto
+            iDocumento.dscTipoDoc       = iVersao.documento.tipo_documento.descricao
+            iDocumento.versaoAtual      = iVersao.documento.versao_atual
+            iDocumento.nomeResponsavel  = iNomeResponsavel
+            iDocumento.nomePasta        = iVersao.documento.pasta.nome
+            iDocumento.dataValidade     = iVersao.documento.data_validade
+            iDocumento.dataDescarte     = iVersao.documento.data_descarte
+            iDocumento.ehPublico        = iVersao.documento.eh_publico
+            iDocumento.totalDownloads   = mHistorico().calculaQuantidadeDeDownloadsDoDocumento(iVersao)
+            iDocumento.totalVisualizacao= mHistorico().calculaQuantidadeDeVisualizacoesDoDocumento(iVersao)
+            
+            return iDocumento
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemInformacoesDocumento: ' + str(e))
             return False 
 
 #-----------------------------VERSAO----------------------------------------
@@ -176,7 +202,7 @@ class Versao(models.Model):
                 self.id_versao= 1
         super(Versao, self).save()   
         
-    def obtemListaDocumentos(self, vIDEmpresa, vIDPasta):
+    def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):
         try:
             iListaDocumentosAuxiliar=[]
             iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(documento__pasta = vIDPasta)
@@ -211,6 +237,31 @@ class Versao(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
+    
+    def obtemListaDeVersoesDoDocumento(self, vIDVersao):
+        try: 
+            iVersaoDoc  = Versao.objects.filter(id_versao= vIDVersao)[0]
+            iListaVersao= Versao.objects.filter(documento= iVersaoDoc.documento).order_by('versao')
+            iLista      = []
+            for i in range(len(iListaVersao)):
+                iVersao= iListaVersao[i]
+                iCriador= iVersao.usr_criador
+                iNomeCriador= iCriador.first_name + ' ' + iCriador.last_name 
+                iVersaoAux= VersaoAuxiliar()
+                iVersaoAux.idVersao        = iVersao.id_versao
+                iVersaoAux.num_versao      = iVersao.versao
+                iVersaoAux.dsc_modificacao = iVersao.dsc_modificacao
+                iVersaoAux.nomeCriador     = iNomeCriador
+                iVersaoAux.nomeArquivo     = iVersao.upload.filename
+                iVersaoAux.estado          = iVersao.estado.descricao
+                iVersaoAux.idEstado        = iVersao.estado
+                iVersaoAux.protocolo       = iVersao.protocolo
+                iVersaoAux.ehAssinado      = iVersao.eh_assinado
+                iLista.append(iVersaoAux)
+            return iLista
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaDeVersoesDoDocumento: ' + str(e))
+            return False 
     
     def obtemCaminhoArquivo(self, vIDVersao):
         try:

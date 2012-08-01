@@ -10,7 +10,6 @@ from autenticacao.models        import Empresa #@UnresolvedImport
 from autenticacao.models        import Usuario #@UnresolvedImport
 from documento.models           import Versao #@UnresolvedImport
 from objetos_auxiliares         import Documento as DocumentoAuxiliar
-from objetos_auxiliares         import Versoes as VersaoAuxiliar
 from objetos_auxiliares         import Historico as HistoricoAuxiliar
 
 import datetime
@@ -79,56 +78,6 @@ class Historico(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar o Historico: ' + str(e))
             return False 
-    
-    def obtemInformacoesDocumento(self, vIDVersao):
-        try: 
-            iVersao = Versao.objects.filter(id_versao= vIDVersao)[0]
-            iResponsavel= iVersao.documento.usr_responsavel
-            iNomeResponsavel= iResponsavel.first_name + ' ' + iResponsavel.last_name 
-            iDocumento= DocumentoAuxiliar()
-            iDocumento.idDocumento      = iVersao.documento.id_documento
-            iDocumento.assunto          = iVersao.documento.assunto
-            iDocumento.dscTipoDoc       = iVersao.documento.tipo_documento.descricao
-            iDocumento.versaoAtual      = iVersao.documento.versao_atual
-            iDocumento.nomeResponsavel  = iNomeResponsavel
-            iDocumento.nomePasta        = iVersao.documento.pasta.nome
-            iDocumento.dataValidade     = iVersao.documento.data_validade
-            iDocumento.dataDescarte     = iVersao.documento.data_descarte
-            iDocumento.ehPublico        = iVersao.documento.eh_publico
-            iDocumento.totalDownloads   = len(Historico.objects.filter(versao__documento= iVersao.documento.id_documento).filter(
-                                                                    tipo_evento= constantes.cntEventoHistoricoDownload))
-            iDocumento.totalVisualizacao= len(Historico.objects.filter(versao__documento= iVersao.documento.id_documento).filter(
-                                                                    tipo_evento= constantes.cntEventoHistoricoVisualizar))
-            
-            return iDocumento
-        except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemInformacoesDocumento: ' + str(e))
-            return False 
-        
-    def obtemListaVersao(self, vIDVersao):
-        try: 
-            iVersaoDoc  = Versao.objects.filter(id_versao= vIDVersao)[0]
-            iListaVersao= Versao.objects.filter(documento= iVersaoDoc.documento).order_by('versao')
-            iLista      = []
-            for i in range(len(iListaVersao)):
-                iVersao= iListaVersao[i]
-                iCriador= iVersao.usr_criador
-                iNomeCriador= iCriador.first_name + ' ' + iCriador.last_name 
-                iVersaoAux= VersaoAuxiliar()
-                iVersaoAux.idVersao        = iVersao.id_versao
-                iVersaoAux.num_versao      = iVersao.versao
-                iVersaoAux.dsc_modificacao = iVersao.dsc_modificacao
-                iVersaoAux.nomeCriador     = iNomeCriador
-                iVersaoAux.nomeArquivo     = iVersao.upload.filename
-                iVersaoAux.estado          = iVersao.estado.descricao
-                iVersaoAux.idEstado        = iVersao.estado
-                iVersaoAux.protocolo       = iVersao.protocolo
-                iVersaoAux.ehAssinado      = iVersao.eh_assinado
-                iLista.append(iVersaoAux)
-            return iLista
-        except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaVersao: ' + str(e))
-            return False 
         
     def obtemListaEventos(self, vIDVersao):
         try: 
@@ -151,4 +100,22 @@ class Historico(models.Model):
             return iLista
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaVersao: ' + str(e))
+            return False 
+    
+    def calculaQuantidadeDeVisualizacoesDoDocumento(self, vVersao):
+        try:
+            iVisualizacoes= len(Historico.objects.filter(versao__documento= vVersao.documento.id_documento).filter(
+                                                                    tipo_evento= constantes.cntEventoHistoricoVisualizar))
+            return iVisualizacoes
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel calculaQuantidadeDeVisualizacoesDoDocumento: ' + str(e))
+            return False 
+        
+    def calculaQuantidadeDeDownloadsDoDocumento(self, vVersao):
+        try:
+            iDownloads= len(Historico.objects.filter(versao__documento= vVersao.documento.id_documento).filter(
+                                                                    tipo_evento= constantes.cntEventoHistoricoDownload))
+            return iDownloads
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel calculaQuantidadeDeDownloadsDoDocumento: ' + str(e))
             return False 

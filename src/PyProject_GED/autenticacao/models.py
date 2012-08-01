@@ -93,8 +93,8 @@ class Usuario(User):
     
     def save(self): 
         if self.username == '':
-            if len(User.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id')) > 0:   
-                iUltimoRegistro = User.objects.using(constantes.cntConfiguracaoBancoPadrao).order_by('-id')[0] 
+            if len(User.objects.order_by('-id')) > 0:   
+                iUltimoRegistro = User.objects.order_by('-id')[0] 
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)

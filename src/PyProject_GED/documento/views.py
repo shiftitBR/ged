@@ -50,7 +50,7 @@ def tabelaDocumentos(vRequest, vTitulo):
         iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
-            iListaDocumentos = Versao().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+            iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
             vRequest.session['iListaDocumento']= iListaDocumentos
             iHtml= []
             if len(iListaDocumentos) > 0:
@@ -300,7 +300,7 @@ def criaArvore(vRequest, vTitulo):
     try :
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
-        iListaDocumentos = Versao().obtemListaDocumentos(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
+        iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
