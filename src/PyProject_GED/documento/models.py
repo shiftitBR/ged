@@ -231,7 +231,8 @@ class Versao(models.Model):
                 iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
                 iDocumento.protocolo= iListaVersao[i].protocolo
                 iDocumento.assinado= iListaVersao[i].eh_assinado
-                iDocumento.visualizavel= DocumentoControle().ehVisualizavel(str(iListaVersao[i].upload.filename))
+                iDocumento.caminhoVisualizar= DocumentoControle().obtemCaminhoVisualizar(str(iListaVersao[i].upload.image))
+                iDocumento.visualizavel= DocumentoControle().ehVisualizavel(iListaVersao[i].upload.filename.encode('utf-8'))
                 iListaDocumentosAuxiliar.append(iDocumento)
             return iListaDocumentosAuxiliar
         except Exception, e:
@@ -257,6 +258,7 @@ class Versao(models.Model):
                 iVersaoAux.idEstado        = iVersao.estado
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
+                iVersaoAux.dataCriacao     = iVersao.data_criacao
                 iLista.append(iVersaoAux)
             return iLista
         except Exception, e:

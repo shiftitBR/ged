@@ -10,6 +10,8 @@ from controle                           import Controle as DocumentoControle
 from models                             import Versao
 from PyProject_GED.historico.models     import Historico
 from PyProject_GED.seguranca.models     import Pasta
+from PyProject_GED.workflow.models      import Pendencia
+from forms                              import FormCheckin
 
 import os
 import urllib
@@ -64,15 +66,18 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iEstado': str(iListaDocumentos[i].estado), 
                                'iUsuario': str(iListaDocumentos[i].criador), 
                                'iData': str(iListaDocumentos[i].data_criacao)})
-                    if iListaDocumentos[i].visualizavel :
-                        iLinha= iLinha + '<a class="btn btn-primary" href="/visualizar/%(iIDVersao)s/"><i class="icon-camera icon-white"></i>  Visualizar</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
-                    else:
-                        iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a>'
+                    #iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
+                    # iLinha= iLinha + '<a class="btn btn-primary" href="/visualizar/%(iIDVersao)s/"><i class="icon-camera icon-white"></i>  Visualizar</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    #if iListaDocumentos[i].visualizavel :
+                    #    iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
+                    #else:
+                    iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     
                     iLinha= iLinha + '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu">'
                     
                     if iListaDocumentos[i].visualizavel :
-                        iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        iLinha= iLinha + '<a class="fancybox" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
+                        #iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     
                     iEstado = iListaDocumentos[i].id_estado
                     
@@ -113,14 +118,22 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         return False
     
     if vRequest.POST:
-        try:
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoDisponivel)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckin, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
-            return True
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
-            return False
+        form = FormCheckin(vRequest.POST)
+        if form.is_valid():
+            try:
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoDisponivel)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckin, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                return True
+            except Exception, e:
+                oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
+                return False
+        else:
+            form = FormCheckin(vRequest.POST)
+            iErro= True
+    else: 
+        form = FormCheckin()
+                                           
     return render_to_response(
         'documentos/checkin.html',
         locals(),
@@ -165,8 +178,8 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
         vIDFuncao = 0
-        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPermissaoNegada= True
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPossuiPermissao= True
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
@@ -174,9 +187,11 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
+            if vRequest.POST.get('comentario') != '':
+                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
                 return False
@@ -192,8 +207,8 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
         vIDFuncao = 0
-        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPermissaoNegada= True
+        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+            iPossuiPermissao= True
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
@@ -201,6 +216,8 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
+            if vRequest.POST.get('comentario') != '':
+                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
                                    iUsuario.id, vRequest.session['IDEmpresa'])
@@ -269,32 +286,6 @@ def download(vRequest, vTitulo, vIDVersao=None):
         context_instance=RequestContext(vRequest),
         )
     
-@login_required 
-def visualizar(vRequest, vTitulo, vIDVersao=None):
-    try :
-        iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
-        vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPermissaoNegada= True
-            
-    except Exception, e:
-        oControle.getLogger().error('Nao foi possivel get visualizar: ' + str(e))
-        return False
-    
-    if vRequest.POST:
-        try :
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-        except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post visualizar: ' + str(e))
-                return False
-    return render_to_response(
-        'acao/visualizar.html',
-        locals(),
-        context_instance=RequestContext(vRequest),
-        )
-        
 @login_required 
 def criaArvore(vRequest, vTitulo):
     try :

@@ -12,6 +12,7 @@ from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
     
 import constantes #@UnresolvedImport
+from django.http import HttpResponse
 
 @login_required     
 def encaminhar(vRequest, vTitulo, vIDVersao=None):
@@ -54,7 +55,7 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
         )
     
 @login_required     
-def acompanhamento(vRequest, vTitulo, vIDVersao=None):
+def acompanhamento(vRequest, vTitulo):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
@@ -68,16 +69,6 @@ def acompanhamento(vRequest, vTitulo, vIDVersao=None):
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get encaminhar: ' + str(e))
         return False
-    
-    if vRequest.POST:
-        try:
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoPendente)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoEncaminhar, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
-            return True
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
-            return False
         
     return render_to_response(
         'pendencia/acompanhamento.html',
