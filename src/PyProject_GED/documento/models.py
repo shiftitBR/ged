@@ -61,7 +61,7 @@ class Tipo_de_Documento(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o ID do tipo de documento: ' + str(e))
             return False
     
-    def obtemListaTipoDocumento(self, vIDEmpresa):
+    def obtemListaTipoDocumentoDaEmpresa(self, vIDEmpresa):
         try:
             iListaTipoDocumento = Tipo_de_Documento.objects.filter(empresa= vIDEmpresa)
             return iListaTipoDocumento
@@ -75,7 +75,6 @@ class Documento(models.Model):
     usr_responsavel = models.ForeignKey(Usuario, null= False)
     pasta           = models.ForeignKey(Pasta, null= False)
     assunto         = models.CharField(max_length=100, null= False)
-    versao_atual    = models.IntegerField(max_length=3, null= False)
     data_validade   = models.DateTimeField(null= True)
     data_descarte   = models.DateTimeField(null= True)
     eh_publico      = models.BooleanField(null= False)
@@ -109,7 +108,6 @@ class Documento(models.Model):
             iDocumento.usr_responsavel  = vResponsavel
             iDocumento.pasta            = iPasta
             iDocumento.assunto          = vAssunto
-            iDocumento.versao_atual     = 1
             iDocumento.data_validade    = vDataValida
             iDocumento.data_descarte    = vDataDescarte
             iDocumento.eh_pulbico       = vEh_Publico
@@ -129,7 +127,6 @@ class Documento(models.Model):
             iDocumento.idDocumento      = iVersao.documento.id_documento
             iDocumento.assunto          = iVersao.documento.assunto
             iDocumento.dscTipoDoc       = iVersao.documento.tipo_documento.descricao
-            iDocumento.versaoAtual      = iVersao.documento.versao_atual
             iDocumento.nomeResponsavel  = iNomeResponsavel
             iDocumento.nomePasta        = iVersao.documento.pasta.nome
             iDocumento.dataValidade     = iVersao.documento.data_validade
@@ -172,6 +169,15 @@ class Estado_da_Versao(models.Model):
             print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar o estado da versao: ' + str(e))
             return False
+    
+    def obtemEstadosDaVersao(self):
+        try:
+            iListaEstados = Estado_da_Versao.objects.all()
+            return iListaEstados
+        except Exception, e:
+            print str(e)
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os estados da versao: ' + str(e))
+            return False
 
 
         
@@ -186,6 +192,7 @@ class Versao(models.Model):
     protocolo       = models.CharField(max_length=20, null=True)
     data_criacao    = models.DateTimeField(null= False)
     eh_assinado     = models.BooleanField(null= False)
+    eh_versao_atual = models.BooleanField(null= False)
     
     class Meta:
         db_table= 'tb_versao'
@@ -202,36 +209,41 @@ class Versao(models.Model):
                 self.id_versao= 1
         super(Versao, self).save()   
         
+
+    def obtemDocumentoAuxiliar(self, vVersao):
+        iDocumento = DocumentoAuxiliar()
+        iDocumento.id = vVersao.documento.id_documento
+        iDocumento.id_versao = vVersao.id_versao
+        iDocumento.assunto = vVersao.documento.assunto
+        iDocumento.pasta = vVersao.documento.pasta
+        iDocumento.id_pasta = vVersao.documento.pasta.id_pasta
+        iDocumento.tipo_documento = vVersao.documento.tipo_documento
+        iDocumento.id_tipo_documento = vVersao.documento.tipo_documento.id_tipo_documento
+        iDocumento.versao_atual = vVersao.eh_versao_atual
+        iDocumento.publico = vVersao.documento.eh_publico
+        iDocumento.responsavel = vVersao.documento.usr_responsavel
+        iDocumento.id_responsavel = vVersao.documento.usr_responsavel.id
+        iDocumento.descarte = vVersao.documento.data_descarte
+        iDocumento.validade = vVersao.documento.data_validade
+        iDocumento.data_criacao = vVersao.data_criacao
+        iDocumento.num_versao = vVersao.versao
+        iDocumento.descricao = vVersao.dsc_modificacao
+        iDocumento.criador = vVersao.usr_criador
+        iDocumento.id_criador = vVersao.usr_criador.id
+        iDocumento.arquivo = str(vVersao.upload.image)
+        iDocumento.estado = vVersao.estado
+        iDocumento.id_estado = vVersao.estado.id_estado_da_versao
+        iDocumento.protocolo = vVersao.protocolo
+        iDocumento.assinado = vVersao.eh_assinado
+        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(str(vVersao.upload.filename))
+        return iDocumento
+
     def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):
         try:
             iListaDocumentosAuxiliar=[]
             iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(documento__pasta = vIDPasta)
             for i in range(len(iListaVersao)):    
-                iDocumento= DocumentoAuxiliar()
-                iDocumento.id= iListaVersao[i].documento.id_documento
-                iDocumento.id_versao= iListaVersao[i].id_versao
-                iDocumento.assunto= iListaVersao[i].documento.assunto
-                iDocumento.pasta= iListaVersao[i].documento.pasta
-                iDocumento.id_pasta= iListaVersao[i].documento.pasta.id_pasta
-                iDocumento.tipo_documento= iListaVersao[i].documento.tipo_documento
-                iDocumento.id_tipo_documento= iListaVersao[i].documento.tipo_documento.id_tipo_documento
-                iDocumento.versao_atual= iListaVersao[i].documento.versao_atual
-                iDocumento.publico= iListaVersao[i].documento.eh_publico
-                iDocumento.responsavel= iListaVersao[i].documento.usr_responsavel
-                iDocumento.id_responsavel= iListaVersao[i].documento.usr_responsavel.id
-                iDocumento.descarte= iListaVersao[i].documento.data_descarte
-                iDocumento.validade= iListaVersao[i].documento.data_validade
-                iDocumento.data_criacao= iListaVersao[i].data_criacao
-                iDocumento.num_versao= iListaVersao[i].versao
-                iDocumento.descricao= iListaVersao[i].dsc_modificacao
-                iDocumento.criador= iListaVersao[i].usr_criador
-                iDocumento.id_criador= iListaVersao[i].usr_criador.id
-                iDocumento.arquivo= str(iListaVersao[i].upload.image)
-                iDocumento.estado= iListaVersao[i].estado
-                iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
-                iDocumento.protocolo= iListaVersao[i].protocolo
-                iDocumento.assinado= iListaVersao[i].eh_assinado
-                iDocumento.visualizavel= DocumentoControle().ehVisualizavel(str(iListaVersao[i].upload.filename))
+                iDocumento = self.obtemDocumentoAuxiliar(iListaVersao[i])
                 iListaDocumentosAuxiliar.append(iDocumento)
             return iListaDocumentosAuxiliar
         except Exception, e:
@@ -257,6 +269,7 @@ class Versao(models.Model):
                 iVersaoAux.idEstado        = iVersao.estado
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
+                iVersaoAux.eh_versao_atual = iVersao.eh_versao_atual
                 iLista.append(iVersaoAux)
             return iLista
         except Exception, e:
@@ -270,6 +283,14 @@ class Versao(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False
+    
+    def obtemVersaoAtualDoDocumento(self, vDocumento):
+        try:
+            iVersao = Versao.objects.filter(documento= vDocumento).filter(eh_versao_atual= True)[0]
+            return iVersao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a versao atual do documento ' + str(e))
+            return False
         
     def alterarEstadoVersao(self, vIDVersao, vIDEstado):
         try:
@@ -282,13 +303,14 @@ class Versao(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterarEstadoVersao ' + str(e))
             return False
     
-    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUpload, vProtocolo, 
-                    vDataCriacao= str(datetime.datetime.today())[:19], vDsc_Modificacao=None, vEh_Assinado=False):
+    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUploadKeyData, vProtocolo, 
+                    vDataCriacao= str(datetime.datetime.today())[:19], vDsc_Modificacao=None, 
+                    vEh_Assinado=False, vEh_Versao_Atual= True):
         try:
             iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
             iCriador    = Usuario.objects.filter(id= vIDCriador)[0]
             iEstado     = Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)[0]
-            iUpload     = MultiuploaderImage.objects.filter(key_data = vUpload)[0]
+            iUpload     = MultiuploaderImage.objects.filter(key_data = vUploadKeyData)[0]
 
             iVersao                 = Versao()
             iVersao.documento       = iDocumento
@@ -300,8 +322,26 @@ class Versao(models.Model):
             iVersao.protocolo       = vProtocolo
             iVersao.data_criacao    = vDataCriacao
             iVersao.eh_assinado     = vEh_Assinado
+            iVersao.eh_versao_atual = vEh_Versao_Atual
             iVersao.save()
             return iVersao
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar a Versao do Documento: ' + str(e))
             return False
+        
+    def buscaDocumentos(self, vAssunto= None, vProtocolo= None):
+        try:
+            iListaDocumentos= Versao.objects.filter(eh_versao_atual= True)
+            if vAssunto not in (None, ''):
+                iListaDocumentos= iListaDocumentos.filter(documento__assunto__icontains= vAssunto)
+            if vProtocolo not in (None, ''):
+                iListaDocumentos= iListaDocumentos.filter(protocolo__exact= vProtocolo)
+            iListaDocumentosAuxiliar= []
+            for i in range(len(iListaDocumentos)):
+                iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDocumentos[i])
+                iDocumentoAuxiliar= Versao().obtemDocumentoAuxiliar(iVersaoAtual)
+                iListaDocumentosAuxiliar.append(iDocumentoAuxiliar)
+            return iListaDocumentosAuxiliar
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel buscar os Documentos: ' + str(e))
+            return False 

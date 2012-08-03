@@ -28,7 +28,7 @@ class Test(TestCase):
         iPastaRaiz      = '/documentos/teste_001/1'
         iEh_Ativo       = True
         iEmpresa        = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
-        iEmpresa.save()
+        iEmpresa.save(False)
         self.assertEquals(iEmpresa.id_empresa, (Empresa.objects.filter(nome= iNome)[0].id_empresa))
         
     def testCriarUsuario(self):
@@ -53,6 +53,11 @@ class Test(TestCase):
         iUsuario= Usuario.objects.all()[0]
         iEmpresa= Usuario().obtemEmpresaDoUsuario(iUsuario.id)
         self.assertEquals(iUsuario.empresa, iEmpresa)
+    
+    def testObtemUsuariosDaEmpresa(self):
+        iEmpresa= Empresa.objects.all()[0]
+        iListaUsuarios= Usuario().obtemUsuariosDaEmpresa(iEmpresa)
+        self.assertEquals(2, len(iListaUsuarios))
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     

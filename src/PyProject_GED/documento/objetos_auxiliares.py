@@ -36,3 +36,4 @@ class Versoes():
     idEstado=None
     protocolo=None
     ehAssinado=None
+    ehVersaoAtual= None
