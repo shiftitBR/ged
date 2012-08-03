@@ -38,7 +38,7 @@ def multiuploader(vRequest):
         iUser = vRequest.user
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
-        iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumento(vRequest.session['IDEmpresa'])
+        iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
         iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
         iTamListaIndices    = len(iListaIndices)
         iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)

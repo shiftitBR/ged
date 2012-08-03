@@ -37,4 +37,8 @@ class Versoes():
     idEstado=None
     protocolo=None
     ehAssinado=None
+<<<<<<< HEAD
     dataCriacao=None
+=======
+    ehVersaoAtual= None
+>>>>>>> f127b2b7c6ce9df81ec5cc693f050877a9d3d639

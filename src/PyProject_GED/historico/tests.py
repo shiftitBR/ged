@@ -134,11 +134,10 @@ class Test(TestCase):
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iPasta          = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iAssunto        = 'Teste'
-        iVersaoAtual    = 1
         iEhPublico      = True
         iDocumento      = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
-                                    versao_atual= iVersaoAtual, eh_publico= iEhPublico)
+                                    eh_publico= iEhPublico)
         iDocumento.save()
         
     def mokarEstadoVersao(self):
@@ -155,8 +154,10 @@ class Test(TestCase):
         iUpload         = MultiuploaderImage.objects.filter()[0]
         iDataCriacao    = datetime.datetime(2012, 02, 15, 15, 10, 45)
         iEh_Assinado    = False
+        iEh_Versao_Atual= True
         iVersao         = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
-                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado)
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
         iVersao.save()
     
     def mokarTipoDeEvento(self):

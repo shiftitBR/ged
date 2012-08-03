@@ -9,38 +9,20 @@
 
 <div class="container">
 	
-	<form class="well form-inline">
+	<form class="well form-inline" method="post"> {% csrf_token %}
 	 	<p>	
-			<input type="text" placeholder="Assunto">
-			<input type="text" placeholder="Responsável">
-			<input type="text" placeholder="Criador">
-			<input type="text" placeholder="Protocolo">
-			<input type="text" placeholder="Conteúdo">
+	 	    {{ form.assunto }}
+			{{ form.protocolo }}
+			{{ form.conteudo }}
+			{{ form.data_criacao_inicial }}
+            {{ form.data_criacao_final }}
 		</p>
 		<p>
-			<input type="text" placeholder="Data de Criação">
-			<input type="text" placeholder="Extensão">
-			<select class="select01">
-	      		<option>Normas</option>
-				<option>1.1 bla bla </option>
-				<option>1.2 bla bla</option>
-				<option>1.2.1 bla bla</option>
-				<option>1.2.2 bla bla</option>
-			</select>
-			<select class="select01">
-	      		<option>Tipo de Documento</option>
-				<option>Contrato</option>
-				<option>Balanço</option>
-				<option>Cronograma</option>
-				<option>Modelo</option>
-			</select>
-			<select class="select01">
-		  		<option>Estado</option>
-				<option>Disponível</option>
-				<option>Indisponível</option>
-				<option>Aprovado</option>
-				<option>Reprovado</option>
-			</select>
+			{{ form.usuario_responsavel }}
+            {{ form.usuario_criador }}
+			{{ form.normas }}
+			{{ form.tipo_documento }}
+			{{ form.estado }}
 		</p>
 		<p>
 			<button type="submit" class="btn btn-success">Busca Simples</button>

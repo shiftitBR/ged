@@ -127,3 +127,11 @@ class Usuario(User):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a Empresa do Usuario ' + str(e))
             return False 
+    
+    def obtemUsuariosDaEmpresa(self, vEmpresa):
+        try:
+            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa)
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))
+            return False 
