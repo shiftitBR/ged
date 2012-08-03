@@ -235,7 +235,7 @@ class Versao(models.Model):
         iDocumento.id_estado = vVersao.estado.id_estado_da_versao
         iDocumento.protocolo = vVersao.protocolo
         iDocumento.assinado = vVersao.eh_assinado
-        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(str(vVersao.upload.filename))
+        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(vVersao.upload.filename.encode('utf-8'))
         return iDocumento
 
     def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):
@@ -243,36 +243,7 @@ class Versao(models.Model):
             iListaDocumentosAuxiliar=[]
             iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(documento__pasta = vIDPasta)
             for i in range(len(iListaVersao)):    
-<<<<<<< HEAD
-                iDocumento= DocumentoAuxiliar()
-                iDocumento.id= iListaVersao[i].documento.id_documento
-                iDocumento.id_versao= iListaVersao[i].id_versao
-                iDocumento.assunto= iListaVersao[i].documento.assunto
-                iDocumento.pasta= iListaVersao[i].documento.pasta
-                iDocumento.id_pasta= iListaVersao[i].documento.pasta.id_pasta
-                iDocumento.tipo_documento= iListaVersao[i].documento.tipo_documento
-                iDocumento.id_tipo_documento= iListaVersao[i].documento.tipo_documento.id_tipo_documento
-                iDocumento.versao_atual= iListaVersao[i].documento.versao_atual
-                iDocumento.publico= iListaVersao[i].documento.eh_publico
-                iDocumento.responsavel= iListaVersao[i].documento.usr_responsavel
-                iDocumento.id_responsavel= iListaVersao[i].documento.usr_responsavel.id
-                iDocumento.descarte= iListaVersao[i].documento.data_descarte
-                iDocumento.validade= iListaVersao[i].documento.data_validade
-                iDocumento.data_criacao= iListaVersao[i].data_criacao
-                iDocumento.num_versao= iListaVersao[i].versao
-                iDocumento.descricao= iListaVersao[i].dsc_modificacao
-                iDocumento.criador= iListaVersao[i].usr_criador
-                iDocumento.id_criador= iListaVersao[i].usr_criador.id
-                iDocumento.arquivo= str(iListaVersao[i].upload.image)
-                iDocumento.estado= iListaVersao[i].estado
-                iDocumento.id_estado= iListaVersao[i].estado.id_estado_da_versao
-                iDocumento.protocolo= iListaVersao[i].protocolo
-                iDocumento.assinado= iListaVersao[i].eh_assinado
-                iDocumento.caminhoVisualizar= DocumentoControle().obtemCaminhoVisualizar(str(iListaVersao[i].upload.image))
-                iDocumento.visualizavel= DocumentoControle().ehVisualizavel(iListaVersao[i].upload.filename.encode('utf-8'))
-=======
                 iDocumento = self.obtemDocumentoAuxiliar(iListaVersao[i])
->>>>>>> f127b2b7c6ce9df81ec5cc693f050877a9d3d639
                 iListaDocumentosAuxiliar.append(iDocumento)
             return iListaDocumentosAuxiliar
         except Exception, e:
@@ -293,16 +264,13 @@ class Versao(models.Model):
                 iVersaoAux.num_versao      = iVersao.versao
                 iVersaoAux.dsc_modificacao = iVersao.dsc_modificacao
                 iVersaoAux.nomeCriador     = iNomeCriador
-                iVersaoAux.nomeArquivo     = iVersao.upload.filename
+                iVersaoAux.nomeArquivo     = iVersao.upload.filename.encode('utf-8')
                 iVersaoAux.estado          = iVersao.estado.descricao
                 iVersaoAux.idEstado        = iVersao.estado
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
-<<<<<<< HEAD
                 iVersaoAux.dataCriacao     = iVersao.data_criacao
-=======
                 iVersaoAux.eh_versao_atual = iVersao.eh_versao_atual
->>>>>>> f127b2b7c6ce9df81ec5cc693f050877a9d3d639
                 iLista.append(iVersaoAux)
             return iLista
         except Exception, e:
