@@ -51,7 +51,6 @@ def multiuploader(vRequest):
     
     if vRequest.method == 'POST':
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
-        print vRequest.POST.get('data_descarte')
         if form.is_valid():
             try : 
                 if vRequest.FILES == None:

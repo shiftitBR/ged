@@ -16,13 +16,25 @@
 		  <p class="lead">Confirmar aprovação de documento.</p>
 		</header>
 		  	
+		{% if iPossuiPermissao %}
 		<form action="" method="POST">{% csrf_token %}
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Aprovar</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 			</div>
 		</form>
-	
+		{% endif %}
+		
+		{% if not iPossuiPermissao %}
+		<div class="alert alert-error">
+		  <p><center>Você não possui permissão para Aprovar o Documento!</center></p>
+		</div>
+		
+		<div class="form-actions">
+			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
+		</div>
+		{% endif %}
+		
   	</div>
 </body>
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+  	
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Download</strong></h2>
+		  <p class="lead">Efetuar Download do Documento</p>
+		</header>
+				
+		{% if not iPossuiPermissao %}
+		<div class="alert alert-error">
+		  <p><center>Você não possui permissão para fazer o Download do Documento!</center></p>
+		</div>
+		
+		<div class="form-actions">
+			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
+		</div>
+		{% endif %}
+		
+  	</div>
+</body>
+
+</html>

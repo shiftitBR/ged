@@ -16,12 +16,23 @@
 		  <p class="lead">Documento ficará indisponível para os outros usuários.</p>
 		</header>
 		
+		{% if iPermissaoNegada %}
+		<div class="alert alert-error">
+		  <p><center>Você não possui permissão para efetuar o Check-out!</center></p>
+		</div>
+		
+		<div class="form-actions">
+			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
+		</div>
+		{% else %}
 		<form action="" method="POST">{% csrf_token %}
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Check-out</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 			</div>
 		</form>
+		{% endif %}
+		
   </div>
 </body>
 

@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'seguranca',
 #    'south',
     'multiuploader',
+    'workflow',
     'sorl.thumbnail',
 )
 
