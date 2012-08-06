@@ -4,6 +4,29 @@
 {% include "./media/js.html" %}
 {% endblock scripts %}
 
+<script>
+$("#fancy").live('submit',function(){
+	var params = $(this).serialize();
+	var self = this;
+	$.ajax({
+		type: 'POST',
+		url: self.action,
+		data: params,
+		beforeSend: function(){
+			parent.jQuery.fancybox.close();
+			$( '#tabela' ).attr( 'src', function ( i, val ) { return val; });
+		},
+		success: function(data){
+			alert('Finished processing form');
+			return false;							
+		},
+		dataType: 'json'
+	});
+	return false;
+});
+
+</script>
+
 {% block style %}
 {% include "./media/css.html" %}
 {% endblock style %}
@@ -17,7 +40,7 @@
 		</header>
 		  	
 		{% if iPossuiPermissao %}
-		<form action="" method="POST">{% csrf_token %}
+		<form action="" id="fancy" method="POST">{% csrf_token %}
 			<div class="control-group">
 	            <label class="control-label" for="textarea">Comentário</label>
 	            <div class="controls">
@@ -26,7 +49,7 @@
           	</div>
 			
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Aprovar</button>
+				<button type="submit" class="btn btn-primary" >Aprovar</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 			</div>
 		</form>

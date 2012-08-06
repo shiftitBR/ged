@@ -260,6 +260,6 @@ $(document).ready
 	
 		$("#id_data_validade").mask("99/99/9999");
 		$("#id_data_descarte").mask("99/99/9999");
-		
 	}
 );
+

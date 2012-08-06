@@ -13,6 +13,6 @@ except AttributeError:
 
 urlpatterns = patterns('',
     (r'^'+delete_url+'/(\d+)/$', 'multiuploader.views.multiuploader_delete'),
-    url(r'^importar/$', 'multiuploader.views.multiuploader', name='multi'),
+    url(r'^upload/$', 'multiuploader.views.multiuploader', name='multi'),
     (r'^'+image_url+'/(\d+)/$', 'multiuploader.views.multi_show_uploaded'),
 )

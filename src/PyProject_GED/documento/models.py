@@ -17,6 +17,7 @@ from django.db.models           import get_model
 
 import datetime
 import logging
+import constantes#@UnresolvedImport
 
 #-----------------------------DOCUMENTO----------------------------------------
 
@@ -235,13 +236,15 @@ class Versao(models.Model):
         iDocumento.id_estado = vVersao.estado.id_estado_da_versao
         iDocumento.protocolo = vVersao.protocolo
         iDocumento.assinado = vVersao.eh_assinado
-        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(vVersao.upload.filename.encode('utf-8'))
+        iDocumento.tipoVisualizacao = DocumentoControle().tipoVisualizavel(vVersao.upload.filename.encode('utf-8'))
+        iDocumento.caminhoVisualizar = DocumentoControle().obtemCaminhoVisualizar(str(vVersao.upload.image))
         return iDocumento
 
     def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):
         try:
             iListaDocumentosAuxiliar=[]
-            iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(documento__pasta = vIDPasta)
+            iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(
+                                    documento__pasta = vIDPasta).filter(eh_versao_atual=True).order_by('-data_criacao')
             for i in range(len(iListaVersao)):    
                 iDocumento = self.obtemDocumentoAuxiliar(iListaVersao[i])
                 iListaDocumentosAuxiliar.append(iDocumento)
@@ -300,6 +303,17 @@ class Versao(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False
+    
+    def obsoletarVersao(self, vVersao):
+        try:
+            iEstado = Estado_da_Versao.objects.filter(id_estado_da_versao= constantes.cntEstadoVersaoObsoleto)[0]
+            vVersao.eh_versao_atual= False
+            vVersao.estado= iEstado
+            vVersao.save()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False
         
     def alterarEstadoVersao(self, vIDVersao, vIDEstado):
         try:
@@ -329,7 +343,7 @@ class Versao(models.Model):
             iVersao.dsc_modificacao = vDsc_Modificacao
             iVersao.upload          = iUpload
             iVersao.protocolo       = vProtocolo
-            iVersao.data_criacao    = vDataCriacao
+            iVersao.data_criacao    = str(datetime.datetime.today())[:19]
             iVersao.eh_assinado     = vEh_Assinado
             iVersao.eh_versao_atual = vEh_Versao_Atual
             iVersao.save()

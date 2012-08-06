@@ -19,6 +19,7 @@ cntEventoHistoricoExcluir   = 5
 cntEventoHistoricoDownload  = 6
 cntEventoHistoricoVisualizar= 7
 cntEventoHistoricoEncaminhar= 8
+cntEventoHistoricoObsoletar = 9
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -28,4 +29,9 @@ cntEstadoVersaoReprovado    = 4
 cntEstadoVersaoExcluida     = 5
 cntEstadoVersaoObsoleto     = 6
 cntEstadoVersaoPendente     = 7
+
+#TipoVisualizacao
+cntTipoVisualizacaoPDF      = 1
+cntTipoVisualizacaoImagem   = 2
+cntTipoVisualizacaoOutro    = 3
 

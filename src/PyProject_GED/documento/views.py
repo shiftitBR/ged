@@ -6,13 +6,16 @@ from django.contrib.auth.decorators     import login_required
 
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
-from controle                           import Controle as DocumentoControle
-from models                             import Versao
 from PyProject_GED.historico.models     import Historico
 from PyProject_GED.seguranca.models     import Pasta
 from PyProject_GED.workflow.models      import Pendencia
-from forms                              import FormCheckin
+from PyProject_GED.documento.models     import Tipo_de_Documento
+from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
+from controle                           import Controle as DocumentoControle
+from models                             import Versao, Documento
+from forms                              import FormCheckin, FormUploadDeArquivo
 
+import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
@@ -56,8 +59,9 @@ def tabelaDocumentos(vRequest, vTitulo):
             vRequest.session['iListaDocumento']= iListaDocumentos
             iHtml= []
             if len(iListaDocumentos) > 0:
-                for i in range(len(iListaDocumentos)):     
-                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><div class="btn-group">' % (
+                for i in range(len(iListaDocumentos)):  
+                    iEstado = iListaDocumentos[i].id_estado   
+                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
                                'iProtocolo': str(iListaDocumentos[i].protocolo), 
@@ -66,19 +70,19 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iEstado': str(iListaDocumentos[i].estado), 
                                'iUsuario': str(iListaDocumentos[i].criador), 
                                'iData': str(iListaDocumentos[i].data_criacao)})
-                    #iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
-                    # iLinha= iLinha + '<a class="btn btn-primary" href="/visualizar/%(iIDVersao)s/"><i class="icon-camera icon-white"></i>  Visualizar</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
-                    #if iListaDocumentos[i].visualizavel :
-                    #    iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
-                    #else:
-                    iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     
-                    iLinha= iLinha + '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu">'
-                    
-                    if iListaDocumentos[i].visualizavel :
-                        iLinha= iLinha + '<a class="fancybox" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
-                        #iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
-                    
+                    iLinha= iLinha + '<div class="btn-group">'
+                    if iEstado == constantes.cntEstadoVersaoExcluida:
+                        iLinha= iLinha + '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-plus-sign icon-white"></i> Informações   <span class="caret"></span></a><ul class="dropdown-menu">'
+                    else:
+                        if iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoPDF:
+                            iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" target="_blank" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})    
+                        elif iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoImagem:
+                            iLinha= iLinha + '<a class="btn btn-primary fancybox" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
+                        elif iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoOutro:
+                            iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        iLinha= iLinha + '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu">'
+                        
                     iEstado = iListaDocumentos[i].id_estado
                     
                     if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
@@ -105,9 +109,80 @@ def tabelaDocumentos(vRequest, vTitulo):
             return False
 
 @login_required     
+def importar(vRequest, vTitulo):
+    try :
+        iUser = vRequest.user
+        if iUser:
+            iUsuario= Usuario().obtemUsuario(iUser)
+        iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
+        iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+        iTamListaIndices    = len(iListaIndices)
+        iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+        iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+        #gerarProtocolo 
+        
+    except Exception, e:
+            oControle.getLogger().error('Nao foi possivel get importar: ' + str(e))
+            return False
+    
+    if vRequest.POST:
+        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+        if form.is_valid():
+            try:
+                if vRequest.session['Image'] != False :
+                    iImage= vRequest.session['Image']
+                    #Adicionar na tabela documeto e versao
+                    if len(vRequest.POST.get('data_validade')) != 10:
+                        iDataValidade= datetime.datetime.now()
+                    else:
+                        iListaDataValidade= vRequest.POST.get('data_validade').split('/')
+                        iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
+                    if len(vRequest.POST.get('data_descarte')) != 10:
+                        iDataDescarte= datetime.datetime.now()
+                    else:
+                        iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
+                        iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
+                    iAssunto    = vRequest.POST.get('assunto')
+                    iIDResponsavel= vRequest.POST.get('usr_responsavel')
+                    iResponsavel= Usuario().obtemUsuarioPeloID(iIDResponsavel)
+                    if vRequest.POST.get('eh_publico') != None:
+                        iEh_Publico = True
+                    else:
+                        iEh_Publico = False
+                    iIDTipo_Documento = vRequest.POST.get('tipo_documento')
+                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
+                                                             iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
+                    iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                                                    1, 1, iImage.key_data, '1234567')
+                    #Salvar Indices
+                    for i in range(len(iListaIndices)):
+                        iIndice = iListaIndices[i]
+                        iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
+                        vRequest.POST['indice_%s' % iIndice.id_indice] = ''
+                        if iValor != '':
+                            Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                    vRequest.session['Image']= False
+            except Exception, e:
+                oControle.getLogger().error('Nao foi possivel importar: ' + str(e))
+                return False
+        else:
+            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+    else: 
+        form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
+                                           
+    return render_to_response(
+        'acao/importar.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+
+@login_required     
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
-        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        iUsuario    = Usuario().obtemUsuario(vRequest.user)
+        iVersaoBase = Versao().obtemVersao(vIDVersao)
+        iDocumento  = iVersaoBase.documento
+        #gerarProtocolo 
         
         vIDFuncao = 0
         if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
@@ -121,10 +196,18 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoDisponivel)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckin, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-                return True
+                if vRequest.session['Image'] != False :
+                    iImage= vRequest.session['Image']
+                    iDescricao= vRequest.POST.get('descricao')
+                    iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                                                        1, int(iVersaoBase.versao)+1, iImage.key_data, '1234567', 
+                                                        vDsc_Modificacao=iDescricao)
+                    Versao().obsoletarVersao(iVersaoBase)
+                    Historico().salvaHistorico(iVersaoBase.id_versao, constantes.cntEventoHistoricoObsoletar, 
+                                           iUsuario.id, vRequest.session['IDEmpresa'])
+                    Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoCheckIn, 
+                                           iUsuario.id, vRequest.session['IDEmpresa'])
+                    vRequest.session['Image']= False
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
@@ -237,7 +320,7 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
         
         vIDFuncao = 0
         if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPermissaoNegada= True
+            iPossuiPermissao= True
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get excluir: ' + str(e))
@@ -245,13 +328,9 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
-            vIDFuncao = 0
-            if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoExcluida)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExcluir, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-            else:
-                iPermissaoNegada= True
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoExcluida)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExcluir, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
                 return False
