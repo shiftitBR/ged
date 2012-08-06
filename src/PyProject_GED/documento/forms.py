@@ -9,6 +9,7 @@ from django                     import forms
 from models                     import Tipo_de_Documento
 from autenticacao.models        import Usuario #@UnresolvedImport
 from autenticacao.models        import Empresa #@UnresolvedImport
+from PyProject_GED.indice.models import Indice
 
 class FormUploadDeArquivo(forms.Form):
             
@@ -19,7 +20,7 @@ class FormUploadDeArquivo(forms.Form):
         iResp = iListaResponsavel[i]
         iNome= iResp.first_name + ' ' + iResp.last_name
         iListaResp.append((iResp.id, iNome)) 
-    
+                   
     tipo_documento  = forms.ModelChoiceField(queryset=Tipo_de_Documento.objects.all())
     usr_responsavel = forms.ModelChoiceField(iListaResp)
     assunto         = forms.CharField(max_length=100)
@@ -45,7 +46,7 @@ class FormUploadDeArquivo(forms.Form):
     def __init__(self, *args, **kwargs):
         iIDEmpresa= kwargs.pop('iIDEmpresa')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
-        super(FormUploadDeArquivo, self).__init__(*args, **kwargs)  
+        super(FormUploadDeArquivo, self).__init__(*args, **kwargs)          
         self.fields['tipo_documento'].error_messages['required'] = u'O campo Tipo de Documento é obrigatório' 
         self.fields['assunto'].error_messages['required'] = u'O campo Assunto é obrigatório'  
         self.fields['usr_responsavel'].error_messages['required'] = u'O campo Usuário Responsável é obrigatório'  

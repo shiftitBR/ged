@@ -100,52 +100,29 @@
   	
 </div>
     
+<form class="well form-inline" method="post"> {% csrf_token %}
+    
     <div class="modal hide" id="avancado">
 	  <div class="modal-header">
 	    <button type="button" class="close" data-dismiss="modal">×</button>
 	    <h3>Busca Avançada - Índices Personalizados</h3>
 	  </div>
 	  <div class="modal-body">
+	    {% for indice in iListaIndices %}
 	    <div class="control-group">
-			<label class="control-label" for="input01">Quantidade</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="input01">
+				<input type="text" class="input-xlarge" id="input_{{indice.id_indice}}" 
+				name= "indice_{{indice.id_indice}}" placeholder={{indice.descricao}} >
 			</div>
 		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="input01">Valor</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" id="input01">
-			</div>
-		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="input01">Tamanho</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" id="input01">
-			</div>
-		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="input01">Local</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" id="input01">
-			</div>
-		</div>
-		
-		<div class="control-group">
-			<label class="control-label" for="input01">Cliente</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" id="input01">
-			</div>
-		</div>
+		{% endfor %}   
 	  </div>
 	  <div class="modal-footer">
 	    <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
-	    <a href="#" class="btn btn-success">Buscar</a>
+	    <button type="submit" class="btn btn-success" name= "BuscaAvancada">Buscar</button>
 	  </div>
 	</div>
+</form>
 
 
 {% endblock conteudo %}

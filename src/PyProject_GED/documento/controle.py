@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import logging
+import datetime
 
 class Controle(object):
     
@@ -39,5 +40,13 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
             return False
-            
+    
+    def formataData(self, vDataString):
+        try:
+            iListaData= vDataString.split('/')
+            iData= datetime.datetime(int(iListaData[2]), int(iListaData[1]), int(iListaData[0]), 00, 00, 00)
+            return iData
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))
+            return False
     

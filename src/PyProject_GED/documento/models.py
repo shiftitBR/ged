@@ -337,16 +337,38 @@ class Versao(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar a Versao do Documento: ' + str(e))
             return False
         
-    def buscaDocumentos(self, vAssunto= None, vProtocolo= None):
+    def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
+                        vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
+                        vDataDeCriacaoFinal= None, vListaIndice= None):
         try:
-            iListaDocumentos= Versao.objects.filter(eh_versao_atual= True)
+            iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
             if vAssunto not in (None, ''):
-                iListaDocumentos= iListaDocumentos.filter(documento__assunto__icontains= vAssunto)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):
-                iListaDocumentos= iListaDocumentos.filter(protocolo__exact= vProtocolo)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(protocolo__exact= vProtocolo)
+            if vIDUsuarioResponsavel not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__usr_responsavel__id= int(vIDUsuarioResponsavel))
+            if vIDUsuarioCriador not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(usr_criador__id= int(vIDUsuarioCriador))
+            if vIDTipoDocumento not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__tipo_documento__id_tipo_documento= int(vIDTipoDocumento))
+            if vIDEstadoDoDocumento not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(estado__id_estado_da_versao= int(vIDEstadoDoDocumento))
+            if vDataDeCriacaoInicial not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__gt= vDataDeCriacaoInicial)
+            if vDataDeCriacaoFinal not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__lt= vDataDeCriacaoFinal)
+            if vListaIndice not in (None, ''):
+                iListaVersoesIndice= []
+                mIndice_Versao_Valor= get_model('indice', 'Indice_Versao_Valor')
+                for x in range(len(vListaIndice)):
+                    iIDIndice, iValorIndice= vListaIndice[x]
+                    for i in range(len(iListaDeVersoesEncontradas)):
+                        iListaVersoesIndice= mIndice_Versao_Valor().obtemIDVersoesFiltradosPorIndice(vIDEmpresa, iIDIndice, iValorIndice)
+                        iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(id_versao__in = iListaVersoesIndice)
             iListaDocumentosAuxiliar= []
-            for i in range(len(iListaDocumentos)):
-                iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDocumentos[i])
+            for i in range(len(iListaDeVersoesEncontradas)):
+                iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDeVersoesEncontradas[i])
                 iDocumentoAuxiliar= Versao().obtemDocumentoAuxiliar(iVersaoAtual)
                 iListaDocumentosAuxiliar.append(iDocumentoAuxiliar)
             return iListaDocumentosAuxiliar
