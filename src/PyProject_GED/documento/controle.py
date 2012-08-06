@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import logging
-from django.conf                    import settings
+import datetime
 
 import constantes #@UnresolvedImport
 
@@ -60,6 +60,7 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
             return False
+<<<<<<< HEAD
             
             
     def obtemListaNomesUsuarios(self, vLista):
@@ -75,5 +76,15 @@ class Controle(object):
             return iListaNome
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemListaNomesUsuarios: ' + str(e))
+=======
+    
+    def formataData(self, vDataString):
+        try:
+            iListaData= vDataString.split('/')
+            iData= datetime.datetime(int(iListaData[2]), int(iListaData[1]), int(iListaData[0]), 00, 00, 00)
+            return iData
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))
+>>>>>>> 285e98b2715ec079551044b5c379964f5c1228e1
             return False
     

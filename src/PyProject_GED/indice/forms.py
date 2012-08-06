@@ -21,7 +21,7 @@ class FormBuscaDocumento(forms.Form):
     normas              = forms.ChoiceField(choices=[])
     tipo_documento      = forms.ChoiceField(choices=[])
     estado              = forms.ChoiceField(choices=[])
-      
+          
     def __init__(self, *args, **kwargs):
         iIDEmpresa= kwargs.pop('iIDEmpresa')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
@@ -58,3 +58,5 @@ class FormBuscaDocumento(forms.Form):
         self.fields['normas'].choices = iListaDeNormas
         self.fields['tipo_documento'].choices = iListaDeTiposDeDocumento
         self.fields['estado'].choices = iListaDeEstados
+        
+        

@@ -75,7 +75,6 @@ class Indice_Versao_Valor(models.Model):
     indice                  = models.ForeignKey(Indice, null= False)
     versao                  = models.ForeignKey(Versao, null= False)
     valor                   = models.CharField(max_length=50)
-    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_indice_versao_valor'
@@ -104,4 +103,17 @@ class Indice_Versao_Valor(models.Model):
             return iVersao
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar a Versao do Documento: ' + str(e))
+            return False
+    
+    def obtemIDVersoesFiltradosPorIndice(self, vIDEmpresa, vIDIndice, vValor):
+        try:
+            iListaVersoesIndice= []
+            iListaVersaoIndice= Indice_Versao_Valor.objects.filter(indice__empresa__id_empresa= vIDEmpresa)
+            iListaVersaoIndice= iListaVersaoIndice.filter(indice__id_indice= vIDIndice)
+            iListaVersaoIndice= iListaVersaoIndice.filter(valor= vValor)
+            for i in range(len(iListaVersaoIndice)):
+                iListaVersoesIndice.append(iListaVersaoIndice[i].versao.id_versao)
+            return iListaVersoesIndice
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter IDs das Versoes: ' + str(e))
             return False
