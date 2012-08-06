@@ -18,6 +18,13 @@
 		  	
 		{% if iPossuiPermissao %}
 		<form action="" method="POST">{% csrf_token %}
+			<div class="control-group">
+	            <label class="control-label" for="textarea">Comentário</label>
+	            <div class="controls">
+	              <textarea class="input-xlarge" id="textarea" name= "comentario" rows="3"></textarea>
+	            </div>
+          	</div>
+			
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Aprovar</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>

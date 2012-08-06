@@ -3,10 +3,11 @@ from django.template                import RequestContext
 
 from models                         import Historico
 from PyProject_GED.documento.models import Versao
+from PyProject_GED.documento.models import Documento
 
 def historico(vRequest, vTitulo, vIDVersao=None):
     
-    iDocumento      = Historico().obtemInformacoesDocumento(vIDVersao)
+    iDocumento      = Documento().obtemInformacoesDocumento(vIDVersao)
     iListaVersao    = Versao().obtemListaDeVersoesDoDocumento(vIDVersao)
     iListaEventos   = Historico().obtemListaEventos(vIDVersao)
     

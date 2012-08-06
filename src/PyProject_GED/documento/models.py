@@ -235,7 +235,7 @@ class Versao(models.Model):
         iDocumento.id_estado = vVersao.estado.id_estado_da_versao
         iDocumento.protocolo = vVersao.protocolo
         iDocumento.assinado = vVersao.eh_assinado
-        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(str(vVersao.upload.filename))
+        iDocumento.visualizavel = DocumentoControle().ehVisualizavel(vVersao.upload.filename.encode('utf-8'))
         return iDocumento
 
     def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):
@@ -264,11 +264,12 @@ class Versao(models.Model):
                 iVersaoAux.num_versao      = iVersao.versao
                 iVersaoAux.dsc_modificacao = iVersao.dsc_modificacao
                 iVersaoAux.nomeCriador     = iNomeCriador
-                iVersaoAux.nomeArquivo     = iVersao.upload.filename
+                iVersaoAux.nomeArquivo     = iVersao.upload.filename.encode('utf-8')
                 iVersaoAux.estado          = iVersao.estado.descricao
                 iVersaoAux.idEstado        = iVersao.estado
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
+                iVersaoAux.dataCriacao     = iVersao.data_criacao
                 iVersaoAux.eh_versao_atual = iVersao.eh_versao_atual
                 iLista.append(iVersaoAux)
             return iLista

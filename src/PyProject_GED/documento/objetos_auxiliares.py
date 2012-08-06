@@ -25,6 +25,7 @@ class Documento():
         protocolo=None
         assinado=None
         visualizavel=None
+        caminhoVisualizar=None
 
 class Versoes():
     idVersao=None
@@ -36,4 +37,5 @@ class Versoes():
     idEstado=None
     protocolo=None
     ehAssinado=None
+    dataCriacao=None
     ehVersaoAtual= None

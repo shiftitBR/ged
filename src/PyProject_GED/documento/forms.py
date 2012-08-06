@@ -56,3 +56,17 @@ class FormUploadDeArquivo(forms.Form):
         self.fields['usr_responsavel'].queryset = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
         self.fields['tipo_documento'].queryset = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)
         
+        
+class FormCheckin(forms.Form):
+
+    descricao = forms.Field(widget=forms.Textarea)
+    
+    def clean_descricao(self):
+        if self.cleaned_data['descricao'] == '':
+            raise forms.ValidationError('O campo Descrição é obrigatório')
+        return self.cleaned_data['descricao']
+   
+    def __init__(self, *args, **kwargs):
+        super(FormCheckin, self).__init__(*args, **kwargs)  
+        self.fields['descricao'].error_messages['required'] = u'O campo Descrição é obrigatório' 
+        

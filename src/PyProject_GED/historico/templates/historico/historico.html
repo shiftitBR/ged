@@ -47,9 +47,7 @@
 		</div>
 		  
 	</div>
-	
-	<div class="page-header"> </div>
-	
+	<br>
 	<div class="container">
 		<div class="alert alert-info">
 			
@@ -77,7 +75,10 @@
 				    <div class="span8">
 						<p><b>Criador:</b> {{iVersao.nomeCriador}}</p>
 						<p><b>Nome do Arquivo:</b>  {{iVersao.nomeArquivo}}</p>
+						<p><b>Data de Criação:</b>  {{iVersao.dataCriacao}}</p>
+						{% if iVersao.dsc_modificacao != None %}
 						<p><b>Descrição da Modificação:</b>  {{iVersao.dsc_modificacao}}</p>
+						{% endif %}
 				    </div>
 				    <div class="span4">
 						<p><b>Estado:</b>  {{iVersao.estado}}</p>
@@ -98,45 +99,17 @@
     	</div>
   	</div>
   	
-	<div class="page-header"> </div>
-	
 	<div class="container">
 		<div class="alert alert-info">
         <center><strong>Informações sobre Acessos e Ações</strong></center>
       	</div>
 		<ul id="acessos" class="nav nav-pills">
-		    <li class="active"><a href="#acesso" data-toggle="tab">Acessos ao Documento</a></li>
-		    <li class=""><a href="#acao" data-toggle="tab">Ações sobre Versão</a></li>
+		    <li class="active"><a href="#acao" data-toggle="tab">Ações sobre Versão</a></li>
+		    <li class=""><a href="#acesso" data-toggle="tab">Acessos ao Documento</a></li>
 		</ul>
 		<div id="tabela_02" class="tab-content">
 			
-			<div class="tab-pane fade active in" id="acesso">
-			   	<table class="table table-striped">
-			        <thead>
-			          <tr>
-			          	<th>Versão</th>
-			            <th>Usuário</th>
-			            <th>Data e Hora</th>
-			            <th>Tipo de Acesso</th>
-			          </tr>
-			        </thead>
-			        <tbody>
-			        {% for iEvento in iListaEventos %}
-						{% if iEvento.idTipoEvento > 5 %}
-				          <tr>
-				          	<td>{{iEvento.num_versao}}</td>
-				            <td>{{iEvento.nomeUsuario}}</td>
-				            <td>{{iEvento.dataEvento}}</td>
-				            <td>{{iEvento.dscEvento}}</td>
-				          </tr>
-			        	{% endif %}
-					{% empty %}
-					{% endfor %}
-			        </tbody>
-				</table>
-			</div>
-			
-            <div class="tab-pane fade" id="acao">
+            <div class="tab-pane fade active in" id="acao">
 	            <table class="table table-striped">
 			        <thead>
 			          <tr>
@@ -148,7 +121,7 @@
 			        </thead>
 			        <tbody>
 					{% for iEvento in iListaEventos %}
-						{% if iEvento.idTipoEvento <= 5 %}
+						{% if iEvento.idTipoEvento <= 5 or iEvento.idTipoEvento == 8 %}
 				          <tr>
 				          	<td>{{iEvento.num_versao}}</td>
 				            <td>{{iEvento.nomeUsuario}}</td>
@@ -161,6 +134,32 @@
 			        </tbody>
 		 		</table>
             </div>
+            <br>
+            <div class="tab-pane fade" id="acesso">
+			   	<table class="table table-striped">
+			        <thead>
+			          <tr>
+			          	<th>Versão</th>
+			            <th>Usuário</th>
+			            <th>Data e Hora</th>
+			            <th>Tipo de Acesso</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			        {% for iEvento in iListaEventos %}
+						{% if iEvento.idTipoEvento == 6 or iEvento.idTipoEvento == 7%}
+				          <tr>
+				          	<td>{{iEvento.num_versao}}</td>
+				            <td>{{iEvento.nomeUsuario}}</td>
+				            <td>{{iEvento.dataEvento}}</td>
+				            <td>{{iEvento.dscEvento}}</td>
+				          </tr>
+			        	{% endif %}
+					{% empty %}
+					{% endfor %}
+			        </tbody>
+				</table>
+			</div>
             
     	</div>
   	</div>

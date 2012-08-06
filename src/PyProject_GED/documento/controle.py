@@ -26,6 +26,14 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obtemIDPastaArvore: ' + str(e))
             return False
         
+    def obtemCaminhoVisualizar(self, vArquivo):
+        try:
+            iCaminho = vArquivo.replace('/home/diego/git/GED/src/PyProject_GED', '')
+            return iCaminho
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemCaminhoVisualizar: ' + str(e))
+            return False
+        
         
     def obtemPermissao(self, vIDUsuario, vIDFuncao):
         try:
