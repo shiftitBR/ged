@@ -406,10 +406,10 @@ class Test(TestCase):
     
     def mokarMultiUploader(self):
         iUpload                 = MultiuploaderImage()
-        iUpload.iFileName       = 'teste.txt'
-        iUpload.iImage          = '/documento/teste.txt'
-        iUpload.iKeyData        = iUpload.key_generate
-        iUpload.iUploadDate     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload.filename        = 'teste.txt'
+        iUpload.image           = '/documento/teste.txt'
+        iUpload.key_data        = iUpload.key_generate
+        iUpload.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
         iEmpresa                = Empresa.objects.filter(id_empresa=1)[0]
         iIDPasta                = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0].id_pasta
         iUpload.save(iIDPasta, iEmpresa.id_empresa)
