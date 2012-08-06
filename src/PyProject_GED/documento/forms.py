@@ -12,29 +12,12 @@ from autenticacao.models        import Empresa #@UnresolvedImport
 from PyProject_GED.indice.models import Indice
 
 class FormUploadDeArquivo(forms.Form):
-<<<<<<< HEAD
         
     tipo_documento  = forms.ChoiceField(choices=[])
     usr_responsavel = forms.ChoiceField(choices=[])
     assunto         = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Assunto *'}))
     data_validade   = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'Data de Validade'}))
     data_descarte   = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'Data de Descarte'}))
-=======
-            
-    iListaResponsavel= Usuario.objects.all()
-    iListaResp = []
-    iListaResp.append((0, '- Selecione -'))
-    for i in range(len(iListaResponsavel)): 
-        iResp = iListaResponsavel[i]
-        iNome= iResp.first_name + ' ' + iResp.last_name
-        iListaResp.append((iResp.id, iNome)) 
-                   
-    tipo_documento  = forms.ModelChoiceField(queryset=Tipo_de_Documento.objects.all())
-    usr_responsavel = forms.ModelChoiceField(iListaResp)
-    assunto         = forms.CharField(max_length=100)
-    data_validade   = forms.DateField()
-    data_descarte   = forms.DateField()
->>>>>>> 285e98b2715ec079551044b5c379964f5c1228e1
     eh_publico      = forms.BooleanField()
     
     def clean_tipo_documento(self):
@@ -55,7 +38,6 @@ class FormUploadDeArquivo(forms.Form):
     def __init__(self, *args, **kwargs):
         iIDEmpresa= kwargs.pop('iIDEmpresa')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
-<<<<<<< HEAD
         
         iListaDeUsuariosResponsaveis= []
         iListaDeUsuariosResponsaveis.append(('selected', 'Usuário Responsável *'))
@@ -69,10 +51,7 @@ class FormUploadDeArquivo(forms.Form):
         for i in range(len(iLista)):
             iListaDeTiposDeDocumento.append((iLista[i].id_tipo_documento, '%s' % iLista[i].descricao))
         
-        super(FormUploadDeArquivo, self).__init__(*args, **kwargs)  
-=======
         super(FormUploadDeArquivo, self).__init__(*args, **kwargs)          
->>>>>>> 285e98b2715ec079551044b5c379964f5c1228e1
         self.fields['tipo_documento'].error_messages['required'] = u'O campo Tipo de Documento é obrigatório' 
         self.fields['assunto'].error_messages['required'] = u'O campo Assunto é obrigatório'  
         self.fields['usr_responsavel'].error_messages['required'] = u'O campo Usuário Responsável é obrigatório'  
