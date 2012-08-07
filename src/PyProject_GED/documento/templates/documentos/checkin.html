@@ -22,7 +22,7 @@
 			{% multiupform %}
 		</form>
 			
-		<form class="form-horizontal" action="" method="POST" >{% csrf_token %}
+		<form class="form-horizontal" id="fancy" action="" method="POST" >{% csrf_token %}
 			
 			<div class="control-group">
 	            <label class="control-label" for="textarea">Descrição da Modificação:</label>
@@ -32,7 +32,7 @@
           	</div>
 				
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Importar</button>
+				<button type="submit" class="btn btn-primary">Importar</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 			</div>
 			

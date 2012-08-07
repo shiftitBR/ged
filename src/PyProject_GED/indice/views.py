@@ -21,11 +21,12 @@ def busca(vRequest, vTitulo):
         iTipoDocumento= vRequest.POST.get('tipo_documento')
         iEstado= vRequest.POST.get('estado')
         iListaIDIndices= []
-        print vRequest.POST.get('buscaAcancada')
-        for i in range(len(iListaIndices)):
-            iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
-            if iIndice not in (None, ''):
-                iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
+        if 'buscaAcancada' in vRequest.POST:
+            print vRequest.POST
+            for i in range(len(iListaIndices)):
+                iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
+                if iIndice not in (None, ''):
+                    iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
         iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                    iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
                                                    iDataFim, iListaIDIndices)

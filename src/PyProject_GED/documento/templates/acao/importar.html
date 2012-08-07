@@ -6,17 +6,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/projeto/mascaras.js"></script> 
 {% endblock scripts %}
 
-<script>
-	function mostrarDocumetnos(vCampoID)
-	{
-		$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
-	    {
-	            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
-	            $('#id_tabelaDocumentos tr:last').after(data);
-	    });
-	}
-</script>
-
 {% block style %}
 {% include "./media/css.html" %}
 {% endblock style %}
@@ -44,7 +33,7 @@
 			{% multiupform %}
 		</div>
 	</form>
-	<form class="form" action="" method="POST" >{% csrf_token %}
+	<form class="form" id="formimportar" data-fancy="true" action="" method="POST" >{% csrf_token %}
 		
 		<div class="container-fluid">
 	  		<div class="row-fluid">
@@ -89,12 +78,28 @@
 	  		  
 		<div class="container">
 			<div class="form-actions">
-				<button type="submit" id="importar" class="btn btn-primary" onClick="mostrarDocumetnos();">Importar</button>
+				<button type="submit" id="importar" class="btn btn-primary">Importar</button>
 				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 			</div>
 		</div>
 	
-	</form>       
+	</form>     
+	
+<script type="text/javascript">
+    $(document).ready( function() {
+    	console.log('>>>>>>>>> entrou_1')
+        $('#formimportar').on('atualizar', function() {
+        	console.log('>>>>>>>>> entrou_2')
+        	$.get('/tabela_documentos/', { dir: 'teste' }, function(data)
+    		{
+    			console.log('>>>>>>>>> entrou_3')
+	            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
+	            $('#id_tabelaDocumentos tr:last').after(data);
+    		});
+        });
+    });
+</script>
+	  
 </body>
 
 </html>

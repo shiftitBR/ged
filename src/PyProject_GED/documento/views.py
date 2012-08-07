@@ -19,6 +19,7 @@ import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
+from duplicity.asyncscheduler import thread
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -158,7 +159,6 @@ def importar(vRequest, vTitulo):
                     for i in range(len(iListaIndices)):
                         iIndice = iListaIndices[i]
                         iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
-                        vRequest.POST['indice_%s' % iIndice.id_indice] = ''
                         if iValor != '':
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False

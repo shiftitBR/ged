@@ -4,29 +4,6 @@
 {% include "./media/js.html" %}
 {% endblock scripts %}
 
-<script>
-$("#fancy").live('submit',function(){
-	var params = $(this).serialize();
-	var self = this;
-	$.ajax({
-		type: 'POST',
-		url: self.action,
-		data: params,
-		beforeSend: function(){
-			parent.jQuery.fancybox.close();
-			$( '#tabela' ).attr( 'src', function ( i, val ) { return val; });
-		},
-		success: function(data){
-			alert('Finished processing form');
-			return false;							
-		},
-		dataType: 'json'
-	});
-	return false;
-});
-
-</script>
-
 {% block style %}
 {% include "./media/css.html" %}
 {% endblock style %}

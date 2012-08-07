@@ -361,13 +361,13 @@ class Versao(models.Model):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(protocolo__exact= vProtocolo)
-            if vIDUsuarioResponsavel not in (None, ''):
+            if vIDUsuarioResponsavel not in (None, '', 'selected'):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__usr_responsavel__id= int(vIDUsuarioResponsavel))
-            if vIDUsuarioCriador not in (None, ''):
+            if vIDUsuarioCriador not in (None, '', 'selected'):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(usr_criador__id= int(vIDUsuarioCriador))
-            if vIDTipoDocumento not in (None, ''):
+            if vIDTipoDocumento not in (None, '', 'selected'):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__tipo_documento__id_tipo_documento= int(vIDTipoDocumento))
-            if vIDEstadoDoDocumento not in (None, ''):
+            if vIDEstadoDoDocumento not in (None, '', 'selected'):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(estado__id_estado_da_versao= int(vIDEstadoDoDocumento))
             if vDataDeCriacaoInicial not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__gt= vDataDeCriacaoInicial)
@@ -383,7 +383,7 @@ class Versao(models.Model):
                         iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(id_versao__in = iListaVersoesIndice)
             iListaDocumentosAuxiliar= []
             for i in range(len(iListaDeVersoesEncontradas)):
-                iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDeVersoesEncontradas[i])
+                iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDeVersoesEncontradas[i].documento)
                 iDocumentoAuxiliar= Versao().obtemDocumentoAuxiliar(iVersaoAtual)
                 iListaDocumentosAuxiliar.append(iDocumentoAuxiliar)
             return iListaDocumentosAuxiliar

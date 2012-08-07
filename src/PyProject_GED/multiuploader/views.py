@@ -33,7 +33,6 @@ def multiuploader_delete(request, pk):
 @csrf_exempt
 def multiuploader(vRequest):
     if vRequest.method == 'POST':
-        print '>>>>>>>>>>>>>>>>>.. entrou post'
         try:
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
