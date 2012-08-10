@@ -147,6 +147,7 @@ INSTALLED_APPS = (
     'multiuploader',
     'workflow',
     'sorl.thumbnail',
+    'ocr',
 )
 
 AUTHENTICATION_BACKENDS = (
