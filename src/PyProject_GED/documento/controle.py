@@ -3,6 +3,8 @@
 import logging
 import datetime
 
+import constantes #@UnresolvedImport
+
 class Controle(object):
     
     oLogger= logging.getLogger('PyProject_GED.controle')
@@ -42,12 +44,36 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
             return False
         
-    def ehVisualizavel(self, vNome):
+    def tipoVisualizavel(self, vNome):
         try:
-            return True
+            iListaImagem= ['png', 'jpg', 'bmp']
+            iListaNome= vNome.split('.')
+            iExt= iListaNome[1]
+            iTipo= constantes.cntTipoVisualizacaoOutro
+            if iExt == 'pdf':
+                iTipo= constantes.cntTipoVisualizacaoPDF
+            else:
+                for i in range(len(iListaImagem)):
+                    if iExt == iListaImagem[i]:
+                        iTipo= constantes.cntTipoVisualizacaoImagem 
+            return iTipo 
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemPermissao: ' + str(e))
             return False
+            
+    def obtemListaNomesUsuarios(self, vLista):
+        try:
+            iListaNome=''
+            for i in range (len(vLista)):
+                iNomeUsuario= vLista[i].first_name + ' ' + vLista[i].last_name + ' - %04d' % vLista[i].id
+                if iListaNome=='':
+                    iListaNome= iListaNome + '"'+iNomeUsuario+'"'
+                else:
+                    iListaNome= iListaNome + ',"'+iNomeUsuario+'"'
+            iListaNome= '[' + iListaNome + ']'
+            return iListaNome
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemListaNomesUsuarios: ' + str(e))
     
     def formataData(self, vDataString):
         try:

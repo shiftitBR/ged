@@ -121,7 +121,7 @@
 			        </thead>
 			        <tbody>
 					{% for iEvento in iListaEventos %}
-						{% if iEvento.idTipoEvento <= 5 or iEvento.idTipoEvento == 8 %}
+						{% if iEvento.idTipoEvento <= 5 or iEvento.idTipoEvento >= 8 %}
 				          <tr>
 				          	<td>{{iEvento.num_versao}}</td>
 				            <td>{{iEvento.nomeUsuario}}</td>

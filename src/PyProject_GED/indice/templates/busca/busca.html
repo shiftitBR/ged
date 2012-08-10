@@ -4,7 +4,7 @@
 	
 <header class="jumbotron subhead" id="overview">
   <h1>Buscar Documentos</h1>
-  <p class="lead">Listagem de Documentos bla bla bla</p>
+  <p class="lead">Listagem de Documentos</p>
 </header>
 
 <div class="container">
@@ -71,26 +71,45 @@
 		    <td>{{documento.tipo_documento}}</td>
 		    <td>{{documento.estado}}</td>
 		    <td>{{documento.criador}}</td>
-		    <td><center>{{documento.versao}}</center></td>
+		    <td><center>{{documento.num_versao}}</center></td>
 		    <td><center>{{documento.data_criacao}}</center></td>
 		    <td>
-		        <div class="btn-group">
-		          <button class="btn btn-primary"><i class="icon-download-alt icon-white"></i>  Download</button>
-		          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-		          <ul class="dropdown-menu">
-		            <li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/reprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/checkout/{{documento.id_versao}}/"><i class="icon-edit"></i>  Check-out</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/checkin/{{documento.id_versao}}/"><i class="icon-share"></i>  Check-in</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/assinar/{{documento.id_versao}}/"><i class="icon-check"></i>  Assinar</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/excluir_documento/{{documento.id_versao}}/"><i class="icon-trash"></i>  Excluir</a></li>
-		            <li class="divider"></li>
-		            <li><a class="fancybox fancybox.iframe" href="/historico/{{documento.id_versao}}/"><i class="icon-book"></i>  Histórico</a></li>
-		            <li><a class="fancybox fancybox.iframe" href="/informacoes_documento/{{documento.id_versao}}/"><i class="icon-info-sign"></i>  Informações</a></li>
-		          </ul>
-		        </div>
-        	</td>
+	            <div class="btn-group">   
+	            	{% if documento.id_estado == 5 %}
+	            	<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-plus-sign icon-white"></i> Informações    <span class="caret"></span></a>
+	            	{% else %}
+	            		{% if documento.tipoVisualizacao == 1 %}
+	            			<a class="btn btn-primary" href="{{documento.caminhoVisualizar}}" target="_blank" title="{{documento.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
+	            		{% endif %}
+	            		{% if documento.tipoVisualizacao == 2 %}
+	            			<a class="btn btn-primary fancybox" href="{{documento.caminhoVisualizar}}" data-fancybox-group="gallery" title="{{documento.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
+	            		{% endif %}
+	            		{% if documento.tipoVisualizacao == 3 %}
+	            			<a class="btn btn-primary" href="/download/{{documento.id_versao}}/"><i class="icon-download-alt icon-white"></i>  Download</a>
+	            		{% endif %}
+	            		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+	            	{% endif %}
+	            	<ul class="dropdown-menu">
+		            	{% if documento.id_estado == 7 %}
+		            	<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
+		            	{% endif %}
+		            	{% if documento.id_estado == 1 or documento.id_estado == 3 or documento.id_estado == 4 %}
+		            	<li><a class="fancybox fancybox.iframe" href="/checkout/{{documento.id_versao}}/"><i class="icon-edit"></i>  Check-out</a></li>
+		            	{% endif %}
+		            	{% if documento.id_estado == 1 %}
+		            	<li><a class="fancybox fancybox.iframe" href="/encaminhar/{{documento.id_versao}}/"><i class="icon-share-alt"></i>  Encaminhar</a></li>
+		            	{% endif %}
+		            	{% if documento.id_estado == 2 %}
+		            	<li><a class="fancybox fancybox.iframe" href="/checkin/{{documento.id_versao}}/"><i class="icon-share"></i>  Check-in</a></li>
+		            	{% endif %}
+		            	{% if documento.id_estado == 1 %}
+		            	<li class="divider"></li>
+		            	<li><a class="fancybox fancybox.iframe" href="/excluir_documento/{{documento.id_versao}}/"><i class="icon-trash"></i>  Excluir</a></li>
+		            	{% endif %}
+		         		<li class="divider"></li><li><a class="fancybox fancybox.iframe" href="/historico/{{documento.id_versao}}/"><i class="icon-book"></i>  Histórico</a></li>
+		         	</ul>
+		         </div>
+			</td>
 		  </tr>
 		  {% empty %}
 		  {% endfor %}	
@@ -119,7 +138,7 @@
 	  </div>
 	  <div class="modal-footer">
 	    <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
-	    <button type="submit" class="btn btn-success" name= "BuscaAvancada">Buscar</button>
+	    <button type="submit" class="btn btn-success" name= "buscaAcancada">Buscar</button>
 	  </div>
 	</div>
 </form>

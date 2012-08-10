@@ -12,20 +12,12 @@ from autenticacao.models        import Empresa #@UnresolvedImport
 from PyProject_GED.indice.models import Indice
 
 class FormUploadDeArquivo(forms.Form):
-            
-    iListaResponsavel= Usuario.objects.all()
-    iListaResp = []
-    iListaResp.append((0, '- Selecione -'))
-    for i in range(len(iListaResponsavel)): 
-        iResp = iListaResponsavel[i]
-        iNome= iResp.first_name + ' ' + iResp.last_name
-        iListaResp.append((iResp.id, iNome)) 
-                   
-    tipo_documento  = forms.ModelChoiceField(queryset=Tipo_de_Documento.objects.all())
-    usr_responsavel = forms.ModelChoiceField(iListaResp)
-    assunto         = forms.CharField(max_length=100)
-    data_validade   = forms.DateField()
-    data_descarte   = forms.DateField()
+        
+    tipo_documento  = forms.ChoiceField(choices=[])
+    usr_responsavel = forms.ChoiceField(choices=[])
+    assunto         = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Assunto *'}))
+    data_validade   = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'Data de Validade'}))
+    data_descarte   = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'Data de Descarte'}))
     eh_publico      = forms.BooleanField()
     
     def clean_tipo_documento(self):
@@ -46,6 +38,19 @@ class FormUploadDeArquivo(forms.Form):
     def __init__(self, *args, **kwargs):
         iIDEmpresa= kwargs.pop('iIDEmpresa')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
+        
+        iListaDeUsuariosResponsaveis= []
+        iListaDeUsuariosResponsaveis.append(('selected', 'Usuário Responsável *'))
+        iLista= Usuario().obtemUsuariosDaEmpresa(iEmpresa)
+        for i in range(len(iLista)):
+            iListaDeUsuariosResponsaveis.append((iLista[i].id, '%s %s' % (iLista[i].first_name, iLista[i].last_name)))
+        
+        iListaDeTiposDeDocumento= []
+        iListaDeTiposDeDocumento.append(('selected', 'Tipo de Documento *'))
+        iLista= Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(iEmpresa.id_empresa)
+        for i in range(len(iLista)):
+            iListaDeTiposDeDocumento.append((iLista[i].id_tipo_documento, '%s' % iLista[i].descricao))
+        
         super(FormUploadDeArquivo, self).__init__(*args, **kwargs)          
         self.fields['tipo_documento'].error_messages['required'] = u'O campo Tipo de Documento é obrigatório' 
         self.fields['assunto'].error_messages['required'] = u'O campo Assunto é obrigatório'  
@@ -53,9 +58,8 @@ class FormUploadDeArquivo(forms.Form):
         self.fields['data_validade'].required = False
         self.fields['data_descarte'].required = False
         self.fields['eh_publico'].required = False
-        self.fields['usr_responsavel'].queryset = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
-        self.fields['tipo_documento'].queryset = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)
-        
+        self.fields['tipo_documento'].choices = iListaDeTiposDeDocumento
+        self.fields['usr_responsavel'].choices = iListaDeUsuariosResponsaveis
         
 class FormCheckin(forms.Form):
 
