@@ -16,8 +16,6 @@ import threading
 import logging
 import time
 
-from PyProject_GED.autenticacao.controle import Controle
-
 #-----------------------------EMPRESA---------------------------------------
 
 class Empresa(models.Model):
@@ -80,10 +78,50 @@ class Empresa(models.Model):
             print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Empresa: ' + str(e))
             return False
-
+        
+    def obtemListaEnderecoEmpresas(self):
+        try:
+            iEmpresas= Empresa.objects.filter()
+            iLista= ''
+            for i in range(len(iEmpresas)):
+                if iEmpresas[i].rua != '' or iEmpresas[i].bairro != '':
+                    iInfo= "%s %s" % (iEmpresas[i].rua, iEmpresas[i].bairro)
+                    if iLista== '':
+                        iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
+                    else:
+                        iLista= iLista + '%' + str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
+            return iLista
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter obtemListaEnderecoEmpresas ' + str(e))
+            return False 
+        
+        
+#---------------------------TIPO USUARIO -----------------------------------
+        
+class Tipo_de_Usuario(models.Model):
+    id_tipo_de_usuario  = models.IntegerField(max_length=3, primary_key=True)
+    descricao           = models.CharField(max_length=30)
+    
+    class Meta:
+        db_table= 'tb_tipo_de_usuario'
+    
+    def __unicode__(self):
+        return self.descricao
+    
+    def save(self):  
+        if len(Tipo_de_Usuario.objects.order_by('-id_tipo_de_usuario')) > 0:   
+            iUltimoRegistro = Tipo_de_Usuario.objects.order_by('-id_tipo_de_usuario')[0] 
+            self.id_tipo_de_usuario= iUltimoRegistro.pk + 1
+        else:
+            self.id_tipo_de_usuario= 1
+        super(Tipo_de_Usuario, self).save()
+    
+    
 #---------------------------USUARIO---------------------------------------
+
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
+    tipo_usuario    = models.ForeignKey(Tipo_de_Usuario, null= False)
     
     class Meta:
         db_table= 'tb_usuario'
@@ -135,3 +173,30 @@ class Usuario(User):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))
             return False 
+    
+    def obtemUsuariosComEmailDaEmpresa(self, vEmpresa):
+        try:
+            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa).filter(
+                                tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioSistema).filter(email__isnull=False)
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))
+            return False 
+        
+    def obtemContatosComEmailDaEmpresa(self, vEmpresa):
+        try:
+            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa).filter(
+                                tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioContato).filter(email__isnull=False)
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))
+            return False    
+    
+    def obtemUsuariosPeloTipo(self, vIDTipoUsuario):
+        try:
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iUsuarios       = Usuario.objects.filter(tipo_usuario= iTipoUsuario)
+            return iUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo tipo de usuario ' + str(e))
+            return False  

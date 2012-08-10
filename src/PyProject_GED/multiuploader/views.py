@@ -8,14 +8,7 @@ from django.utils                   import simplejson
 from django.views.decorators.csrf   import csrf_exempt
 
 from models                             import MultiuploaderImage
-from documento.forms                    import FormUploadDeArquivo #@UnresolvedImport
 from PyProject_GED                      import oControle
-from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
-from PyProject_GED.documento.models     import Tipo_de_Documento, Versao, Documento
-from PyProject_GED.autenticacao.models  import Usuario
-
-
-import datetime
 
 @csrf_exempt
 @login_required 

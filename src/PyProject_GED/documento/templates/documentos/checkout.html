@@ -25,10 +25,10 @@
 			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
 		</div>
 		{% else %}
-		<form action="" id="fancy" method="POST">{% csrf_token %}
+		<form action="" method="POST">{% csrf_token %}
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary">Check-out</button>
-				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Check-out</button>
+				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 			</div>
 		</form>
 		{% endif %}

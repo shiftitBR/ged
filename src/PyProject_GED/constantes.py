@@ -20,6 +20,8 @@ cntEventoHistoricoDownload  = 6
 cntEventoHistoricoVisualizar= 7
 cntEventoHistoricoEncaminhar= 8
 cntEventoHistoricoObsoletar = 9
+cntEventoHistoricoEmail     = 10
+cntEventoHistoricoPublicar  = 11
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -34,4 +36,8 @@ cntEstadoVersaoPendente     = 7
 cntTipoVisualizacaoPDF      = 1
 cntTipoVisualizacaoImagem   = 2
 cntTipoVisualizacaoOutro    = 3
+
+#TipoUsuario
+cntTipoUsuarioSistema       = 1
+cntTipoUsuarioContato       = 2
 

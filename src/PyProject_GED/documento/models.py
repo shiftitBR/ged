@@ -140,6 +140,17 @@ class Documento(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemInformacoesDocumento: ' + str(e))
             return False 
+        
+    def gerarProtocolo(self, vIDDocumento, vNum_versao):
+        try:
+            iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
+            iDocumento  = str('%07d'%iDocumento.empresa.id_empresa)
+            iVersao     = str('%03d'%vNum_versao)
+            iProtocolo  = '%s%s' %(iDocumento, iVersao)
+            return iProtocolo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel gerarProtocolo ' + str(e))
+            return False
 
 #-----------------------------VERSAO----------------------------------------
         
@@ -236,6 +247,7 @@ class Versao(models.Model):
         iDocumento.id_estado = vVersao.estado.id_estado_da_versao
         iDocumento.protocolo = vVersao.protocolo
         iDocumento.assinado = vVersao.eh_assinado
+        iDocumento.nomeArquivo= vVersao.upload.filename.encode('utf-8')
         iDocumento.tipoVisualizacao = DocumentoControle().tipoVisualizavel(vVersao.upload.filename.encode('utf-8'))
         iDocumento.caminhoVisualizar = DocumentoControle().obtemCaminhoVisualizar(str(vVersao.upload.image))
         return iDocumento
@@ -269,7 +281,7 @@ class Versao(models.Model):
                 iVersaoAux.nomeCriador     = iNomeCriador
                 iVersaoAux.nomeArquivo     = iVersao.upload.filename.encode('utf-8')
                 iVersaoAux.estado          = iVersao.estado.descricao
-                iVersaoAux.idEstado        = iVersao.estado
+                iVersaoAux.idEstado        = iVersao.estado.id_estado_da_versao
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
                 iVersaoAux.dataCriacao     = iVersao.data_criacao
@@ -354,9 +366,13 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vEhPublico= False):
         try:
-            iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
+            if vEhPublico:
+                iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
+                                                                  documento__eh_publico= True)
+            else:
+                iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
             if vAssunto not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):
@@ -390,3 +406,4 @@ class Versao(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel buscar os Documentos: ' + str(e))
             return False 
+        

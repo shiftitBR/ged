@@ -17,7 +17,7 @@
 		</header>
 		  	
 		{% if iPossuiPermissao %}
-		<form action="" id="fancy" method="POST">{% csrf_token %}
+		<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
 			<div class="control-group">
 	            <label class="control-label" for="textarea">Comentário</label>
 	            <div class="controls">
@@ -27,12 +27,10 @@
 			
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary" >Aprovar</button>
-				<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 			</div>
 		</form>
-		{% endif %}
-		
-		{% if not iPossuiPermissao %}
+		{% else %}
 		<div class="alert alert-error">
 		  <p><center>Você não possui permissão para Aprovar o Documento!</center></p>
 		</div>

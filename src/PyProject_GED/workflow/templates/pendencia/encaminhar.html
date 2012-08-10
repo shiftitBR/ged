@@ -19,7 +19,7 @@
 		
 		{% if iPossuiPermissao %}
 		<div class="container">
-			<form class="form-horizontal" action="" method="POST">{% csrf_token %}
+			<form class="form-horizontal" action="" data-fancy='true' method="POST">{% csrf_token %}
 				<div class="control-group">
 					<label class="control-label" for="select01">Usuário Destinatário *</label>
 					<div class="controls">
@@ -36,7 +36,7 @@
 			
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Encaminhar</button>
-					<button class="btn" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
+					<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>
 				</div>
 			</form>
 		</div> 

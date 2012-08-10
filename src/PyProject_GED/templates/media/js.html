@@ -27,11 +27,10 @@ $("form[data-fancy=true]").live('submit',function(){
 		type: 'POST',
 		url: self.action,
 		data: params,
-		beforeSend: function(){
+		complete: function(){
 			parent.jQuery.fancybox.close();
-			$form.trigger('atualizar')
 		},
-		success: function(data){
+		success: function(){
 			alert('Finished processing form');
 			return false;							
 		},
@@ -39,6 +38,7 @@ $("form[data-fancy=true]").live('submit',function(){
 	});
 	return false;
 });
+
 </script>
 
 {% if iAcao == 1 %}
@@ -49,7 +49,7 @@ $("form[data-fancy=true]").live('submit',function(){
 	            'transitionIn': 'fade',
 	            'transitionOut': 'fade',
 	            'type': 'iframe',
-	            'href': '/assinar/{{iVersao}}/'
+	            'href': '/email/'
 	        });
 	});
 </script>
@@ -63,22 +63,9 @@ $("form[data-fancy=true]").live('submit',function(){
 	            'transitionIn': 'fade',
 	            'transitionOut': 'fade',
 	            'type': 'iframe',
-	            'href': '/norma/{{iVersao}}/'
+	            'href': '/publicar/'
 	        });
 	});
 </script>
 {% endif %}
 
-{% if iAcao == 3 %}
-<script type="text/javascript">
-	$(document).ready(function () {
-	        $.fancybox({
-	            'autoScale': true,
-	            'transitionIn': 'fade',
-	            'transitionOut': 'fade',
-	            'type': 'iframe',
-	            'href': '/email/{{iVersao}}/'
-	        });
-	});
-</script>
-{% endif %}

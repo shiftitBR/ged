@@ -26,6 +26,7 @@ class Documento():
         assinado=None
         tipoVisualizacao=None
         caminhoVisualizar=None
+        nomeArquivo=None
 
 class Versoes():
     idVersao=None

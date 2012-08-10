@@ -38,3 +38,36 @@ def busca(vRequest, vTitulo):
         locals(),
         context_instance=RequestContext(vRequest),
         )
+    
+def publico(vRequest, vTitulo, vIDEmpresa):
+    iListaIndices= Indice().obtemListaIndices(vIDEmpresa)
+    if vRequest.method == 'POST':
+        form = FormBuscaDocumento(vRequest.POST, iIDEmpresa= vIDEmpresa)
+        iAssunto= vRequest.POST.get('assunto')
+        iProtocolo= vRequest.POST.get('protocolo')
+        iConteudo= vRequest.POST.get('conteudo')
+        iDataInicio= vRequest.POST.get('data_criacao_inicial')
+        iDataFim= vRequest.POST.get('data_criacao_final')
+        iUsuarioResponsavel= vRequest.POST.get('usuario_responsavel')
+        iUsuarioCriador= vRequest.POST.get('usuario_criador')
+        iNormas= vRequest.POST.get('normas')
+        iTipoDocumento= vRequest.POST.get('tipo_documento')
+        iEstado= vRequest.POST.get('estado')
+        iListaIDIndices= []
+        if 'buscaAcancada' in vRequest.POST:
+            print vRequest.POST
+            for i in range(len(iListaIndices)):
+                iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
+                if iIndice not in (None, ''):
+                    iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
+        iListaDocumentos= Versao().buscaDocumentos(vIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
+                                                   iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
+                                                   iDataFim, iListaIDIndices, vEhPublico= True)
+    else:
+        form = FormBuscaDocumento(iIDEmpresa= vIDEmpresa)        
+        
+    return render_to_response(
+        'publico/publico.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
