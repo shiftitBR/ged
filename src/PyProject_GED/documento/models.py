@@ -326,15 +326,23 @@ class Versao(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterarEstadoVersao ' + str(e))
             return False
     
-    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUploadKeyData, vProtocolo, 
-                    vDataCriacao= str(datetime.datetime.today())[:19], vDsc_Modificacao=None, 
+    def salvaVersao(self, vIDDocumento, vIDCriador, vIDEstado, vVersao, vUploadKeyData, vProtocolo=None, 
+                    vDataCriacao=None, vDsc_Modificacao=None, 
                     vEh_Assinado=False, vEh_Versao_Atual= True):
         try:
             iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
             iCriador    = Usuario.objects.filter(id= vIDCriador)[0]
             iEstado     = Estado_da_Versao.objects.filter(id_estado_da_versao= vIDEstado)[0]
             iUpload     = MultiuploaderImage.objects.filter(key_data = vUploadKeyData)[0]
-
+            if vDataCriacao == None:
+                iDataCriacao= str(datetime.datetime.today())[:19]
+            else:
+                iDataCriacao= vDataCriacao
+            if vProtocolo == None:
+                iProtocolo= '1' #gerar protocolo
+            else:
+                iProtocolo= vProtocolo
+                
             iVersao                 = Versao()
             iVersao.documento       = iDocumento
             iVersao.usr_criador     = iCriador
@@ -342,8 +350,8 @@ class Versao(models.Model):
             iVersao.versao          = vVersao
             iVersao.dsc_modificacao = vDsc_Modificacao
             iVersao.upload          = iUpload
-            iVersao.protocolo       = vProtocolo
-            iVersao.data_criacao    = str(datetime.datetime.today())[:19]
+            iVersao.protocolo       = iProtocolo
+            iVersao.data_criacao    = iDataCriacao
             iVersao.eh_assinado     = vEh_Assinado
             iVersao.eh_versao_atual = vEh_Versao_Atual
             iVersao.save()

@@ -9,7 +9,6 @@ from django.conf    import settings
 #Configuracoes
 cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos= 'documentos'
-cntConfiguracaoExtencaoOCR= 'ocr'
 
 #Eventos
 cntEventoHistoricoCheckIn   = 1
@@ -36,3 +35,9 @@ cntTipoVisualizacaoPDF      = 1
 cntTipoVisualizacaoImagem   = 2
 cntTipoVisualizacaoOutro    = 3
 
+#OCR
+cntOCRExtencaoDocumentoTexto= 'ocr'
+cntOCRExtencoesImagens      = ['.jpg', '.png', '.tif', '.bmp']
+cntOCRExtencoesDocumentos   = ['.doc', '.docx', '.odt']
+cntOCRExtencoesTextos       = ['.txt', '.ocr']
+cntOCRExtencoesPDF          = ['.pdf',]

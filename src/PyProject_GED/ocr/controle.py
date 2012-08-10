@@ -31,6 +31,23 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
     
+    def executaOCR(self, vVersao):
+        try:
+            iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
+            if iExtencao in constantes.cntOCRExtencoesPDF:
+                iTexto= self.obtemTextoDoPDF(vVersao.id_versao)
+                iExecutou= len(iTexto) > 0
+            elif iExtencao in constantes.cntOCRExtencoesImagens:
+                iTexto= self.obtemTextoDaImagem(vVersao.id_versao)
+                iExecutou= len(iTexto) > 0
+            else:
+                iTexto= 'Nao foi possivel passar o OCR'
+                iExecutou= None
+            return iExecutou
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
+            return False
+    
     def obtemTextoDaImagem(self, vIDVersao):
         try:
             iEnderecoImagem= self.mVersao().obtemCaminhoArquivo(vIDVersao)
@@ -39,6 +56,28 @@ class Controle(object):
             return iTexto
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
+            return False
+    
+    def obtemTextoDoPDF(self, vIDVersao):
+        try:
+            iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
+            iTexto= self.lePDF(str(iEnderecoDocumento))
+            self.criaArquivoOCR(iEnderecoDocumento, iTexto)
+            return iTexto
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel buscar texto do pdf: ' + str(e))
+            return False
+    
+    def buscaEmConteudoDoDocumento(self, vVersao, vString):
+        try:
+            iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
+            if iExtencao in constantes.cntOCRExtencoesDocumentos:
+                iEncontrou= self.buscaTextoNoDocumento(vVersao.id_versao, vString)
+            else:
+                iEncontrou= self.buscaTextoNoTXT(vString, vIDVersao= vVersao.id_versao)
+            return iEncontrou
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel buscar texto no documento: ' + str(e))
             return False
     
     def buscaTextoNoDocumento(self, vIDVersao, vTexto):
@@ -58,23 +97,16 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel buscar texto do documento: ' + str(e))
             return False
-    
-    def buscaTextoNoPDF(self, vIDVersao, vTexto):
-        try:
-            iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
-            iTexto= self.obtemTextoDoPDF(str(iEnderecoDocumento))
-            iEnderecoArquivoOCR= self.criaArquivoOCR(iEnderecoDocumento, iTexto)
-            return self.buscaTextoNoTXT(vTexto, vEnderecoArquivoTXT=iEnderecoArquivoOCR)
-        except Exception, e:
-            self.getLogger().error('Nao foi possivel buscar texto do pdf: ' + str(e))
-            return False
-    
+        
     def buscaTextoNoTXT(self, vTexto, vIDVersao=None, vEnderecoArquivoTXT=None):
         try:
             if vIDVersao != None:
                 iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
             else:
                 iEnderecoDocumento= vEnderecoArquivoTXT
+            iNomeArquivo, iExtencaoArquivo = os.path.splitext(str(iEnderecoDocumento))
+            if iExtencaoArquivo.lower() != 'txt':
+                iEnderecoDocumento= '%s.%s' % (iNomeArquivo, constantes.cntOCRExtencaoDocumentoTexto)
             iArquivo = open(str(iEnderecoDocumento),"r")
             iTexto = iArquivo.read().lower()
             iArquivo.close()
@@ -82,10 +114,10 @@ class Controle(object):
             iIndex = iTexto.find(iLocalizar)
             return iIndex > -1
         except Exception, e:
-            self.getLogger().error('Nao foi possivel buscar texto do pdf: ' + str(e))
+            self.getLogger().error('Nao foi possivel buscar texto do txt: ' + str(e))
             return False
     
-    def obtemTextoDoPDF(self, path):
+    def lePDF(self, path):
         try:
             rsrcmgr = PDFResourceManager()
             retstr = StringIO()
@@ -106,8 +138,8 @@ class Controle(object):
     def criaArquivoOCR(self, vEnderecoArquivoPai, vTexto):
         try:
             iNomeArquivo = os.path.splitext(str(vEnderecoArquivoPai))[0]
-            iEnderecoArquivoOCR= '%s.%s' % (iNomeArquivo, constantes.cntConfiguracaoExtencaoOCR)
-            iArquivo = open('%s.%s' % (iNomeArquivo, constantes.cntConfiguracaoExtencaoOCR),"w")
+            iEnderecoArquivoOCR= '%s.%s' % (iNomeArquivo, constantes.cntOCRExtencaoDocumentoTexto)
+            iArquivo = open('%s.%s' % (iNomeArquivo, constantes.cntOCRExtencaoDocumentoTexto),"w")
             iArquivo.write(vTexto)
             iArquivo.close()
             return iEnderecoArquivoOCR

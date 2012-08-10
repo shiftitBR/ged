@@ -39,7 +39,7 @@ class Test(TestCase):
         Empresa.objects.all().delete()
         pass
 
-    
+
     def testOCRImagemTIFF(self):
         iIDVersao= Versao.objects.all()[0].id_versao
         iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
@@ -52,6 +52,11 @@ class Test(TestCase):
         
     def testOCRImagemPNG(self):
         iIDVersao= Versao.objects.all()[2].id_versao
+        iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
+        self.assertEquals(True, len(iString) > 0)
+    
+    def testOCRImagemBMP(self):
+        iIDVersao= Versao.objects.all()[7].id_versao
         iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
         self.assertEquals(True, len(iString) > 0)
           
@@ -75,9 +80,43 @@ class Test(TestCase):
     
     def testLerTextoPDF(self):
         iIDVersao= Versao.objects.all()[6].id_versao
+        iString= ControleOCR().obtemTextoDoPDF(iIDVersao)
+        self.assertEquals(True, len(iString) > 0)
+    
+    def testLerTextoDOCX(self):
+        iIDVersao= Versao.objects.all()[8].id_versao
         iTexto= 'FRED'
-        iEncontrou= ControleOCR().buscaTextoNoPDF(iIDVersao, iTexto)
+        iEncontrou= ControleOCR().buscaTextoNoDocumento(iIDVersao, iTexto)
         self.assertEquals(True, iEncontrou)
+    
+    def testExecutaOCR(self):
+        iVersao= Versao.objects.all()[4]
+        iExecuta= ControleOCR().executaOCR(iVersao)
+        self.assertEquals(None, iExecuta)
+        
+        iVersao= Versao.objects.all()[6]
+        iExecuta= ControleOCR().executaOCR(iVersao)
+        self.assertEquals(True, iExecuta)
+        
+        iVersao= Versao.objects.all()[7]
+        iExecuta= ControleOCR().executaOCR(iVersao)
+        self.assertEquals(True, iExecuta)
+    
+    def testBuscaEmConteudoDoDocumento(self):
+        iVersao= Versao.objects.all()[4]
+        iTexto= 'FreD'
+        iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
+        self.assertEquals(True, iEncontrou)
+        
+        iVersao= Versao.objects.all()[1]
+        iTexto= 'RapOsA'
+        iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
+        self.assertEquals(True, iEncontrou)
+        
+        iVersao= Versao.objects.all()[1]
+        iTexto= 'Fred'
+        iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
+        self.assertEquals(False, iEncontrou)
     
 #-----------------------------------------------------MOKS---------------------------------------------------  
     
@@ -120,22 +159,22 @@ class Test(TestCase):
         iUpload1                 = MultiuploaderImage()
         iUpload1.key_data        = iUpload1.key_generate
         iUpload1.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
-        iUpload1.fileName       = 'imagem.tif'
-        iUpload1.image          = '%s/media_teste/imagem.tif' % settings.MEDIA_ROOT
+        iUpload1.fileName       = 'imagem_tif.tif'
+        iUpload1.image          = '%s/media_teste/imagem_tif.tif' % settings.MEDIA_ROOT
         iUpload1.save(iIDPasta, iEmpresa.id_empresa)
         
         iUpload2                 = MultiuploaderImage()
         iUpload2.key_data        = iUpload2.key_generate
         iUpload2.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
-        iUpload2.fileName       = 'imagem.jpg'
-        iUpload2.image          = '%s/media_teste/imagem.jpg' % settings.MEDIA_ROOT
+        iUpload2.fileName       = 'imagem_jpg.jpg'
+        iUpload2.image          = '%s/media_teste/imagem_jpg.jpg' % settings.MEDIA_ROOT
         iUpload2.save(iIDPasta, iEmpresa.id_empresa)
         
         iUpload3                 = MultiuploaderImage()
         iUpload3.key_data        = iUpload3.key_generate
         iUpload3.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
-        iUpload3.fileName       = 'imagem.png'
-        iUpload3.image          = '%s/media_teste/imagem.png' % settings.MEDIA_ROOT
+        iUpload3.fileName       = 'imagem_png.png'
+        iUpload3.image          = '%s/media_teste/imagem_png.png' % settings.MEDIA_ROOT
         iUpload3.save(iIDPasta, iEmpresa.id_empresa)
         
         iUpload4                 = MultiuploaderImage()
@@ -165,6 +204,20 @@ class Test(TestCase):
         iUpload7.fileName       = 'texto.pdf'
         iUpload7.image          = '%s/media_teste/texto.pdf' % settings.MEDIA_ROOT
         iUpload7.save(iIDPasta, iEmpresa.id_empresa)
+    
+        iUpload8                 = MultiuploaderImage()
+        iUpload8.key_data        = iUpload6.key_generate
+        iUpload8.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload8.fileName       = 'imagem_bmp.bmp'
+        iUpload8.image          = '%s/media_teste/imagem_bmp.bmp' % settings.MEDIA_ROOT
+        iUpload8.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload9                 = MultiuploaderImage()
+        iUpload9.key_data        = iUpload7.key_generate
+        iUpload9.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload9.fileName       = 'texto.docx'
+        iUpload9.image          = '%s/media_teste/texto.docx' % settings.MEDIA_ROOT
+        iUpload9.save(iIDPasta, iEmpresa.id_empresa)
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
@@ -236,6 +289,20 @@ class Test(TestCase):
         
         iVersao         = 7
         iUpload         = MultiuploaderImage.objects.filter()[6]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 8
+        iUpload         = MultiuploaderImage.objects.filter()[7]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 9
+        iUpload         = MultiuploaderImage.objects.filter()[8]
         iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
                                  upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
                                  eh_versao_atual= iEh_Versao_Atual)
