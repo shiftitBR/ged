@@ -7,7 +7,8 @@ Created on Aug 6, 2012
 from django.test                            import TestCase
 from controle                               import Controle as ControleOCR
 from django.conf                            import settings
-from PyProject_GED.autenticacao.models      import Empresa, Usuario
+from PyProject_GED.autenticacao.models      import Empresa, Usuario,\
+    Tipo_de_Usuario
 from PyProject_GED.seguranca.models         import Pasta
 from PyProject_GED.documento.models         import Tipo_de_Documento, Documento, Estado_da_Versao, Versao
 from PyProject_GED.multiuploader.models     import MultiuploaderImage
@@ -19,6 +20,7 @@ class Test(TestCase):
     
     def setUp(self):
         self.mokarEmpresa()
+        self.mokarTipoUsuario()
         self.mokarUsuario()
         self.mokarPasta()
         self.mokarTipoDocumento()
@@ -36,6 +38,7 @@ class Test(TestCase):
         Tipo_de_Documento.objects.all().delete()
         Pasta.objects.all().delete()
         Usuario.objects.all().delete()
+        Tipo_de_Usuario.objects.all().delete()
         Empresa.objects.all().delete()
         pass
 
@@ -133,9 +136,17 @@ class Test(TestCase):
         iEmpresa_2      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
         iEmpresa_2.save(False)
         
+    def mokarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()    
+        
     def mokarUsuario(self):
         iEmpresa_1      = Empresa.objects.filter(id_empresa= 1)[0]
-        iUsuario_1      = Usuario(empresa= iEmpresa_1)
+        iTipoUsuario    = Tipo_de_Usuario.objects.all()[0]
+        iEmail          = 'usuario1@teste.com.br'
+        iUsuario_1      = Usuario(empresa= iEmpresa_1, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_1.save()
         
     def mokarPasta(self):
