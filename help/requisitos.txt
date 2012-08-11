@@ -4,3 +4,10 @@
 - Fabric (easy-istall fabric)
 - Sorl-thumbnail (pip install sorl-thumbnail)
 - PIL
+- python-imaging
+- PDF Miner (pip install pdfminer)
+- PyUNO
+- LibreOficce
+- GCC C++
+- Leptonica
+- Tesseract

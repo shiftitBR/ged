@@ -6,7 +6,7 @@ Created on Aug 9, 2012
 
 # -*- coding: utf-8 -*- 
 
-from PyProject_GED          import constantes
+
 from Image                  import open as OpenImage
 from tesseract              import image_to_string
 
@@ -18,7 +18,7 @@ from cStringIO import StringIO
 import logging
 import os
 import uno
-from kivy.logger import console
+import constantes #@UnresolvedImport
 
 class Controle(object):
     
