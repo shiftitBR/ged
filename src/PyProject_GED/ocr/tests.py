@@ -44,23 +44,23 @@ class Test(TestCase):
 
 
     def testOCRImagemTIFF(self):
-        iIDVersao= Versao.objects.all()[0].id_versao
-        iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
+        iVersao= Versao.objects.all()[0]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
     
     def testOCRImagemJPEG(self):
-        iIDVersao= Versao.objects.all()[1].id_versao
-        iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
+        iVersao= Versao.objects.all()[1]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
         
     def testOCRImagemPNG(self):
-        iIDVersao= Versao.objects.all()[2].id_versao
-        iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
+        iVersao= Versao.objects.all()[2]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
     
     def testOCRImagemBMP(self):
-        iIDVersao= Versao.objects.all()[7].id_versao
-        iString= ControleOCR().obtemTextoDaImagem(iIDVersao)
+        iVersao= Versao.objects.all()[7]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
           
     def testLerTextoDOC(self):
@@ -82,8 +82,8 @@ class Test(TestCase):
         self.assertEquals(True, iEncontrou)
     
     def testLerTextoPDF(self):
-        iIDVersao= Versao.objects.all()[6].id_versao
-        iString= ControleOCR().obtemTextoDoPDF(iIDVersao)
+        iVersao= Versao.objects.all()[6]
+        iString= ControleOCR().obtemTextoDoPDF(iVersao)
         self.assertEquals(True, len(iString) > 0)
     
     def testLerTextoDOCX(self):

@@ -9,7 +9,6 @@ Created on Aug 9, 2012
 from PyProject_GED          import constantes
 from Image                  import open as OpenImage
 from tesseract              import image_to_string
-from django.db.models       import get_model
 
 from pdfminer.pdfinterp import PDFResourceManager, process_pdf
 from pdfminer.converter import TextConverter
@@ -24,7 +23,6 @@ from kivy.logger import console
 class Controle(object):
     
     oLogger= logging.getLogger('PyProject_GED.controle')
-    mVersao= get_model('documento', 'Versao')
     
     def setLogger(self, vLogger):
         self.oLogger= vLogger
@@ -36,10 +34,10 @@ class Controle(object):
         try:
             iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
             if iExtencao in constantes.cntOCRExtencoesPDF:
-                iTexto= self.obtemTextoDoPDF(vVersao.id_versao)
+                iTexto= self.obtemTextoDoPDF(vVersao)
                 iExecutou= len(iTexto) > 0
             elif iExtencao in constantes.cntOCRExtencoesImagens:
-                iTexto= self.obtemTextoDaImagem(vVersao.id_versao)
+                iTexto= self.obtemTextoDaImagem(vVersao)
                 iExecutou= len(iTexto) > 0
             else:
                 iTexto= 'Nao foi possivel passar o OCR'
@@ -49,9 +47,9 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
             return False
     
-    def obtemTextoDaImagem(self, vIDVersao):
+    def obtemTextoDaImagem(self, vVersao):
         try:
-            iEnderecoImagem= self.mVersao().obtemCaminhoArquivo(vIDVersao)
+            iEnderecoImagem= vVersao.upload.image
             iTexto= image_to_string(OpenImage(iEnderecoImagem))
             self.criaArquivoOCR(iEnderecoImagem, iTexto)
             return iTexto
@@ -59,9 +57,9 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
             return False
     
-    def obtemTextoDoPDF(self, vIDVersao):
+    def obtemTextoDoPDF(self, vVersao):
         try:
-            iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
+            iEnderecoDocumento= vVersao.upload.image
             iTexto= self.lePDF(str(iEnderecoDocumento))
             self.criaArquivoOCR(iEnderecoDocumento, iTexto)
             return iTexto
