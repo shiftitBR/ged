@@ -39,7 +39,6 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoPendente)
                 Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoEncaminhar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
-                return True
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False

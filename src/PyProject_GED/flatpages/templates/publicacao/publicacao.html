@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block conteudo %}
+
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<center>
+	<header class="jumbotron subhead" id="overview">
+	  <h1><strong>Publicação</strong></h1>
+	  <p class="lead">Listagem de Documentos Publicados</p>
+	</header>
+	</center>
+	
+	<div class="container">
+		
+		<table class="table table-striped">
+	        <thead>
+	          <tr>
+	            <th>Remetente</th>
+	            <th>Arquivo</th>
+	            <th>Assunto</th>
+	            <th>Visualização</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        {% for publicacao in iListaPublicacao %}
+	          <tr>
+	            <td>{{publicacao.nome_remetente}}</td>
+	            <td>{{publicacao.nome_arquivo}}</td>
+	            <td>{{publicacao.assunto}}</td>
+	            <td>
+		            <div class="btn-group">   
+            		{% if publicacao.tipo_visuzalizacao == 1 %}
+            			<a class="btn btn-primary" href="{{publicacao.caminho_visualizar}}" target="_blank" title="{{publicacao.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
+            		{% endif %}
+            		{% if publicacao.tipo_visuzalizacao == 2 %}
+            			<a class="btn btn-primary fancybox" href="{{publicacao.caminho_visualizar}}" data-fancybox-group="gallery" title="{{publicacao.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
+            		{% endif %}
+            		{% if publicacao.tipo_visuzalizacao == 3 %}
+            			<a class="btn btn-primary" href="/download/{{publicacao.id_versao}}/"><i class="icon-download-alt icon-white"></i>  Visualizar</a>
+            		{% endif %}
+			         </div>
+				</td>
+	          </tr>
+	          {% empty %}
+			  {% endfor %}	
+	        </tbody>
+      	</table>
+		
+	</div>
+	
+	
+{% endblock conteudo %}

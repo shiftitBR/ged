@@ -19,7 +19,6 @@ import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
-from duplicity.asyncscheduler import thread
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -40,7 +39,20 @@ def documentos(vRequest, vTitulo):
             for i in range(len(iListaDocumentos)): 
                 if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
                     iListaCheck.append(iListaDocumentos[i].id_versao)
-                    iListaVersao = str(iListaDocumentos[i].id_versao) + iListaVersao
+                    iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
+                
+            if 'email' in vRequest.POST['supporttype']:
+                if len(iListaCheck) > 0:
+                    iAcao= 1
+                    vRequest.session['ListaVersao']= iListaVersao
+                else :
+                    iAcao= 0
+            if 'publicar' in vRequest.POST['supporttype']:
+                if len(iListaCheck) > 0:
+                    iAcao= 2
+                    vRequest.session['ListaVersao']= iListaVersao
+                else :
+                    iAcao= 0
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
             return False
@@ -120,7 +132,6 @@ def importar(vRequest, vTitulo):
         iTamListaIndices    = len(iListaIndices)
         iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
         iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
-        #gerarProtocolo 
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get importar: ' + str(e))
@@ -130,7 +141,7 @@ def importar(vRequest, vTitulo):
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False :
+                if vRequest.session['Image'] != False and not 'cancelar' in vRequest.POST :
                     iImage= vRequest.session['Image']
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
@@ -153,8 +164,9 @@ def importar(vRequest, vTitulo):
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
                     iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
                                                              iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
+                    iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
-                                                    1, 1, iImage.key_data, '1234567')
+                                                    1, 1, iImage.key_data, iProtocolo)
                     #Salvar Indices
                     for i in range(len(iListaIndices)):
                         iIndice = iListaIndices[i]
@@ -182,8 +194,6 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         iUsuario    = Usuario().obtemUsuario(vRequest.user)
         iVersaoBase = Versao().obtemVersao(vIDVersao)
         iDocumento  = iVersaoBase.documento
-        #gerarProtocolo 
-        
         vIDFuncao = 0
         if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
             iPossuiPermissao= True
@@ -196,11 +206,12 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False :
+                if vRequest.session['Image'] != False and not 'cancelar' in vRequest.POST  :
                     iImage= vRequest.session['Image']
-                    iDescricao= vRequest.POST.get('descricao')
+                    iDescricao  = vRequest.POST.get('descricao')
+                    iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, int(iVersaoBase.versao)+1)
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
-                                                        1, int(iVersaoBase.versao)+1, iImage.key_data, '1234567', 
+                                                        1, int(iVersaoBase.versao)+1, iImage.key_data, iProtocolo, 
                                                         vDsc_Modificacao=iDescricao)
                     Versao().obsoletarVersao(iVersaoBase)
                     Historico().salvaHistorico(iVersaoBase.id_versao, constantes.cntEventoHistoricoObsoletar, 
@@ -238,14 +249,17 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
-            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-            iFile = open(iArquivo,"r")
-            response = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-            return response
+            print '>>>>>>>>>>>>>>>>>>>> post'
+            print vRequest.POST
+            if not 'cancelar' in vRequest.POST :
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+                iFile = open(iArquivo,"r")
+                response = HttpResponse(iFile.read())
+                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+                return response
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
                 return False
@@ -270,7 +284,7 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
-            if vRequest.POST.get('comentario') != '':
+            if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
                 Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
                 Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
                 Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
@@ -299,7 +313,7 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
-            if vRequest.POST.get('comentario') != '':
+            if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
                 Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 

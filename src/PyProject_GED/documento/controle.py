@@ -2,7 +2,6 @@
 
 import logging
 import datetime
-
 import constantes #@UnresolvedImport
 
 class Controle(object):
@@ -83,4 +82,4 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))
             return False
-    
+        

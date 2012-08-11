@@ -30,7 +30,6 @@
     </div>
 
     <div class="span9">
-
 	<div class="subnav">
 	    <ul class="nav nav-pills">
 	      <li class=""><a href="#">Digitalizar Documento(s)</a></li>
@@ -38,11 +37,13 @@
 	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documento(s)</a></li>
 	      <li class=""><a href="javascript:getsupport('norma')">Associar Norma</a></li>
 	      <li class=""><a href="javascript:getsupport('email')">Enviar E-mail</a></li>
+	      <li class=""><a href="javascript:getsupport('publicar')">Publicar</a></li>
 	    </ul>
   	</div> 
   	<br>
   	
 	<form name= "acao" id="formTabela" action="" method="post">{% csrf_token %}
+		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		<table id= "id_tabelaDocumentos" class="table table-striped table-bordered table-condensed">
 			<thead>
 			  <tr>

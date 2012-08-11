@@ -395,6 +395,15 @@ class Test(TestCase):
         iListaDeEstados= Estado_da_Versao().obtemEstadosDaVersao()
         self.assertEquals(1, len(iListaDeEstados))
         
+    def testGerarProtocolo(self):
+        iVersao     = Versao.objects.filter()[0]
+        iAno        = str(datetime.datetime.year)
+        iMes        = str(datetime.datetime.month)
+        iDia        = str(datetime.datetime.day)
+        iProtocolo  = '%s%s%s%s%s' %(iAno, iMes, iDia, str(iVersao.documento.id_documento), str(iVersao.id_versao))
+        print iProtocolo
+        
+        
     #-----------------------------------------------------MOKS---------------------------------------------------
     
     

@@ -20,6 +20,8 @@ cntEventoHistoricoDownload  = 6
 cntEventoHistoricoVisualizar= 7
 cntEventoHistoricoEncaminhar= 8
 cntEventoHistoricoObsoletar = 9
+cntEventoHistoricoEmail     = 10
+cntEventoHistoricoPublicar  = 11
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -41,3 +43,7 @@ cntOCRExtencoesImagens      = ['.jpg', '.png', '.tif', '.bmp']
 cntOCRExtencoesDocumentos   = ['.doc', '.docx', '.odt']
 cntOCRExtencoesTextos       = ['.txt', '.ocr']
 cntOCRExtencoesPDF          = ['.pdf',]
+
+#TipoUsuario
+cntTipoUsuarioSistema       = 1
+cntTipoUsuarioContato       = 2

@@ -8,7 +8,7 @@ PROJECT_ROOT_URL= 'http://localhost:8000/'
 
 LOCAL= True
 DEBUG = True
-EMAIL = False
+EMAIL = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -146,6 +146,7 @@ INSTALLED_APPS = (
 #    'south',
     'multiuploader',
     'workflow',
+    'envioemail',
     'sorl.thumbnail',
     'ocr',
 )
