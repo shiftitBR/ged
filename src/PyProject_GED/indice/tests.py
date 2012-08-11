@@ -9,7 +9,7 @@ from models                             import Indice
 from models                             import Indice_Versao_Valor
 from PyProject_GED.documento.models     import Tipo_de_Documento, Documento, Estado_da_Versao
 from PyProject_GED.documento.controle   import Controle as ControleDocumentos
-from PyProject_GED.autenticacao.models  import Usuario
+from PyProject_GED.autenticacao.models  import Usuario, Tipo_de_Usuario
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.seguranca.models     import Pasta
 
@@ -20,6 +20,7 @@ class Test(TestCase):
     
     def setUp(self):
         self.mokarEmpresa()
+        self.mokarTipoUsuario()
         self.mokarUsuario()
         self.mokarPasta()
         self.mokarTipoDocumento()
@@ -81,11 +82,17 @@ class Test(TestCase):
         iEmpresa_1      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
         iEmpresa_1.save(False)
     
+    def mokarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()
+    
     def mokarUsuario(self):
         iEmpresa       = Empresa.objects.filter(id_empresa= 1)[0]
-        
+        iTipoUsuario    = Tipo_de_Usuario.objects.all()[0]
         iEmail          = 'usuario1@teste.com.br'
-        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail)
+        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_1.save()
         
     def mokarIndice(self):

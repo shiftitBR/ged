@@ -3,7 +3,7 @@ from django.test                                import TestCase
 from django.conf                                import settings
 
 from autenticacao.models                        import Empresa #@UnresolvedImport
-from PyProject_GED.autenticacao.models          import Usuario
+from PyProject_GED.autenticacao.models          import Usuario, Tipo_de_Usuario
 from seguranca.models                           import Pasta #@UnresolvedImport
 from multiuploader.models                       import MultiuploaderImage #@UnresolvedImport
 
@@ -21,6 +21,7 @@ class Test(TestCase):
     
     def setUp(self):
         self.mokarEmpresa()
+        self.mokarTipoUsuario()
         self.mokarUsuario()
         self.mokarPasta()
         self.mokarTipoDocumento()
@@ -45,6 +46,7 @@ class Test(TestCase):
         Tipo_de_Documento.objects.all().delete()
         Pasta.objects.all().delete()
         Usuario.objects.all().delete()
+        Tipo_de_Usuario.objects.all().delete()
         Empresa.objects.all().delete()
         pass
     
@@ -419,16 +421,23 @@ class Test(TestCase):
         iEh_Ativo       = True
         iEmpresa_2      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
         iEmpresa_2.save(False)
+    
+    def mokarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()
         
     def mokarUsuario(self):
         iEmpresa       = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoUsuario   = Tipo_de_Usuario.objects.all()[0]
         
         iEmail          = 'usuario1@teste.com.br'
-        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail)
+        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_1.save()
         
         iEmail          = 'usuario2@teste.com.br'
-        iUsuario_2      = Usuario(empresa= iEmpresa, email= iEmail)
+        iUsuario_2      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_2.save()
         
     def mokarPasta(self):

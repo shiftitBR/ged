@@ -96,7 +96,7 @@ class Empresa(models.Model):
             return False 
         
         
-#---------------------------TIPO USUARIO -----------------------------------
+#---------------------------USUARIO -----------------------------------
         
 class Tipo_de_Usuario(models.Model):
     id_tipo_de_usuario  = models.IntegerField(max_length=3, primary_key=True)
@@ -117,8 +117,6 @@ class Tipo_de_Usuario(models.Model):
         super(Tipo_de_Usuario, self).save()
     
     
-#---------------------------USUARIO---------------------------------------
-
 class Usuario(User):
     empresa         = models.ForeignKey(Empresa, null= False)
     tipo_usuario    = models.ForeignKey(Tipo_de_Usuario, null= False)

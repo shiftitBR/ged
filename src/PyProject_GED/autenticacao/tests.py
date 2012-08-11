@@ -4,22 +4,24 @@ from django.contrib.auth.models                 import User
 
 from models                                     import Empresa
 from models                                     import Usuario
-from PyProject_GED.seguranca.models             import Pasta
+from models                                     import Tipo_de_Usuario
 
 import time
+
 
 class Test(TestCase):
     
     def setUp(self):
         self.mokarEmpresa()
+        self.mokarTipoUsuario()
         self.mokarUsuario()
         pass
 
     def tearDown(self):
         time.sleep(2)
-        Pasta.objects.all().delete()
-        Empresa.objects.all().delete()
         Usuario.objects.all().delete()
+        Tipo_de_Usuario.objects.all().delete()
+        Empresa.objects.all().delete()
         pass
 
 
@@ -31,10 +33,18 @@ class Test(TestCase):
         iEmpresa.save(False)
         self.assertEquals(iEmpresa.id_empresa, (Empresa.objects.filter(nome= iNome)[0].id_empresa))
         
+    def testCriarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()
+        self.assertEqual(2, Tipo_de_Usuario.objects.count())
+    
     def testCriarUsuario(self):
         iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoUsuario    = Tipo_de_Usuario.objects.all()[0]
         iEmail          = 'usuario@teste.com.br'
-        iUsuario        = Usuario(empresa= iEmpresa, email= iEmail)
+        iUsuario        = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario.save()
         self.assertEquals(iUsuario.id, (Usuario.objects.filter(email= 'usuario@teste.com.br')[0].id))
     
@@ -73,22 +83,29 @@ class Test(TestCase):
         iEh_Ativo       = True
         iEmpresa_2      = Empresa(nome= iNome, pasta_raiz= iPastaRaiz, eh_ativo= iEh_Ativo)
         iEmpresa_2.save(False)
+    
+    def mokarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()
         
     def mokarUsuario(self):
         iEmpresa_1      = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoUsuario_1  = Tipo_de_Usuario.objects.all()[0]
         iEmail_1        = 'usuario1@teste.com.br'
-        iUsuario_1      = Usuario(empresa= iEmpresa_1, email= iEmail_1)
+        iUsuario_1      = Usuario(empresa= iEmpresa_1, email= iEmail_1, tipo_usuario= iTipoUsuario_1)
         iUsuario_1.save()
         
         iEmail_2        = 'usuario2@teste.com.br'
-        iUsuario_2      = Usuario(empresa= iEmpresa_1, email= iEmail_2)
+        iUsuario_2      = Usuario(empresa= iEmpresa_1, email= iEmail_2, tipo_usuario= iTipoUsuario_1)
         iUsuario_2.save()
         
         iEmpresa_2      = Empresa.objects.filter(id_empresa= 2)[0]
         iEmail_3        = 'usuario3@teste.com.br'
-        iUsuario_3      = Usuario(empresa= iEmpresa_2, email= iEmail_3)
+        iUsuario_3      = Usuario(empresa= iEmpresa_2, email= iEmail_3, tipo_usuario= iTipoUsuario_1)
         iUsuario_3.save()
         
         iEmail_4        = 'usuario4@teste.com.br'
-        iUsuario_4      = Usuario(empresa= iEmpresa_2, email= iEmail_4)
+        iUsuario_4      = Usuario(empresa= iEmpresa_2, email= iEmail_4, tipo_usuario= iTipoUsuario_1)
         iUsuario_4.save()
