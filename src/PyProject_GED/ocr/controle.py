@@ -19,6 +19,7 @@ from cStringIO import StringIO
 import logging
 import os
 import uno
+from kivy.logger import console
 
 class Controle(object):
     
@@ -71,9 +72,12 @@ class Controle(object):
     def buscaEmConteudoDoDocumento(self, vVersao, vString):
         try:
             iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
+            iEncontrou= False
             if iExtencao in constantes.cntOCRExtencoesDocumentos:
                 iEncontrou= self.buscaTextoNoDocumento(vString, vVersao)
-            else:
+            elif iExtencao in constantes.cntOCRExtencoesImagens or \
+                 iExtencao in constantes.cntOCRExtencoesPDF or \
+                 iExtencao in constantes.cntOCRExtencoesTextos:
                 iEncontrou= self.buscaTextoNoTXT(vString, vVersao= vVersao)
             return iEncontrou
         except Exception, e:

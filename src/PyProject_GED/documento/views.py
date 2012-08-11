@@ -11,6 +11,7 @@ from PyProject_GED.seguranca.models     import Pasta
 from PyProject_GED.workflow.models      import Pendencia
 from PyProject_GED.documento.models     import Tipo_de_Documento
 from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
+from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from controle                           import Controle as DocumentoControle
 from models                             import Versao, Documento
 from forms                              import FormCheckin, FormUploadDeArquivo
@@ -174,6 +175,7 @@ def importar(vRequest, vTitulo):
                         if iValor != '':
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
+                    ControleOCR().executaOCR(iVersao)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel importar: ' + str(e))
                 return False
@@ -219,6 +221,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                     Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoCheckIn, 
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                     vRequest.session['Image']= False
+                    ControleOCR().executaOCR(iVersao)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
