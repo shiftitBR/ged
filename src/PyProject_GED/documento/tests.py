@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.test                                import TestCase
+from django.conf                                import settings
 
 from autenticacao.models                        import Empresa #@UnresolvedImport
 from PyProject_GED.autenticacao.models          import Usuario
@@ -98,7 +99,7 @@ class Test(TestCase):
         iIDPasta= Pasta.objects.filter(empresa= iIDEmpresa)[0].id_pasta
         iLista= Versao().obtemListaDeDocumentosDaPasta(iIDEmpresa, iIDPasta)
         
-        self.assertEquals(4, len(iLista))
+        self.assertEquals(7, len(iLista))
     
     def testObtemListaDeVersoesDoDocumento(self):
         iIDVersao= Versao.objects.all()[0].id_versao
@@ -126,7 +127,7 @@ class Test(TestCase):
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
                                     eh_publico= iEhPublico)
         iDocumento.save()
-        self.assertEquals(iDocumento.id_documento, Documento.objects.filter(empresa= iEmpresa.id_empresa).filter(id_documento= 5)[0].id_documento)
+        self.assertEquals(iDocumento.id_documento, Documento.objects.filter(empresa= iEmpresa.id_empresa).filter(id_documento= 8)[0].id_documento)
     
     def testSalvaDocumento(self):
         iIDEmpresa= Empresa.objects.all()[0].id_empresa
@@ -142,7 +143,7 @@ class Test(TestCase):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
         iIDEmpresa= iEmpresa.id_empresa
         iLista= Versao().buscaDocumentos(iIDEmpresa)
-        self.assertEquals(4, len(iLista))
+        self.assertEquals(7, len(iLista))
     
     def testBuscaDocumentosPorAssunto(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
@@ -156,13 +157,13 @@ class Test(TestCase):
         self.assertEquals(1, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto2)
-        self.assertEquals(2, len(iLista))
+        self.assertEquals(4, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto3)
-        self.assertEquals(2, len(iLista))
+        self.assertEquals(4, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto3)
-        self.assertEquals(2, len(iLista))
+        self.assertEquals(4, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto4)
         self.assertEquals(0, len(iLista))
@@ -205,7 +206,7 @@ class Test(TestCase):
         iTipoDocumento1= Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)[0].id_tipo_documento
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vIDTipoDocumento= iTipoDocumento1)
-        self.assertEquals(4, len(iLista))
+        self.assertEquals(7, len(iLista))
     
     def testBuscaDocumentosPorEstadoDoDocumento(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
@@ -213,7 +214,7 @@ class Test(TestCase):
         iEstadoDoDocumento1= str(Estado_da_Versao.objects.all()[0].id_estado_da_versao)
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vIDEstadoDoDocumento= iEstadoDoDocumento1)
-        self.assertEquals(4, len(iLista))
+        self.assertEquals(7, len(iLista))
     
     def testBuscaDocumentosPorDataDeCriacao(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
@@ -222,13 +223,13 @@ class Test(TestCase):
         iDataFinal1= ControleDocumentos().formataData('05/08/2012')
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vDataDeCriacaoInicial= iDataInicial1)
-        self.assertEquals(3, len(iLista))
+        self.assertEquals(4, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vDataDeCriacaoInicial= iDataInicial1, vDataDeCriacaoFinal= iDataFinal1)
         self.assertEquals(2, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vDataDeCriacaoFinal= iDataFinal1)
-        self.assertEquals(3, len(iLista))
+        self.assertEquals(5, len(iLista))
     
     def testBuscaDocumentosPorIndicePersonalizadoTipoString(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
@@ -258,6 +259,22 @@ class Test(TestCase):
         iLista= Versao().buscaDocumentos(iIDEmpresa, vListaIndice= iListaIndice)
         self.assertEquals(4, len(iLista))
     
+    def testBuscaDocumentosPorConteudo(self):
+        iIDEmpresa= Empresa.objects.filter(id_empresa=1)[0].id_empresa
+        iConteudo1= 'FrED'
+        iConteudo2= 'RaPOsa'
+        iConteudo3= 'Marisco'
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo1)
+        self.assertEquals(2, len(iLista))
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo2)
+        self.assertEquals(2, len(iLista))
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo3)
+        self.assertEquals(0, len(iLista))
+        
+    
     def testBuscaDocumentosComMultiplosFiltros(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
         iIDEmpresa= iEmpresa.id_empresa
@@ -275,6 +292,8 @@ class Test(TestCase):
         iEstadoDoDocumento1= str(Estado_da_Versao.objects.all()[0].id_estado_da_versao)
         iIndice2= (2, 'teste_string2')
         iIndice3= (2, 'teste_string1')
+        iConteudo1= 'RaPOsa'
+        iConteudo2= 'Marisco'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto1, vProtocolo= iProtocolo1)
         self.assertEquals(0, len(iLista))
@@ -336,6 +355,19 @@ class Test(TestCase):
         iLista= Versao().buscaDocumentos(iIDEmpresa, vIDUsuarioCriador= iUsuarioCriador1, 
                                          vProtocolo= iProtocolo3, vIDTipoDocumento= iTipoDocumento1,
                                          vIDEstadoDoDocumento= iEstadoDoDocumento1, vListaIndice= iListaIndice)
+        self.assertEquals(1, len(iLista))
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto3, vProtocolo= iProtocolo3, 
+                                         vIDUsuarioCriador= iUsuarioCriador1, 
+                                         vIDTipoDocumento= iTipoDocumento1, vConteudo= iConteudo2 )
+        self.assertEquals(0, len(iLista))
+        
+        iListaIndice= [] 
+        iListaIndice.append(iIndice2)
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vIDUsuarioCriador= iUsuarioCriador1, 
+                                         vProtocolo= iProtocolo3, vIDTipoDocumento= iTipoDocumento1,
+                                         vIDEstadoDoDocumento= iEstadoDoDocumento1, vListaIndice= iListaIndice,
+                                         vConteudo= iConteudo1)
         self.assertEquals(1, len(iLista))
         
         
@@ -405,14 +437,36 @@ class Test(TestCase):
         iTipoDocumento.save()
     
     def mokarMultiUploader(self):
-        iUpload                 = MultiuploaderImage()
-        iUpload.filename        = 'teste.txt'
-        iUpload.image           = '/documento/teste.txt'
-        iUpload.key_data        = iUpload.key_generate
-        iUpload.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
-        iEmpresa                = Empresa.objects.filter(id_empresa=1)[0]
-        iIDPasta                = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0].id_pasta
-        iUpload.save(iIDPasta, iEmpresa.id_empresa)
+        iEmpresa                 = Empresa.objects.filter(id_empresa=1)[0]
+        iIDPasta                 = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0].id_pasta
+        
+        iUpload1                 = MultiuploaderImage()
+        iUpload1.filename        = 'teste.txt'
+        iUpload1.image           = '%s/media_teste/teste.txt' % settings.MEDIA_ROOT
+        iUpload1.key_data        = iUpload1.key_generate
+        iUpload1.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload1.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload2                 = MultiuploaderImage()
+        iUpload2.key_data        = iUpload2.key_generate
+        iUpload2.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload2.filename        = 'texto.pdf'
+        iUpload2.image           = '%s/media_teste/texto.pdf' % settings.MEDIA_ROOT
+        iUpload2.save(iIDPasta, iEmpresa.id_empresa)
+    
+        iUpload3                 = MultiuploaderImage()
+        iUpload3.key_data        = iUpload3.key_generate
+        iUpload3.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload3.filename        = 'imagem_bmp.bmp'
+        iUpload3.image           = '%s/media_teste/imagem_bmp.bmp' % settings.MEDIA_ROOT
+        iUpload3.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload4                 = MultiuploaderImage()
+        iUpload4.key_data        = iUpload4.key_generate
+        iUpload4.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload4.filename        = 'texto.docx'
+        iUpload4.image           = '%s/media_teste/texto.docx' % settings.MEDIA_ROOT
+        iUpload4.save(iIDPasta, iEmpresa.id_empresa)
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
@@ -448,6 +502,27 @@ class Test(TestCase):
                                     eh_publico= iEhPublico)
         iDocumento4.save()
         
+        iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
+        iAssunto        = 'Documento PDF'
+        iDocumento5     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
+                                    usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
+                                    eh_publico= iEhPublico)
+        iDocumento5.save()
+        
+        iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
+        iAssunto        = 'Imagem BMP'
+        iDocumento6     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
+                                    usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
+                                    eh_publico= iEhPublico)
+        iDocumento6.save()
+        
+        iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
+        iAssunto        = 'Documento DOCX'
+        iDocumento7     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
+                                    usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
+                                    eh_publico= iEhPublico)
+        iDocumento7.save()
+        
     def mokarEstadoVersao(self):
         iDescricao      = 'Disponivel'
         iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
@@ -466,12 +541,14 @@ class Test(TestCase):
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
+        iUpload         = MultiuploaderImage.objects.filter()[2]
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iDocumento      = Documento.objects.filter(id_documento= 2)[0]
         iProtocolo      = '1002'
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
+        iUpload         = MultiuploaderImage.objects.filter()[0]
         iDataCriacao    = ControleDocumentos().formataData('03/09/2012')
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 3)[0]
@@ -483,6 +560,29 @@ class Test(TestCase):
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 4)[0]
         iProtocolo      = '1004'
+        Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
+                             iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
+        
+        iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
+        iDocumento      = Documento.objects.filter(id_documento= 5)[0]
+        iProtocolo      = '1005'
+        iUpload         = MultiuploaderImage.objects.all()[1]
+        Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
+                             iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
+        
+        iDataCriacao    = ControleDocumentos().formataData('03/09/2012')
+        iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
+        iDocumento      = Documento.objects.filter(id_documento= 6)[0]
+        iProtocolo      = '1006'
+        iUpload         = MultiuploaderImage.objects.all()[2]
+        Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
+                             iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
+        
+        iDataCriacao    = ControleDocumentos().formataData('03/07/2012')
+        iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
+        iDocumento      = Documento.objects.filter(id_documento= 7)[0]
+        iProtocolo      = '1007'
+        iUpload         = MultiuploaderImage.objects.all()[3]
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
     

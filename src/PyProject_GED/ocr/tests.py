@@ -61,21 +61,21 @@ class Test(TestCase):
         self.assertEquals(True, len(iString) > 0)
           
     def testLerTextoDOC(self):
-        iIDVersao= Versao.objects.all()[3].id_versao
+        iVersao= Versao.objects.all()[3]
         iTexto= 'Fred'
-        iEncontrou= ControleOCR().buscaTextoNoDocumento(iIDVersao, iTexto)
+        iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
     
     def testLerTextoODT(self):
-        iIDVersao= Versao.objects.all()[4].id_versao
+        iVersao= Versao.objects.all()[4]
         iTexto= 'FRED'
-        iEncontrou= ControleOCR().buscaTextoNoDocumento(iIDVersao, iTexto)
+        iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
         
     def testLerTextoTXT(self):
-        iIDVersao= Versao.objects.all()[5].id_versao
+        iVersao= Versao.objects.all()[5]
         iTexto= 'FRED'
-        iEncontrou= ControleOCR().buscaTextoNoTXT(iTexto, vIDVersao= iIDVersao)
+        iEncontrou= ControleOCR().buscaTextoNoTXT(iTexto, vVersao= iVersao)
         self.assertEquals(True, iEncontrou)
     
     def testLerTextoPDF(self):
@@ -84,9 +84,9 @@ class Test(TestCase):
         self.assertEquals(True, len(iString) > 0)
     
     def testLerTextoDOCX(self):
-        iIDVersao= Versao.objects.all()[8].id_versao
+        iVersao= Versao.objects.all()[8]
         iTexto= 'FRED'
-        iEncontrou= ControleOCR().buscaTextoNoDocumento(iIDVersao, iTexto)
+        iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
     
     def testExecutaOCR(self):

@@ -72,21 +72,21 @@ class Controle(object):
         try:
             iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
             if iExtencao in constantes.cntOCRExtencoesDocumentos:
-                iEncontrou= self.buscaTextoNoDocumento(vVersao.id_versao, vString)
+                iEncontrou= self.buscaTextoNoDocumento(vString, vVersao)
             else:
-                iEncontrou= self.buscaTextoNoTXT(vString, vIDVersao= vVersao.id_versao)
+                iEncontrou= self.buscaTextoNoTXT(vString, vVersao= vVersao)
             return iEncontrou
         except Exception, e:
             self.getLogger().error('Nao foi possivel buscar texto no documento: ' + str(e))
             return False
     
-    def buscaTextoNoDocumento(self, vIDVersao, vTexto):
+    def buscaTextoNoDocumento(self, vTexto, vVersao):
         try:
             local = uno.getComponentContext()
             resolver = local.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", local)
             context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
             desktop = context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", context)
-            iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
+            iEnderecoDocumento= str(vVersao.upload.image)
             document = desktop.loadComponentFromURL("file://%s" % iEnderecoDocumento ,"_blank", 0, ())
             search = document.createSearchDescriptor()
             search.SearchString = vTexto
@@ -98,10 +98,10 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel buscar texto do documento: ' + str(e))
             return False
         
-    def buscaTextoNoTXT(self, vTexto, vIDVersao=None, vEnderecoArquivoTXT=None):
+    def buscaTextoNoTXT(self, vTexto, vVersao=None, vEnderecoArquivoTXT=None):
         try:
-            if vIDVersao != None:
-                iEnderecoDocumento= self.mVersao().obtemCaminhoArquivo(vIDVersao)
+            if vVersao != None:
+                iEnderecoDocumento= str(vVersao.upload.image)
             else:
                 iEnderecoDocumento= vEnderecoArquivoTXT
             iNomeArquivo, iExtencaoArquivo = os.path.splitext(str(iEnderecoDocumento))

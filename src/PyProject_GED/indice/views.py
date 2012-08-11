@@ -20,6 +20,7 @@ def busca(vRequest, vTitulo):
         iNormas= vRequest.POST.get('normas')
         iTipoDocumento= vRequest.POST.get('tipo_documento')
         iEstado= vRequest.POST.get('estado')
+        iConteudo= vRequest.POST.get('conteudo')
         iListaIDIndices= []
         if 'buscaAcancada' in vRequest.POST:
             print vRequest.POST
@@ -29,7 +30,7 @@ def busca(vRequest, vTitulo):
                     iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
         iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                    iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
-                                                   iDataFim, iListaIDIndices)
+                                                   iDataFim, iListaIDIndices, iConteudo)
     else:
         form = FormBuscaDocumento(iIDEmpresa= iIDEmpresa)        
         

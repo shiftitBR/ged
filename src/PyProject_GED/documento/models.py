@@ -14,6 +14,7 @@ from objetos_auxiliares         import Documento as DocumentoAuxiliar
 from objetos_auxiliares         import Versoes as VersaoAuxiliar
 from controle                   import Controle as DocumentoControle
 from django.db.models           import get_model
+from PyProject_GED.ocr.controle import Controle as ControleOCR
 
 import datetime
 import logging
@@ -362,7 +363,7 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None):
         try:
             iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
             if vAssunto not in (None, ''):
@@ -389,6 +390,13 @@ class Versao(models.Model):
                     for i in range(len(iListaDeVersoesEncontradas)):
                         iListaVersoesIndice= mIndice_Versao_Valor().obtemIDVersoesFiltradosPorIndice(vIDEmpresa, iIDIndice, iValorIndice)
                         iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(id_versao__in = iListaVersoesIndice)
+            if vConteudo not in (None, ''):
+                iListaDeVersoes= []
+                for i in range(len(iListaDeVersoesEncontradas)):
+                    iEncontrouConteudo= ControleOCR().buscaEmConteudoDoDocumento(iListaDeVersoesEncontradas[i], vConteudo)
+                    if iEncontrouConteudo:
+                        iListaDeVersoes.append(iListaDeVersoesEncontradas[i])
+                iListaDeVersoesEncontradas= iListaDeVersoes
             iListaDocumentosAuxiliar= []
             for i in range(len(iListaDeVersoesEncontradas)):
                 iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iListaDeVersoesEncontradas[i].documento)
