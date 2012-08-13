@@ -6,8 +6,6 @@ Created on Jul 18, 2012
 
 from django.db                          import models
 from autenticacao.models                import Empresa #@UnresolvedImport
-from PyProject_GED                      import constantes
-from django.db.models                   import get_model
 
 import logging
 
@@ -180,7 +178,7 @@ class Firewall(models.Model):
         db_table= 'tb_firewall'
     
     def __unicode__(self):
-        return self.descricacao
+        return self.ip
     
     def save(self):  
         if len(Firewall.objects.order_by('-id_firewall')) > 0:   
@@ -189,6 +187,25 @@ class Firewall(models.Model):
         else:
             self.id_firewall= 1
         super(Firewall, self).save()
+        
+    def verificaIP (self, vIP, vEmpresa):
+        try :
+            iPossivel= False
+            iListaFirewall= Firewall.objects.filter(empresa= vEmpresa)
+            if len(iListaFirewall) == 0:
+                return True
+            iListaIP= vIP.split('.')
+            for i in range(len(iListaFirewall)):
+                iFirewall= iListaFirewall[i].ip.split('.')
+                if iListaIP[0] == iFirewall[0] and iListaIP[1] == iFirewall[1] and iListaIP[2] == iFirewall[2] and iListaIP[3] == iFirewall[3]:
+                    iPossivel=True
+                elif iFirewall[2] == '0' and iFirewall[3] == '0':
+                    if iListaIP[0] == iFirewall[0] and iListaIP[1] == iFirewall[1]:
+                        iPossivel=True
+            return iPossivel
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificar IP: ' + str(e))
+            return False
 
 class Firewall_Grupo(models.Model):
     id_firewall_grupo       = models.IntegerField(max_length=3, primary_key=True)

@@ -178,7 +178,7 @@ LOGGING = {
         },
     }
 }
-LOGIN_URL = '/login_error/'
+LOGIN_URL = '/login_error/0/'
 LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/documentos/'
 

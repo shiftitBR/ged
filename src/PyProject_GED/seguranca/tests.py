@@ -48,7 +48,7 @@ class Test(TestCase):
         iIDPasta= Pasta.objects.all()[0].id_pasta
         iIDEmpresa= Empresa.objects.all()[0].id_empresa
         iDiretorio= Pasta().obtemDiretorioUpload(iIDPasta, iIDEmpresa)
-        self.assertEquals('/home/spengler/Git/GED/PyProject_GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
+        self.assertEquals('/home/diego/git/GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
 
     def testMontaDiretorioPasta(self):
         iPasta= Pasta.objects.all()[0]
@@ -83,6 +83,24 @@ class Test(TestCase):
         iFirewallGrupo.save()
         self.assertEquals(iFirewallGrupo.id_firewall_grupo, Firewall_Grupo.objects.filter(firewall= iFirewall.id_firewall)[0].id_firewall_grupo)
             
+    def verificaIP(self):
+        iEmpresa    = Empresa.objects.filter(id_empresa= 1)[0]
+        iIP         = '127.0.0.1'
+        iPossivel= False
+        iListaFirewall= Firewall.objects.filter(empresa= iEmpresa)
+        if len(iListaFirewall) == 0:
+            return True
+        iListaIP= iIP.split('.')
+        for i in range(len(iListaFirewall)):
+            iFirewall= iListaFirewall[i].ip.split('.')
+            if iListaIP[0] == iFirewall[0] and iListaIP[1] == iFirewall[1] and iListaIP[2] == iFirewall[2] and iListaIP[3] == iFirewall[3]:
+                iPossivel=True
+            elif iFirewall[2] == '0' and iFirewall[3] == '0':
+                if iListaIP[0] == iFirewall[0] and iListaIP[1] == iFirewall[1]:
+                    iPossivel=True
+        self.assertEquals(iPossivel , True)      
+    
+    
     #-----------------------------------------------------MOKS---------------------------------------------------  
     
     def mokarEmpresa(self):
@@ -114,7 +132,7 @@ class Test(TestCase):
         iFuncao.save()
         
     def mokarFirewall(self):
-        iIp              = '1939393939'
+        iIp              = '127.0.0.1'
         iDescricao       = 'teste'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iFirewal         = Firewall(ip= iIp, descricao= iDescricao, empresa= iEmpresa)
