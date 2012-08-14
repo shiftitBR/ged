@@ -16,21 +16,20 @@
 		  <p class="lead">Criar uma nova versão de um documento.</p>
 		</header>
 		</center>
-		
 		<form class="form" id="fancy" data-fancy='true' action="{% url multi %}" method="POST" enctype="multipart/form-data">
 			{% load multiuploader %}
 			{% multiupform %}
 		</form>
-			
 		<form class="form-horizontal" id="fancy" data-fancy='true' action="" method="POST" >{% csrf_token %}
+			<div class="well">
+				<div class="control-group">
+		            <label class="control-label" for="textarea">Descrição da Modificação:</label>
+		            <div class="controls">
+		              <textarea id="id_descricao_checkin" rows="10" cols="40" name="descricao" style="margin: 0px 0px 9px; width: 361px; height: 100px; "></textarea>
+		            </div>
+	          	</div>
+			</div>	
 			
-			<div class="control-group">
-	            <label class="control-label" for="textarea">Descrição da Modificação:</label>
-	            <div class="controls">
-	              <textarea id="id_descricao" rows="10" cols="40" name="descricao" style="margin: 0px 0px 9px; width: 361px; height: 100px; "></textarea>
-	            </div>
-          	</div>
-				
 			<div class="form-actions">
 				<button type="submit" class="btn btn-primary">Importar</button>
 				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->

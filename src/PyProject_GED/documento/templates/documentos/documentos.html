@@ -37,13 +37,22 @@
 	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documento(s)</a></li>
 	      <li class=""><a href="javascript:getsupport('norma')">Associar Norma</a></li>
 	      <li class=""><a href="javascript:getsupport('email')">Enviar E-mail</a></li>
-	      <li class=""><a href="javascript:getsupport('publicar')">Publicar</a></li>
+	      <li class=""><a href="javascript:getsupport('publicar')">Enviar Publicação</a></li>
 	    </ul>
   	</div> 
   	<br>
   	
 	<form name= "acao" id="formTabela" action="" method="post">{% csrf_token %}
 		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
 		<table id= "id_tabelaDocumentos" class="table table-striped table-bordered table-condensed">
 			<thead>
 			  <tr>
