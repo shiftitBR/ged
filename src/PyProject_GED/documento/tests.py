@@ -268,7 +268,7 @@ class Test(TestCase):
         iConteudo3= 'Marisco'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo1)
-        self.assertEquals(2, len(iLista))
+        self.assertEquals(1, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo2)
         self.assertEquals(2, len(iLista))
@@ -397,14 +397,12 @@ class Test(TestCase):
         iListaDeEstados= Estado_da_Versao().obtemEstadosDaVersao()
         self.assertEquals(1, len(iListaDeEstados))
         
-    def testGerarProtocolo(self):
-        iVersao     = Versao.objects.filter()[0]
-        iAno        = str(datetime.datetime.year)
-        iMes        = str(datetime.datetime.month)
-        iDia        = str(datetime.datetime.day)
-        iProtocolo  = '%s%s%s%s%s' %(iAno, iMes, iDia, str(iVersao.documento.id_documento), str(iVersao.id_versao))
-        print iProtocolo
-        
+    def testgerarProtocolo(self):
+        iDocumento  = Documento.objects.all()[0]
+        iDocumento  = str('%07d'%iDocumento.id_documento)
+        iVersao     = str('%03d'%1)
+        iProtocolo  = '%s%s' %(iDocumento, iVersao)
+        self.assertEquals('0000001001', iProtocolo)
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     

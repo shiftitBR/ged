@@ -84,7 +84,7 @@ class Empresa(models.Model):
             iEmpresas= Empresa.objects.filter()
             iLista= ''
             for i in range(len(iEmpresas)):
-                if iEmpresas[i].rua != '' or iEmpresas[i].bairro != '':
+                if (iEmpresas[i].rua != '' or iEmpresas[i].bairro != '') and (iEmpresas[i].rua != None or iEmpresas[i].bairro != None):
                     iInfo= "%s %s" % (iEmpresas[i].rua, iEmpresas[i].bairro)
                     if iLista== '':
                         iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
@@ -190,9 +190,9 @@ class Usuario(User):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))
             return False    
     
-    def obtemUsuariosPeloTipo(self, vIDTipoUsuario):
+    def obtemUsuariosPeloTipo(self, vEmpresa, vIDTipoUsuario):
         try:
-            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(empresa= vEmpresa).filter(id_tipo_de_usuario= vIDTipoUsuario)
             iUsuarios       = Usuario.objects.filter(tipo_usuario= iTipoUsuario)
             return iUsuarios
         except Exception, e:

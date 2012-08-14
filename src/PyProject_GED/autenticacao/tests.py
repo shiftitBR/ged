@@ -7,6 +7,7 @@ from models                                     import Usuario
 from models                                     import Tipo_de_Usuario
 
 import time
+import constantes #@UnresolvedImport
 
 
 class Test(TestCase):
@@ -68,6 +69,30 @@ class Test(TestCase):
         iEmpresa= Empresa.objects.all()[0]
         iListaUsuarios= Usuario().obtemUsuariosDaEmpresa(iEmpresa)
         self.assertEquals(2, len(iListaUsuarios))
+        
+    def testobtemListaEnderecoEmpresas(self):
+        iEmpresas= Empresa.objects.filter()
+        iLista= ''
+        for i in range(len(iEmpresas)):
+            if (iEmpresas[i].rua != '' or iEmpresas[i].bairro != '') and (iEmpresas[i].rua != None or iEmpresas[i].bairro != None):
+                iInfo= "%s %s" % (iEmpresas[i].rua, iEmpresas[i].bairro)
+                if iLista== '':
+                    iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
+                else:
+                    iLista= iLista + '%' + str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
+        self.assertEquals('', iLista)
+        
+    def testobtemUsuariosComEmailDaEmpresa(self):
+        iEmpresa= Empresa.objects.all()[0]
+        iListaUsuarios= Usuario.objects.filter(empresa= iEmpresa).filter(
+                            tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioSistema).filter(email__isnull=False)
+        self.assertEquals(2, len(iListaUsuarios))
+        
+    def testobtemContatosComEmailDaEmpresa(self):
+        iEmpresa= Empresa.objects.all()[0]
+        iListaUsuarios= Usuario.objects.filter(empresa= iEmpresa).filter(
+                            tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioContato).filter(email__isnull=False)
+        self.assertEquals(0, len(iListaUsuarios))
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     
