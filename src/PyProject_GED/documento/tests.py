@@ -268,7 +268,7 @@ class Test(TestCase):
         iConteudo3= 'Marisco'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo1)
-        self.assertEquals(1, len(iLista))
+        self.assertEquals(2, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo2)
         self.assertEquals(2, len(iLista))
