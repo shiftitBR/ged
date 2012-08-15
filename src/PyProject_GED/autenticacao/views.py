@@ -5,6 +5,7 @@ from django.contrib.auth                import logout as auth_logout
 from django.contrib.auth                import login as auth_login
 from django.http                        import HttpResponseRedirect
 from PyProject_GED.seguranca.models     import Firewall
+from PyProject_GED                      import oControle
 
 import constantes #@UnresolvedImport
 from PyProject_GED.autenticacao.models import Usuario
@@ -19,6 +20,8 @@ def login(vRequest, vTitulo):
             client_address = vRequest.META['HTTP_X_FORWARDED_FOR']  # case server 200.000.02.001
         except:
             client_address = vRequest.META['REMOTE_ADDR']           # case localhost ou 127.0.0.1
+            
+        oControle.getLogger().error('IP_Address: ' + str(client_address))
         
         user = authenticate(username=username, password=password)
         if user is not None:
