@@ -1,5 +1,6 @@
 
 from django.test                                import TestCase
+from django.conf                    import settings
 
 from autenticacao.models                        import Empresa #@UnresolvedImport
 
@@ -48,7 +49,7 @@ class Test(TestCase):
         iIDPasta= Pasta.objects.all()[0].id_pasta
         iIDEmpresa= Empresa.objects.all()[0].id_empresa
         iDiretorio= Pasta().obtemDiretorioUpload(iIDPasta, iIDEmpresa)
-        self.assertEquals('/home/diego/git/GED/src/PyProject_GED/media/documentos/empresa_001/1', iDiretorio)
+        self.assertEquals(settings.PROJECT_ROOT_PATH + '/media/documentos/empresa_001/1', iDiretorio)
 
     def testMontaDiretorioPasta(self):
         iPasta= Pasta.objects.all()[0]
