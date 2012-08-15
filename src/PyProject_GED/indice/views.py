@@ -1,5 +1,6 @@
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
+from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.indice.forms         import FormBuscaDocumento
 from PyProject_GED.indice.models import Indice
@@ -8,6 +9,21 @@ from PyProject_GED.indice.models import Indice
 def busca(vRequest, vTitulo):
     iIDEmpresa= vRequest.session['IDEmpresa']
     iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
+    
+    try:
+        iPaginator= vRequest.session['iPaginator']
+        iPage = vRequest.GET.get('page')
+        if iPage ==None:
+            iPage = 1
+        try:
+            iDocumentos = iPaginator.page(iPage)
+        except PageNotAnInteger:
+            iDocumentos = iPaginator.page(1)
+        except EmptyPage:
+            iDocumentos = iPaginator.page(iPaginator.num_pages)
+    except:
+        iDocumentos=[]
+    
     if vRequest.method == 'POST':
         form = FormBuscaDocumento(vRequest.POST, iIDEmpresa= iIDEmpresa)
         iAssunto= vRequest.POST.get('assunto')
@@ -31,6 +47,9 @@ def busca(vRequest, vTitulo):
         iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                    iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
                                                    iDataFim, iListaIDIndices, iConteudo, vEhPublico= False)
+        iPaginator = Paginator(iListaDocumentos, 10)
+        iDocumentos = iPaginator.page(1)
+        vRequest.session['iPaginator'] = iPaginator
     else:
         form = FormBuscaDocumento(iIDEmpresa= iIDEmpresa)        
         

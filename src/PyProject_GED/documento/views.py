@@ -66,6 +66,9 @@ def documentos(vRequest, vTitulo):
 @login_required 
 def tabelaDocumentos(vRequest, vTitulo):
     try :
+        iUser = vRequest.user
+        if iUser:
+            iUsuario= Usuario().obtemUsuario(iUser)
         iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
@@ -74,7 +77,8 @@ def tabelaDocumentos(vRequest, vTitulo):
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):  
-                    iEstado = iListaDocumentos[i].id_estado   
+                    iEstado = iListaDocumentos[i].id_estado  
+                    iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
                     iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
@@ -99,8 +103,8 @@ def tabelaDocumentos(vRequest, vTitulo):
                         
                     iEstado = iListaDocumentos[i].id_estado
                     
-                    if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
-                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    #if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
+                    #    iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     
                     if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -108,7 +112,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Encaminhar
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/encaminhar/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
                         
-                    if iEstado == constantes.cntEstadoVersaoBloqueado  : #CheckIn
+                    if iEstado == constantes.cntEstadoVersaoBloqueado  and iPodeCheckIn: #CheckIn
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkin/%(iIDVersao)s/"><i class="icon-share"></i>  Check-in</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Excluir
