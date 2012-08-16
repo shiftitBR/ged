@@ -10,16 +10,8 @@ from autenticacao.models        import Usuario #@UnresolvedImport
 from autenticacao.models        import Empresa #@UnresolvedImport
 
 class FormEncaminharPendencia(forms.Form):
-        
-    iListaResponsavel= Usuario.objects.all()
-    iListaResp = []
-    iListaResp.append((0, '- Selecione -'))
-    for i in range(len(iListaResponsavel)): 
-        iResp = iListaResponsavel[i]
-        iNome= iResp.first_name + ' ' + iResp.last_name
-        iListaResp.append((iResp.id, iNome))    
-    
-    usr_destinatario = forms.ModelChoiceField(iListaResp)
+           
+    usr_destinatario = forms.ChoiceField(choices=[])
     descricao = forms.Field(widget=forms.Textarea)
     
     def clean_usr_destinatario(self):
@@ -38,4 +30,11 @@ class FormEncaminharPendencia(forms.Form):
         super(FormEncaminharPendencia, self).__init__(*args, **kwargs)  
         self.fields['descricao'].error_messages['required'] = u'O campo Descrição é obrigatório' 
         self.fields['usr_destinatario'].error_messages['required'] = u'O campo Usuário Destinatário é obrigatório'  
-        self.fields['usr_destinatario'].queryset = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
+        iListaResponsavel= Usuario.objects.filter(empresa= iEmpresa.id_empresa)
+        iListaResp = []
+        iListaResp.append((0, '- Selecione -'))
+        for i in range(len(iListaResponsavel)): 
+            iResp = iListaResponsavel[i]
+            iNome= iResp.first_name + ' ' + iResp.last_name
+            iListaResp.append((iResp.id, iNome))    
+        self.fields['usr_destinatario'].choices = iListaResp

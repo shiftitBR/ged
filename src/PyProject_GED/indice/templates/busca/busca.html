@@ -6,37 +6,48 @@
 
 <div class="container">
 	
-	<form class="well form-inline" method="post"> {% csrf_token %}
-	 	<p>	
-	 	    {{ form.assunto }}
-			{{ form.protocolo }}
-			{{ form.conteudo }}
-			{{ form.data_criacao_inicial }}
-            {{ form.data_criacao_final }}
-		</p>
-		<p>
-			{{ form.usuario_responsavel }}
-            {{ form.usuario_criador }}
-			{{ form.normas }}
-			{{ form.tipo_documento }}
-			{{ form.estado }}
-		</p>
-		<p>
-			<button type="submit" class="btn btn-success">Busca Simples</button>
-			<a href="#avancado" class="btn btn-success" rel="popover" placement="left" data-toggle="modal" data-content="Busca por índices personalizados adicionados ao sistema." data-original-title="Buscar Avançado">Busca Avançada</a>
-		</p>
-    </form>
-
+	<form name= "acao" id="formTabela" class="form-inline" method="post"> {% csrf_token %}
+		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
+		<div class="well">
+		 	<p>	
+		 	    {{ form.assunto }}
+				{{ form.protocolo }}
+				{{ form.conteudo }}
+				{{ form.data_criacao_inicial }}
+	            {{ form.data_criacao_final }}
+			</p>
+			<p>
+				{{ form.usuario_responsavel }}
+	            {{ form.usuario_criador }}
+				{{ form.normas }}
+				{{ form.tipo_documento }}
+				{{ form.estado }}
+			</p>
+			<p>
+				<button type="submit" class="btn btn-success">Busca Simples</button>
+				<a href="#avancado" class="btn btn-success" rel="popover" placement="left" data-toggle="modal" data-content="Busca por índices personalizados adicionados ao sistema." data-original-title="Buscar Avançado">Busca Avançada</a>
+			</p>
+		</div> 
     <div class="subnav">
 	    <ul class="nav nav-pills">
-	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documentos em Lote</a></li>
-	      <li class=""><a href="javascript:getsupport('norma')">Associar Documento Norma</a></li>
-	      <li class=""><a href="javascript:getsupport('email')">Enviar Documento por E-mail</a></li>
+	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documento(s)</a></li>
+	      <li class=""><a href="javascript:getsupport('norma')">Associar Norma</a></li>
+	      <li class=""><a href="javascript:getsupport('email')">Enviar E-mail</a></li>
+	      <li class=""><a href="javascript:getsupport('publicar')">Enviar Publicação</a></li>
 	    </ul>
   	</div> 
   	
   	<br>
-    
+    {% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		  <tr>
@@ -113,6 +124,7 @@
 
 		</tbody>
 	</table>
+	</form>
   	<ul class="pager">
     	<ul class="pager">
         {% if iDocumentos.has_previous %}
@@ -131,6 +143,7 @@
 </div>
     
 <form class="well form-inline" method="post"> {% csrf_token %}
+	<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
     <div class="modal hide" id="avancado">
 	  <div class="modal-header">
 	    <button type="button" class="close" data-dismiss="modal">×</button>

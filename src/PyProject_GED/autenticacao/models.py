@@ -73,7 +73,6 @@ class Empresa(models.Model):
             iThread.start()
             return True
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Empresa: ' + str(e))
             return False
         
@@ -150,6 +149,15 @@ class Usuario(User):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False   
+        
+    def obterNomeUsuario(self, vIDUsuario):
+        try:
+            iUsuario= Usuario.objects.filter(id= vIDUsuario)[0]
+            iNome= iUsuario.first_name + ' ' + iUsuario.last_name[:1] + '.'
+            return iNome
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o nome do usuario ' + str(e))
+            return False
 
     def obtemEmpresaDoUsuario(self, vIDUsario):
         try:

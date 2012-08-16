@@ -17,19 +17,23 @@
 		</header>
 		  	
 		{% if iPossuiPermissao %}
-		<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
-			<div class="control-group">
-	            <label class="control-label" for="textarea">Comentário</label>
-	            <div class="controls">
-	              <textarea class="input-xlarge" id="reprovar_feedback" name= "comentario" rows="3"></textarea>
-	            </div>
-          	</div>
-			
-			<div class="form-actions">
-				<button type="submit" class="btn btn-primary">Reprovar Pendência</button>
-				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
-			</div>
-		</form>
+		<div class="container">
+			<form class="form-horizontal" action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
+				<div class="well">
+					<div class="control-group">
+			            <label class="control-label" for="textarea">Comentário</label>
+			            <div class="controls">
+			              <textarea class="input-xlarge" id="reprovar_feedback" style="width: 500px; height: 100px;" name= "comentario" rows="3"></textarea>
+			            </div>
+		          	</div>
+	          	</div>
+				
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Reprovar Pendência</button>
+					<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
+				</div>
+			</form>
+		</div>
 		{% endif %}
 		
 		{% if not iPossuiPermissao %}

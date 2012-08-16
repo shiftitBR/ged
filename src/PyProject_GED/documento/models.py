@@ -51,7 +51,6 @@ class Tipo_de_Documento(models.Model):
             iTipoDeDocumento.save()
             return iTipoDeDocumento
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de Documento: ' + str(e))
             return False
     
@@ -179,7 +178,6 @@ class Estado_da_Versao(models.Model):
             iEstadoVersao.save()
             return iEstadoVersao
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar o estado da versao: ' + str(e))
             return False
     
@@ -188,7 +186,6 @@ class Estado_da_Versao(models.Model):
             iListaEstados = Estado_da_Versao.objects.all()
             return iListaEstados
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os estados da versao: ' + str(e))
             return False
 
@@ -241,7 +238,7 @@ class Versao(models.Model):
         iDocumento.data_criacao = vVersao.data_criacao
         iDocumento.num_versao = vVersao.versao
         iDocumento.descricao = vVersao.dsc_modificacao
-        iDocumento.criador = vVersao.usr_criador
+        iDocumento.criador = Usuario().obterNomeUsuario(vVersao.usr_criador.id)
         iDocumento.id_criador = vVersao.usr_criador.id
         iDocumento.arquivo = str(vVersao.upload.image)
         iDocumento.estado = vVersao.estado

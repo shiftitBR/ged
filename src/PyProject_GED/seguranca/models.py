@@ -46,7 +46,6 @@ class Pasta(models.Model):
             iPasta.save()
             return iPasta
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar as pastas: ' + str(e))
             return False
 

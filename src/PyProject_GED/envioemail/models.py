@@ -39,7 +39,6 @@ class Publicacao(models.Model):
             iPublicacao.save()
             return iPublicacao
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Publicacao: ' + str(e))
             return False
         
@@ -79,7 +78,6 @@ class Publicacao_Usuario(models.Model):
             iPublicacaoUsr.save()
             return iPublicacaoUsr
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Publicacao_Usuario: ' + str(e))
             return False
         
@@ -119,7 +117,6 @@ class Publicacao_Documento(models.Model):
             iPublicacaoDoc.save()
             return iPublicacaoDoc
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a Publicacao_Documento: ' + str(e))
             return False
         
