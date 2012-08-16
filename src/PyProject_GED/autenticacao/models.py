@@ -62,10 +62,8 @@ class Empresa(models.Model):
                 time.sleep(1)
                 mPasta= get_model('seguranca', 'Pasta')
                 mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
-                mTipoDeIndice= get_model('indice', 'Tipo_de_Indice')
                 iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
                 iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
-                mTipoDeIndice().criaTipoIndice(vEmpresa, 'String')
                 mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
                 ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
                                                  iPastaRaiz.id_pasta, 
