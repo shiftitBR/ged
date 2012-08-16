@@ -4,10 +4,10 @@
 - Fabric (easy-istall fabric)
 - Sorl-thumbnail (pip install sorl-thumbnail)
 - PIL
-- python-imaging
+- python-imaging (yum install python-imaging)
 - PDF Miner (pip install pdfminer)
-- PyUNO
+- PyUNO (yum install libreoffice-pyuno)
 - LibreOficce
 - GCC C++
-- Leptonica
-- Tesseract
+- Leptonica 1.69 (http://code.google.com/p/python-tesseract/wiki/HowToCompilePythonTesseract4Fedora)
+- Tesseract (http://code.google.com/p/tesseract-ocr/wiki/TesseractSvnInstallation)
