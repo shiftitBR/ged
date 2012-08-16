@@ -27,33 +27,48 @@
 		    {% endfor %}
 		</div>
     {% endif %}
-    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
-		<div class="container">
-			{% load multiuploader %}
-			{% multiupform %}
+    
+    {% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+    
+    <div class="well">
+	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
+			<div class="container">
+				{% load multiuploader %}
+				{% multiupform %}
+			</div>
+		</form>
+	</div>
+		<form class="form" id="formimportar" data-fancy="true" action="" method="POST" >{% csrf_token %}
+		<div class="well">
+			<div class="container-fluid">
+		  		<div class="row-fluid">
+		  			<div class="span1"> </div>
+		    		<div class="span5">
+		    			
+						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+						<p>{{form.usr_responsavel}}</p>
+						<p>{{form.tipo_documento}}</p>
+					  
+				    </div>
+				    <div class="span6">
+				    	
+				        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+		            	<p>{{form.data_validade}}</p>
+		              	<p>{{form.data_descarte}}</p>
+		              	
+				    </div>
+				 </div>
+			</div>
 		</div>
-	</form>
-	<form class="form" id="formimportar" data-fancy="true" action="" method="POST" >{% csrf_token %}
-		
-		<div class="container-fluid">
-	  		<div class="row-fluid">
-	  			<div class="span1"> </div>
-	    		<div class="span5">
-	    			
-					<p>{{form.assunto}}</p>
-					<p>{{form.usr_responsavel}}</p>
-					<p>{{form.tipo_documento}}</p>
-				  
-			    </div>
-			    <div class="span6">
-			    	
-			        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
-	            	<p>{{form.data_validade}}</p>
-	              	<p>{{form.data_descarte}}</p>
-	              	
-			    </div>
-			 </div>
-		</div>
+			
 		<div class="container">
 			{%if iTamListaIndices > 0%}
 		    <center>
@@ -78,13 +93,12 @@
 	  		  
 		<div class="container">
 			<div class="form-actions">
-				<button type="submit" id="importar" class="btn btn-primary">Importar</button>
+				<button type="submit" id="importar" class="btn btn-primary">Importar Documento</button>
 				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 			</div>
 		</div>
 	
 	</form>     
-	  
 </body>
 
 </html>

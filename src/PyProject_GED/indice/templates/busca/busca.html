@@ -2,10 +2,7 @@
 {% load i18n %}
 {% block conteudo %}
 	
-<header class="jumbotron subhead" id="overview">
-  <h1>Buscar Documentos</h1>
-  <p class="lead">Listagem de Documentos</p>
-</header>
+<center><h1>Buscar Documentos</h1></center>
 
 <div class="container">
 	
@@ -38,8 +35,8 @@
 	    </ul>
   	</div> 
   	
-    <br><br>
-       
+  	<br>
+    
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		  <tr>
@@ -59,7 +56,7 @@
 		</thead>
 		<tbody>
 
-		{% for documento in iListaDocumentos %}
+		{% for documento in iDocumentos.object_list %}
 		  <tr>
 		  	<td>
 				<label class="checkbox">
@@ -116,11 +113,24 @@
 
 		</tbody>
 	</table>
-  	
+  	<ul class="pager">
+    	<ul class="pager">
+        {% if iDocumentos.has_previous %}
+        <li class="previous">
+        	<a href="?page={{ iDocumentos.previous_page_number }}">&larr; Anterior</a>
+        </li>
+        {% endif %}
+
+        {% if iDocumentos.has_next %}
+        <li class="next">
+			<a href="?page={{ iDocumentos.next_page_number }}">Próxima &rarr;</a>
+		</li>
+        {% endif %}
+        </ul>
+    </ul> 
 </div>
     
 <form class="well form-inline" method="post"> {% csrf_token %}
-    
     <div class="modal hide" id="avancado">
 	  <div class="modal-header">
 	    <button type="button" class="close" data-dismiss="modal">×</button>

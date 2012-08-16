@@ -1,6 +1,7 @@
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.http                        import HttpResponse
+from django.conf                        import settings
 
 from PyProject_GED.autenticacao.models  import Empresa
 from PyProject_GED.envioemail.models    import Publicacao_Documento, Publicacao, Publicacao_Usuario
@@ -13,6 +14,8 @@ def home(vRequest, vTitulo):
     
     vRequest.session['id_pasta'] = ''
     vRequest.session.set_expiry(6000)
+    
+    settings.request = vRequest
     
     return render_to_response(
         'home/home.html',

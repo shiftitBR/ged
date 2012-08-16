@@ -14,7 +14,6 @@ import logging
 class Tipo_de_Indice(models.Model):
     id_tipo_indice          = models.IntegerField(max_length=3, primary_key=True, blank=True)
     descricao               = models.CharField(max_length=30)
-    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_tipo_de_indice'
@@ -30,11 +29,10 @@ class Tipo_de_Indice(models.Model):
             self.id_tipo_indice= 1
         super(Tipo_de_Indice, self).save()
     
-    def criaTipoIndice(self, vEmpresa, vDescricao):
+    def criaTipoIndice(self, vDescricao):
         try:
             iTipoDeIndice= Tipo_de_Indice()
             iTipoDeIndice.descricao= vDescricao
-            iTipoDeIndice.empresa= vEmpresa
             iTipoDeIndice.save()
             return iTipoDeIndice
         except Exception, e:

@@ -119,3 +119,18 @@ class Historico(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel calculaQuantidadeDeDownloadsDoDocumento: ' + str(e))
             return False 
+        
+    def verificaUsuarioAcao(self, vIDUsuario, vIDTipoEvento, vIDVersao):
+        try:
+            iVersao         = Versao.objects.filter(id_versao= vIDVersao)[0]
+            iUsuario        = Usuario.objects.filter(id= vIDUsuario)[0]
+            iTipoEvento     = Tipo_de_Evento.objects.filter(id_tipo_evento= vIDTipoEvento)[0]
+            iHistorico      = Historico.objects.filter(versao= iVersao.id_versao).filter(
+                                tipo_evento= iTipoEvento.id_tipo_evento).filter(usuario= iUsuario.id)
+            if len(iHistorico) > 0:
+                return True
+            else:
+                return False
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificaUsuarioAcao: ' + str(e))
+            return False 

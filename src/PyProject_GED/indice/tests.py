@@ -42,7 +42,7 @@ class Test(TestCase):
     
     def testCriarIndice(self):
         iDescricao      = 'valor'
-        iTipo           = Tipo_de_Indice.objects.filter(empresa= 1)[0]
+        iTipo           = Tipo_de_Indice.objects.all()[0]
         iEmpresa        = Empresa.objects.filter()[0]
         iIndice         = Indice(descricao= iDescricao, tipo_indice= iTipo, empresa= iEmpresa)
         iIndice.save()
@@ -70,8 +70,7 @@ class Test(TestCase):
     
     def mokarTipoIndice(self):
         iDescricao      = 'string'
-        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]     
-        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao, empresa= iEmpresa)
+        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao)
         iTipoIndice.save()   
         
         
@@ -97,7 +96,7 @@ class Test(TestCase):
         
     def mokarIndice(self):
         iDescricao      = 'valor'
-        iTipo           = Tipo_de_Indice.objects.filter(empresa= 1)[0]
+        iTipo           = Tipo_de_Indice.objects.all()[0]
         iEmpresa        = Empresa.objects.filter()[0]
         iIndice         = Indice(descricao= iDescricao, tipo_indice= iTipo, empresa= iEmpresa)
         iIndice.save()

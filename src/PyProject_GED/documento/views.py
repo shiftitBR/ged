@@ -3,6 +3,7 @@ from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.http                        import HttpResponse
 from django.contrib.auth.decorators     import login_required
+from django.contrib                     import messages
 
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
@@ -28,6 +29,7 @@ def documentos(vRequest, vTitulo):
         vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
+        vRequest.session['PastaRaiz'] = iPasta_Raiz
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False
@@ -42,18 +44,15 @@ def documentos(vRequest, vTitulo):
                     iListaCheck.append(iListaDocumentos[i].id_versao)
                     iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
                 
-            if 'email' in vRequest.POST['supporttype']:
-                if len(iListaCheck) > 0:
+            if len(iListaCheck) == 0:
+                messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
+                iAcao= 0
+            else:
+                if 'email' in vRequest.POST['supporttype']:
                     iAcao= 1
-                    vRequest.session['ListaVersao']= iListaVersao
-                else :
-                    iAcao= 0
-            if 'publicar' in vRequest.POST['supporttype']:
-                if len(iListaCheck) > 0:
+                if 'publicar' in vRequest.POST['supporttype']:
                     iAcao= 2
-                    vRequest.session['ListaVersao']= iListaVersao
-                else :
-                    iAcao= 0
+                vRequest.session['ListaVersao']= iListaVersao
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
             return False
@@ -66,6 +65,9 @@ def documentos(vRequest, vTitulo):
 @login_required 
 def tabelaDocumentos(vRequest, vTitulo):
     try :
+        iUser = vRequest.user
+        if iUser:
+            iUsuario= Usuario().obtemUsuario(iUser)
         iPasta_Raiz = vRequest.session['IDPasta']
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
@@ -74,7 +76,8 @@ def tabelaDocumentos(vRequest, vTitulo):
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):  
-                    iEstado = iListaDocumentos[i].id_estado   
+                    iEstado = iListaDocumentos[i].id_estado  
+                    iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
                     iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
@@ -99,8 +102,8 @@ def tabelaDocumentos(vRequest, vTitulo):
                         
                     iEstado = iListaDocumentos[i].id_estado
                     
-                    if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
-                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                    #if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
+                    #    iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     
                     if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -108,7 +111,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Encaminhar
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/encaminhar/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
                         
-                    if iEstado == constantes.cntEstadoVersaoBloqueado  : #CheckIn
+                    if iEstado == constantes.cntEstadoVersaoBloqueado  and iPodeCheckIn: #CheckIn
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkin/%(iIDVersao)s/"><i class="icon-share"></i>  Check-in</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Excluir
@@ -142,7 +145,7 @@ def importar(vRequest, vTitulo):
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False and not 'cancelar' in vRequest.POST :
+                if vRequest.session['Image'] == True or not vRequest.session['Image'] == None:
                     iImage= vRequest.session['Image']
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
@@ -176,6 +179,9 @@ def importar(vRequest, vTitulo):
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
+                    #return HttpResponseRedirect('/tabela_documentos/')
+                else:
+                    messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel importar: ' + str(e))
                 return False
@@ -208,7 +214,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False and not 'cancelar' in vRequest.POST  :
+                if vRequest.session['Image'] != False  :
                     iImage= vRequest.session['Image']
                     iDescricao  = vRequest.POST.get('descricao')
                     iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, int(iVersaoBase.versao)+1)
@@ -252,17 +258,14 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            print '>>>>>>>>>>>>>>>>>>>> post'
-            print vRequest.POST
-            if not 'cancelar' in vRequest.POST :
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-                iFile = open(iArquivo,"r")
-                response = HttpResponse(iFile.read())
-                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-                return response
+            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                   iUsuario.id, vRequest.session['IDEmpresa'])
+            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+            iFile = open(iArquivo,"r")
+            response = HttpResponse(iFile.read())
+            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            return response
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
                 return False

@@ -6,9 +6,6 @@ Created on Jan 30, 2012
 
 from django.contrib.auth.models import User
 
-import constantes #@UnresolvedImport
-
-
 class EmailAuthBackend(object):
     """
     Email Authentication Backend

@@ -23,7 +23,15 @@
 					</form>
 					<div class="alert alert-error">
 				        <button type="button" class="close" data-dismiss="alert">×</button>
+				        {% if vTipoErro == "1" %}
 				        <strong>E-mail e/ou Senha incorreto(s). </strong> Digite novamente seu E-mail e senha para efetuar o login.
+				    	{% endif %}
+				    	{% if vTipoErro == "2" %}
+				        <strong>Esta Usuário está Inativo. </strong> Para mais informações, entre em contato com o administrador.
+				    	{% endif %}
+				    	{% if vTipoErro == "3" %}
+				        <strong>Este endereço de IP está bloqueado. </strong> Para mais informações, entre em contato com o administrador.
+				    	{% endif %}
 				    </div>
 				</center>
 			</div>

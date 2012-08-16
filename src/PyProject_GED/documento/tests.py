@@ -397,14 +397,12 @@ class Test(TestCase):
         iListaDeEstados= Estado_da_Versao().obtemEstadosDaVersao()
         self.assertEquals(1, len(iListaDeEstados))
         
-    def testGerarProtocolo(self):
-        iVersao     = Versao.objects.filter()[0]
-        iAno        = str(datetime.datetime.year)
-        iMes        = str(datetime.datetime.month)
-        iDia        = str(datetime.datetime.day)
-        iProtocolo  = '%s%s%s%s%s' %(iAno, iMes, iDia, str(iVersao.documento.id_documento), str(iVersao.id_versao))
-        print iProtocolo
-        
+    def testgerarProtocolo(self):
+        iDocumento  = Documento.objects.all()[0]
+        iDocumento  = str('%07d'%iDocumento.id_documento)
+        iVersao     = str('%03d'%1)
+        iProtocolo  = '%s%s' %(iDocumento, iVersao)
+        self.assertEquals('0000001001', iProtocolo)
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -606,13 +604,12 @@ class Test(TestCase):
     
     def mokarTipoIndice(self):
         iDescricao      = 'string'
-        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]     
-        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao, empresa= iEmpresa)
+        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao)
         iTipoIndice.save()   
         
         
     def mokarIndice(self):
-        iTipo           = Tipo_de_Indice.objects.filter(empresa= 1)[0]
+        iTipo           = Tipo_de_Indice.objects.all()[0]
         iEmpresa        = Empresa.objects.filter()[0]
         
         iDescricao      = 'nome'

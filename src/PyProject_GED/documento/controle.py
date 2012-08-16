@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- 
 
+from django.conf                    import settings
+
 import logging
 import datetime
 import constantes #@UnresolvedImport
@@ -29,7 +31,7 @@ class Controle(object):
         
     def obtemCaminhoVisualizar(self, vArquivo):
         try:
-            iCaminho = vArquivo.replace('/home/diego/git/GED/src/PyProject_GED', '')
+            iCaminho = vArquivo.replace(settings.PROJECT_ROOT_PATH, '')
             return iCaminho
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemCaminhoVisualizar: ' + str(e))

@@ -16,8 +16,9 @@ def roda_teste():
         result4 = local('python ./manage.py test indice', capture=True)
         result5 = local('python ./manage.py test seguranca', capture=True)
         result6 = local('python ./manage.py test ocr', capture=True)
+        result7 = local('python ./manage.py test workflow', capture=True)
         
-    if (result1.failed or result2.failed or result3.failed  or result4.failed  or result5.failed or result6.failed) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
+    if (result1.failed or result2.failed or result3.failed  or result4.failed  or result5.failed or result6.failed or result7.failed) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
         abort("Abortando...")
 
 def roda_teste_remoto(vDiretorio):

@@ -145,7 +145,7 @@ class Documento(models.Model):
     def gerarProtocolo(self, vIDDocumento, vNum_versao):
         try:
             iDocumento  = Documento.objects.filter(id_documento= vIDDocumento)[0]
-            iDocumento  = str('%07d'%iDocumento.empresa.id_empresa)
+            iDocumento  = str('%07d'%iDocumento.id_documento)
             iVersao     = str('%03d'%vNum_versao)
             iProtocolo  = '%s%s' %(iDocumento, iVersao)
             return iProtocolo

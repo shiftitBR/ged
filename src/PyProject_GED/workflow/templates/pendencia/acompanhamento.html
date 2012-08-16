@@ -34,7 +34,7 @@
 			          </tr>
 			        </thead>
 			        <tbody>
-			       	{% for pendencia in iListaDestinatario %}
+			       	{% for pendencia in iDestinatarios.object_list %}
 			          <tr>
 			          </tr><tr>
 			            <td><center>{{pendencia.protocolo}}</center></td>
@@ -54,6 +54,21 @@
 			        </tbody>
 				</table>
 			</form>
+			<ul class="pager">
+		    	<ul class="pager">
+		        {% if iDestinatarios.has_previous %}
+		        <li class="previous">
+		        	<a href="?page_destinatario={{ iDestinatarios.previous_page_number }}">&larr; Anterior</a>
+		        </li>
+		        {% endif %}
+		
+		        {% if iDestinatarios.has_next %}
+		        <li class="next">
+					<a href="?page_destinatario={{ iDestinatarios.next_page_number }}">Próxima &rarr;</a>
+				</li>
+		        {% endif %}
+		    	</ul>
+		    </ul>
 			
 
 			<table class="table table-striped table-bordered table-condensed">
@@ -71,7 +86,7 @@
 		          </tr>
 		        </thead>
 		        <tbody>
-				{% for pendencia in iListaRemetente %}
+				{% for pendencia in iRemetentes.object_list %}
 					<tr>
 					</tr><tr>
 					<td><center>{{pendencia.protocolo}}</center></td>
@@ -85,6 +100,22 @@
 				{% endfor %}
 		        </tbody>
 			</table>
+			
+			<ul class="pager">
+		    	<ul class="pager">
+		        {% if iRemetentes.has_previous %}
+		        <li class="previous">
+		        	<a href="?page_remetente={{ iRemetentes.previous_page_number }}">&larr; Anterior</a>
+		        </li>
+		        {% endif %}
+		
+		        {% if iRemetentes.has_next %}
+		        <li class="next">
+					<a href="?page_remetente={{ iRemetentes.next_page_number }}">Próxima &rarr;</a>
+				</li>
+		        {% endif %}
+		    </ul>
+			</div>
 			
 		</div> 		
 		
