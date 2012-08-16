@@ -15,6 +15,7 @@ from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
 from PyProject_GED import multiuploader
+from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
@@ -38,7 +39,8 @@ class AdminEmpresa(MultiDBModelAdmin):
 class AdminUsuario(MultiDBModelAdmin): 
     list_display    = UserAdmin.list_display + ('empresa', 'is_active')
     search_fields   = UserAdmin.search_fields
-    exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions') 
+    exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions', 
+                       'tipo_usuario', 'username') 
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
@@ -47,6 +49,10 @@ class AdminUsuario(MultiDBModelAdmin):
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         form.base_fields['email'].required= True
         return form 
+    
+    def save_model(self, request, obj, form, change):
+        obj.tipo_usuario = Tipo_de_Usuario.objects.all()[0]
+        obj.save()
 
    
 class AdminIndice(MultiDBModelAdmin): 

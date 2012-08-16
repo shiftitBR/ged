@@ -132,8 +132,23 @@ class Usuario(User):
                 self.username= "%03d-%06d" % (int(self.empresa.pk), int(iUltimoRegistro.pk) + 1)
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
-        self.set_password(self.password)   
+        if not self.comaparaSenha(self.pk, self.password):
+            self.set_password(self.password)   
         super(Usuario, self).save()   
+    
+    def comaparaSenha(self, vIDUsuario, vSenha):
+        try:
+            iUsuario= Usuario.objects.filter(pk= vIDUsuario)[0]
+            print iUsuario.password
+            print vSenha
+            if iUsuario.password == vSenha:
+                return True
+            else:
+                return False
+            return iUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel comparar a senha do usuario ' + str(e))
+            return False 
         
     def obtemUsuario(self, vUser):
         try:
