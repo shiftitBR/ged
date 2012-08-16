@@ -19,6 +19,7 @@ import logging
 import os
 import uno
 import constantes #@UnresolvedImport
+import unicodedata
 
 class Controle(object):
     
@@ -110,10 +111,10 @@ class Controle(object):
             if iExtencaoArquivo.lower() != 'txt':
                 iEnderecoDocumento= '%s.%s' % (iNomeArquivo, constantes.cntOCRExtencaoDocumentoTexto)
             iArquivo = open(str(iEnderecoDocumento),"r")
-            iTexto = iArquivo.read().lower()
+            iTextoArquivo = iArquivo.read().lower()
             iArquivo.close()
-            iLocalizar = vTexto.lower()
-            iIndex = iTexto.find(iLocalizar)
+            iLocalizar = unicodedata.normalize('NFKD', vTexto.lower()).encode('ascii', 'ignore')
+            iIndex = iTextoArquivo.find(iLocalizar)
             return iIndex > -1
         except Exception, e:
             self.getLogger().error('Nao foi possivel buscar texto do txt: ' + str(e))

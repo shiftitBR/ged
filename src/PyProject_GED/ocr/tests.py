@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*- 
+
 '''
 Created on Aug 6, 2012
 
 @author: Shift IT | www.shiftit.com.br
 '''
+
 
 from django.test                            import TestCase
 from controle                               import Controle as ControleOCR
@@ -52,6 +55,11 @@ class Test(TestCase):
         iVersao= Versao.objects.all()[1]
         iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
+    
+    def testOCRImagemJPEG2(self):
+        iVersao= Versao.objects.all()[9]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
+        self.assertEquals(True, len(iString) > 0)
         
     def testOCRImagemPNG(self):
         iVersao= Versao.objects.all()[2]
@@ -65,19 +73,19 @@ class Test(TestCase):
           
     def testLerTextoDOC(self):
         iVersao= Versao.objects.all()[3]
-        iTexto= 'Fred'
+        iTexto= u'Fred'
         iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
     
     def testLerTextoODT(self):
         iVersao= Versao.objects.all()[4]
-        iTexto= 'FRED'
+        iTexto= u'FRED'
         iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
         
     def testLerTextoTXT(self):
         iVersao= Versao.objects.all()[5]
-        iTexto= 'FRED'
+        iTexto= u'FRéD'
         iEncontrou= ControleOCR().buscaTextoNoTXT(iTexto, vVersao= iVersao)
         self.assertEquals(True, iEncontrou)
     
@@ -88,7 +96,7 @@ class Test(TestCase):
     
     def testLerTextoDOCX(self):
         iVersao= Versao.objects.all()[8]
-        iTexto= 'FRED'
+        iTexto= u'FRED'
         iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
         self.assertEquals(True, iEncontrou)
     
@@ -107,17 +115,17 @@ class Test(TestCase):
     
     def testBuscaEmConteudoDoDocumento(self):
         iVersao= Versao.objects.all()[4]
-        iTexto= 'FreD'
+        iTexto= u'FreD'
         iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
         self.assertEquals(True, iEncontrou)
         
         iVersao= Versao.objects.all()[1]
-        iTexto= 'RapOsA'
+        iTexto= u'RapOsA'
         iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
         self.assertEquals(True, iEncontrou)
         
         iVersao= Versao.objects.all()[1]
-        iTexto= 'Fred'
+        iTexto= u'Fred'
         iEncontrou= ControleOCR().buscaEmConteudoDoDocumento(iVersao, iTexto)
         self.assertEquals(False, iEncontrou)
     
@@ -229,6 +237,13 @@ class Test(TestCase):
         iUpload9.fileName       = 'texto.docx'
         iUpload9.image          = '%s/media_teste/texto.docx' % settings.MEDIA_ROOT
         iUpload9.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload10                = MultiuploaderImage()
+        iUpload10.key_data       = iUpload10.key_generate
+        iUpload10.upload_date    = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload10.fileName       = 'imagem2_jpg.jpg'
+        iUpload10.image          = '%s/media_teste/imagem2_jpg.jpg' % settings.MEDIA_ROOT
+        iUpload10.save(iIDPasta, iEmpresa.id_empresa)
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
@@ -314,6 +329,13 @@ class Test(TestCase):
         
         iVersao         = 9
         iUpload         = MultiuploaderImage.objects.filter()[8]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 10
+        iUpload         = MultiuploaderImage.objects.filter()[9]
         iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
                                  upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
                                  eh_versao_atual= iEh_Versao_Atual)
