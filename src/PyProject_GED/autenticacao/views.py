@@ -15,6 +15,9 @@ def login(vRequest, vTitulo):
     if vRequest.POST:
         username= vRequest.POST.get('username')
         password= vRequest.POST.get('password')
+        print '>>>>>>>>>>>>>>>>>>. login'
+        print username
+        print password
         
         try:
             client_address = vRequest.META['HTTP_X_FORWARDED_FOR']  # case server 200.000.02.001
@@ -22,6 +25,8 @@ def login(vRequest, vTitulo):
             client_address = vRequest.META['REMOTE_ADDR']           # case localhost ou 127.0.0.1
             
         oControle.getLogger().error('IP_Address: ' + str(client_address))
+        print '>>>>>>>>>>>>>>>>> IP:'
+        print client_address
         
         user = authenticate(username=username, password=password)
         if user is not None:
