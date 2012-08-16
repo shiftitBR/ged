@@ -1,0 +1,33 @@
+TUTORIAL INSTALACAO FEDORA 17 / CENTOS 6
+
++ Python 2.7.3
+	# yum install python-devel python-seteuptools
+
++ Django 1.3.1
+	# wget http://www.djangoproject.com/m/releases/1.3/Django-1.3.1.tar.gz
+	# tar xzvf Django-1.3.1.tar.gz
+	# cd Django-1.3.1
+	# python setup.py install 
+
++ Apache 2.2
+	# yum install httpd mod_wsgi
+
++ PosgreSQL 8.4.12
+	# yum install postgresql postgresql-server postgresql-contrib
+	# service postgresql initdb
+	# service postgresql start
+	# su postgresl
+	$(bash) psql
+	$(postgres) alter user postgres with password 'shift@ged';
+	$(postgres) \q
+	$(bash) exit
+	# vim /var/lib/pgsql/data/pg_hba.conf
+		original: # "local" is for Unix domain socket connections only
+			  local   all         all                               ident
+		novo	: # "local" is for Unix domain socket connections only
+			  local   all         all                               md5
+	# service postgresql restart
+
++ PsycoPG2 2.0.14
+	# yum install psyscopg2
+
