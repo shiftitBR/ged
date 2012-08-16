@@ -83,7 +83,7 @@ class Empresa(models.Model):
             iLista= ''
             for i in range(len(iEmpresas)):
                 if (iEmpresas[i].rua != '' or iEmpresas[i].bairro != '') and (iEmpresas[i].rua != None or iEmpresas[i].bairro != None):
-                    iInfo= "%s %s" % (iEmpresas[i].rua, iEmpresas[i].bairro)
+                    iInfo= "%s %s %s %s %s %s" % (iEmpresas[i].rua, str(iEmpresas[i].numero), iEmpresas[i].cep, iEmpresas[i].bairro, iEmpresas[i].cidade, iEmpresas[i].uf)
                     if iLista== '':
                         iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
                     else:

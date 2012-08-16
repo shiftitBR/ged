@@ -7,7 +7,7 @@ var map;
 function initialize() {
   geocoder = new google.maps.Geocoder();
   var myOptions = {
-    zoom: 12,
+    zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
