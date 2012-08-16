@@ -28,6 +28,7 @@ class Controle(object):
             os.system('mkdir %s' % iDiretorioEmpresa) 
             os.system('mkdir %s/%s' % (iDiretorioEmpresa, vIDPastaRaiz)) 
             os.system('mkdir %s/%s/%s' % (iDiretorioEmpresa, str(vIDPastaRaiz), str(vIDPastaModelo)))
+            self.getLogger().warning('Diretorio_Empresa: '+iDiretorioEmpresa)
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar pastas: ' + str(e))
             return False
