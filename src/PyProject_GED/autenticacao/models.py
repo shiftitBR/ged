@@ -137,9 +137,10 @@ class Usuario(User):
     
     def comaparaSenha(self, vIDUsuario, vSenha):
         try:
-            iUsuario= Usuario.objects.filter(pk= vIDUsuario)[0]
-            print iUsuario.password
-            print vSenha
+            try:
+                iUsuario= Usuario.objects.filter(pk= vIDUsuario)[0]
+            except:
+                return False
             if iUsuario.password == vSenha:
                 return True
             else:
