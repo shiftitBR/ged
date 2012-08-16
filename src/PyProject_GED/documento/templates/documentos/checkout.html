@@ -27,7 +27,7 @@
 		{% else %}
 		<form action="" method="POST">{% csrf_token %}
 			<div class="form-actions">
-				<button type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Check-out</button>
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" onClick="parent.jQuery.fancybox.close();">Check-out</button>
 				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 			</div>
 		</form>

@@ -50,7 +50,6 @@ class Pendencia(models.Model):
             iPendencia.save()
             return iPendencia
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia: ' + str(e))
             return False
         
@@ -78,7 +77,6 @@ class Pendencia(models.Model):
                 iLista.append(iPendencia)
             return iLista
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasRemetente: ' + str(e))
             return False
         
@@ -108,7 +106,6 @@ class Pendencia(models.Model):
                 iLista.append(iPendencia)
             return iLista
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasDestinatario: ' + str(e))
             return False
         
@@ -119,6 +116,5 @@ class Pendencia(models.Model):
             iPendencia.save()
             return True
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel adicionarFeedback: ' + str(e))
             return False

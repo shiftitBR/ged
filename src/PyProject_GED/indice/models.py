@@ -36,7 +36,6 @@ class Tipo_de_Indice(models.Model):
             iTipoDeIndice.save()
             return iTipoDeIndice
         except Exception, e:
-            print str(e)
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os tipos de Indice: ' + str(e))
             return False
 

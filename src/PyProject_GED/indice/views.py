@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.indice.forms         import FormBuscaDocumento
-from PyProject_GED.indice.models import Indice
+from PyProject_GED.indice.models        import Indice
+from django.contrib                     import messages
+from PyProject_GED                      import oControle
 
     
 def busca(vRequest, vTitulo):
@@ -11,7 +14,7 @@ def busca(vRequest, vTitulo):
     iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
     
     try:
-        iPaginator= vRequest.session['iPaginator']
+        iPaginator= vRequest.session['iPaginatorBusca']
         iPage = vRequest.GET.get('page')
         if iPage ==None:
             iPage = 1
@@ -26,30 +29,56 @@ def busca(vRequest, vTitulo):
     
     if vRequest.method == 'POST':
         form = FormBuscaDocumento(vRequest.POST, iIDEmpresa= iIDEmpresa)
-        iAssunto= vRequest.POST.get('assunto')
-        iProtocolo= vRequest.POST.get('protocolo')
-        iConteudo= vRequest.POST.get('conteudo')
-        iDataInicio= vRequest.POST.get('data_criacao_inicial')
-        iDataFim= vRequest.POST.get('data_criacao_final')
-        iUsuarioResponsavel= vRequest.POST.get('usuario_responsavel')
-        iUsuarioCriador= vRequest.POST.get('usuario_criador')
-        iNormas= vRequest.POST.get('normas')
-        iTipoDocumento= vRequest.POST.get('tipo_documento')
-        iEstado= vRequest.POST.get('estado')
-        iConteudo= vRequest.POST.get('conteudo')
-        iListaIDIndices= []
-        if 'buscaAcancada' in vRequest.POST:
-            print vRequest.POST
-            for i in range(len(iListaIndices)):
-                iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
-                if iIndice not in (None, ''):
-                    iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
-        iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
-                                                   iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
-                                                   iDataFim, iListaIDIndices, iConteudo, vEhPublico= False)
-        iPaginator = Paginator(iListaDocumentos, 10)
-        iDocumentos = iPaginator.page(1)
-        vRequest.session['iPaginator'] = iPaginator
+        if 'email' in vRequest.POST['supporttype'] or 'publicar' in vRequest.POST['supporttype']:
+            try :
+                iListaCheck=[]
+                iListaVersao = ''
+                iListaDocumentos= vRequest.session['iListaBusca']
+                for i in range(len(iListaDocumentos)): 
+                    if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
+                        iListaCheck.append(iListaDocumentos[i].id_versao)
+                        iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
+                if len(iListaCheck) == 0:
+                    messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
+                    iAcao= 0
+                else:
+                    if 'email' in vRequest.POST['supporttype']:
+                        iAcao= 1
+                    if 'publicar' in vRequest.POST['supporttype']:
+                        iAcao= 2
+                    vRequest.session['ListaVersao']= iListaVersao
+            except Exception, e:
+                oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
+                return False
+        else:
+            try:
+                iAssunto= vRequest.POST.get('assunto')
+                iProtocolo= vRequest.POST.get('protocolo')
+                iConteudo= vRequest.POST.get('conteudo')
+                iDataInicio= vRequest.POST.get('data_criacao_inicial')
+                iDataFim= vRequest.POST.get('data_criacao_final')
+                iUsuarioResponsavel= vRequest.POST.get('usuario_responsavel')
+                iUsuarioCriador= vRequest.POST.get('usuario_criador')
+                iNormas= vRequest.POST.get('normas')
+                iTipoDocumento= vRequest.POST.get('tipo_documento')
+                iEstado= vRequest.POST.get('estado')
+                iConteudo= vRequest.POST.get('conteudo')
+                iListaIDIndices= []
+                if 'buscaAcancada' in vRequest.POST:
+                    for i in range(len(iListaIndices)):
+                        iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
+                        if iIndice not in (None, ''):
+                            iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
+                iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
+                                                           iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
+                                                           iDataFim, iListaIDIndices, iConteudo, vEhPublico= False)
+                vRequest.session['iListaBusca'] = iListaDocumentos
+                iPaginator = Paginator(iListaDocumentos, 10)
+                iDocumentos = iPaginator.page(1)
+                vRequest.session['iPaginatorBusca'] = iPaginator
+            except Exception, e:
+                oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
+                return False
     else:
         form = FormBuscaDocumento(iIDEmpresa= iIDEmpresa)        
         
@@ -76,7 +105,6 @@ def publico(vRequest, vTitulo, vIDEmpresa):
         iConteudo= vRequest.POST.get('conteudo')
         iListaIDIndices= []
         if 'buscaAcancada' in vRequest.POST:
-            print vRequest.POST
             for i in range(len(iListaIndices)):
                 iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
                 if iIndice not in (None, ''):
