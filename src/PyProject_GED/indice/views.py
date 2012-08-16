@@ -30,8 +30,6 @@ def busca(vRequest, vTitulo):
     if vRequest.method == 'POST':
         form = FormBuscaDocumento(vRequest.POST, iIDEmpresa= iIDEmpresa)
         if 'email' in vRequest.POST['supporttype'] or 'publicar' in vRequest.POST['supporttype']:
-            print '>>>>>>>>>>>>>>> entrou'
-            print vRequest.POST
             try :
                 iListaCheck=[]
                 iListaVersao = ''
@@ -40,8 +38,6 @@ def busca(vRequest, vTitulo):
                     if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
                         iListaCheck.append(iListaDocumentos[i].id_versao)
                         iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
-                print len(iListaCheck)
-                    
                 if len(iListaCheck) == 0:
                     messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
                     iAcao= 0

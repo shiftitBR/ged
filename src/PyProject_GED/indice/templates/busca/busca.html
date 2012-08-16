@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block conteudo %}
-	
+
 <center><h1>Buscar Documentos</h1></center>
 
 <div class="container">
@@ -24,7 +24,7 @@
 				{{ form.estado }}
 			</p>
 			<p>
-				<button type="submit" class="btn btn-success">Busca Simples</button>
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-success">Busca Simples</button>
 				<a href="#avancado" class="btn btn-success" rel="popover" placement="left" data-toggle="modal" data-content="Busca por índices personalizados adicionados ao sistema." data-original-title="Buscar Avançado">Busca Avançada</a>
 			</p>
 		</div> 
