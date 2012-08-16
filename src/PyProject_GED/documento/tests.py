@@ -604,13 +604,12 @@ class Test(TestCase):
     
     def mokarTipoIndice(self):
         iDescricao      = 'string'
-        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]     
-        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao, empresa= iEmpresa)
+        iTipoIndice     = Tipo_de_Indice(descricao= iDescricao)
         iTipoIndice.save()   
         
         
     def mokarIndice(self):
-        iTipo           = Tipo_de_Indice.objects.filter(empresa= 1)[0]
+        iTipo           = Tipo_de_Indice.objects.all()[0]
         iEmpresa        = Empresa.objects.filter()[0]
         
         iDescricao      = 'nome'
