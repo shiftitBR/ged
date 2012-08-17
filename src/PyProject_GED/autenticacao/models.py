@@ -32,7 +32,8 @@ class Empresa(models.Model):
     cidade          = models.CharField(max_length=30, null= True, blank=True)
     uf              = models.CharField(max_length=2, null= True, blank=True)
     pasta_raiz      = models.CharField(max_length=100, null= False, blank=True)
-    eh_ativo        = models.BooleanField(null= False)
+    eh_ativo        = models.BooleanField(null= False, verbose_name='Ativa', help_text='Empresa Ativa')
+    eh_publico      = models.BooleanField(null= False, verbose_name='Pública', help_text='Possui Documentos Públicos para Divulgação')
     
     class Meta:
         db_table= 'tb_empresa'
@@ -78,15 +79,20 @@ class Empresa(models.Model):
         
     def obtemListaEnderecoEmpresas(self):
         try:
-            iEmpresas= Empresa.objects.filter()
+            iEmpresas= Empresa.objects.filter(eh_publico = True)
             iLista= ''
             for i in range(len(iEmpresas)):
-                if (iEmpresas[i].rua != '' or iEmpresas[i].bairro != '') and (iEmpresas[i].rua != None or iEmpresas[i].bairro != None):
-                    iInfo= "%s %s %s %s %s %s" % (iEmpresas[i].rua, str(iEmpresas[i].numero), iEmpresas[i].cep, iEmpresas[i].bairro, iEmpresas[i].cidade, iEmpresas[i].uf)
-                    if iLista== '':
-                        iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
-                    else:
-                        iLista= iLista + '%' + str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + str(iEmpresas[i].nome)
+                iRua    = unicode(iEmpresas[i].rua)
+                iNumero = unicode(iEmpresas[i].numero)
+                iCep    = unicode(iEmpresas[i].cep)
+                iBairro = unicode(iEmpresas[i].bairro)
+                iCidade = unicode(iEmpresas[i].cidade)
+                iUF     = unicode(iEmpresas[i].uf)
+                iInfo= "%s %s %s %s %s %s" % (iRua, iNumero, iCep, iBairro, iCidade, iUF)
+                if iLista== '':
+                    iLista= str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + unicode(iEmpresas[i].nome)
+                else:
+                    iLista= iLista + '%' + str(iEmpresas[i].id_empresa) + '%' + iInfo + '%' + unicode(iEmpresas[i].nome)
             return iLista
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter obtemListaEnderecoEmpresas ' + str(e))
