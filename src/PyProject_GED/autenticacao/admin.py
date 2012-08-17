@@ -14,11 +14,7 @@ from models                         import Usuario
 from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
-<<<<<<< HEAD
-=======
-from PyProject_GED import multiuploader
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
->>>>>>> 5c43fc6e36357231bc8cbc7a35dad43ab6086c41
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
