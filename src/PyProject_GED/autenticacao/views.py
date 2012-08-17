@@ -17,19 +17,20 @@ def login(vRequest, vTitulo):
         password= vRequest.POST.get('password')
         
         try:
-            client_address = vRequest.META['HTTP_X_FORWARDED_FOR']  # case server 200.000.02.001
+            client_address = vRequest.META['HTTP_X_FORWARDED_FOR']
         except:
-            client_address = vRequest.META['REMOTE_ADDR']           # case localhost ou 127.0.0.1
+            client_address = vRequest.META['REMOTE_ADDR']
             
-        oControle.getLogger().error('IP_Address: ' + str(client_address))
-        
         user = authenticate(username=username, password=password)
         if user is not None:
+            if not Usuario().obtemUsuario(user).empresa.eh_ativo:
+                return HttpResponseRedirect('/login_error/'+ str(constantes.cntTipoErroEmpresaInativa))
             if user.is_active:
                 if Firewall().verificaIP(client_address, Usuario().obtemUsuario(user).empresa):
                     auth_login(vRequest, user)
                     return HttpResponseRedirect('/documentos/')
                 else: 
+                    oControle.getLogger().warning('O IP_Address: ' + str(client_address) + ' foi recusado!')
                     auth_logout(vRequest)
                     return HttpResponseRedirect('/login_error/'+ str(constantes.cntTipoErroIpBloqueado))
             else:

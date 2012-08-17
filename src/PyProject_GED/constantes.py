@@ -52,3 +52,4 @@ cntTipoUsuarioContato       = 2
 cntTipoErroSenhaUser        = 1
 cntTipoErroInativo          = 2
 cntTipoErroIpBloqueado      = 3
+cntTipoErroEmpresaInativa   = 4
