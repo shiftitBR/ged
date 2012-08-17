@@ -263,9 +263,9 @@ class Test(TestCase):
     
     def testBuscaDocumentosPorConteudo(self):
         iIDEmpresa= Empresa.objects.filter(id_empresa=1)[0].id_empresa
-        iConteudo1= 'FrED'
-        iConteudo2= 'RaPOsa'
-        iConteudo3= 'Marisco'
+        iConteudo1= u'FrED'
+        iConteudo2= u'RaPOsa'
+        iConteudo3= u'Marisco'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo1)
         self.assertEquals(2, len(iLista))
@@ -294,8 +294,8 @@ class Test(TestCase):
         iEstadoDoDocumento1= str(Estado_da_Versao.objects.all()[0].id_estado_da_versao)
         iIndice2= (2, 'teste_string2')
         iIndice3= (2, 'teste_string1')
-        iConteudo1= 'RaPOsa'
-        iConteudo2= 'Marisco'
+        iConteudo1= u'RaPOsa'
+        iConteudo2= u'Marisco'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto1, vProtocolo= iProtocolo1)
         self.assertEquals(0, len(iLista))
