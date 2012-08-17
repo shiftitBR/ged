@@ -4,9 +4,9 @@ Created on Jan 17, 2012
 @author: spengler
 '''
 
-from django.contrib                 import admin, sites
+from django.contrib                 import admin
 from django.contrib.auth.admin      import UserAdmin 
-from django.contrib.auth.models     import User, Group
+from django.contrib.auth.models     import User
 from django.contrib.sites.models    import Site
 
 from models                         import Empresa
@@ -14,13 +14,12 @@ from models                         import Usuario
 from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
 
 from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
-from PyProject_GED import multiuploader
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
-                       'cidade', 'uf', 'eh_ativo')
+                       'cidade', 'uf', 'eh_ativo', 'eh_publico')
     search_fields   = ('id_empresa', 'nome', 'cnpj', 'eh_ativo')
     exclude         = ('id_empresa', 'pasta_raiz') 
     
