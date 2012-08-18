@@ -175,7 +175,8 @@ class Test(TestCase):
         iIDEmpresa= iEmpresa.id_empresa
         iProtocolo1= '1000'
         iProtocolo2= '1001'
-        iProtocolo3= '10'
+        iProtocolo3= '0000001001'
+        iProtocolo4= '10'
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vProtocolo= iProtocolo1)
         self.assertEquals(0, len(iLista))
@@ -184,6 +185,9 @@ class Test(TestCase):
         self.assertEquals(1, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vProtocolo= iProtocolo3)
+        self.assertEquals(1, len(iLista))
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vProtocolo= iProtocolo4)
         self.assertEquals(0, len(iLista))
     
     def testBuscaDocumentosPorUsuarioResponsavel(self):
@@ -236,9 +240,10 @@ class Test(TestCase):
     def testBuscaDocumentosPorIndicePersonalizadoTipoString(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
         iIDEmpresa= iEmpresa.id_empresa
-        iIndice1= (1, 'teste_string1') #(id_indice, valor)
+        iIndice1= (1, 'TEste_stRIng1') #(id_indice, valor)
         iIndice2= (2, 'teste_string2')
         iIndice3= (2, 'teste_string1')
+        iIndice4= (2, 'teste')
         
         iListaIndice= [] 
         iListaIndice.append(iIndice1)
@@ -260,12 +265,18 @@ class Test(TestCase):
         iListaIndice.append(iIndice2)
         iLista= Versao().buscaDocumentos(iIDEmpresa, vListaIndice= iListaIndice)
         self.assertEquals(4, len(iLista))
+        
+        iListaIndice= [] 
+        iListaIndice.append(iIndice4)
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vListaIndice= iListaIndice)
+        self.assertEquals(0, len(iLista))
     
     def testBuscaDocumentosPorConteudo(self):
         iIDEmpresa= Empresa.objects.filter(id_empresa=1)[0].id_empresa
         iConteudo1= u'FrED'
         iConteudo2= u'RaPOsa'
         iConteudo3= u'Marisco'
+        
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo1)
         self.assertEquals(2, len(iLista))
@@ -553,14 +564,14 @@ class Test(TestCase):
         
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iDocumento      = Documento.objects.filter(id_documento= 1)[0]
-        iProtocolo      = '1001'
+        iProtocolo      = '0000001001'
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
         iUpload         = MultiuploaderImage.objects.filter()[2]
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iDocumento      = Documento.objects.filter(id_documento= 2)[0]
-        iProtocolo      = '1002'
+        iProtocolo      = '0000001002'
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
@@ -568,20 +579,20 @@ class Test(TestCase):
         iDataCriacao    = ControleDocumentos().formataData('03/09/2012')
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 3)[0]
-        iProtocolo      = '1003'
+        iProtocolo      = '0000001003'
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
         iDataCriacao    = ControleDocumentos().formataData('03/07/2012')
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 4)[0]
-        iProtocolo      = '1004'
+        iProtocolo      = '0000001004'
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 5)[0]
-        iProtocolo      = '1005'
+        iProtocolo      = '0000001005'
         iUpload         = MultiuploaderImage.objects.all()[1]
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
@@ -589,7 +600,7 @@ class Test(TestCase):
         iDataCriacao    = ControleDocumentos().formataData('03/09/2012')
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 6)[0]
-        iProtocolo      = '1006'
+        iProtocolo      = '0000001006'
         iUpload         = MultiuploaderImage.objects.all()[2]
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
@@ -597,7 +608,7 @@ class Test(TestCase):
         iDataCriacao    = ControleDocumentos().formataData('03/07/2012')
         iCriador        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[1]
         iDocumento      = Documento.objects.filter(id_documento= 7)[0]
-        iProtocolo      = '1007'
+        iProtocolo      = '0000001007'
         iUpload         = MultiuploaderImage.objects.all()[3]
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
@@ -629,7 +640,7 @@ class Test(TestCase):
         Indice_Versao_Valor().salvaValorIndice(iValor, iIDIndice1, iIDVersao)
         
         iIDVersao       = Versao.objects.filter(documento__id_documento= 1)[0].id_versao
-        iValor          = 'teste_string2'
+        iValor          = 'teSTe_StrinG2'
         Indice_Versao_Valor().salvaValorIndice(iValor, iIDIndice2, iIDVersao)
         
         iIDVersao       = Versao.objects.filter(documento__id_documento= 2)[0].id_versao

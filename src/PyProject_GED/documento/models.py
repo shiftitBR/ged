@@ -64,7 +64,7 @@ class Tipo_de_Documento(models.Model):
     
     def obtemListaTipoDocumentoDaEmpresa(self, vIDEmpresa):
         try:
-            iListaTipoDocumento = Tipo_de_Documento.objects.filter(empresa= vIDEmpresa)
+            iListaTipoDocumento = Tipo_de_Documento.objects.filter(empresa= vIDEmpresa).order_by('descricao')
             return iListaTipoDocumento
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de tipos de documentos: ' + str(e))
@@ -183,7 +183,7 @@ class Estado_da_Versao(models.Model):
     
     def obtemEstadosDaVersao(self):
         try:
-            iListaEstados = Estado_da_Versao.objects.all()
+            iListaEstados = Estado_da_Versao.objects.all().order_by('descricao')
             return iListaEstados
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os estados da versao: ' + str(e))
@@ -383,7 +383,7 @@ class Versao(models.Model):
             if vAssunto not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):
-                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(protocolo__exact= vProtocolo)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(protocolo__exact= str('%010d' % int(vProtocolo)))
             if vIDUsuarioResponsavel not in (None, '', 'selected'):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__usr_responsavel__id= int(vIDUsuarioResponsavel))
             if vIDUsuarioCriador not in (None, '', 'selected'):

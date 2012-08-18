@@ -79,9 +79,12 @@ class Test(TestCase):
     
     def testLerTextoODT(self):
         iVersao= Versao.objects.all()[4]
-        iTexto= u'FRED'
-        iEncontrou= ControleOCR().buscaTextoNoDocumento(iTexto, iVersao)
-        self.assertEquals(True, iEncontrou)
+        iTexto1= u'FRED'
+        iTexto2= u'fricção'
+        iEncontrou1= ControleOCR().buscaTextoNoDocumento(iTexto1, iVersao)
+        iEncontrou2= ControleOCR().buscaTextoNoDocumento(iTexto2, iVersao)
+        self.assertEquals(True, iEncontrou1)
+        self.assertEquals(True, iEncontrou2)
         
     def testLerTextoTXT(self):
         iVersao= Versao.objects.all()[5]
