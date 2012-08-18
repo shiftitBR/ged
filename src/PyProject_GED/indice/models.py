@@ -107,7 +107,7 @@ class Indice_Versao_Valor(models.Model):
             iListaVersoesIndice= []
             iListaVersaoIndice= Indice_Versao_Valor.objects.filter(indice__empresa__id_empresa= vIDEmpresa)
             iListaVersaoIndice= iListaVersaoIndice.filter(indice__id_indice= vIDIndice)
-            iListaVersaoIndice= iListaVersaoIndice.filter(valor= vValor)
+            iListaVersaoIndice= iListaVersaoIndice.filter(valor__iexact= vValor)
             for i in range(len(iListaVersaoIndice)):
                 iListaVersoesIndice.append(iListaVersaoIndice[i].versao.id_versao)
             return iListaVersoesIndice

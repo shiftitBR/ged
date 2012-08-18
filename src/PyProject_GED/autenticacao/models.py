@@ -194,7 +194,7 @@ class Usuario(User):
     
     def obtemUsuariosDaEmpresa(self, vEmpresa):
         try:
-            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa)
+            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa).order_by('first_name')
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))

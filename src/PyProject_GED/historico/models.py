@@ -9,7 +9,6 @@ from django.db                  import models
 from autenticacao.models        import Empresa #@UnresolvedImport
 from autenticacao.models        import Usuario #@UnresolvedImport
 from documento.models           import Versao #@UnresolvedImport
-from objetos_auxiliares         import Documento as DocumentoAuxiliar
 from objetos_auxiliares         import Historico as HistoricoAuxiliar
 
 import datetime
@@ -60,19 +59,23 @@ class Historico(models.Model):
         super(Historico, self).save()  
     
     def salvaHistorico(self, vIDVersao, vIDTipo_Evento, vIDUsuario, vIDEmpresa, 
-                       vData= str(datetime.datetime.today())[:19]):
+                       vData= None):
         try:
             iVersao         = Versao.objects.filter(id_versao= vIDVersao)[0]
             iTipoEvento     = Tipo_de_Evento.objects.filter(id_tipo_evento= vIDTipo_Evento)[0]
             iUsuario        = Usuario.objects.filter(id= vIDUsuario)[0]
             iEmpresa        = Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
+            if vData == None:
+                iData= str(datetime.datetime.today())[:19]
+            else:
+                iData= vData
             
             iHistorico              = Historico()
             iHistorico.versao       = iVersao
             iHistorico.tipo_evento  = iTipoEvento
             iHistorico.usuario      = iUsuario
             iHistorico.empresa      = iEmpresa
-            iHistorico.data         = vData
+            iHistorico.data         = iData
             iHistorico.save()
             return iHistorico
         except Exception, e:
@@ -82,7 +85,7 @@ class Historico(models.Model):
     def obtemListaEventos(self, vIDVersao):
         try: 
             iVersaoDoc      = Versao.objects.filter(id_versao= vIDVersao)[0]
-            iListaHistorico = Historico.objects.filter(versao__documento= iVersaoDoc.documento).order_by('versao')
+            iListaHistorico = Historico.objects.filter(versao__documento= iVersaoDoc.documento).order_by('versao', 'data')
             iLista      = []
             for i in range(len(iListaHistorico)):
                 iHistorico= iListaHistorico[i]
