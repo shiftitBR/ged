@@ -34,13 +34,19 @@ $("form[data-fancy=true]").live('submit',function(){
 		},
 		success: function(){
 			alert('Finished processing form');
-			return false;							
 		},
 		dataType: 'json'
 	});
-	return false;
 });
 
+</script>
+
+<script type="text/javascript">
+    function closeME() {
+        event.preventDefault();
+        parent.$.fancybox.close();
+        $('#fancy').submit();
+    }
 </script>
 
 {% if iAcao == 1 %}

@@ -254,7 +254,8 @@ class Versao(models.Model):
         try:
             iListaDocumentosAuxiliar=[]
             iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(
-                                    documento__pasta = vIDPasta).filter(eh_versao_atual=True).order_by('-data_criacao')
+                                    documento__pasta = vIDPasta).filter(eh_versao_atual=True).exclude(
+                                    estado=constantes.cntEstadoVersaoExcluida).order_by('-data_criacao')
             for i in range(len(iListaVersao)):    
                 iDocumento = self.obtemDocumentoAuxiliar(iListaVersao[i])
                 iListaDocumentosAuxiliar.append(iDocumento)
