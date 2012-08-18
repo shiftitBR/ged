@@ -91,7 +91,7 @@
         btn.button('loading')
         setTimeout(function () {
           btn.button('reset')
-        }, 3000)
+        },9000)
       })
 
     // carousel demo
