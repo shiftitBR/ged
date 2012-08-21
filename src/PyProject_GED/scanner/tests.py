@@ -6,6 +6,7 @@ Created on Aug 20, 2012
 
 
 from django.test                                import TestCase
+from PyProject_GED.scanner.core._imagescanner import ImageScanner
 
 
 
@@ -20,4 +21,6 @@ class Test(TestCase):
         pass
 
     def testCriarTipoDeEvento(self):
-        
+        iscanner = ImageScanner()
+        scanners = iscanner.list_scanners()
+        self.assertEqual(True, len(scanners) > 0)
