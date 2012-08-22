@@ -39,45 +39,35 @@
 	{% endif %}
 	
     {% if iPossuiPermissao %}
-    <div class="container">
-	    <table class="table table-striped">
-	      <thead>
-	        <tr>
-	          <th>#</th>
-	          <th>Scanner</th>
-	          <th>Ação</th>
-	        </tr>
-	      </thead>
-	      <tbody>
-	        <tr>
-	          <td>1</td>
-	          <td>Scanner - 01</td>
-	          <td><a id="fat-btn" data-loading-text="Carregando..." class="btn btn-primary" href="#" ><i class="icon-picture icon-white"></i> Digitalizar</a></td>
-	        </tr>
-	      </tbody>
-	    </table>
-    </div>
-    
 	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
 		<div class="well">
+			
 			<div class="container-fluid">
 		  		<div class="row-fluid">
 		  			<div class="span1"> </div>
 		    		<div class="span5">
-		    			
+		    			<p>
+		    				<select name='scanner'>
+							  <option value='0'>Selecione Scanner *</option>
+							  <option value='1'>1 - Scanner 001</option>
+							  <option value='2'>2 - Scanner 002</option>
+							  <option value='3'>3 - Scanner 003</option>
+							</select>
+		    			</p>
 						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
 						<p>{{form.usr_responsavel}}</p>
-						<p>{{form.tipo_documento}}</p>
-					  
 				    </div>
 				    <div class="span6">
-				    	
-				        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				    	<p>{{form.tipo_documento}}</p>
 		            	<p>{{form.data_validade}}</p>
 		              	<p>{{form.data_descarte}}</p>
-		              	
 				    </div>
 				 </div>
+			</div>
+			<div class="container">
+				<center>
+				<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				</center>
 			</div>
 		</div>
 			
