@@ -21,6 +21,7 @@ def historico(vRequest, vTitulo, vIDVersao=None):
         iListaVersao    = Versao().obtemListaDeVersoesDoDocumento(vIDVersao)
         iListaEventos   = Historico().obtemListaEventos(vIDVersao)
         iUltimaVersao   = iListaVersao[len(iListaVersao)-1].num_versao
+        iPossuiPermissao= True
     else:
         messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
     

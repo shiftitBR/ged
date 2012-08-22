@@ -103,7 +103,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                         if iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoPDF:
                             iLinha= iLinha + '<a class="btn btn-primary" href="%(iArquivo)s" target="_blank" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})    
                         elif iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoImagem:
-                            iLinha= iLinha + '<a class="btn btn-primary fancybox" href="%(iArquivo)s" data-fancybox-group="gallery" title="%(iAssunto)s"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iArquivo': str(iListaDocumentos[i].caminhoVisualizar), 'iAssunto': str(iListaDocumentos[i].assunto)})
+                            iLinha= iLinha + '<a class="btn btn-primary fancybox fancybox.iframe" href="/visualizar/%(iIDVersao)s/"><i class="icon-camera icon-white"></i> Visualizar</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         elif iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoOutro:
                             iLinha= iLinha + '<a class="btn btn-primary" href="/download/%(iIDVersao)s/"><i class="icon-download-alt icon-white"></i>  Download</a>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         iLinha= iLinha + '<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button><ul class="dropdown-menu">'
@@ -436,13 +436,16 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoVisualizar):
-            iVersao = Versao().obtemVersao(vIDVersao)
-            iVersao.caminhoVisualizar
+            iVersao     = Versao().obtemVersao(vIDVersao)
+            iImagem  = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+            iPossuiPermissao= True
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
         
     except Exception, e:
-            oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel fazer visualizar o arquivo: ' + str(e))
             return False
 
     return render_to_response(

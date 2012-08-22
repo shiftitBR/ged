@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+  		<center>
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Visualizar Documento</strong></h2>
+		</header>
+		</center>
+				
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+		
+		{% if iPossuiPermissao %}
+		<div class="well">
+			<center><img src="{{iImagem}}" border="5" /></center>
+		</div>
+		{% endif %}
+		
+  	</div>
+</body>
+
+</html>
