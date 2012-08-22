@@ -24,7 +24,7 @@ class Controle(object):
             scanners = iscanner.list_scanners()
             
             print '>>>>>>>>>>>>>>>>>>>'
-            print scanners
+            #print scanners
             print '<<<<<<<<<<<<<<<<<<<'
             scanner = scanners[1]
             
