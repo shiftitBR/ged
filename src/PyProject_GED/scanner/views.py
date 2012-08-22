@@ -39,12 +39,11 @@ def importar(vRequest, vTitulo):
             return False
     
     if vRequest.POST:
-        ControleScanner().executaScanner()
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
-                if vRequest.session['Image'] == True or not vRequest.session['Image'] == None:
-                    iImage= vRequest.session['Image']
+                if ControleScanner().executaScanner():
+                    iImage= vRequest.session['Image'] # Verificar
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= datetime.datetime.now()
@@ -75,10 +74,9 @@ def importar(vRequest, vTitulo):
                         iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
                         if iValor != '':
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
-                    vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
                 else:
-                    messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
+                    messages.warning(vRequest, 'Não foi possível digitalizar imagem!')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel importar: ' + str(e))
                 return False
