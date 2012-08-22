@@ -22,6 +22,8 @@ import os
 import urllib
 import constantes #@UnresolvedImport
 
+from PyProject_GED.scanner.controle import Controle as ControleScanner
+
 @login_required 
 def documentos(vRequest, vTitulo):
     try :
@@ -160,6 +162,7 @@ def importar(vRequest, vTitulo):
             return False
     
     if vRequest.POST:
+        ControleScanner().executaScanner()
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
