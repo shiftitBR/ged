@@ -3,6 +3,7 @@ from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib                     import messages
 
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
@@ -11,6 +12,7 @@ from PyProject_GED.documento.models     import Versao
 from PyProject_GED.historico.models     import Historico
 from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
+from PyProject_GED.seguranca.models     import Funcao_Grupo
     
 import constantes #@UnresolvedImport
 from django.http import HttpResponse
@@ -20,9 +22,11 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPossuiPermissao= True
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
+            vIDFuncao = 0
+            iPossuiPermissao    = True
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get encaminhar: ' + str(e))

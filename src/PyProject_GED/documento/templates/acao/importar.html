@@ -37,7 +37,8 @@
 		</ul>
 	</div>
 	{% endif %}
-    
+	
+    {% if iPossuiPermissao %}
     <div class="well">
 	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 			<div class="container">
@@ -98,7 +99,9 @@
 			</div>
 		</div>
 	
-	</form>     
+	</form>   
+	{% endif %}
+	  
 </body>
 
 </html>

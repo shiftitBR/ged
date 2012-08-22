@@ -16,13 +16,13 @@
 		  <p class="lead">Efetuar Download do Documento</p>
 		</header>
 				
-		{% if not iPossuiPermissao %}
-		<div class="alert alert-error">
-		  <p><center>Você não possui permissão para fazer o Download do Documento!</center></p>
-		</div>
-		
-		<div class="form-actions">
-			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
 		</div>
 		{% endif %}
 		

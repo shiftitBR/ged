@@ -16,7 +16,6 @@
 		  <p class="lead">Confirmar reprovação de documento.</p>
 		</header>
 		  	
-		{% if iPossuiPermissao %}
 		<div class="container">
 			<form class="form-horizontal" action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
 				<div class="well">
@@ -34,17 +33,6 @@
 				</div>
 			</form>
 		</div>
-		{% endif %}
-		
-		{% if not iPossuiPermissao %}
-		<div class="alert alert-error">
-		  <p><center>Você não possui permissão para Reprovar o Documento!</center></p>
-		</div>
-		
-		<div class="form-actions">
-			<button class="btn btn-inverse" onClick="parent.jQuery.fancybox.close();">Fechar</button>
-		</div>
-		{% endif %}
 	</div>
 </body>
 

@@ -8,7 +8,7 @@ from django.contrib                     import messages
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico
-from PyProject_GED.seguranca.models     import Pasta
+from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
 from PyProject_GED.workflow.models      import Pendencia
 from PyProject_GED.documento.models     import Tipo_de_Documento
 from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
@@ -25,8 +25,10 @@ import constantes #@UnresolvedImport
 @login_required 
 def documentos(vRequest, vTitulo):
     try :
+        iUser = vRequest.user
+        if iUser:
+            iUsuario= Usuario().obtemUsuario(iUser)
         iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
-        vRequest.session['IDEmpresa'] = iEmpresa.id_empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
         vRequest.session['PastaRaiz'] = iPasta_Raiz
@@ -49,9 +51,15 @@ def documentos(vRequest, vTitulo):
                 iAcao= 0
             else:
                 if 'email' in vRequest.POST['supporttype']:
-                    iAcao= 1
+                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
+                        iAcao= 1
+                    else:
+                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
                 if 'publicar' in vRequest.POST['supporttype']:
-                    iAcao= 2
+                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
+                        iAcao= 2
+                    else:
+                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
                 vRequest.session['ListaVersao']= iListaVersao
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
@@ -105,7 +113,10 @@ def tabelaDocumentos(vRequest, vTitulo):
                     #if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
                     #    iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     if iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoPDF or iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoImagem:
-                        iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
+                            iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        else:
+                            iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/download/0/"><i class="icon-download-alt"></i>  Download</a></li>'
                     
                     if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -133,11 +144,16 @@ def importar(vRequest, vTitulo):
         iUser = vRequest.user
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
-        iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
-        iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
-        iTamListaIndices    = len(iListaIndices)
-        iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
-        iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+            
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
+            iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
+            iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+            iTamListaIndices    = len(iListaIndices)
+            iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+            iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+            iPossuiPermissao    = True
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get importar: ' + str(e))
@@ -202,11 +218,13 @@ def importar(vRequest, vTitulo):
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario    = Usuario().obtemUsuario(vRequest.user)
-        iVersaoBase = Versao().obtemVersao(vIDVersao)
-        iDocumento  = iVersaoBase.documento
-        vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
+            iVersaoBase = Versao().obtemVersao(vIDVersao)
+            iDocumento  = iVersaoBase.documento
+            vIDFuncao = 0
             iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get checkin: ' + str(e))
@@ -250,9 +268,11 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        vIDFuncao = 0
-        if not DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPermissaoNegada= True
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
+            vIDFuncao = 0
+            iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.')    
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get checkout: ' + str(e))
@@ -281,10 +301,7 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
 def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
         vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPossuiPermissao= True
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
@@ -310,10 +327,7 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
 def reprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
         vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
-            iPossuiPermissao= True
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
@@ -340,9 +354,11 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        vIDFuncao = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoExcluir):
+            vIDFuncao = 0
             iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get excluir: ' + str(e))
@@ -366,17 +382,20 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        vIDFuncao  = 0
-        if DocumentoControle().obtemPermissao(iUsuario.id, vIDFuncao):
+        
+        if vIDVersao != '0':
+            vIDFuncao = 0
             iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
             iFile = open(iArquivo,"r")
             response = HttpResponse(iFile.read())
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
+            iPossuiPermissao= True
             return response
-        else: 
-            iPossuiPermissao= False
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
+        
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
             return False
@@ -390,6 +409,7 @@ def download(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def criaArvore(vRequest, vTitulo):
     try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
         iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
@@ -398,8 +418,9 @@ def criaArvore(vRequest, vTitulo):
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
                 if os.path.isdir(iDiretorioFilho):
-                    iPasta= Pasta().obtemNomeDaPasta(iPasta)
-                    iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iPasta))
+                    iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
+                    if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
+                        iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
             iHtml.append('</ul>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
@@ -408,3 +429,24 @@ def criaArvore(vRequest, vTitulo):
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel criar arvore: ' + str(e))
             return False
+        
+@login_required 
+def visualizar(vRequest, vTitulo, vIDVersao=None):
+    try :
+        iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoVisualizar):
+            iVersao = Versao().obtemVersao(vIDVersao)
+            iVersao.caminhoVisualizar
+        else:
+            messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
+        
+    except Exception, e:
+            oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
+            return False
+
+    return render_to_response(
+        'acao/visualizar.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )       

@@ -1,8 +1,6 @@
 
 from django.test                                import TestCase
-from django.conf                    import settings
-
-from autenticacao.models                        import Empresa #@UnresolvedImport
+from django.conf                                import settings
 
 from models                                     import Pasta 
 from models                                     import Grupo
@@ -10,7 +8,11 @@ from models                                     import Funcao
 from models                                     import Firewall
 from models                                     import Grupo_Pasta
 from models                                     import Funcao_Grupo
-from models                                     import Firewall_Grupo        
+from models                                     import Firewall_Grupo  
+      
+from PyProject_GED.autenticacao.models          import Tipo_de_Usuario, Usuario,\
+    Empresa
+from PyProject_GED.seguranca.models             import Grupo_Usuario
 
 class Test(TestCase):
     
@@ -20,11 +22,27 @@ class Test(TestCase):
         self.mokarPasta()
         self.mokarFuncao()
         self.mokarFirewall()
+        self.mokarGrupoPasta()
+        self.mokarFuncaoGrupo()
+        self.mokarFirewallGrupo()
+        self.mokarTipoUsuario()
+        self.mokarUsuario()
+        self.mokarGrupo_Usuario()
         pass
     
     
     def tearDown(self):
         Empresa.objects.all().delete()
+        Pasta.objects.all().delete()
+        Grupo.objects.all().delete()
+        Funcao.objects.all().delete()
+        Firewall.objects.all().delete()
+        Grupo_Pasta.objects.all().delete()
+        Funcao_Grupo.objects.all().delete()
+        Firewall_Grupo.objects.all().delete()
+        Tipo_de_Usuario.objects.all().delete()
+        Usuario.objects.all().delete()
+        Grupo_Usuario.objects.all().delete()
         pass
     
     def testCriarPasta(self):
@@ -65,13 +83,12 @@ class Test(TestCase):
     def testCriarGrupoPasta(self):
         iGrupo           = Grupo.objects.filter(empresa= 1)[0]
         iPasta           = Pasta.objects.filter(empresa= 1)[0]
-        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
-        iGrupoPasta      = Grupo_Pasta(grupo= iGrupo, pasta= iPasta, empresa= iEmpresa)
+        iGrupoPasta      = Grupo_Pasta(grupo= iGrupo, pasta= iPasta)
         iGrupoPasta.save()
-        self.assertEquals(iGrupoPasta.id_grupo_pasta, Grupo_Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0].id_grupo_pasta)
+        self.assertEquals(iGrupoPasta.id_grupo_pasta, Grupo_Pasta.objects.all()[1].id_grupo_pasta)
 
     def testCriarFuncaoGrupo(self):
-        iFuncao          = Funcao.objects.filter(empresa= 1)[0]
+        iFuncao          = Funcao.objects.filter()[0]
         iGrupo           = Grupo.objects.filter(empresa= 1)[0]
         iFuncaoGrupo     = Funcao_Grupo(funcao= iFuncao, grupo= iGrupo)
         iFuncaoGrupo.save()
@@ -84,7 +101,7 @@ class Test(TestCase):
         iFirewallGrupo.save()
         self.assertEquals(iFirewallGrupo.id_firewall_grupo, Firewall_Grupo.objects.filter(firewall= iFirewall.id_firewall)[0].id_firewall_grupo)
             
-    def verificaIP(self):
+    def testverificaIP(self):
         iEmpresa    = Empresa.objects.filter(id_empresa= 1)[0]
         iIP         = '127.0.0.1'
         iPossivel= False
@@ -101,6 +118,54 @@ class Test(TestCase):
                     iPossivel=True
         self.assertEquals(iPossivel , True)      
     
+    def testobtemListaGrupoPasta(self):
+        iGrupo = Grupo.objects.filter(empresa= 1)[0]
+        iLista = Grupo_Pasta.objects.filter(grupo= iGrupo)[0]
+        self.assertEquals(1 , iLista.id_grupo_pasta) 
+        
+    def testpossuiAcessoPasta(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iGrupoUsuario   = Grupo_Usuario().obtemGrupoUsuario(iUsuario)
+        iLista          = Grupo_Pasta.objects.filter(grupo= iGrupoUsuario.grupo.id_grupo)
+        iPossuiAcesso   = False
+        for i in range(len(iLista)):
+            if int(1) == int(iLista[i].pasta.id_pasta):
+                iPossuiAcesso= True
+        self.assertEquals(iPossuiAcesso , True)
+        
+    def testcriaGrupo_Usuario(self):
+        iEmpresa              = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario              = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iGrupo                = Grupo.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iGrupo_Usuario        = Grupo_Usuario()
+        iGrupo_Usuario.grupo  = iGrupo
+        iGrupo_Usuario.usuario= iUsuario
+        iGrupo_Usuario.save()
+        self.assertEquals(2 , iGrupo_Usuario.id_grupo_usuario)
+        
+    def testobtemGrupoUsuario(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iGrupoUsuario   = Grupo_Usuario.objects.filter(usuario= iUsuario.id)[0]
+        self.assertEquals(1 , iGrupoUsuario.id_grupo_usuario)
+        
+    def testobtemListaFuncaoGrupo(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo          = Grupo.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iListaFuncoes   = Funcao_Grupo.objects.filter(grupo= iGrupo)
+        self.assertEquals(1 , len(iListaFuncoes))
+        
+    def testpossuiAcessoFuncao(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iGrupoUsuario   = Grupo_Usuario().obtemGrupoUsuario(iUsuario)
+        iLista          = Funcao_Grupo.objects.filter(grupo= iGrupoUsuario.grupo.id_grupo)
+        iPossuiAcesso   = False
+        for i in range(len(iLista)):
+            if int(1) == int(iLista[i].funcao.id_funcao):
+                iPossuiAcesso= True
+        self.assertEquals(iPossuiAcesso , True)
     
     #-----------------------------------------------------MOKS---------------------------------------------------  
     
@@ -124,13 +189,24 @@ class Test(TestCase):
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
         iGrupo.save()
+        
+    def mokarGrupoPasta(self):
+        iGrupo           = Grupo.objects.filter(empresa= 1)[0]
+        iPasta           = Pasta.objects.filter(empresa= 1)[0]
+        iGrupoPasta      = Grupo_Pasta(grupo= iGrupo, pasta= iPasta)
+        iGrupoPasta.save()
     
     def mokarFuncao(self):
         iNome            = 'teste'
         iDescricao       = 'teste'
-        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
-        iFuncao          = Funcao(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
+        iFuncao          = Funcao(nome= iNome, descricao= iDescricao)
         iFuncao.save()
+        
+    def mokarFuncaoGrupo(self):
+        iFuncao          = Funcao.objects.filter()[0]
+        iGrupo           = Grupo.objects.filter(empresa= 1)[0]
+        iFuncaoGrupo     = Funcao_Grupo(funcao= iFuncao, grupo= iGrupo)
+        iFuncaoGrupo.save()
         
     def mokarFirewall(self):
         iIp              = '127.0.0.1'
@@ -138,3 +214,30 @@ class Test(TestCase):
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iFirewal         = Firewall(ip= iIp, descricao= iDescricao, empresa= iEmpresa)
         iFirewal.save()
+        
+    def mokarFirewallGrupo(self):
+        iFirewall        = Firewall.objects.filter(empresa= 1)[0]
+        iGrupo           = Grupo.objects.filter(empresa= 1)[0]
+        iFirewallGrupo   = Firewall_Grupo(firewall= iFirewall, grupo= iGrupo)
+        iFirewallGrupo.save()
+        
+    def mokarTipoUsuario(self):
+        iDescricacao= 'Tipo teste'
+        iTipoUsuario= Tipo_de_Usuario()
+        iTipoUsuario.descricao= iDescricacao
+        iTipoUsuario.save()
+        
+    def mokarUsuario(self):
+        iEmpresa       = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoUsuario   = Tipo_de_Usuario.objects.all()[0]
+        
+        iEmail          = 'usuario1@teste.com.br'
+        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
+        iUsuario_1.save()
+        
+    def mokarGrupo_Usuario(self):
+        iEmpresa              = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo_Usuario        = Grupo_Usuario()
+        iGrupo_Usuario.grupo  = Grupo.objects.filter(empresa= 1)[0]
+        iGrupo_Usuario.usuario= Usuario.objects.filter(empresa= iEmpresa)[0]
+        iGrupo_Usuario.save()

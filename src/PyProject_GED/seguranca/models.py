@@ -6,6 +6,7 @@ Created on Jul 18, 2012
 
 from django.db                          import models
 from autenticacao.models                import Empresa #@UnresolvedImport
+from PyProject_GED.autenticacao.models  import Usuario
 
 import logging
 
@@ -37,10 +38,10 @@ class Pasta(models.Model):
     
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
         try:
-            iPasta= Pasta()
-            iPasta.id_pasta= 1
-            iPasta.nome= vNomePasta
-            iPasta.empresa= vEmpresa
+            iPasta          = Pasta()
+            iPasta.id_pasta = 1
+            iPasta.nome     = vNomePasta
+            iPasta.empresa  = vEmpresa
             if vPastaPai != None:
                 iPasta.pasta_pai= vPastaPai
             iPasta.save()
@@ -103,11 +104,24 @@ class Grupo(models.Model):
             self.id_grupo= 1
         super(Grupo, self).save()
         
+    def criaGrupo(self, vEmpresa, vDescricao, vNome):
+        try:
+            iGrupo= Grupo()
+            iGrupo.nome= vNome
+            iGrupo.empresa= vEmpresa
+            iGrupo.descricao= vDescricao
+            iGrupo.save()
+            return iGrupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar os grupos: ' + str(e))
+            return False
+        
+#-----------------------------GRUPO/PASTA------------------------------------        
+        
 class Grupo_Pasta(models.Model):
     id_grupo_pasta          = models.IntegerField(max_length=3, primary_key=True)
     grupo                   = models.ForeignKey(Grupo, null= False)
     pasta                   = models.ForeignKey(Pasta, null= False)
-    empresa                 = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_grupo_pasta'
@@ -123,13 +137,84 @@ class Grupo_Pasta(models.Model):
             self.id_grupo_pasta= 1
         super(Grupo_Pasta, self).save()
         
+    def criaGrupo_Pasta(self, vGrupo, vPasta, vEmpresa):
+        try:
+            iGrupo_Pasta        = Grupo_Pasta()
+            iGrupo_Pasta.grupo  = vGrupo
+            iGrupo_Pasta.pasta  = vPasta
+            iGrupo_Pasta.save()
+            return iGrupo_Pasta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Grupo_Pasta: ' + str(e))
+            return False
+        
+    def obtemListaGrupoPasta(self, vGrupo):
+        try:
+            iLista = Grupo_Pasta.objects.filter(grupo= vGrupo)[0]
+            return iLista
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista GrupoPasta: ' + str(e))
+            return False
+        
+    def possuiAcessoPasta(self, vUsuario, vIDPasta):
+        try:
+            iGrupoUsuario   = Grupo_Usuario().obtemGrupoUsuario(vUsuario)
+            iLista          = Grupo_Pasta.objects.filter(grupo= iGrupoUsuario.grupo.id_grupo)
+            iPossuiAcesso   = False
+            for i in range(len(iLista)):
+                if int(vIDPasta) == int(iLista[i].pasta.id_pasta):
+                    iPossuiAcesso= True
+            return iPossuiAcesso
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel possui Acesso Pasta: ' + str(e))
+            return False
+        
+#-----------------------------GRUPO/USUARIO---------------------------------  
+        
+class Grupo_Usuario(models.Model):
+    id_grupo_usuario        = models.IntegerField(max_length=3, primary_key=True)
+    grupo                   = models.ForeignKey(Grupo, null= False)
+    usuario                 = models.ForeignKey(Usuario, null= False)
+    
+    class Meta:
+        db_table= 'tb_grupo_usuario'
+    
+    def __unicode__(self):
+        return self.id_grupo_usuario
+    
+    def save(self):  
+        if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
+            iUltimoRegistro = Grupo_Usuario.objects.order_by('-id_grupo_usuario')[0] 
+            self.id_grupo_usuario= iUltimoRegistro.pk + 1
+        else:
+            self.id_grupo_usuario= 1
+        super(Grupo_Usuario, self).save()
+        
+    def criaGrupo_Usuario(self, vGrupo, vUsuario):
+        try:
+            iGrupo_Usuario        = Grupo_Usuario()
+            iGrupo_Usuario.grupo  = vGrupo
+            iGrupo_Usuario.usuario= vUsuario
+            iGrupo_Usuario.save()
+            return iGrupo_Usuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Grupo_Usuario: ' + str(e))
+            return False
+        
+    def obtemGrupoUsuario(self, vUsuario):
+        try:
+            iGrupoUsuario = Grupo_Usuario.objects.filter(usuario= vUsuario.id)[0]
+            return iGrupoUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem GruposUsuario: ' + str(e))
+            return False
+    
 #-----------------------------FUNCAO----------------------------------------
 
 class Funcao(models.Model):
     id_funcao       = models.IntegerField(max_length=3, primary_key=True)
     nome            = models.CharField(max_length=100)
     descricao       = models.CharField(max_length=100)
-    empresa         = models.ForeignKey(Empresa, null= False)
     
     class Meta:
         db_table= 'tb_funcao'
@@ -144,6 +229,17 @@ class Funcao(models.Model):
         else:
             self.id_funcao= 1
         super(Funcao, self).save()
+        
+    def criaFuncao(self, vNome, vDescricao):
+        try:
+            iFuncao             = Funcao()
+            iFuncao.nome        = vNome
+            iFuncao.descricao   = vDescricao
+            iFuncao.save()
+            return iFuncao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Funcao: ' + str(e))
+            return False
 
 class Funcao_Grupo(models.Model):
     id_funcao_grupo         = models.IntegerField(max_length=3, primary_key=True)
@@ -164,7 +260,39 @@ class Funcao_Grupo(models.Model):
         else:
             self.id_funcao_grupo= 1
         super(Funcao_Grupo, self).save()
-
+        
+    def criaFuncao_Grupo(self, vFuncao, vGrupo):
+        try:
+            iFuncao_Grupo       = Funcao_Grupo()
+            iFuncao_Grupo.funcao= vFuncao
+            iFuncao_Grupo.grupo = vGrupo
+            iFuncao_Grupo.save()
+            return iFuncao_Grupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Funcao_Grupo: ' + str(e))
+            return False
+        
+    def obtemListaFuncaoGrupo(self, vGrupo):
+        try:
+            iListaFuncoes = Funcao_Grupo.objects.filter(grupo= vGrupo)
+            return iListaFuncoes
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
+            return False
+        
+    def possuiAcessoFuncao(self, vUsuario, vIDFuncao):
+        try:
+            iGrupoUsuario   = Grupo_Usuario().obtemGrupoUsuario(vUsuario)
+            iLista          = Funcao_Grupo.objects.filter(grupo= iGrupoUsuario.grupo.id_grupo)
+            iPossuiAcesso   = False
+            for i in range(len(iLista)):
+                if int(vIDFuncao) == int(iLista[i].funcao.id_funcao):
+                    iPossuiAcesso= True
+            return iPossuiAcesso
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel possui Acesso Funcao: ' + str(e))
+            return False
+        
 #-----------------------------IPs_PERMETIDOS----------------------------------------
 
 class Firewall(models.Model):
