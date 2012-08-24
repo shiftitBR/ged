@@ -5,9 +5,11 @@ Created on Jul 19, 2012
 @author: Shift IT | wwww.shiftit.com.br
 '''
 
-from django                     import forms
-from autenticacao.models        import Usuario #@UnresolvedImport
-from autenticacao.models        import Empresa #@UnresolvedImport
+from django                         import forms
+from autenticacao.models            import Usuario #@UnresolvedImport
+from autenticacao.models            import Empresa #@UnresolvedImport
+from PyProject_GED                  import constantes
+from PyProject_GED.seguranca.models import Funcao_Grupo
 
 class FormEncaminharPendencia(forms.Form):
            
@@ -36,5 +38,6 @@ class FormEncaminharPendencia(forms.Form):
         for i in range(len(iListaResponsavel)): 
             iResp = iListaResponsavel[i]
             iNome= iResp.first_name + ' ' + iResp.last_name
-            iListaResp.append((iResp.id, iNome))    
+            if Funcao_Grupo().possuiAcessoFuncao(iListaResponsavel[i], constantes.cntFuncaoAprovarReprovar):
+                iListaResp.append((iResp.id, iNome))    
         self.fields['usr_destinatario'].choices = iListaResp

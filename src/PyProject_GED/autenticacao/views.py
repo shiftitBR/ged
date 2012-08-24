@@ -1,14 +1,16 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.contrib.auth                import authenticate 
 from django.contrib.auth                import logout as auth_logout
 from django.contrib.auth                import login as auth_login
 from django.http                        import HttpResponseRedirect
-from PyProject_GED.seguranca.models     import Firewall
-from PyProject_GED                      import oControle
+from django.contrib                     import messages
 
-import constantes #@UnresolvedImport
-from PyProject_GED.autenticacao.models import Usuario
+from PyProject_GED.seguranca.models     import Firewall, Grupo_Usuario,\
+    Grupo_Pasta, Funcao_Grupo
+from PyProject_GED                      import oControle
+from PyProject_GED.autenticacao.models  import Usuario
 
 def login(vRequest, vTitulo):
     
@@ -24,19 +26,22 @@ def login(vRequest, vTitulo):
         user = authenticate(username=username, password=password)
         if user is not None:
             if not Usuario().obtemUsuario(user).empresa.eh_ativo:
-                return HttpResponseRedirect('/login_error/'+ str(constantes.cntTipoErroEmpresaInativa))
+                messages.warning(vRequest, 'Esta Empresa está inativa. Para mais informações, entre em contato com o administrador.')
             if user.is_active:
-                if Firewall().verificaIP(client_address, Usuario().obtemUsuario(user).empresa):
+                iUsuario= Usuario().obtemUsuario(user)
+                if Firewall().verificaIP(client_address, iUsuario.empresa):
                     auth_login(vRequest, user)
+                    vRequest.session.set_expiry(6000)
+                    vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
                     return HttpResponseRedirect('/documentos/')
                 else: 
                     oControle.getLogger().warning('O IP_Address: ' + str(client_address) + ' foi recusado!')
                     auth_logout(vRequest)
-                    return HttpResponseRedirect('/login_error/'+ str(constantes.cntTipoErroIpBloqueado))
+                    messages.warning(vRequest, 'Este endereço de IP está bloqueado. Para mais informações entre em contato com o administrador.')
             else:
-                return HttpResponseRedirect('/login_error/' + str(constantes.cntTipoErroInativo))
+                messages.warning(vRequest, 'Esta Usuário está Inativo. Para mais informações entre em contato com o administrador.')
         else:
-            return HttpResponseRedirect('/login_error/'+ str(constantes.cntTipoErroSenhaUser))
+            messages.warning(vRequest, 'E-mail e/ou Senha incorreto(s). Digite novamente seu E-mail e Senha para efetuar o login.')
     
     return render_to_response(
         'login/login.html',
@@ -54,11 +59,3 @@ def logout(vRequest, vTitulo):
         context_instance=RequestContext(vRequest),
         )
     
-    
-def login_error(vRequest, vTitulo, vTipoErro=None):
-    
-    return render_to_response(
-        'login/login_error.html',
-        locals(),
-        context_instance=RequestContext(vRequest),
-        )

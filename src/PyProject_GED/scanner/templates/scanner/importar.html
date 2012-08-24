@@ -14,7 +14,7 @@
 	<div class="container">
   		<center>
 		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Importar Documento</strong></h2>
+		  <h2><strong>Importar Documento Via Scanner</strong></h2>
 		</header>
 		</center>
 	</div>	
@@ -39,34 +39,35 @@
 	{% endif %}
 	
     {% if iPossuiPermissao %}
-    <div class="well">
-	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
-			<div class="container">
-				{% load multiuploader %}
-				{% multiupform %}
-			</div>
-		</form>
-	</div>
 	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
 		<div class="well">
+			
 			<div class="container-fluid">
 		  		<div class="row-fluid">
 		  			<div class="span1"> </div>
 		    		<div class="span5">
-		    			
+		    			<p>
+		    				<select name='scanner'>
+							  <option value='0'>Selecione Scanner *</option>
+							  <option value='1'>1 - Scanner 001</option>
+							  <option value='2'>2 - Scanner 002</option>
+							  <option value='3'>3 - Scanner 003</option>
+							</select>
+		    			</p>
 						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
 						<p>{{form.usr_responsavel}}</p>
-						<p>{{form.tipo_documento}}</p>
-					  
 				    </div>
 				    <div class="span6">
-				    	
-				        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				    	<p>{{form.tipo_documento}}</p>
 		            	<p>{{form.data_validade}}</p>
 		              	<p>{{form.data_descarte}}</p>
-		              	
 				    </div>
 				 </div>
+			</div>
+			<div class="container">
+				<center>
+				<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				</center>
 			</div>
 		</div>
 			

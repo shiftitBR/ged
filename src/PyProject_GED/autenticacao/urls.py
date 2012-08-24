@@ -16,8 +16,5 @@ urlpatterns = patterns('autenticacao.views',
     url('^login/$', 'login', {'vTitulo': trans(u'login')}, name='login'),
     
     url('^logout/$', 'logout', {'vTitulo': trans(u'logout')}, name='logout'),
-    
-    url('^login_error/(?P<vTipoErro>\d+)/$', 'login_error', {'vTitulo': trans(u'login_error')}, name='login_error'),
-
 )
 

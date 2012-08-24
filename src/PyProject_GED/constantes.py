@@ -48,8 +48,18 @@ cntOCRExtencoesPDF          = ['.pdf',]
 cntTipoUsuarioSistema       = 1
 cntTipoUsuarioContato       = 2
 
-#Tipo Erro Login
-cntTipoErroSenhaUser        = 1
-cntTipoErroInativo          = 2
-cntTipoErroIpBloqueado      = 3
-cntTipoErroEmpresaInativa   = 4
+#Funcoes
+cntFuncaoDownload           = 1
+cntFuncaoCheckinChekout     = 2
+cntFuncaoAprovarReprovar    = 3
+cntFuncaoEncaminhar         = 4
+cntFuncaoExcluir            = 5
+cntFuncaoHistorico          = 6
+cntFuncaoVisualizar         = 7
+cntFuncaoDigitalizar        = 8
+cntFuncaoImportar           = 9
+cntFuncaoAssinar            = 10
+cntFuncaoAssociarNorma      = 11
+cntFuncaoEmail              = 12
+cntFuncaoPublicar           = 13
+cntFuncaoRelatorio          = 14

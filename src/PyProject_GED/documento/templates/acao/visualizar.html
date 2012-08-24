@@ -10,12 +10,12 @@
 
 <body>
 	<div class="container">
-  	
+  		<center>
 		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Check-out</strong></h2>
-		  <p class="lead">Documento ficará indisponível para os outros usuários.</p>
+		  <h2><strong>Visualizar Documento</strong></h2>
 		</header>
-		
+		</center>
+				
 		{% if messages %}
 		<div class="alert alert-info">
 			<ul class="messages">
@@ -27,15 +27,10 @@
 		{% endif %}
 		
 		{% if iPossuiPermissao %}
-		<form action="" id="fancy" method="POST">{% csrf_token %}
-			<div class="form-actions">
-				<button id="fat-btn" data-loading-text="Carregando..." onClick="closeME();" type="submit" class="btn btn-primary">Check-out</button>
-				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
-			</div>
-		</form>
+			<center><img class="img-polaroid" src="{{iImagem}}" border="5" /></center>
 		{% endif %}
 		
-  </div>
+  	</div>
 </body>
 
 </html>
