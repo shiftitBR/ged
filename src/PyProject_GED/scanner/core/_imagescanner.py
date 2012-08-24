@@ -7,14 +7,14 @@ import platform
 import logging
 from importlib import import_module
 
-from imagescanner import settings
+from PyProject_GED.scanner import settings
 
 
-OSX_BACKEND = 'imagescanner.backends.osx'
-POSIX_BACKEND = 'imagescanner.backends.sane'
-NT_BACKEND = 'imagescanner.backends.twain'
-NETWORK_BACKEND = 'imagescanner.backends.net'
-TEST_BACKEND = 'imagescanner.backends.test'
+OSX_BACKEND = 'PyProject_GED.scanner.backends.osx'
+POSIX_BACKEND = 'PyProject_GED.scanner.backends.sane'
+NT_BACKEND = 'PyProject_GED.scanner.backends.twain'
+NETWORK_BACKEND = 'PyProject_GED.scanner.backends.net'
+TEST_BACKEND = 'PyProject_GED.scanner.backends.test'
 
 # Look for aditional backends
 BACKENDS = getattr(settings, 'BACKENDS', None)
@@ -30,6 +30,7 @@ class ImageScanner(object):
         of each one of the ScannerManager.
 
         """
+        logging.debug('[_imagescanner 33] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 1') 
         self.managers = []
         backends = []
 
@@ -45,6 +46,8 @@ class ImageScanner(object):
         elif os.name == 'nt':
             logging.debug('NT backend enabled (%s)', NT_BACKEND)
             backends.append(NT_BACKEND)
+        
+        logging.debug('[_imagescanner 50] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 2')
         
         # Check if we should load the test backend
         if getattr(settings, 'ENABLE_TEST_BACKEND', False):
@@ -73,16 +76,20 @@ class ImageScanner(object):
 
             try:
                 manager = backend_module.ScannerManager(**kwargs)
+                logging.debug('[_imagescanner 79] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 3')
             except AttributeError:
                 logging.error('Backend %s does not implement '
                               'ScannerManager class [skiping]', backend)
                 # Backend not implement the required API, so skip it
                 continue 
         
+            logging.debug('[_imagescanner 85] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 4')
             self.managers.append(manager)
+            logging.debug('[_imagescanner 88] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 5')
 
     def list_scanners(self, *args, **kwargs):
         """List all devices for all the backends available"""
+        logging.debug('[_imagescanner 86] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> list_scanners 1') 
         logging.debug('Looking for all scanner devices') 
         scanners = []
         for manager in self.managers:

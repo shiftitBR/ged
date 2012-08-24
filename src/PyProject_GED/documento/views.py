@@ -146,7 +146,7 @@ def importar(vRequest, vTitulo):
             return False
     
     if vRequest.POST:
-        ControleScanner().executaScanner()
+        ControleScanner().executaScanner() #------------------------------TESTE !!!!!!!!!!!!!!
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:

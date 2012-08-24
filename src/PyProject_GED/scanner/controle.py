@@ -20,7 +20,7 @@ class Controle(object):
     def executaScanner(self, vIDScanner=None):
         try:
             iscanner = ImageScanner()
-            
+            logging.debug('[controle 23] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> executaScanner 1')
             scanners = iscanner.list_scanners()
             
             print '>>>>>>>>>>>>>>>>>>>'
