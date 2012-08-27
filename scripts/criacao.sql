@@ -76,7 +76,11 @@ INSERT INTO tb_tipo_de_evento(
 
 INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
-    VALUES (11, 'Público');
+    VALUES (11, 'Publicar');
+
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (12, 'Login');
 
 INSERT INTO tb_tipo_de_indice(
             id_tipo_indice, descricao)

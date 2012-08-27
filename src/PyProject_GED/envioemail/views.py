@@ -9,7 +9,7 @@ from PyProject_GED.autenticacao.models  import Usuario, Empresa
 from PyProject_GED.envioemail.forms     import FormEmail
 from PyProject_GED                      import oControle, constantes
 from objetos_auxiliares                 import Destinatario
-from PyProject_GED.historico.models     import Historico
+from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento, Publicacao_Usuario
 
 def email(vRequest, vTitulo):
@@ -55,6 +55,8 @@ def email(vRequest, vTitulo):
                         for i in range(len(iVersoes)):
                             Historico().salvaHistorico(iVersoes[i].id_versao, constantes.cntEventoHistoricoEmail, 
                                            iUsuario.id, vRequest.session['IDEmpresa'])
+                            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEmail, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
                 except Exception, e:
                     oControle.getLogger().error('Nao foi possivel post email: ' + str(e))
                     return False
@@ -125,6 +127,11 @@ def publicar(vRequest, vTitulo):
                         for i in range(len(iDestinatarios)):
                             email.to.append(Usuario().obtemUsuarioPeloID(iDestinatarios[i]).email)
                         email.send()                    
+                        for i in range(len(iVersoes)):
+                            Historico().salvaHistorico(iVersoes[i].id_versao, constantes.cntEventoHistoricoPublicar, 
+                                           iUsuario.id, vRequest.session['IDEmpresa'])
+                            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoPublicar, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
             else:
                 form = FormEmail(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         except Exception, e:

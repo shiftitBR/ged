@@ -24,7 +24,7 @@ def importar(vRequest, vTitulo):
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
             
-        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDigitalizar):
             iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
             iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
             iTamListaIndices    = len(iListaIndices)

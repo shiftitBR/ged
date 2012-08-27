@@ -150,7 +150,7 @@ INSTALLED_APPS = (
     'envioemail',
     'sorl.thumbnail',
     'ocr',
-    'scanner',
+#    'scanner',
 )
 
 AUTHENTICATION_BACKENDS = (

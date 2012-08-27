@@ -22,6 +22,7 @@ cntEventoHistoricoEncaminhar= 8
 cntEventoHistoricoObsoletar = 9
 cntEventoHistoricoEmail     = 10
 cntEventoHistoricoPublicar  = 11
+cntEventoHistoricoLogin     = 12
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1

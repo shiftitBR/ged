@@ -7,7 +7,7 @@ from django.contrib                     import messages
 
 from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
-from PyProject_GED.historico.models     import Historico
+from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
 from PyProject_GED.workflow.models      import Pendencia
 from PyProject_GED.documento.models     import Tipo_de_Documento
@@ -197,7 +197,6 @@ def importar(vRequest, vTitulo):
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
-                    #return HttpResponseRedirect('/tabela_documentos/')
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -246,6 +245,8 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                     Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoCheckIn, 
                                            iUsuario.id, vRequest.session['IDEmpresa'])
+                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckIn, iUsuario.id, 
+                                                  vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
             except Exception, e:
@@ -283,6 +284,8 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
                                    iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckout, iUsuario.id, 
+                                          vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
             iFile = open(iArquivo,"r")
             response = HttpResponse(iFile.read())
@@ -314,6 +317,8 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
                 Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
                 Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
+                                        vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
                 return False
@@ -340,6 +345,8 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
                                    iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
                 return False
@@ -369,6 +376,8 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
             Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoExcluida)
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExcluir, 
                                    iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExcluir, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
                 return False
@@ -391,6 +400,8 @@ def download(vRequest, vTitulo, vIDVersao=None):
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDownload, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iPossuiPermissao= True
             return response
         else:
@@ -440,6 +451,8 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
             iImagem  = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoVisualizar, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iPossuiPermissao= True
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 

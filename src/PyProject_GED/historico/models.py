@@ -137,3 +137,58 @@ class Historico(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificaUsuarioAcao: ' + str(e))
             return False 
+    
+#-----------------------------LogUsuario----------------------------------------
+    
+class Log_Usuario(models.Model):
+    id_log_usuario  = models.IntegerField(max_length=10, primary_key=True, blank=True)
+    usuario         = models.ForeignKey(Usuario, null= False)
+    versao          = models.ForeignKey(Versao, null= True)
+    tipo_evento     = models.ForeignKey(Tipo_de_Evento, null= False)
+    usuario         = models.ForeignKey(Usuario, null= False)
+    data            = models.CharField(max_length=100, null= False)
+    empresa         = models.ForeignKey(Empresa, null= False)
+    
+    class Meta:
+        db_table= 'tb_log_usuario'
+    
+    def __unicode__(self):
+        return str(self.id_log_usuario)
+    
+    def save(self): 
+        if self.id_log_usuario == '' or self.id_log_usuario== None:
+            if len(Log_Usuario.objects.order_by('-id_log_usuario')) > 0:   
+                iUltimoRegistro = Log_Usuario.objects.order_by('-id_log_usuario')[0] 
+                self.id_log_usuario= iUltimoRegistro.pk + 1
+            else:
+                self.id_log_usuario= 1
+        super(Log_Usuario, self).save()  
+        
+        
+    def salvalogUsuario(self, vIDTipo_Evento, vIDUsuario, vIDEmpresa, vIDVersao=None,
+                       vData= None):
+        try:
+            if vIDVersao != None:
+                iVersao     = Versao.objects.filter(id_versao= vIDVersao)[0]
+            else:
+                iVersao     = None
+            iTipoEvento     = Tipo_de_Evento.objects.filter(id_tipo_evento= vIDTipo_Evento)[0]
+            iUsuario        = Usuario.objects.filter(id= vIDUsuario)[0]
+            iEmpresa        = Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
+            if vData == None:
+                iData= str(datetime.datetime.today())[:19]
+            else:
+                iData= vData
+            
+            iLogUsuario             = Log_Usuario()
+            iLogUsuario.versao      = iVersao
+            iLogUsuario.tipo_evento = iTipoEvento
+            iLogUsuario.usuario     = iUsuario
+            iLogUsuario.empresa     = iEmpresa
+            iLogUsuario.data        = iData
+            iLogUsuario.save()
+            return iLogUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar o Log do Usuario: ' + str(e))
+            return False 
+        

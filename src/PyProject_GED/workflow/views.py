@@ -9,7 +9,7 @@ from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 from PyProject_GED.documento.models     import Versao
-from PyProject_GED.historico.models     import Historico
+from PyProject_GED.historico.models     import Historico, Log_Usuario
 from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
 from PyProject_GED.seguranca.models     import Funcao_Grupo
@@ -44,6 +44,8 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoPendente)
                 Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoEncaminhar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEncaminhar, iUsuario.id, 
+                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False

@@ -127,7 +127,7 @@ class Grupo_Pasta(models.Model):
         db_table= 'tb_grupo_pasta'
     
     def __unicode__(self):
-        return self.id_grupo_pasta
+        return str(self.id_grupo_pasta)
     
     def save(self):  
         if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
@@ -180,7 +180,7 @@ class Grupo_Usuario(models.Model):
         db_table= 'tb_grupo_usuario'
     
     def __unicode__(self):
-        return self.id_grupo_usuario
+        return str(self.id_grupo_usuario)
     
     def save(self):  
         if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
@@ -251,7 +251,7 @@ class Funcao_Grupo(models.Model):
         db_table= 'tb_funcao_grupo'
     
     def __unicode__(self):
-        return self.id_funcao_grupo
+        return str(self.id_funcao_grupo)
     
     def save(self):  
         if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
@@ -343,7 +343,7 @@ class Firewall_Grupo(models.Model):
         db_table= 'tb_firewall_grupo'
     
     def __unicode__(self):
-        return self.id_firewall_grupo
+        return str(self.id_firewall_grupo)
     
     def save(self):  
         if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
