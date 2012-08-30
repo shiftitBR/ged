@@ -7,7 +7,7 @@ from StringIO import StringIO
 
 import Image
 import twain
-from imagescanner.backends import base
+from PyProject_GED.scanner.backends import base
 
 class ScannerManager(base.ScannerManager):
     

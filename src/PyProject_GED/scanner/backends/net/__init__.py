@@ -9,8 +9,8 @@ from cStringIO import StringIO
 
 import Image
 from autoconnect import UdpReceiver
-from imagescanner import settings
-from imagescanner.backends import base
+from PyProject_GED.scanner import settings
+from PyProject_GED.scanner.backends import base
 
 SEARCH_PORT = 3244
 SEARCH_TIMEOUT = 3
@@ -23,9 +23,11 @@ def dict_keys_to_str(dict_obj):
 class ScannerManager(base.ScannerManager):
 
     def __init__(self, **kwargs):
+        logging.info('[net 26] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 1') 
         super(ScannerManager, self).__init__(**kwargs)
         self.remote_hosts = kwargs.get('remote_hosts', list())       
-
+        logging.info('[net 29] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 2')
+        
         if kwargs.get('remote_search', True):
             self._search_for_remote_devices()
 
@@ -47,17 +49,23 @@ class ScannerManager(base.ScannerManager):
         the timeout is reset.
         
         """
-
+        logging.info('[net 51] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> _search_for_remote_devices 1') 
         logging.debug('Waiting for remote scanners')
         udpr = UdpReceiver()
         
         wait_for_remote_devices = True
         time_last_found = 0
+        logging.info('[net 58] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> _search_for_remote_devices 3')
         while wait_for_remote_devices:
             # Wait for a broadcast message
             try:
+                logging.info('[net 62] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> _search_for_remote_devices 4')
                 encoded_msg, socket_addr = udpr.receive(port=SEARCH_PORT, 
                                                         timeout=SEARCH_TIMEOUT)
+                logging.info(encoded_msg)
+                logging.info(socket_addr)
+                print encoded_msg
+                print socket_addr
             except socket.timeout:
                 # in case of timeout stop searching
                 msg = ('Stop searching for devices. '
@@ -68,6 +76,8 @@ class ScannerManager(base.ScannerManager):
             
             msg = json.loads(encoded_msg)
             ipaddr = msg.get('ip')
+            print msg
+            print ipaddr
         
             # If the IP address is generic or not set use the 
             #   address which the broadcast message came from
@@ -97,9 +107,12 @@ class ScannerManager(base.ScannerManager):
                 logging.debug('Time now: %s' % time_now)
                 logging.debug('Last found at: %s' % time_last_found)
                 wait_for_remote_devices = False
+            
+        logging.info('[net 107] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> _search_for_remote_devices 2') 
 
 
     def _refresh(self, *args, **kwargs):
+        logging.info('[net 105] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> _refresh 1')
         logging.info('Reloading remote devices information')
         self._devices = []
         for proxy in self._proxies:
@@ -126,6 +139,7 @@ class Scanner(base.Scanner):
     def __init__(self, **kwargs):
         # Different hosts can have the same id, so the host need to be part of
         #   the scanner id
+        logging.info('[net 132d] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> init 1')
         scanner_id = kwargs.get('id', None)
         proxy = kwargs.get('proxy', None)
         remote_host = proxy._ServerProxy__host

@@ -9,7 +9,7 @@ import xmlrpclib
 from cStringIO import StringIO
 from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 
-from imagescanner import ImageScanner
+from PyProject_GED.scanner import ImageScanner
 
 
 def scanner_serializer(device):
