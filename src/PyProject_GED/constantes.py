@@ -9,6 +9,10 @@ from django.conf    import settings
 #Configuracoes
 cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos= 'documentos'
+cntConfiguracaoDiasAvisoVencimento= 5
+
+#Servicos
+cntServicosEnviaAlertaPendencia= 1
 
 #Eventos
 cntEventoHistoricoCheckIn   = 1
