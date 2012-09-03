@@ -34,6 +34,10 @@ INSERT INTO tb_estado_da_versao(
             id_estado_da_versao, descricao)
     VALUES (7, 'Pendente');
 
+INSERT INTO tb_estado_da_versao(
+            id_estado_da_versao, descricao)
+    VALUES (8, 'Vencido');
+
 INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
     VALUES (1, 'Check-in');

@@ -33,7 +33,7 @@
             			<a class="btn btn-primary" href="{{publicacao.caminho_visualizar}}" target="_blank" title="{{publicacao.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
             		{% endif %}
             		{% if publicacao.tipo_visuzalizacao == 2 %}
-            			<a class="btn btn-primary fancybox" href="{{publicacao.caminho_visualizar}}" data-fancybox-group="gallery" title="{{publicacao.assunto}}"><i class="icon-camera icon-white"></i> Visualizar</a>
+            			<a class="btn btn-primary fancybox fancybox.iframe" href="/visualizar/{{publicacao.id_versao}}/" ><i class="icon-camera icon-white"></i> Visualizar</a>
             		{% endif %}
             		{% if publicacao.tipo_visuzalizacao == 3 %}
             			<a class="btn btn-primary" href="/download/{{publicacao.id_versao}}/"><i class="icon-download-alt icon-white"></i>  Visualizar</a>
