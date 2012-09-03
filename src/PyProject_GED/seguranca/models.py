@@ -27,7 +27,7 @@ class Pasta(models.Model):
     def __unicode__(self):
         return self.nome
     
-    def save(self):  
+    def save(self, vCriaPasta=True):  
         if self.id_pasta == '' or self.id_pasta== None:
             if len(Pasta.objects.order_by('-id_pasta')) > 0:   
                 iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
@@ -37,9 +37,10 @@ class Pasta(models.Model):
             self.diretorio= self.montaDiretorioPasta(self.empresa.id_empresa, 
                                                                self, 
                                                                self.pasta_pai)
-            iDiretorioEmpresa   = constantes.cntConfiguracaoDiretorioDocumentos % self.empresa.id_empresa
-            iDiretorio          = '%s/%s' % (iDiretorioEmpresa, self.diretorio)
-            os.system('mkdir %s' % iDiretorio ) 
+            if vCriaPasta:
+                iDiretorioEmpresa   = constantes.cntConfiguracaoDiretorioDocumentos % self.empresa.id_empresa
+                iDiretorio          = '%s/%s' % (iDiretorioEmpresa, self.diretorio)
+                os.system('mkdir %s' % iDiretorio ) 
         super(Pasta, self).save()
     
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):

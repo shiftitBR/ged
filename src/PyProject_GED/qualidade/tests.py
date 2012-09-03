@@ -62,6 +62,11 @@ class Test(TestCase):
         iNorma           = Norma.objects.filter(empresa= 1)[0]
         self.assertEquals(iNorma.id_norma, 1)
     
+    def testObtemDocumentosPelaNorma(self):
+        iNorma= Norma.objects.filter(empresa= 1)[0]
+        iListaDocumentos= Norma_Documento().obtemDocumentosPelaNorma(iNorma)
+        self.assertEquals(1, len(iListaDocumentos))
+    
     #-----------------------------------------------------MOKS---------------------------------------------------  
     
     def mokarEmpresa(self):
@@ -109,7 +114,7 @@ class Test(TestCase):
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'

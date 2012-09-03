@@ -107,4 +107,15 @@ class Norma_Documento(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Norma_Documento: ' + str(e))
             return False
+    
+    def obtemDocumentosPelaNorma(self, vNorma):
+        try:
+            iListaNormaDocumentos= Norma_Documento.objects.filter(norma= vNorma)
+            iListaDocumentos= []
+            for iDocumentoNorma in iListaNormaDocumentos:
+                iListaDocumentos.append(iDocumentoNorma.documento)
+            return iListaDocumentos
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Documentos pela Norma: ' + str(e))
+            return False
         

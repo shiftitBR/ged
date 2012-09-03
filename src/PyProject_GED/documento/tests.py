@@ -17,6 +17,7 @@ import datetime
 from PyProject_GED.indice.models import Tipo_de_Indice, Indice,\
     Indice_Versao_Valor
 from PyProject_GED import constantes
+from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma, Norma_Documento
 
 class Test(TestCase):
     
@@ -33,6 +34,9 @@ class Test(TestCase):
         self.mokarTipoIndice()
         self.mokarIndice()
         self.mokarAssociacaoIndiceVersao()
+        self.mokarTipoNorma()
+        self.mokarNorma()
+        self.mokarAssociacaoNormaDocumento()
         pass
     
     
@@ -288,6 +292,11 @@ class Test(TestCase):
         iLista= Versao().buscaDocumentos(iIDEmpresa, vConteudo= iConteudo3)
         self.assertEquals(0, len(iLista))
         
+    def testBuscaDocumentosPorNorma(self):
+        iIDEmpresa= Empresa.objects.filter(id_empresa=1)[0].id_empresa
+        iNorma= Norma.objects.all()[0]    
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vItemNorma= iNorma)  
+        self.assertEquals(1, len(iLista)) 
     
     def testBuscaDocumentosComMultiplosFiltros(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
@@ -308,6 +317,7 @@ class Test(TestCase):
         iIndice3= (2, 'teste_string1')
         iConteudo1= u'RaPOsa'
         iConteudo2= u'Marisco'
+        iNorma= Norma.objects.all()[0]   
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto1, vProtocolo= iProtocolo1)
         self.assertEquals(0, len(iLista))
@@ -382,6 +392,10 @@ class Test(TestCase):
                                          vProtocolo= iProtocolo3, vIDTipoDocumento= iTipoDocumento1,
                                          vIDEstadoDoDocumento= iEstadoDoDocumento1, vListaIndice= iListaIndice,
                                          vConteudo= iConteudo1)
+        self.assertEquals(1, len(iLista))
+        
+        iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto3, vProtocolo= iProtocolo3)
+        print iLista[0].id_versao
         self.assertEquals(1, len(iLista))
         
         
@@ -460,7 +474,7 @@ class Test(TestCase):
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'
@@ -661,3 +675,24 @@ class Test(TestCase):
         iIDVersao       = Versao.objects.filter(documento__id_documento= 4)[0].id_versao
         iValor          = 'teste_string2'
         Indice_Versao_Valor().salvaValorIndice(iValor, iIDIndice2, iIDVersao)
+        
+    def mokarTipoNorma(self):
+        iDescricao       = 'ABNT'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoNorma       = Tipo_de_Norma(descricao= iDescricao, empresa=iEmpresa)
+        iTipoNorma.save()
+        
+    def mokarNorma(self):
+        iEmpresa            = Empresa.objects.filter(id_empresa= 1)[0]
+        iNorma= Norma()
+        iNorma.tipo_norma   = Tipo_de_Norma.objects.filter(empresa= iEmpresa)[0]
+        iNorma.empresa      = iEmpresa
+        iNorma.descricao    = 'descricao norma'
+        iNorma.norma_pai    = None
+        iNorma.save()
+    
+    def mokarAssociacaoNormaDocumento(self):
+        iNorma           = Norma.objects.filter(empresa= 1)[0]
+        iDocumento       = Documento.objects.filter(empresa= 1)[2]
+        iNormaDocumento  = Norma_Documento(norma= iNorma, documento= iDocumento)
+        iNormaDocumento.save()
