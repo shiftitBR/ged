@@ -57,16 +57,23 @@
 						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
 						<p>{{form.usr_responsavel}}</p>
 						<p>{{form.tipo_documento}}</p>
+						<p>{{form.data_validade}}</p>
+		              	<p>{{form.data_descarte}}</p>
 					  
 				    </div>
 				    <div class="span6">
-				    	
-				        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
-		            	<p>{{form.data_validade}}</p>
-		              	<p>{{form.data_descarte}}</p>
+				    	<label><b>Associar Normas:</b></label>
+		              	<p>{{form.norma}}</p>
 		              	
 				    </div>
 				 </div>
+			</div>
+			<div class="container">
+			<center>
+				<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+			</center>
+			<br>
+			<p>(*) Campos Obrigatórios</p>
 			</div>
 		</div>
 			

@@ -21,6 +21,7 @@ import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
+from PyProject_GED.qualidade.models import Norma, Norma_Documento
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -189,6 +190,11 @@ def importar(vRequest, vTitulo):
                     iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
                                                     1, 1, iImage.key_data, iProtocolo)
+                    #Associar Normas
+                    iNormas = vRequest.POST.getlist('norma')
+                    for i in range(len(iNormas)):
+                        iNorma = Norma().obtemNorma(iNormas[i])
+                        Norma_Documento().criaNorma_Documento(iNorma, iDocumento)
                     #Salvar Indices
                     for i in range(len(iListaIndices)):
                         iIndice = iListaIndices[i]

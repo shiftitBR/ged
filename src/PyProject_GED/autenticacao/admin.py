@@ -18,6 +18,7 @@ from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
     Funcao_Grupo, Pasta
+from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma, Norma_Documento
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
@@ -74,10 +75,10 @@ class AdminIndice(MultiDBModelAdmin):
         obj.save()
         
 class AdminPasta(MultiDBModelAdmin): 
-    list_display    = ('pasta_pai', 'nome', 'diretorio')
+    list_display    = ('nome', 'pasta_pai')
     search_fields   = ('pasta_pai', 'nome', 'diretorio',)
     ordering        = ('pasta_pai',)
-    exclude         = ('id_pasta',)
+    exclude         = ('id_pasta','diretorio',)
         
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
@@ -110,6 +111,24 @@ class AdminFuncaoGrupo(admin.ModelAdmin):
     ordering        = ('funcao',)  
     exclude         = ('id_funcao_grupo',)
     
+class AdminTipoNorma(admin.ModelAdmin): 
+    list_display    = ('descricao', 'empresa')
+    search_fields   = ('descricao', 'empresa')
+    ordering        = ('descricao',)  
+    exclude         = ('id_tipo_norma',)
+    
+class AdminNorma(admin.ModelAdmin): 
+    list_display    = ('numero', 'descricao', 'tipo_norma', 'norma_pai', 'empresa')
+    search_fields   = ('norma_pai', 'descricao', 'numero', 'tipo_norma', 'empresa')
+    ordering        = ('numero',)  
+    exclude         = ('id_norma',)
+    
+class AdminNormaDocumento(admin.ModelAdmin): 
+    list_display    = ('norma', 'documento')
+    search_fields   = ('norma', 'documento')
+    ordering        = ('norma',)  
+    exclude         = ('id_norma_documento',)
+    
 admin.site.unregister(User)
 admin.site.unregister(Site)
 admin.site.register(Empresa, AdminEmpresa)
@@ -121,3 +140,6 @@ admin.site.register(Grupo, AdminGrupo)
 admin.site.register(Grupo_Pasta, AdminGrupoPasta)
 admin.site.register(Grupo_Usuario, AdminGrupoUsuario)
 admin.site.register(Pasta, AdminPasta)
+admin.site.register(Tipo_de_Norma, AdminTipoNorma)
+admin.site.register(Norma, AdminNorma)
+admin.site.register(Norma_Documento, AdminNormaDocumento)

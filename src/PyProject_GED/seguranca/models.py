@@ -7,8 +7,10 @@ Created on Jul 18, 2012
 from django.db                          import models
 from autenticacao.models                import Empresa #@UnresolvedImport
 from PyProject_GED.autenticacao.models  import Usuario
+from PyProject_GED                      import constantes
 
 import logging
+import os
 
 #-----------------------------PASTA----------------------------------------
 
@@ -26,14 +28,18 @@ class Pasta(models.Model):
         return self.nome
     
     def save(self):  
-        if len(Pasta.objects.order_by('-id_pasta')) > 0:   
-            iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
-            self.id_pasta= iUltimoRegistro.pk + 1
-        else:
-            self.id_pasta= 1
-        self.diretorio= self.montaDiretorioPasta(self.empresa.id_empresa, 
+        if self.id_pasta == '' or self.id_pasta== None:
+            if len(Pasta.objects.order_by('-id_pasta')) > 0:   
+                iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
+                self.id_pasta= iUltimoRegistro.pk + 1
+            else:
+                self.id_pasta= 1
+            self.diretorio= self.montaDiretorioPasta(self.empresa.id_empresa, 
                                                                self, 
                                                                self.pasta_pai)
+            iDiretorioEmpresa   = constantes.cntConfiguracaoDiretorioDocumentos % self.empresa.id_empresa
+            iDiretorio          = '%s/%s' % (iDiretorioEmpresa, self.diretorio)
+            os.system('mkdir %s' % iDiretorio ) 
         super(Pasta, self).save()
     
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
@@ -66,7 +72,7 @@ class Pasta(models.Model):
                 iDiretorio= '%s' % vPasta.id_pasta
             else:
                 iPastaPai = Pasta.objects.filter(id_pasta= vPastaPai.id_pasta)[0]
-                iDiretorio= '%s/%s' % (iPastaPai.id_pasta, vPasta.id_pasta)
+                iDiretorio= '%s/%s' % (iPastaPai.diretorio, vPasta.id_pasta)
             return iDiretorio
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel omontar o Diretorio da Pasta: ' + str(e))

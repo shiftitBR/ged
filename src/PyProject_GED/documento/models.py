@@ -35,11 +35,12 @@ class Tipo_de_Documento(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Documento.objects.order_by('-id_tipo_documento')) > 0:   
-            iUltimoRegistro = Tipo_de_Documento.objects.order_by('-id_tipo_documento')[0] 
-            self.id_tipo_documento= iUltimoRegistro.pk + 1
-        else:
-            self.id_tipo_documento= 1
+        if self.id_tipo_documento == '' or self.id_tipo_documento== None:
+            if len(Tipo_de_Documento.objects.order_by('-id_tipo_documento')) > 0:   
+                iUltimoRegistro = Tipo_de_Documento.objects.order_by('-id_tipo_documento')[0] 
+                self.id_tipo_documento= iUltimoRegistro.pk + 1
+            else:
+                self.id_tipo_documento= 1
         super(Tipo_de_Documento, self).save()
     
     def criaTipoDocumento(self, vEmpresa, vDescricao):
