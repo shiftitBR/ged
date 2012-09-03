@@ -63,12 +63,10 @@ class Empresa(models.Model):
                 time.sleep(1)
                 mPasta= get_model('seguranca', 'Pasta')
                 mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
+                ControleAutenticacao().criaPastaEmpresa(vEmpresa.id_empresa) 
                 iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
-                iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
+                mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
                 mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
-                ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
-                                                 iPastaRaiz.id_pasta, 
-                                                 iPastaModelo.id_pasta)
         try:
             iThread = ThreadClass()
             iThread.start()

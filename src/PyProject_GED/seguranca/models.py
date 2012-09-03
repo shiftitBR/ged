@@ -45,7 +45,6 @@ class Pasta(models.Model):
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
         try:
             iPasta          = Pasta()
-            iPasta.id_pasta = 1
             iPasta.nome     = vNomePasta
             iPasta.empresa  = vEmpresa
             if vPastaPai != None:

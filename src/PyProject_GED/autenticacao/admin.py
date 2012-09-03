@@ -150,12 +150,7 @@ class AdminNorma(admin.ModelAdmin):
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
-    
-class AdminNormaDocumento(admin.ModelAdmin): 
-    list_display    = ('norma', 'documento')
-    search_fields   = ('norma', 'documento')
-    ordering        = ('norma',)  
-    exclude         = ('id_norma_documento',)
+
     
 admin.site.unregister(User)
 admin.site.unregister(Site)
@@ -170,4 +165,3 @@ admin.site.register(Grupo_Usuario, AdminGrupoUsuario)
 admin.site.register(Pasta, AdminPasta)
 admin.site.register(Tipo_de_Norma, AdminTipoNorma)
 admin.site.register(Norma, AdminNorma)
-admin.site.register(Norma_Documento, AdminNormaDocumento)

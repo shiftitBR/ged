@@ -22,12 +22,10 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
     
-    def criaPasta(self, vIDEmpresa, vIDPastaRaiz, vIDPastaModelo):
+    def criaPastaEmpresa(self, vIDEmpresa):
         try:
             iDiretorioEmpresa= constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa
             os.system('mkdir %s' % iDiretorioEmpresa) 
-            os.system('mkdir %s/%s' % (iDiretorioEmpresa, vIDPastaRaiz)) 
-            os.system('mkdir %s/%s/%s' % (iDiretorioEmpresa, str(vIDPastaRaiz), str(vIDPastaModelo)))
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar pastas: ' + str(e))
             return False

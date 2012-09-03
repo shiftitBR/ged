@@ -54,8 +54,8 @@ class FormUploadDeArquivo(forms.Form):
             
         iListaNormas= []
         iLista = Norma.objects.filter(empresa= iEmpresa.id_empresa).order_by('numero')
-        for i in range(len(iLista)):
-            iListaNormas.append((iLista[i].id_norma, '%s %s' % (iLista[i].numero, iLista[i].descricao)))
+        for iNorma in iLista:
+            iListaNormas.append((iNorma.id_norma, '%s %s' % (iNorma.numero, iNorma.descricao)))
         
         super(FormUploadDeArquivo, self).__init__(*args, **kwargs)          
         self.fields['tipo_documento'].error_messages['required'] = u'O campo Tipo de Documento é obrigatório' 
@@ -64,6 +64,7 @@ class FormUploadDeArquivo(forms.Form):
         self.fields['data_validade'].required = False
         self.fields['data_descarte'].required = False
         self.fields['eh_publico'].required = False
+        self.fields['norma'].required = False
         self.fields['norma'].choices = iListaNormas
         self.fields['tipo_documento'].choices = iListaDeTiposDeDocumento
         self.fields['usr_responsavel'].choices = iListaDeUsuariosResponsaveis
