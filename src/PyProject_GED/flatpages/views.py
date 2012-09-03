@@ -42,6 +42,7 @@ def publicacao(vRequest, vTitulo, vIDPublicacao=None):
         iPublicacaoAux.nome_remetente       = iNomeRemetente
         iPublicacaoAux.tipo_visuzalizacao   = DocumentoControle().tipoVisualizavel(iVersao.upload.filename.encode('utf-8'))
         iPublicacaoAux.caminho_visualizar   = DocumentoControle().obtemCaminhoVisualizar(str(iVersao.upload.image))
+        iPublicacaoAux.id_versao            = iVersao.id_versao
         iListaPublicacao.append(iPublicacaoAux)
         
     return render_to_response(

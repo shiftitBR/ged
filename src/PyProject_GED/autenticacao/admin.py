@@ -79,6 +79,13 @@ class AdminPasta(MultiDBModelAdmin):
     search_fields   = ('pasta_pai', 'nome', 'diretorio',)
     ordering        = ('pasta_pai',)
     exclude         = ('id_pasta','diretorio',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminPasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
         
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
@@ -86,6 +93,13 @@ class AdminLogUsuario(MultiDBModelAdmin):
     ordering        = ('data',)
     readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'empresa', 'data')
     exclude         = ('id_log_usuario',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminLogUsuario,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
     
 class AdminGrupo(MultiDBModelAdmin): 
     list_display    = ('nome', 'descricao')
@@ -117,11 +131,25 @@ class AdminTipoNorma(admin.ModelAdmin):
     ordering        = ('descricao',)  
     exclude         = ('id_tipo_norma',)
     
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminTipoNorma,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
+    
 class AdminNorma(admin.ModelAdmin): 
     list_display    = ('numero', 'descricao', 'tipo_norma', 'norma_pai', 'empresa')
     search_fields   = ('norma_pai', 'descricao', 'numero', 'tipo_norma', 'empresa')
     ordering        = ('numero',)  
     exclude         = ('id_norma',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminNorma,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
     
 class AdminNormaDocumento(admin.ModelAdmin): 
     list_display    = ('norma', 'documento')

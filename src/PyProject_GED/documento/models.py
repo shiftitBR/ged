@@ -4,17 +4,18 @@ Created on Jul 18, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                  import models
+from django.db                          import models
 
-from autenticacao.models        import Empresa #@UnresolvedImport
-from autenticacao.models        import Usuario #@UnresolvedImport
-from seguranca.models           import Pasta #@UnresolvedImport
-from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
-from objetos_auxiliares         import Documento as DocumentoAuxiliar
-from objetos_auxiliares         import Versoes as VersaoAuxiliar
-from controle                   import Controle as DocumentoControle
-from django.db.models           import get_model
-from PyProject_GED.ocr.controle import Controle as ControleOCR
+from autenticacao.models                import Empresa #@UnresolvedImport
+from autenticacao.models                import Usuario #@UnresolvedImport
+from seguranca.models                   import Pasta #@UnresolvedImport
+from multiuploader.models               import MultiuploaderImage #@UnresolvedImport
+from objetos_auxiliares                 import Documento as DocumentoAuxiliar
+from objetos_auxiliares                 import Versoes as VersaoAuxiliar
+from controle                           import Controle as DocumentoControle
+from django.db.models                   import get_model
+from PyProject_GED.ocr.controle         import Controle as ControleOCR
+from PyProject_GED.envioemail.controle  import Controle as ControleEmail
 
 import datetime
 import logging
@@ -169,6 +170,8 @@ class Documento(models.Model):
             for iDocumento in iListaDocumentosVecendo:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
                 #envia email
+                ControleEmail().enviarEmail('', '', iDocumento.usr_responsavel.email, 
+                                            constantes.cntConfiguracaoEmailAlerta)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
@@ -181,6 +184,8 @@ class Documento(models.Model):
             for iDocumento in iListaDocumentosVecidos:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
                 #altera estado
+                iVersao = Versao().obtemVersaoAtualDoDocumento(iDocumento)
+                Versao().alterarEstadoVersao(iVersao.id_versao, constantes.cntEstadoVersaoVencido)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))

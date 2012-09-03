@@ -10,6 +10,7 @@ from django.conf    import settings
 cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos= 'documentos'
 cntConfiguracaoDiasAvisoVencimento= 5
+cntConfiguracaoEmailAlerta  = 'alerta@trackdoc.com.br'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -36,6 +37,7 @@ cntEstadoVersaoReprovado    = 4
 cntEstadoVersaoExcluida     = 5
 cntEstadoVersaoObsoleto     = 6
 cntEstadoVersaoPendente     = 7
+cntEstadoVersaoVencido      = 8
 
 #TipoVisualizacao
 cntTipoVisualizacaoPDF      = 1
