@@ -152,7 +152,40 @@ class Documento(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel gerarProtocolo ' + str(e))
             return False
+    
+    def buscaDocumentosVencendo(self, iDataInicio, iDiasAntecedencia= constantes.cntConfiguracaoDiasAvisoVencimento):
+        try:
+            iDataFim= iDataInicio + datetime.timedelta(days= iDiasAntecedencia + 1)
+            iDocumentos  = Documento.objects.filter(data_validade__gt= iDataInicio).filter(data_validade__lt= iDataFim)
+            return iDocumentos
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel buscar documentos vencendo ' + str(e))
+            return False
 
+    def notificaUsuarioResponsavelPorDocumentosVencendo(self):
+        try:
+            iListaDocumentosVecendo= self.buscaDocumentosVencendo(datetime.datetime.today())
+            iListaUsuarios= []
+            for iDocumento in iListaDocumentosVecendo:
+                iListaUsuarios.append(iDocumento.usr_responsavel)
+                #envia email
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
+            return False
+    
+    def alteraEstadoDosDocumentosVencidos(self):
+        try:
+            iListaDocumentosVecidos= self.buscaDocumentosVencendo(datetime.datetime.today(), 0)
+            iListaUsuarios= []
+            for iDocumento in iListaDocumentosVecidos:
+                iListaUsuarios.append(iDocumento.usr_responsavel)
+                #altera estado
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
+            return False
+        
 #-----------------------------VERSAO----------------------------------------
         
 class Estado_da_Versao(models.Model):

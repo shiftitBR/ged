@@ -16,6 +16,7 @@ from controle                                   import Controle as ControleDocum
 import datetime
 from PyProject_GED.indice.models import Tipo_de_Indice, Indice,\
     Indice_Versao_Valor
+from PyProject_GED import constantes
 
 class Test(TestCase):
     
@@ -414,6 +415,11 @@ class Test(TestCase):
         iVersao     = str('%03d'%1)
         iProtocolo  = '%s%s' %(iDocumento, iVersao)
         self.assertEquals('0000001001', iProtocolo)
+    
+    def testBuscaDocumentosPorVencimento(self):
+        iDataAtual= ControleDocumentos().formataData('05/08/2012')
+        iDocumentos= Documento().buscaDocumentosVencendo(iDataAtual)
+        self.assertEquals(1, len(iDocumentos))
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -500,12 +506,13 @@ class Test(TestCase):
         iTipoDocumento  = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iPasta          = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iAssunto        = 'Teste'
+        iDataVencimento = ControleDocumentos().formataData('10/08/2012')
         iEhPublico      = True
         
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[0]
         iDocumento1     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
-                                    eh_publico= iEhPublico)
+                                    data_validade= iDataVencimento, eh_publico= iEhPublico)
         iDocumento1.save()
         
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[0]

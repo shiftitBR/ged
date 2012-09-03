@@ -31,3 +31,9 @@ TUTORIAL INSTALACAO FEDORA 17 / CENTOS 6
 + PsycoPG2 2.0.14
 	# yum install psyscopg2
 
+
+
+## Crontab
+
+	crontab -e
+	adicionar: * * * * * python /project/path/manage.py cron
