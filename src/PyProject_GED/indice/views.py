@@ -71,8 +71,8 @@ def busca(vRequest, vTitulo):
                             iListaIDIndices.append((iListaIndices[i].id_indice, iIndice))  
                 iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                            iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
-                                                           iDataFim, iListaIDIndices, iConteudo, vEhPublico= False, 
-                                                           iNormas)
+                                                           iDataFim, iListaIDIndices, iConteudo, iNormas, 
+                                                           vEhPublico= False)
                 vRequest.session['iListaBusca'] = iListaDocumentos
                 iPaginator = Paginator(iListaDocumentos, 10)
                 iDocumentos = iPaginator.page(1)
