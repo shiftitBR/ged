@@ -407,7 +407,7 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vEhPublico= False):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vEhPublico= False, vItemNorma= None):
         try:
             if vEhPublico:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
@@ -430,6 +430,13 @@ class Versao(models.Model):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__gt= vDataDeCriacaoInicial)
             if vDataDeCriacaoFinal not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__lt= vDataDeCriacaoFinal)
+            if vItemNorma not in (None, ''):
+                mNormaDocumento= get_model('qualidade', 'Norma_Documento')
+                iListaDocumentos= mNormaDocumento().obtemDocumentosPelaNorma(vItemNorma)
+                iListaIDsVersaoAtual= []
+                for iDocumento in iListaDocumentos:
+                    iListaIDsVersaoAtual.append(self.obtemVersaoAtualDoDocumento(iDocumento).id_versao)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(id_versao__in = iListaIDsVersaoAtual)
             if vListaIndice not in (None, ''):
                 iListaVersoesIndice= []
                 mIndice_Versao_Valor= get_model('indice', 'Indice_Versao_Valor')
