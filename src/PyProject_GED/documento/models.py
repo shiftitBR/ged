@@ -154,9 +154,10 @@ class Documento(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel gerarProtocolo ' + str(e))
             return False
     
-    def buscaDocumentosVencendo(self, iDataInicio, iDiasAntecedencia= constantes.cntConfiguracaoDiasAvisoVencimento):
+    def buscaDocumentosVencendo(self, vDataInicio, vDiasAntecedencia= constantes.cntConfiguracaoDiasAvisoVencimento):
         try:
-            iDataFim= iDataInicio + datetime.timedelta(days= iDiasAntecedencia + 1)
+            iDataInicio= vDataInicio + datetime.timedelta(days= vDiasAntecedencia -1)
+            iDataFim= vDataInicio + datetime.timedelta(days= vDiasAntecedencia + 1)
             iDocumentos  = Documento.objects.filter(data_validade__gt= iDataInicio).filter(data_validade__lt= iDataFim)
             return iDocumentos
         except Exception, e:
@@ -169,7 +170,6 @@ class Documento(models.Model):
             iListaUsuarios= []
             for iDocumento in iListaDocumentosVecendo:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
-                #envia email
                 ControleEmail().enviarEmail('', '', iDocumento.usr_responsavel.email, 
                                             constantes.cntConfiguracaoEmailAlerta)
             return iListaUsuarios
@@ -180,13 +180,10 @@ class Documento(models.Model):
     def alteraEstadoDosDocumentosVencidos(self):
         try:
             iListaDocumentosVecidos= self.buscaDocumentosVencendo(datetime.datetime.today(), 0)
-            iListaUsuarios= []
             for iDocumento in iListaDocumentosVecidos:
-                iListaUsuarios.append(iDocumento.usr_responsavel)
-                #altera estado
                 iVersao = Versao().obtemVersaoAtualDoDocumento(iDocumento)
                 Versao().alterarEstadoVersao(iVersao.id_versao, constantes.cntEstadoVersaoVencido)
-            return iListaUsuarios
+            return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
             return False
