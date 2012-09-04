@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -17,6 +18,8 @@ class Tipo_de_Indice(models.Model):
     
     class Meta:
         db_table= 'tb_tipo_de_indice'
+        verbose_name = 'Tipo de Índice'
+        verbose_name_plural = 'Tipos de Índice'
     
     def __unicode__(self):
         return self.descricao
@@ -47,6 +50,8 @@ class Indice(models.Model):
     
     class Meta:
         db_table= 'tb_indice'
+        verbose_name = 'Índice'
+        verbose_name_plural = 'Índices'
     
     def __unicode__(self):
         return self.descricao

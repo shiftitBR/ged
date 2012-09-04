@@ -19,6 +19,8 @@ class Tipo_de_Norma(models.Model):
 
     class Meta:
         db_table= 'tb_tipo_de_norma'
+        verbose_name = 'Tipo de Norma'
+        verbose_name_plural = 'Tipos de Norma'
     
     def __unicode__(self):
         return self.descricao
@@ -42,6 +44,8 @@ class Norma(models.Model):
     
     class Meta:
         db_table= 'tb_norma'
+        verbose_name = 'Norma'
+        verbose_name_plural = 'Normas'
     
     def __unicode__(self):
         return self.descricao

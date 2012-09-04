@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -31,6 +32,8 @@ class Tipo_de_Documento(models.Model):
     
     class Meta:
         db_table= 'tb_tipo_de_documento'
+        verbose_name = 'Tipo de Documento'
+        verbose_name_plural = 'Tipos de Documento'
     
     def __unicode__(self):
         return self.descricao
@@ -85,6 +88,8 @@ class Documento(models.Model):
     
     class Meta:
         db_table= 'tb_documento'
+        verbose_name = 'Documento'
+        verbose_name_plural = 'Documentos'
     
     def __unicode__(self):
         return self.assunto
@@ -199,6 +204,8 @@ class Estado_da_Versao(models.Model):
     
     class Meta:
         db_table= 'tb_estado_da_versao'
+        verbose_name = 'Estado da Versão'
+        verbose_name_plural = 'Estados da Versão'
     
     def __unicode__(self):
         return self.descricao
@@ -245,6 +252,8 @@ class Versao(models.Model):
     
     class Meta:
         db_table= 'tb_versao'
+        verbose_name = 'Versão'
+        verbose_name_plural = 'Versões'
     
     def __unicode__(self):
         return str(self.id_versao)

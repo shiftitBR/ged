@@ -17,8 +17,8 @@ from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
-    Funcao_Grupo, Pasta
-from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma, Norma_Documento
+    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo
+from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
 
 
 class AdminEmpresa(MultiDBModelAdmin): 
@@ -84,28 +84,29 @@ class AdminPasta(MultiDBModelAdmin):
         form = super(AdminPasta,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+            form.base_fields['empresa'].queryset    = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+            form.base_fields['pasta_pai'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
         return form
         
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
     search_fields   = ('usuario',)
     ordering        = ('data',)
-    readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'empresa', 'data')
+    readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'data', 'empresa')
     exclude         = ('id_log_usuario',)
-    
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminLogUsuario,self).get_form(vRequest, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-        return form
     
 class AdminGrupo(MultiDBModelAdmin): 
     list_display    = ('nome', 'descricao')
     search_fields   = ('nome', 'descricao',)
     ordering        = ('nome',)
     exclude         = ('id_grupo',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminGrupo,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
         
 class AdminGrupoPasta(MultiDBModelAdmin): 
     list_display    = ('grupo', 'pasta')
@@ -113,17 +114,40 @@ class AdminGrupoPasta(MultiDBModelAdmin):
     ordering        = ('grupo',)  
     exclude         = ('id_grupo_pasta',)  
     
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
+        return form
+    
 class AdminGrupoUsuario(MultiDBModelAdmin): 
     list_display    = ('grupo', 'usuario')
     search_fields   = ('grupo', 'usuario')
     ordering        = ('grupo',)   
     exclude         = ('id_grupo_usuario',)  
     
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['usuario'].queryset    = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
+        return form
+    
 class AdminFuncaoGrupo(admin.ModelAdmin): 
     list_display    = ('funcao', 'grupo')
     search_fields   = ('funcao', 'grupo')
     ordering        = ('funcao',)  
     exclude         = ('id_funcao_grupo',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminFuncaoGrupo,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+        return form
     
 class AdminTipoNorma(admin.ModelAdmin): 
     list_display    = ('descricao', 'empresa')
@@ -149,8 +173,36 @@ class AdminNorma(admin.ModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+            form.base_fields['tipo_norma'].queryset = Tipo_de_Norma.objects.filter(empresa=iEmpresa.id_empresa)
+            form.base_fields['norma_pai'].queryset = Norma.objects.filter(empresa=iEmpresa.id_empresa)
         return form
-
+    
+class AdminFirewall(admin.ModelAdmin): 
+    list_display    = ('ip', 'descricao')
+    search_fields   = ('ip', 'descricao', 'empresa')
+    ordering        = ('ip',)  
+    exclude         = ('id_firewall',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminFirewall,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
+    
+class AdminFirewallGrupo(admin.ModelAdmin): 
+    list_display    = ('firewall', 'grupo')
+    search_fields   = ('firewall', 'grupo')
+    ordering        = ('firewall',)  
+    exclude         = ('id_firewall_grupo',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminFirewallGrupo,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['firewall'].queryset   = Firewall.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+        return form
     
 admin.site.unregister(User)
 admin.site.unregister(Site)
@@ -165,3 +217,5 @@ admin.site.register(Grupo_Usuario, AdminGrupoUsuario)
 admin.site.register(Pasta, AdminPasta)
 admin.site.register(Tipo_de_Norma, AdminTipoNorma)
 admin.site.register(Norma, AdminNorma)
+admin.site.register(Firewall, AdminFirewall)
+admin.site.register(Firewall_Grupo, AdminFirewallGrupo)

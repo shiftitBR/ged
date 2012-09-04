@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -26,6 +27,8 @@ class Pendencia(models.Model):
     
     class Meta:
         db_table= 'tb_pendencia'
+        verbose_name = 'Pendência'
+        verbose_name_plural = 'Pendências'
     
     def __unicode__(self):
         return self.id_pendencia

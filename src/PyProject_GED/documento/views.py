@@ -32,7 +32,8 @@ def documentos(vRequest, vTitulo):
         iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
-        vRequest.session['PastaRaiz'] = iPasta_Raiz
+        vRequest.session['PastaRaiz']       = iPasta_Raiz
+        vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -23,6 +24,8 @@ class Pasta(models.Model):
     
     class Meta:
         db_table= 'tb_pasta'
+        verbose_name = 'Pasta'
+        verbose_name_plural = 'Pastas'
     
     def __unicode__(self):
         return self.nome
@@ -98,6 +101,9 @@ class Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_grupo'
+        verbose_name = 'Grupo'
+        verbose_name_plural = 'Grupos'
+        
     
     def __unicode__(self):
         return self.nome
@@ -131,6 +137,8 @@ class Grupo_Pasta(models.Model):
     
     class Meta:
         db_table= 'tb_grupo_pasta'
+        verbose_name = 'Associar Grupo a Pasta'
+        verbose_name_plural = 'Associar Grupo a Pasta'
     
     def __unicode__(self):
         return str(self.id_grupo_pasta)
@@ -184,6 +192,8 @@ class Grupo_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_grupo_usuario'
+        verbose_name = 'Associar Grupo a Usuário'
+        verbose_name_plural = 'Associar Grupo a Usuário'
     
     def __unicode__(self):
         return str(self.id_grupo_usuario)
@@ -224,6 +234,8 @@ class Funcao(models.Model):
     
     class Meta:
         db_table= 'tb_funcao'
+        verbose_name = 'Função'
+        verbose_name_plural = 'Funções'
     
     def __unicode__(self):
         return self.nome
@@ -255,6 +267,8 @@ class Funcao_Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_funcao_grupo'
+        verbose_name = 'Associar Função a Grupo'
+        verbose_name_plural = 'Associar Função a Grupo'
     
     def __unicode__(self):
         return str(self.id_funcao_grupo)
@@ -309,6 +323,8 @@ class Firewall(models.Model):
     
     class Meta:
         db_table= 'tb_firewall'
+        verbose_name = 'Firewall'
+        verbose_name_plural = 'Firewall'
     
     def __unicode__(self):
         return self.ip
@@ -347,6 +363,8 @@ class Firewall_Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_firewall_grupo'
+        verbose_name = 'Associar Firewall a Grupo'
+        verbose_name_plural = 'Associar Firewall a Grupo'
     
     def __unicode__(self):
         return str(self.id_firewall_grupo)

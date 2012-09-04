@@ -37,6 +37,8 @@ class Empresa(models.Model):
     
     class Meta:
         db_table= 'tb_empresa'
+        verbose_name = 'Empresa'
+        verbose_name_plural = 'Empresas'
     
     def __unicode__(self):
         return "%s - %s" % (str(self.id_empresa), self.nome)
@@ -105,6 +107,8 @@ class Tipo_de_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_tipo_de_usuario'
+        verbose_name = 'Tipo de Usuário'
+        verbose_name_plural = 'Tipos de Usuário'
     
     def __unicode__(self):
         return self.descricao
@@ -124,9 +128,11 @@ class Usuario(User):
     
     class Meta:
         db_table= 'tb_usuario'
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
     
     def __unicode__(self):
-        return self.username
+        return "%s - %s %s" % (self.username, self.first_name, self.last_name)
     
     def save(self): 
         if self.username == '':

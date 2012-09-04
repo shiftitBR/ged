@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -23,6 +24,8 @@ class Tipo_de_Evento(models.Model):
 
     class Meta:
         db_table= 'tb_tipo_de_evento'
+        verbose_name = 'Tipo de Evento'
+        verbose_name_plural = 'Tipos de Evento'
     
     def __unicode__(self):
         return self.descricao
@@ -45,6 +48,8 @@ class Historico(models.Model):
     
     class Meta:
         db_table= 'tb_historico'
+        verbose_name = 'Histórico'
+        verbose_name_plural = 'Histórico'
     
     def __unicode__(self):
         return str(self.id_historico)
@@ -151,6 +156,8 @@ class Log_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_log_usuario'
+        verbose_name = 'Log de Usuário'
+        verbose_name_plural = 'Log de Usuário'
     
     def __unicode__(self):
         return str(self.id_log_usuario)
