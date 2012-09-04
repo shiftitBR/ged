@@ -435,6 +435,10 @@ class Test(TestCase):
         iDocumentos= Documento().buscaDocumentosVencendo(iDataAtual)
         self.assertEquals(1, len(iDocumentos))
         
+        iDataAtual= datetime.datetime.today()
+        iDocumentos= Documento().buscaDocumentosVencendo(iDataAtual, 0)
+        self.assertEquals(1, len(iDocumentos))
+        
     #-----------------------------------------------------MOKS---------------------------------------------------
     
     
@@ -531,9 +535,10 @@ class Test(TestCase):
         
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[0]
         iAssunto        = 'Documento Alpha'
+        iDataVencimento = datetime.datetime.today()
         iDocumento2     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
-                                    eh_publico= iEhPublico)
+                                    data_validade= iDataVencimento, eh_publico= iEhPublico)
         iDocumento2.save()
         
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
