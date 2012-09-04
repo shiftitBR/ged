@@ -13,8 +13,23 @@ from objetos_auxiliares                 import Pendencia as PendenciaAuxiliar
 import logging
 import datetime
 import constantes #@UnresolvedImport
+from PyProject_GED.autenticacao.models import Empresa
+from PyProject_GED.documento.models import Tipo_de_Documento
+from PyProject_GED.seguranca.models import Pasta, Grupo
 
 #-----------------------------Pendencia----------------------------------------
+
+class Tipo_de_Pendencia(models.Model):
+    id_tipo_de_pendencia   = models.IntegerField(max_length=3, primary_key=True)
+    descricao       = models.CharField(max_length=200, null= False)
+    
+    class Meta:
+        db_table= 'tb_tipo_de_pendencia'
+        verbose_name = 'Tipo de Pendência'
+        verbose_name_plural = 'Tipos de Pendência'
+    
+    def __unicode__(self):
+        return str(self.id_tipo_de_pendencia)
 
 class Pendencia(models.Model):
     id_pendencia    = models.IntegerField(max_length=3, primary_key=True)
@@ -121,3 +136,33 @@ class Pendencia(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel adicionarFeedback: ' + str(e))
             return False
+
+class Workflow(models.Model):
+    id_workflow     = models.IntegerField(max_length=5, primary_key=True)
+    empresa         = models.ForeignKey(Empresa, unique=False)
+    tipo_documento  = models.ForeignKey(Tipo_de_Documento, null= False)
+    pasta           = models.ForeignKey(Pasta, null= False)
+    descricao       = models.CharField(max_length=200, null= False)
+    
+    class Meta:
+        db_table= 'tb_workflow'
+        verbose_name = 'Workflow'
+        verbose_name_plural = 'Workflow'
+    
+    def __unicode__(self):
+        return str(self.id_workflow)
+    
+class Etapa_do_Workflow(models.Model):
+    id_etapa_do_workflow    = models.IntegerField(max_length=5, primary_key=True)
+    grupo                   = models.ForeignKey(Grupo, null= False)
+    tipo_de_pendencia       = models.ForeignKey(Tipo_de_Pendencia, null= False)
+    eh_multiplo             = models.BooleanField(null= False)
+    descricao               = models.CharField(max_length=200, null= False)
+    
+    class Meta:
+        db_table= 'tb_etapa_do_workflow'
+        verbose_name = 'Etapa do Workflow'
+        verbose_name_plural = 'Etapas do Workflow'
+    
+    def __unicode__(self):
+        return str(self.id_etapa_do_workflow)
