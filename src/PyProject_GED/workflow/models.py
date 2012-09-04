@@ -154,6 +154,7 @@ class Workflow(models.Model):
     
 class Etapa_do_Workflow(models.Model):
     id_etapa_do_workflow    = models.IntegerField(max_length=5, primary_key=True)
+    workflow                = models.ForeignKey(Workflow, null= False)
     grupo                   = models.ForeignKey(Grupo, null= False)
     tipo_de_pendencia       = models.ForeignKey(Tipo_de_Pendencia, null= False)
     eh_multiplo             = models.BooleanField(null= False)
