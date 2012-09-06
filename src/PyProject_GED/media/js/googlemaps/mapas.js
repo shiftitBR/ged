@@ -55,11 +55,11 @@ $(document).ready
 	function()
 	{
 		$('#map_canvas').change(initialize())
-		$('#map_canvas').change(codeAddress('Lauro Linhares Trindade'))
+		$('#map_canvas').change(codeAddress())
 	}
 );
 
-function codeAddress(iEndereco) {
+function codeAddress() {
 	$.post('/enderecos/', { dir: 'teste' }, function(data)
     {
 		var lista=data.split("%");
