@@ -11,6 +11,7 @@ from PyProject_GED.seguranca.models     import Firewall
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Log_Usuario
+from PyProject_GED.autenticacao.forms import FormConfiguracoesDeUsuario
 
 def login(vRequest, vTitulo):
     
@@ -61,6 +62,34 @@ def logout(vRequest, vTitulo):
 
     return render_to_response(
         'logout/logout.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+    
+def trocar_senha(vRequest, vTitulo):
+    iUser = vRequest.user
+    if iUser:
+        iUsuario= Usuario().obtemUsuario(iUser)
+    else:
+        iUsuario= None
+        
+    if vRequest.POST:
+        try:
+            form = FormConfiguracoesDeUsuario(vRequest.POST, instance= iUsuario)
+            if form.is_valid():
+                iUsuario = form.save(commit=True)
+                
+                return HttpResponseRedirect('/')
+            else:
+                form = FormConfiguracoesDeUsuario(vRequest.POST)
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel post trocar_senha: ' + str(e))
+            return False
+    else:
+        form = FormConfiguracoesDeUsuario(instance= iUsuario)
+        
+    return render_to_response(
+        'senha/trocar_senha.html',
         locals(),
         context_instance=RequestContext(vRequest),
         )

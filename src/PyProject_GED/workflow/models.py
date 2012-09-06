@@ -157,7 +157,7 @@ class Etapa_do_Workflow(models.Model):
     workflow                = models.ForeignKey(Workflow, null= False)
     grupo                   = models.ForeignKey(Grupo, null= False)
     tipo_de_pendencia       = models.ForeignKey(Tipo_de_Pendencia, null= False)
-    eh_multiplo             = models.BooleanField(null= False)
+    eh_multiplo             = models.BooleanField(null= False, verbose_name='Multiplo', help_text='Indica que todos os usuários de determinado grupo devem efetuar a ação desejada.')
     descricao               = models.CharField(max_length=200, null= False)
     
     class Meta:

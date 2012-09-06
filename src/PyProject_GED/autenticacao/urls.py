@@ -16,5 +16,7 @@ urlpatterns = patterns('autenticacao.views',
     url('^login/$', 'login', {'vTitulo': trans(u'login')}, name='login'),
     
     url('^logout/$', 'logout', {'vTitulo': trans(u'logout')}, name='logout'),
+    
+    url('^trocar_senha/$', 'trocar_senha', {'vTitulo': trans(u'trocar_senha')}, name='trocar_senha'),
 )
 
