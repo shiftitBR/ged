@@ -83,6 +83,11 @@ form table .clearfix {
               </a>
               <ul class="dropdown-menu">
                   {% url 'django-admindocs-docroot' as docsroot %}
+                  {% if user.is_superuser %}
+                  	  <li><a href="/gerenciamento">{% trans 'Gerenciamento' %}</a></li>
+                  {% else %}
+                  	<li><a href="/">{% trans 'Acessar Sistema' %}</a></li>
+                  {% endif %}
                   {% if docsroot %}
                       <li><a href="{{ docsroot }}">{% trans 'Documentação' %}</a></li>
                   {% endif %}
@@ -92,7 +97,7 @@ form table .clearfix {
                   {% else %}
                       <li><a href="{{ root_path }}password_change/">
                   {% endif %}
-                  {% trans 'Trocar senha' %}</a></li>
+                  {% trans 'Trocar Senha' %}</a></li>
                   <li class="divider"></li>
                   {% url 'admin:logout' as logout_url %}
                   {% if logout_url %}

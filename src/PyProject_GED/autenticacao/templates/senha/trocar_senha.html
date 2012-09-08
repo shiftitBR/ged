@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+		
+		<center>
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Trocar Senha</strong></h2>
+		</header>
+		</center>
+		
+	</div>
+	
+	<div class="container">
+		{% for field in form %}
+	    	<strong>{{ field.errors }}</strong>
+	    {% endfor %}
+	</div>
+		
+	<div class="container-fluid">
+	  <div class="row-fluid">
+	    <div class="span2">
+	    </div>
+	    <div class="span8">
+		    <form class="form-horizontal" action="" method="POST">{% csrf_token %}
+			  <div class="control-group">
+			    <label class="control-label" for="inputEmail">Senha Atual:</label>
+			    <div class="controls">
+			      <input type="text" id="senhaAtual" placeholder="Senha Atual" name="senha_atual">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="inputPassword">Nova Senha:</label>
+			    <div class="controls">
+			      <input type="password" id="inputPassword" placeholder="Nova Senha" name="password">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="inputPassword">Confirmar Nova Senha:</label>
+			    <div class="controls">
+			      <input type="password" id="confirmPassword" placeholder="Confirmar Nova Senha" name="confirme_a_senha">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <div class="controls">
+			    	<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Alterar Senha</button>
+			    </div>
+			  </div>
+			</form>
+	    </div>
+	    <div class="span2">
+	    </div>
+	  </div>
+	</div>
+</body>
+
+</html>

@@ -3,7 +3,6 @@ Created on Jan 17, 2012
 
 @author: spengler
 '''
-from django                         import forms
 from django.contrib                 import admin
 from django.contrib.auth.admin      import UserAdmin 
 from django.contrib.auth.models     import User
@@ -19,7 +18,8 @@ from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
     Funcao_Grupo, Pasta, Firewall, Firewall_Grupo
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
-
+from PyProject_GED.documento.models import Tipo_de_Documento
+from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
@@ -129,7 +129,7 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
     exclude         = ('id_grupo_usuario',)  
     
     def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
+        form = super(AdminGrupoUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
@@ -204,6 +204,35 @@ class AdminFirewallGrupo(admin.ModelAdmin):
             form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
+class AdminWorkflow(admin.ModelAdmin): 
+    list_display    = ('descricao', 'tipo_documento', 'pasta', 'empresa')
+    search_fields   = ('descricao', 'tipo_documento', 'pasta')
+    ordering        = ('descricao',)  
+    exclude         = ('id_workflow',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminWorkflow,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['tipo_documento'].queryset   = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
+    
+class AdminEtapaWorkflow(admin.ModelAdmin): 
+    list_display    = ('descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multiplo')
+    search_fields   = ('descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multiplo')
+    ordering        = ('workflow', 'descricao',)  
+    exclude         = ('id_etapa_do_workflow',)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminEtapaWorkflow,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['workflow'].queryset   = Workflow.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+        return form      
+
 admin.site.unregister(User)
 admin.site.unregister(Site)
 admin.site.register(Empresa, AdminEmpresa)
@@ -219,3 +248,5 @@ admin.site.register(Tipo_de_Norma, AdminTipoNorma)
 admin.site.register(Norma, AdminNorma)
 admin.site.register(Firewall, AdminFirewall)
 admin.site.register(Firewall_Grupo, AdminFirewallGrupo)
+admin.site.register(Workflow, AdminWorkflow)
+admin.site.register(Etapa_do_Workflow, AdminEtapaWorkflow)

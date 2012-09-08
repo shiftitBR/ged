@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     (r'^', include('workflow.urls')),
     (r'^', include('envioemail.urls')),
     (r'^', include('scanner.urls')),
+    (r'^', include('gerenciamento.urls')),
     url(r'', include('multiuploader.urls')),
 )
 

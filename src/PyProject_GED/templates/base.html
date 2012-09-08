@@ -59,20 +59,25 @@
 	            </ul>
 	          </div>
 	          {% endif %}
-	          
+
 	          <div class="btn-group pull-right">
 	          	{% if user.is_authenticated %}
 	            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-	              <i class="icon-user"></i> Logado
+	              <i class="icon-user"></i> Bem-vindo
+	              <strong>{% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</strong>
 	              <span class="caret"></span>
 	            </a>
 	            <ul class="dropdown-menu">
-	              <li class="divider"></li>
-	              <li><a href="/logout/">Sair</a></li>
+	            {% if user.is_staff %}
+	            	<li><a href="/admin/"><i class="icon-lock"></i>  Administração</a></li>
+	            {% endif %}
+	            	<li><a class="fancybox fancybox.iframe" href="/trocar_senha/"><i class="icon-retweet"></i>  Trocar Senha</a></li>
+	              	<li class="divider"></li>
+	              	<li><a href="/logout/"><i class="icon-remove"></i>  Sair</a></li>
 	            </ul>
 	            {% else %}
 				<a class="btn" href="/login/">
-	              <i class="icon-user"></i> Login
+	              	<i class="icon-user"></i> ENTRAR
 	            </a>
 	            {% endif %}
 	          </div>

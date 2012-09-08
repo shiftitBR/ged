@@ -88,9 +88,7 @@ class Pasta(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
-    
-    
-        
+
 #-----------------------------GRUPO----------------------------------------
 
 class Grupo(models.Model):

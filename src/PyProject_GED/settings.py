@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'ocr',
     'chronograph',
 #    'scanner',
+    'gerenciamento',
 )
 
 AUTHENTICATION_BACKENDS = (

@@ -1,0 +1,124 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block bodyclass %}login{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+	
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+	
+{% block content %}
+
+<div class="container">
+  	
+  	<center>
+	  <h1><strong>Gerenciamento</strong></h1>
+	</center>
+	
+	<br>
+	<div class="container">
+		<div class="well">
+			<blockquote>
+			  <p>Informações Gerais para o gerenciamento de documentos, versões e espaço em disco</p>
+			  <small>Estas informações englobam todo o sistema</small>
+			</blockquote>
+			<table class="table table-striped">
+		      <thead>
+		        <tr>
+		          <th><center>Total de Documentos</center></th>
+		          <th><center>Total de Versões</center></th>
+		          <th><center>Espaço Utilizado em Disco</center></th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		        <tr>
+		          <td><center>{{iTotalDocumentos}}</center></td>
+		          <td><center>{{iTotalVersoes}}</center></td>
+		          <td><center>{{iToalEspacoUtilizado}}</center></td>
+		        </tr>
+		      </tbody>
+		    </table>
+	    </div>	
+   	</div>		
+	
+	<br>
+	
+	<div class="container">
+		<div class="well">
+			<blockquote>
+			  <p>Informações relacionadas ao número de documentos, versões e espaço em disco</p>
+			  <small>Refere-se a cada empresa cadastrada no sistema</small>
+			</blockquote>
+			<table class="table table-striped">
+		      <thead>
+		        <tr>
+		          <th><center>Empresa</center></th>
+		          <th><center>Total de Documentos</center></th>
+		          <th><center>Total de Versões</center></th>
+		          <th><center>Espaço Utilizado em Disco</center></th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		      	{% for iEmpresa in iListaEmpresasAux %}
+		        <tr>
+		          <td><center>{{iEmpresa.Nome}}</center></td>
+		          <td><center>{{iEmpresa.TotalDocumentos}}</center></td>
+		          <td><center>{{iEmpresa.TotalVersoes}}</center></td>
+		          <td><center>{{iEmpresa.EspacoDisco}}</center></td>
+		        </tr>
+		        {% empty %}
+				{% endfor %}
+		      </tbody>
+		    </table>
+	    </div>
+   	</div>
+   			
+   	
+   	<br>
+   	
+   	<div class="container">
+   		<div class="well">
+	   		<blockquote>
+			  <p>Usuários que executaram o login no sistema</p>
+			  <small>Referente a última 1 (uma) hora</small>
+			</blockquote>	
+			<table class="table table-striped">
+		      <thead>
+		        <tr>
+		          <th><center>Empresa</center></th>
+		          <th><center>Nome do Usuário</center></th>
+		          <th><center>Último Acesso</center></th>
+		        </tr>
+		      </thead>
+		      <tbody>
+		      	{% for iEmpresa in iListaEmpresasAux %}
+		      		{% for iUsuario in iEmpresa.UsuariosOnLine %}
+			        <tr>
+			          <td><center>{{iEmpresa.Nome}}</center></td>
+			          <td><center>{{iUsuario.first_name}} {{iUsuario.last_name}}</center></td>
+			          <td><center>{{iUsuario.last_login}}</center></td>
+			        </tr>
+			        {% empty %}
+					{% endfor %}
+		        {% empty %}
+				{% endfor %}
+		      </tbody>
+		    </table>
+	    </div>
+   	</div>		
+	
+	<footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a class="btn btn-primary" href="/admin" >VOLTAR</a></p>
+      </div>
+    </footer>
+
+</div>
+
+{% endblock %}
