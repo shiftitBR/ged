@@ -15,9 +15,10 @@ import datetime
 import constantes #@UnresolvedImport
 from PyProject_GED.autenticacao.models import Empresa
 from PyProject_GED.documento.models import Tipo_de_Documento
-from PyProject_GED.seguranca.models import Pasta, Grupo
+from PyProject_GED.seguranca.models import Pasta, Grupo, Grupo_Usuario
 
-#-----------------------------Pendencia----------------------------------------
+
+#-----------------------------Workflow----------------------------------------
 
 class Tipo_de_Pendencia(models.Model):
     id_tipo_de_pendencia   = models.IntegerField(max_length=3, primary_key=True)
@@ -30,15 +31,205 @@ class Tipo_de_Pendencia(models.Model):
     
     def __unicode__(self):
         return str(self.id_tipo_de_pendencia)
+    
+    def save(self):  
+        if self.id_tipo_de_pendencia == '' or self.id_tipo_de_pendencia== None:
+            if len(Tipo_de_Pendencia.objects.order_by('-id_tipo_de_pendencia')) > 0:   
+                iUltimoRegistro = Tipo_de_Pendencia.objects.order_by('-id_tipo_de_pendencia')[0] 
+                self.id_tipo_de_pendencia= iUltimoRegistro.pk + 1
+            else:
+                self.id_tipo_de_pendencia= 1
+        super(Tipo_de_Pendencia, self).save()
+
+class Workflow(models.Model):
+    id_workflow         = models.IntegerField(max_length=5, primary_key=True)
+    empresa             = models.ForeignKey(Empresa, unique=False)
+    tipo_de_documento   = models.ForeignKey(Tipo_de_Documento, null= False)
+    pasta               = models.ForeignKey(Pasta, null= False)
+    descricao           = models.CharField(max_length=200, null= False)
+    
+    class Meta:
+        db_table= 'tb_workflow'
+        verbose_name = 'Workflow'
+        verbose_name_plural = 'Workflow'
+    
+    def __unicode__(self):
+        return str(self.id_workflow)
+    
+    def save(self):  
+        if self.id_workflow == '' or self.id_workflow== None:
+            if len(Workflow.objects.order_by('-id_workflow')) > 0:   
+                iUltimoRegistro = Workflow.objects.order_by('-id_workflow')[0] 
+                self.id_workflow= iUltimoRegistro.pk + 1
+            else:
+                self.id_workflow= 1
+        super(Workflow, self).save()
+    
+    def obtemWorkflow(self, vPasta, vTipoDoDocumento):
+        try:
+            iListaWorkflow= Workflow.objects.filter(tipo_de_documento= vTipoDoDocumento, pasta= vPasta)
+            if len(iListaWorkflow) > 0:
+                iWorkflow= iListaWorkflow[0]
+            else:
+                iWorkflow= None
+            return iWorkflow
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Workflow: ' + str(e))
+            return False
+    
+    def obtemEtapaAtual(self, vWorkflow):
+        try:
+            iListaPendenciasDoWorkflow= Pendencia.objects.filter(workflow= vWorkflow)
+            iOrdemEtapaAtual= -1
+            iEtapaAtual= Etapa_do_Workflow.objects.filter(workflow= vWorkflow, ordem_da_etapa= 0)[0]
+            for iPendencia in iListaPendenciasDoWorkflow:
+                if iOrdemEtapaAtual < iPendencia.etapa_do_workflow.ordem_da_etapa:
+                    iEtapaAtual= iPendencia.etapa_do_workflow
+                    iOrdemEtapaAtual= iEtapaAtual.ordem_da_etapa
+            return iEtapaAtual
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a Etapa Atual: ' + str(e))
+            return False
+    
+    def obtemProximaEtapa(self, vWorkflow):
+        try:
+            iListaEtapas= Etapa_do_Workflow.objects.filter(workflow= vWorkflow).order_by('ordem_da_etapa')
+            if len(iListaEtapas) == 0:
+                return None
+            iOrdemEtapaAtual= self.obtemEtapaAtual(vWorkflow).ordem_da_etapa
+            iProximaEtapa= None
+            if iOrdemEtapaAtual < len(iListaEtapas) -1:
+                iOrdemProximaEtapa= iOrdemEtapaAtual + 1
+                iProximaEtapa= iListaEtapas[iOrdemProximaEtapa]
+            return iProximaEtapa
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a Proxima Etapa: ' + str(e))
+            return False
+    
+    def verificaSeEtapaAtualEstaConcluida(self, vWorkflow):
+        try:
+            iEtapaAtual= self.obtemEtapaAtual(vWorkflow)
+            iListaPendenciasDaEtapa= Pendencia.objects.filter(workflow= vWorkflow, etapa_do_workflow= iEtapaAtual)
+            iPendenciasConcluidas= 0
+            for iPendencia in iListaPendenciasDaEtapa:
+                if iPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaConcluida: 
+                    iPendenciasConcluidas= iPendenciasConcluidas + 1
+            if (iEtapaAtual.eh_multipla) and (iPendenciasConcluidas == len(iListaPendenciasDaEtapa)):
+                iConcluido= True
+            elif not iEtapaAtual.eh_multipla and (iPendenciasConcluidas > 0):
+                iConcluido= True
+            else:
+                iConcluido= False
+            return iConcluido
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificar se etapa atual esta concluida: ' + str(e))
+            return False
+    
+    def executaWorkflow(self, vDocumento):
+        try:
+            iPasta= vDocumento.pasta
+            iTipoDoDocumento= vDocumento.tipo_documento
+            iWorkflow= self.obtemWorkflow(iPasta, iTipoDoDocumento)
+            iTeste= self.verificaSeEtapaAtualEstaConcluida(iWorkflow)
+            if (iWorkflow not in (None, False)) and (self.verificaSeEtapaAtualEstaConcluida(iWorkflow)):
+                Pendencia().cancelaPendenciasDoWorkflow(iWorkflow, vDocumento)
+                iEtapaAtual= self.obtemEtapaAtual(iWorkflow)
+                iProximaEtapa= self.obtemProximaEtapa(iWorkflow)
+                if iProximaEtapa not in (None, False):
+                    Pendencia().criaPendenciaDoWorkflow(iWorkflow, vDocumento)
+                elif iProximaEtapa == None:
+                    self.alteraEstadoDoDocumentoDoWorkflow(iEtapaAtual, vDocumento)
+            elif iWorkflow == None:
+                return None  
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel executar o Workflow: ' + str(e))
+            return False
+    
+    def alteraEstadoDoDocumentoDoWorkflow(self, vEtapaAtual, vDocumento):
+        try:
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            if vEtapaAtual.tipo_de_pendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAprovacao:
+                Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoAprovado)
+            elif vEtapaAtual.tipo_de_pendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAssintaura:
+                Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoDisponivel) 
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterar estado do Documento da Pendencia: ' + str(e))
+            return False
+    
+class Etapa_do_Workflow(models.Model):
+    id_etapa_do_workflow    = models.IntegerField(max_length=5, primary_key=True)
+    ordem_da_etapa          = models.IntegerField(max_length=3, null= False)
+    workflow                = models.ForeignKey(Workflow, null= False)
+    grupo                   = models.ForeignKey(Grupo, null= False)
+    tipo_de_pendencia       = models.ForeignKey(Tipo_de_Pendencia, null= False)
+    eh_multipla             = models.BooleanField(null= False)
+    descricao               = models.CharField(max_length=200, null= False)
+    
+    class Meta:
+        db_table= 'tb_etapa_do_workflow'
+        verbose_name = 'Etapa do Workflow'
+        verbose_name_plural = 'Etapas do Workflow'
+    
+    def __unicode__(self):
+        return str(self.id_etapa_do_workflow)
+    
+    def save(self): 
+        try: 
+            if self.id_etapa_do_workflow == '' or self.id_etapa_do_workflow== None:
+                if len(Etapa_do_Workflow.objects.order_by('-id_etapa_do_workflow')) > 0:   
+                    iUltimoRegistro = Etapa_do_Workflow.objects.order_by('-id_etapa_do_workflow')[0] 
+                    self.id_etapa_do_workflow= iUltimoRegistro.pk + 1
+                else:
+                    self.id_etapa_do_workflow= 1
+                
+                iListaEtapas= Etapa_do_Workflow.objects.filter(workflow= self.workflow).order_by('-ordem_da_etapa')
+                if len(iListaEtapas) == 0:
+                    self.ordem_da_etapa= 0
+                else:
+                    self.ordem_da_etapa= iListaEtapas[len(iListaEtapas)-1].ordem_da_etapa + 1
+                
+            super(Etapa_do_Workflow, self).save()
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar a Etapa do Workflow: ' + str(e))
+            return False
+        
+
+#-----------------------------Pendencia----------------------------------------
+        
+class Estado_da_Pendencia(models.Model):
+    id_estado_da_pendencia  = models.IntegerField(max_length=3, primary_key=True)
+    descricao               = models.CharField(max_length=30)
+    
+    class Meta:
+        db_table= 'tb_estado_da_pendencia'
+        verbose_name = 'Estado da Pendência'
+        verbose_name_plural = 'Estados da Pendência'
+    
+    def __unicode__(self):
+        return self.descricao
+    
+    def save(self):  
+        if len(Estado_da_Pendencia.objects.order_by('-id_estado_da_pendencia')) > 0:   
+            iUltimoRegistro = Estado_da_Pendencia.objects.order_by('-id_estado_da_pendencia')[0] 
+            self.id_estado_da_pendencia= iUltimoRegistro.pk + 1
+        else:
+            self.id_estado_da_pendencia= 1
+        super(Estado_da_Pendencia, self).save()
 
 class Pendencia(models.Model):
-    id_pendencia    = models.IntegerField(max_length=3, primary_key=True)
-    usr_remetente   = models.ForeignKey(Usuario, blank=True, unique=False, verbose_name='user', related_name="usr_remetente")
-    usr_destinatario= models.ForeignKey(Usuario, blank=True, unique=False, verbose_name='user', related_name="usr_destinatario")
-    versao          = models.ForeignKey(Versao, null= False)
-    data            = models.CharField(max_length=100, null= False)
-    descricao       = models.CharField(max_length=200, null= False)
-    feedback        = models.CharField(max_length=200, null= True)
+    id_pendencia        = models.IntegerField(max_length=3, primary_key=True)
+    estado_da_pendencia = models.ForeignKey(Estado_da_Pendencia, null= False)
+    usr_remetente       = models.ForeignKey(Usuario, blank=True, unique=False, verbose_name='user', related_name="usr_remetente")
+    usr_destinatario    = models.ForeignKey(Usuario, blank=True, unique=False, verbose_name='user', related_name="usr_destinatario")
+    versao              = models.ForeignKey(Versao, null= False)
+    tipo_de_pendencia   = models.ForeignKey(Tipo_de_Pendencia, null= False)
+    workflow            = models.ForeignKey(Workflow, null= True)
+    etapa_do_workflow   = models.ForeignKey(Etapa_do_Workflow, null= True)
+    data                = models.CharField(max_length=100, null= False)
+    descricao           = models.CharField(max_length=200, null= False)
+    feedback            = models.CharField(max_length=200, null= True)
     
     class Meta:
         db_table= 'tb_pendencia'
@@ -46,18 +237,20 @@ class Pendencia(models.Model):
         verbose_name_plural = 'Pendências'
     
     def __unicode__(self):
-        return self.id_pendencia
+        return str(self.id_pendencia)
     
-    def save(self):  
+    def save(self): 
         if self.id_pendencia == '' or self.id_pendencia== None:
             if len(Pendencia.objects.order_by('-id_pendencia')) > 0:   
                 iUltimoRegistro = Pendencia.objects.order_by('-id_pendencia')[0] 
                 self.id_pendencia= iUltimoRegistro.pk + 1
             else:
                 self.id_pendencia= 1
+            self.estado_da_pendencia= Estado_da_Pendencia.objects.filter(id_estado_da_pendencia= constantes.cntEstadoPendenciaPendente)[0]
         super(Pendencia, self).save()
         
-    def criaPendencia(self, vRemetente, vDestinatario, vVersao, vDescricao, vData=str(datetime.datetime.today())[:19]):
+    def criaPendencia(self, vRemetente, vDestinatario, vVersao, vDescricao, vTipoDePendencia, 
+                      vWorkflow=None, vEtapaDoWorkflow=None, vData=str(datetime.datetime.today())[:19]):
         try:
             iPendencia= Pendencia()
             iPendencia.usr_remetente    = vRemetente
@@ -65,10 +258,45 @@ class Pendencia(models.Model):
             iPendencia.versao           = vVersao   
             iPendencia.data             = vData    
             iPendencia.descricao        = vDescricao
+            iPendencia.tipo_de_pendencia= vTipoDePendencia
+            iPendencia.workflow         = vWorkflow
+            iPendencia.etapa_do_workflow= vEtapaDoWorkflow
             iPendencia.save()
+            
+            Versao().alterarEstadoVersao(vVersao.id_versao, constantes.cntEstadoVersaoPendente)
+            
             return iPendencia
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia: ' + str(e))
+            return False
+    
+    def criaPendenciasDoWorkflow(self, vWorkflow, vDocumento):
+        try:
+            iProximaEtapa= Workflow().obtemProximaEtapa(vWorkflow)
+            if iProximaEtapa == None:
+                return None
+            iGrupo= iProximaEtapa.grupo
+            iListaGrupoUsuarios= Grupo_Usuario.objects.filter(grupo= iGrupo)
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            for iGrupoUsuario in iListaGrupoUsuarios:
+                self.criaPendencia(iVersaoAtual.usr_criador, iGrupoUsuario.usuario, iVersaoAtual, 
+                                        iProximaEtapa.descricao, iProximaEtapa.tipo_de_pendencia, 
+                                        vWorkflow, iProximaEtapa)
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia do workflow: ' + str(e))
+            return False
+    
+    def cancelaPendenciasDoWorkflow(self, vWorkflow, vDocumento):
+        try:
+            iEtapaAtual= Workflow().obtemEtapaAtual(vWorkflow)
+            iListaPendenciasDaEtapa= Pendencia.objects.filter(workflow= vWorkflow, etapa_do_workflow= iEtapaAtual, 
+                                                              estado_da_pendencia= constantes.cntEstadoPendenciaPendente)
+            for iPendencia in iListaPendenciasDaEtapa:
+                self.cancelaPendencia(iPendencia)
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel cancelar as pendencias do workflow: ' + str(e))
             return False
         
     def obtemListaPendenciasRemetente(self, vRemetente):
@@ -136,34 +364,25 @@ class Pendencia(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel adicionarFeedback: ' + str(e))
             return False
-
-class Workflow(models.Model):
-    id_workflow     = models.IntegerField(max_length=5, primary_key=True)
-    empresa         = models.ForeignKey(Empresa, unique=False)
-    tipo_documento  = models.ForeignKey(Tipo_de_Documento, null= False)
-    pasta           = models.ForeignKey(Pasta, null= False)
-    descricao       = models.CharField(max_length=200, null= False)
     
-    class Meta:
-        db_table= 'tb_workflow'
-        verbose_name = 'Workflow'
-        verbose_name_plural = 'Workflow'
+    def concluiPendencia(self, vPendencia):
+        try:
+            if vPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaPendente:
+                iNovoEstado= Estado_da_Pendencia.objects.filter(id_estado_da_pendencia= constantes.cntEstadoPendenciaConcluida)[0]
+                vPendencia.estado_da_pendencia= iNovoEstado
+            vPendencia.save()
+            return vPendencia
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel concluir pendencia: ' + str(e))
+            return False
     
-    def __unicode__(self):
-        return str(self.id_workflow)
-    
-class Etapa_do_Workflow(models.Model):
-    id_etapa_do_workflow    = models.IntegerField(max_length=5, primary_key=True)
-    workflow                = models.ForeignKey(Workflow, null= False)
-    grupo                   = models.ForeignKey(Grupo, null= False)
-    tipo_de_pendencia       = models.ForeignKey(Tipo_de_Pendencia, null= False)
-    eh_multiplo             = models.BooleanField(null= False)
-    descricao               = models.CharField(max_length=200, null= False)
-    
-    class Meta:
-        db_table= 'tb_etapa_do_workflow'
-        verbose_name = 'Etapa do Workflow'
-        verbose_name_plural = 'Etapas do Workflow'
-    
-    def __unicode__(self):
-        return str(self.id_etapa_do_workflow)
+    def cancelaPendencia(self, vPendencia):
+        try:
+            if vPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaPendente:
+                iNovoEstado= Estado_da_Pendencia.objects.filter(id_estado_da_pendencia= constantes.cntEstadoPendenciaCancelada)[0]
+                vPendencia.estado_da_pendencia= iNovoEstado
+            vPendencia.save()
+            return vPendencia
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel cancelar pendencia: ' + str(e))
+            return False

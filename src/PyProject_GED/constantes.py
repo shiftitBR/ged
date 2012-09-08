@@ -39,6 +39,16 @@ cntEstadoVersaoObsoleto     = 6
 cntEstadoVersaoPendente     = 7
 cntEstadoVersaoVencido      = 8
 
+#Estados da Pendencia
+cntEstadoPendenciaPendente  = 1
+cntEstadoPendenciaConcluida = 2
+cntEstadoPendenciaCancelada = 3
+
+#Tipo da Pendencia
+cntTipoPendenciaAprovacao   = 1
+cntTipoPendenciaAssintaura  = 2
+
+
 #TipoVisualizacao
 cntTipoVisualizacaoPDF      = 1
 cntTipoVisualizacaoImagem   = 2

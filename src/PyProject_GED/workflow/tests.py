@@ -14,7 +14,10 @@ from PyProject_GED.documento.models             import Versao
 from PyProject_GED.documento.controle           import Controle as ControleDocumentos
 
 import datetime
-from PyProject_GED.workflow.models import Pendencia
+from PyProject_GED.workflow.models import Pendencia, Tipo_de_Pendencia, Workflow,\
+    Etapa_do_Workflow, Estado_da_Pendencia
+from PyProject_GED.seguranca.models import Grupo, Grupo_Usuario
+from PyProject_GED import constantes
 
 class Test(TestCase):
     
@@ -28,7 +31,14 @@ class Test(TestCase):
         self.mokarDocumento()
         self.mokarEstadoVersao()
         self.mokarCriarVersao()
-        self.mokarcriaPendencia()
+        self.mokarGrupo()
+        self.mokarGrupo_Usuario()
+        self.mokarCriaWorkflow()
+        self.mokarEstadoDaPendencia()
+        self.mokarCriaTipoPendencia()
+        self.mokarCriaEtapaDoWorkflow()
+        self.mokarCriaPendencia()
+        self.mokarCriaPendenciasDoWorkflow()
         pass
     
     
@@ -45,20 +55,121 @@ class Test(TestCase):
         Pendencia.objects.all().delete()
         pass
 
-    def testcriaPendencia(self):
+    def testCriaPendencia(self):
         iRemetente                  = Usuario.objects.all()[0]
         iDestinatario               = Usuario.objects.all()[1]
-        iVersao                     = Versao.objects.all()[0]
-        iPendencia                  = Pendencia()
-        iPendencia.usr_remetente    = iRemetente
-        iPendencia.usr_destinatario = iDestinatario
-        iPendencia.versao           = iVersao   
-        iPendencia.data             = datetime.datetime(2012, 02, 15, 15, 10, 45)    
-        iPendencia.descricao        = 'descricao'
-        iPendencia.save()
-        self.assertEquals(2, iPendencia.id_pendencia)
+        iVersao                     = Versao.objects.filter(id_versao= 1)[0]
+        iTipoDePendencia            = Tipo_de_Pendencia.objects.all()[0]
+        iPendencia= Pendencia().criaPendencia(iRemetente, iDestinatario, iVersao, 'descricao', iTipoDePendencia)
+        self.assertEquals(5, iPendencia.id_pendencia)
+        self.assertEquals('Pendente', Versao.objects.filter(id_versao= 1)[0].estado.descricao)
+    
+    def testCriaPendenciasDoWorkflow(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+        iDocumento= Documento.objects.all()[0]
+        iCriaPendencias= Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+        self.assertEquals(True, iCriaPendencias)
+        self.assertEquals(6, Pendencia.objects.count())
+    
+    def testCancelaPendenciasDoWorkflow(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
+        iDocumento= Documento.objects.filter(id_documento= 2)[0]
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 2)[0])
+        self.assertEquals(2, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
+        iCancelaPendencias= Pendencia().cancelaPendenciasDoWorkflow(iWorkflow, iDocumento)
+        self.assertEquals(True, iCancelaPendencias)
+        self.assertEquals(0, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
+    
+    def testCriaTipoPendencia(self):
+        iDescricao= 'Tipo de Pendencia'
+        iTipoPendencia= Tipo_de_Pendencia()
+        iTipoPendencia.descricao= iDescricao
+        iTipoPendencia.save()
+        self.assertEquals(3, Tipo_de_Pendencia.objects.count())
+    
+    def testConcluiPendencia(self):
+        iPendencia= Pendencia.objects.all()[0]
+        self.assertEquals(constantes.cntEstadoPendenciaPendente, iPendencia.estado_da_pendencia.id_estado_da_pendencia)
         
-
+        iPendencia= Pendencia().concluiPendencia(iPendencia)
+        self.assertEquals(constantes.cntEstadoPendenciaConcluida, iPendencia.estado_da_pendencia.id_estado_da_pendencia)
+    
+    def testCriaWorkflow(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iTipoDocumento  = Tipo_de_Documento.objects.all()[0]
+        iPasta          = Pasta.objects.all()[0]
+        iDescricao      = 'Workflow'
+        iWorkflow= Workflow(empresa= iEmpresa, tipo_de_documento= iTipoDocumento, pasta= iPasta, descricao= iDescricao)
+        iWorkflow.save()
+        self.assertEquals(3, Workflow.objects.count())
+        
+    def testCriaEtapaDoWorkflow(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+        iGrupo= Grupo.objects.all()[0]
+        iTipoDePendencia= Tipo_de_Pendencia.objects.all()[0]
+        iEhMultiplo=  True
+        iDescricao= 'Etapa 1'
+        iEtapa= Etapa_do_Workflow(workflow= iWorkflow, grupo= iGrupo, tipo_de_pendencia= iTipoDePendencia, 
+                                  eh_multipla= iEhMultiplo, descricao= iDescricao)
+        iEtapa.save()
+        self.assertEquals(5, Etapa_do_Workflow.objects.count())
+    
+    def testObtemWorkflow(self):
+        iPasta= Pasta.objects.all()[0]
+        iTipoDeDocumento= Tipo_de_Documento.objects.all()[0]
+        iWorkflow= Workflow().obtemWorkflow(iPasta, iTipoDeDocumento)
+        self.assertEquals(1, iWorkflow.id_workflow)
+    
+    def testObtemEtapaAtual(self):
+        iWorkflow= Workflow.objects.all()[0]
+        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
+        self.assertEquals(0, iEtapaAtual.ordem_da_etapa)
+    
+    def testObtemProximaEtapa(self):
+        iWorkflow= Workflow.objects.all()[0]
+        iProximaEtapa= Workflow().obtemProximaEtapa(iWorkflow)
+        self.assertEquals(1, iProximaEtapa.ordem_da_etapa)
+    
+    def testVerificaSeEtapaAtualEstaConcluida(self):
+        iWorkflow= Workflow.objects.all()[1]
+        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)
+        self.assertEquals(False, iEhConcluida)
+        self.mokarConcluiPendencia()
+        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)
+        self.assertEquals(True, iEhConcluida)
+    
+    def testAlteraEstadoDoDocumentoDaPendencia(self):
+        iWorkflow= Workflow.objects.all()[0]
+        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
+        iDocumento= Documento.objects.filter(id_documento= 2)
+        iEstado= Workflow().alteraEstadoDoDocumentoDoWorkflow(iEtapaAtual, iDocumento)
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iDocumento)
+        self.assertEquals(True, iEstado)
+        self.assertEquals(constantes.cntEstadoVersaoAprovado, iVersaoAtual.estado.id_estado_da_versao)
+    
+    def testExecutandoWorkflow(self):
+        iDocumento_SemWorkflow= Documento.objects.filter(id_documento= 3)[0]
+        iDocumento_ComWorkflow= Documento.objects.filter(id_documento= 4)[0]
+        
+        self.assertEquals(4, Pendencia.objects.count())
+        self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
+        
+        Workflow().executaWorkflow(iDocumento_SemWorkflow)
+        self.assertEquals(4, Pendencia.objects.count())
+        self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
+        
+        
+        self.mokarCriaPendenciasDoWorkflow_2()
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
+        self.assertEquals(2, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
+        self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
+        self.mokarConcluiPendencia_2()
+        Workflow().executaWorkflow(iDocumento_ComWorkflow)
+        
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
+        self.assertEquals(0, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
+        self.assertEquals('Aprovado', iVersaoAtual.estado.descricao)
+        
     #-----------------------------------------------------MOKS---------------------------------------------------
 
     def mokarEmpresa(self):
@@ -97,14 +208,26 @@ class Test(TestCase):
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'
         iEh_Nativo      = True
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
-        iTipoDocumento  = Tipo_de_Documento(descricao= iDescricao, eh_nativo= iEh_Nativo, empresa= iEmpresa)
-        iTipoDocumento.save()
+        iTipoDocumento1  = Tipo_de_Documento(descricao= iDescricao, eh_nativo= iEh_Nativo, empresa= iEmpresa)
+        iTipoDocumento1.save()
+        
+        iDescricao      = 'Contrato'
+        iEh_Nativo      = False
+        iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
+        iTipoDocumento2  = Tipo_de_Documento(descricao= iDescricao, eh_nativo= iEh_Nativo, empresa= iEmpresa)
+        iTipoDocumento2.save()
+        
+        iDescricao      = 'Proposta'
+        iEh_Nativo      = False
+        iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
+        iTipoDocumento3  = Tipo_de_Documento(descricao= iDescricao, eh_nativo= iEh_Nativo, empresa= iEmpresa)
+        iTipoDocumento3.save()
     
     def mokarMultiUploader(self):
         iEmpresa                 = Empresa.objects.filter(id_empresa=1)[0]
@@ -140,7 +263,7 @@ class Test(TestCase):
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
-        iTipoDocumento  = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iTipoDocumento  = Tipo_de_Documento.objects.filter(id_tipo_documento= 2)[0]
         iPasta          = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iAssunto        = 'Teste'
         iEhPublico      = True
@@ -158,16 +281,18 @@ class Test(TestCase):
                                     eh_publico= iEhPublico)
         iDocumento2.save()
         
+        iTipoDocumento2  = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)[2]
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
         iAssunto        = 'Documento Beta'
-        iDocumento3     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
+        iDocumento3     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento2, 
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
                                     eh_publico= iEhPublico)
         iDocumento3.save()
         
+        iTipoDocumento3  = Tipo_de_Documento.objects.filter(id_tipo_documento= 1)[0]
         iResponsavel    = Usuario.objects.filter(empresa= iEmpresa)[1]
         iAssunto        = 'Documentação'
-        iDocumento4     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento, 
+        iDocumento4     = Documento(empresa= iEmpresa, tipo_documento= iTipoDocumento3, 
                                     usr_responsavel= iResponsavel, pasta= iPasta, assunto= iAssunto, 
                                     eh_publico= iEhPublico)
         iDocumento4.save()
@@ -195,6 +320,34 @@ class Test(TestCase):
         
     def mokarEstadoVersao(self):
         iDescricao      = 'Disponivel'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Bloqueado'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Aprovado'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Reprovado'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Excluido'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Obsoleto'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Pendente'
+        iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
+        iEstadoVersao.save() 
+        
+        iDescricao      = 'Vencido'
         iEstadoVersao   = Estado_da_Versao(descricao= iDescricao)
         iEstadoVersao.save() 
     
@@ -256,15 +409,138 @@ class Test(TestCase):
         Versao().salvaVersao(iDocumento.id_documento, iCriador.id, iEstado.id_estado_da_versao, 
                              iVersao, iUpload.key_data, iProtocolo, iDataCriacao)
         
+    def mokarEstadoDaPendencia(self):
+        iDescricao_1= 'Pendente'
+        iDescricao_2= 'Concluido'
+        iDescricao_3= 'Cancelada'
+        iEstado_1   = Estado_da_Pendencia(descricao= iDescricao_1)  
+        iEstado_1.save()
+        iEstado_2   = Estado_da_Pendencia(descricao= iDescricao_2) 
+        iEstado_2.save()
+        iEstado_3   = Estado_da_Pendencia(descricao= iDescricao_3) 
+        iEstado_3.save()
         
-    def mokarcriaPendencia(self):
+        
+    def mokarCriaPendencia(self):
         iRemetente                  = Usuario.objects.all()[0]
         iDestinatario               = Usuario.objects.all()[1]
         iVersao                     = Versao.objects.all()[0]
-        iPendencia                  = Pendencia()
-        iPendencia.usr_remetente    = iRemetente
-        iPendencia.usr_destinatario = iDestinatario
-        iPendencia.versao           = iVersao   
-        iPendencia.data             = datetime.datetime(2012, 02, 15, 15, 10, 45)    
-        iPendencia.descricao        = 'descricao'
-        iPendencia.save()
+        iTipoDePendencia            = Tipo_de_Pendencia.objects.all()[0]
+        
+        iPendencia_1                    = Pendencia()
+        iPendencia_1.usr_remetente      = iRemetente
+        iPendencia_1.usr_destinatario   = iDestinatario
+        iPendencia_1.versao             = iVersao   
+        iPendencia_1.data               = datetime.datetime(2012, 02, 15, 15, 10, 45)    
+        iPendencia_1.descricao          = 'descricao 1'
+        iPendencia_1.tipo_de_pendencia  = iTipoDePendencia
+        iPendencia_1.save()
+        
+        iPendencia_2                    = Pendencia()
+        iPendencia_2.usr_remetente      = iRemetente
+        iPendencia_2.usr_destinatario   = iDestinatario
+        iPendencia_2.versao             = iVersao   
+        iPendencia_2.data               = datetime.datetime(2012, 02, 15, 15, 10, 45)    
+        iPendencia_2.descricao          = 'descricao 2'
+        iPendencia_2.tipo_de_pendencia  = Tipo_de_Pendencia.objects.filter(id_tipo_de_pendencia= constantes.cntTipoPendenciaAprovacao)[0]
+        iPendencia_2.workflow           = Workflow.objects.all()[0]
+        iPendencia_2.etapa_do_workflow  = Etapa_do_Workflow.objects.all()[0]
+        iPendencia_2.save()
+    
+    def mokarCriaTipoPendencia(self):
+        iDescricao= 'Aprovacao'
+        iTipoPendencia= Tipo_de_Pendencia()
+        iTipoPendencia.descricao= iDescricao
+        iTipoPendencia.save()
+        
+        iDescricao= 'Assinatura'
+        iTipoPendencia= Tipo_de_Pendencia()
+        iTipoPendencia.descricao= iDescricao
+        iTipoPendencia.save()
+    
+    def mokarCriaWorkflow(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iPasta          = Pasta.objects.filter(empresa= iEmpresa)[0]
+        
+        iTipoDocumento  = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa, id_tipo_documento= 1)[0]
+        iDescricao      = 'Workflow 1'
+        iWorkflow1= Workflow(empresa= iEmpresa, tipo_de_documento= iTipoDocumento, pasta= iPasta, descricao= iDescricao)
+        iWorkflow1.save()
+        
+        iTipoDocumento  = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa, id_tipo_documento= 2)[0]
+        iDescricao      = 'Workflow 2'
+        iWorkflow2= Workflow(empresa= iEmpresa, tipo_de_documento= iTipoDocumento, pasta= iPasta, descricao= iDescricao)
+        iWorkflow2.save()
+    
+    def mokarCriaEtapaDoWorkflow(self):
+        iWorkflow1= Workflow.objects.filter(id_workflow= 1)[0]
+        iGrupo= Grupo.objects.all()[0]
+        iTipoDePendencia= Tipo_de_Pendencia.objects.all()[0]
+        iEhMultiplo= True
+        
+        iDescricao_1= 'Etapa 1'
+        iEtapa_1= Etapa_do_Workflow(workflow= iWorkflow1, grupo= iGrupo, tipo_de_pendencia= iTipoDePendencia, 
+                                  eh_multipla= iEhMultiplo, descricao= iDescricao_1)
+        iEtapa_1.save()
+        
+        iDescricao_2= 'Etapa 2'
+        iEtapa_2= Etapa_do_Workflow(workflow= iWorkflow1, grupo= iGrupo, tipo_de_pendencia= iTipoDePendencia, 
+                                  eh_multipla= iEhMultiplo, descricao= iDescricao_2)
+        iEtapa_2.save()
+        
+        iWorkflow2= Workflow.objects.filter(id_workflow= 2)[0]
+        iGrupo= Grupo.objects.all()[0]
+        iTipoDePendencia= Tipo_de_Pendencia.objects.all()[0]
+        iEhMultiplo=  False
+        
+        iDescricao_1= 'Etapa 1'
+        iEtapa_1= Etapa_do_Workflow(workflow= iWorkflow2, grupo= iGrupo, tipo_de_pendencia= iTipoDePendencia, 
+                                  eh_multipla= iEhMultiplo, descricao= iDescricao_1)
+        iEtapa_1.save()
+        
+        iDescricao_2= 'Etapa 2'
+        iEtapa_2= Etapa_do_Workflow(workflow= iWorkflow2, grupo= iGrupo, tipo_de_pendencia= iTipoDePendencia, 
+                                  eh_multipla= iEhMultiplo, descricao= iDescricao_2)
+        iEtapa_2.save()
+
+    def mokarGrupo(self):
+        iNome            = 'Teste'
+        iDescricao       = 'Colaboradores'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
+        iGrupo.save()
+    
+    def mokarGrupo_Usuario(self):
+        iEmpresa               = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo_Usuario1        = Grupo_Usuario()
+        iGrupo_Usuario1.grupo  = Grupo.objects.filter(empresa= 1)[0]
+        iGrupo_Usuario1.usuario= Usuario.objects.filter(empresa= iEmpresa)[0]
+        iGrupo_Usuario1.save()
+        
+        iGrupo_Usuario2        = Grupo_Usuario()
+        iGrupo_Usuario2.grupo  = Grupo.objects.filter(empresa= 1)[0]
+        iGrupo_Usuario2.usuario= Usuario.objects.filter(empresa= iEmpresa)[1]
+        iGrupo_Usuario2.save()
+    
+    def mokarCriaPendenciasDoWorkflow(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
+        iDocumento= Documento.objects.filter(id_documento= 2)[0]
+        Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+    
+    def mokarConcluiPendencia(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
+        iPendencia= Pendencia.objects.filter(workflow= iWorkflow)[0]
+        iPendencia= Pendencia().concluiPendencia(iPendencia)
+    
+    def mokarCriaPendenciasDoWorkflow_2(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+        iDocumento= Documento.objects.filter(id_documento= 4)[0]
+        Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+    
+    def mokarConcluiPendencia_2(self):
+        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+        iPendencia1= Pendencia.objects.filter(workflow= iWorkflow)[0]
+        iPendencia2= Pendencia.objects.filter(workflow= iWorkflow)[1]
+        Pendencia().concluiPendencia(iPendencia1)
+        Pendencia().concluiPendencia(iPendencia2)
+    
