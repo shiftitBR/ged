@@ -214,7 +214,7 @@ class Test(TestCase):
         iDocumento_SemWorkflow= Documento.objects.filter(id_documento= 3)[0]
         iDocumento_ComWorkflow= Documento.objects.filter(id_documento= 4)[0]
         iDocumento_ComGrupoPendencia= Documento.objects.filter(id_documento= 5)[0]
-        iUsuario= Usuario.objects.filter(id= 32)[0]
+        iUsuario= Usuario.objects.all()[0]
         
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= iDocumento_SemWorkflow.id_documento)[0])
         self.mokarCriaPendencia_2(iVersaoAtual, iUsuario)
@@ -237,6 +237,11 @@ class Test(TestCase):
         self.assertEquals('Reprovado', iVersaoAtual_3.estado.descricao)
         self.assertEquals('Aprovado', iVersaoAtual_4.estado.descricao)
         self.assertEquals('Disponivel', iVersaoAtual_5.estado.descricao)
+    
+    def testObtemDestinatariosPendendentes(self):
+        iDocumento= Documento.objects.all()[0]
+        iListaDestinatarios= Pendencia().obtemListaDeDestinatariosPendentes(iDocumento)
+        self.assertEquals(1, len(iListaDestinatarios))
         
         
     #-----------------------------------------------------MOKS---------------------------------------------------

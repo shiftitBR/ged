@@ -483,3 +483,16 @@ class Pendencia(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel tratar a pendencia: ' + str(e))
             return False
+
+    def obtemListaDeDestinatariosPendentes(self, vDocumento):
+        try:
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            iListaPendencias= Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)
+            iListaDestinatarios= []
+            for iPendencia in iListaPendencias:
+                iListaDestinatarios.append(iPendencia.usr_destinatario)
+            iListaDestinatariosUnicos= list(set(iListaDestinatarios))
+            return iListaDestinatariosUnicos
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de destinatarios pendentes: ' + str(e))
+            return False
