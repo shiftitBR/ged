@@ -16,6 +16,7 @@ from PyProject_GED.seguranca.models     import Funcao_Grupo
     
 import constantes #@UnresolvedImport
 from django.http import HttpResponseRedirect
+from PyProject_GED.workflow.models import Tipo_de_Pendencia
 
 @login_required     
 def encaminhar(vRequest, vTitulo, vIDVersao=None):
@@ -40,13 +41,20 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 iDescricao      = vRequest.POST.get('descricao')
                 iVersao         = Versao().obtemVersao(vIDVersao)
                 iUsuarios       = vRequest.POST.getlist('usr_destinatario')
+                if vRequest.POST.get('eh_multipla') != None:
+                    iMultipla = True
+                else:
+                    iMultipla = False
+                iListaDestinatarios= []
+                for iUser in iUsuarios:
+                    iListaDestinatarios.append(Usuario().obtemUsuarioPeloID(iUser))
+                iTipoPendencia  = Tipo_de_Pendencia.objects.filter(id_tipo_de_pendencia=vRequest.session['TipoPendencia'])[0]
                 
-                Pendencia().criaPendencia(iUsuario, iDestinatario, iVersao, iDescricao)
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoPendente)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoEncaminhar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                Pendencia().criaPendencia(iUsuario, iListaDestinatarios, iVersao, 
+                                          iDescricao, iTipoPendencia, vEhMultipla=iMultipla)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEncaminhar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                messages.success(vRequest, 'Pendência Encaminhada com Sucesso!')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False

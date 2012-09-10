@@ -15,7 +15,7 @@ class FormEncaminharPendencia(forms.Form):
            
     usr_destinatario = forms.MultipleChoiceField(choices=[])
     descricao = forms.Field(widget=forms.Textarea)
-    tipo_pendencia = forms.ChoiceField(choices=[])
+    eh_multipla      = forms.BooleanField()
     
     def clean_usr_destinatario(self):
         if len(self.cleaned_data['usr_destinatario']) == 0 or len(self.cleaned_data['usr_destinatario']) == None:
@@ -31,7 +31,8 @@ class FormEncaminharPendencia(forms.Form):
         iIDEmpresa          = kwargs.pop('iIDEmpresa')
         iIDTipoPendencia    = kwargs.pop('iIDTipoPendencia')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
-        super(FormEncaminharPendencia, self).__init__(*args, **kwargs)  
+        super(FormEncaminharPendencia, self).__init__(*args, **kwargs) 
+        self.fields['eh_multipla'].required = False 
         self.fields['descricao'].error_messages['required'] = u'O campo Descrição é obrigatório' 
         self.fields['usr_destinatario'].error_messages['required'] = u'O campo Usuário Destinatário é obrigatório' 
         iListaResponsavel= Usuario.objects.filter(empresa= iEmpresa.id_empresa)

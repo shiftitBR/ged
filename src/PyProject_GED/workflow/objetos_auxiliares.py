@@ -12,3 +12,4 @@ class Pendencia():
         data        = None
         estado      = None
         idEstado    = None
+        tipo        = None

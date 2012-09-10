@@ -9,7 +9,7 @@ from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
-from PyProject_GED.workflow.models      import Pendencia
+from PyProject_GED.workflow.models      import Pendencia, Workflow
 from PyProject_GED.documento.models     import Tipo_de_Documento
 from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
@@ -204,6 +204,7 @@ def importar(vRequest, vTitulo):
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
+                    Workflow().executaWorkflow(iDocumento)
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -256,6 +257,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
+                    Workflow().executaWorkflow(iDocumento)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
@@ -320,10 +322,9 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     if vRequest.POST:
         try :
             if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
+                iVersao = Versao().obtemVersao(vIDVersao)
                 Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, iUsuario)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
@@ -349,9 +350,8 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
         try :
             if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
                 Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
+            iVersao = Versao().obtemVersao(vIDVersao)
+            Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, iUsuario)
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:

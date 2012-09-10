@@ -42,12 +42,20 @@
 			            <td>{{pendencia.descricao}}</td>
 			            <td><center>{{pendencia.data}}</center></td>
 			            <td><a class="fancybox fancybox.iframe" href="/historico/{{pendencia.idVersao}}/"><i class="icon-book"></i>  Histórico</a></td></td>
+			            {% if pendencia.tipo = 1 %}
 			            <td>
 			            	<p>
 								<a class="fancybox fancybox.iframe" href="/aprovar_documento/{{pendencia.idVersao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a>
 								<a class="fancybox fancybox.iframe" href="/reprovar_documento/{{pendencia.idVersao}}/"><i class="icon-thumbs-down"></i>  Reprovar</a>
 							</p>
 						</td>
+						{% else %}
+						<td>
+			            	<p>
+								<a class="fancybox fancybox.iframe" href="/assinar/{{pendencia.idVersao}}/"><i class="icon-thumbs-up"></i>  Assinar</a>
+							</p>
+						</td>
+						{%endif%}
 			          </tr>
 			        {% empty %}
 			  		{% endfor %}
