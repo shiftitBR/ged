@@ -124,7 +124,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Encaminhar
-                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/encaminhar/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/tipo_pendencia/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
                         
                     if iEstado == constantes.cntEstadoVersaoBloqueado  and iPodeCheckIn: #CheckIn
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkin/%(iIDVersao)s/"><i class="icon-share"></i>  Check-in</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})

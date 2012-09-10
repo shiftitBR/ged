@@ -15,14 +15,14 @@ from models                             import Pendencia
 from PyProject_GED.seguranca.models     import Funcao_Grupo
     
 import constantes #@UnresolvedImport
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 @login_required     
 def encaminhar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEncaminhar):
             vIDFuncao = 0
             iPossuiPermissao    = True
         else:
@@ -33,12 +33,13 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
         return False
     
     if vRequest.POST:
-        form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+        form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'], iIDTipoPendencia=vRequest.session['TipoPendencia'])
         if form.is_valid():
             try:
                 iDestinatario   = Usuario().obtemUsuarioPeloID(vRequest.POST.get('usr_destinatario'))
                 iDescricao      = vRequest.POST.get('descricao')
                 iVersao         = Versao().obtemVersao(vIDVersao)
+                iUsuarios       = vRequest.POST.getlist('usr_destinatario')
                 
                 Pendencia().criaPendencia(iUsuario, iDestinatario, iVersao, iDescricao)
                 Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoPendente)
@@ -50,9 +51,9 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False
         else: 
-            form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+            form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'], iIDTipoPendencia=vRequest.session['TipoPendencia'])
     else:
-        form = FormEncaminharPendencia(iIDEmpresa=vRequest.session['IDEmpresa'])
+        form = FormEncaminharPendencia(iIDEmpresa=vRequest.session['IDEmpresa'], iIDTipoPendencia=vRequest.session['TipoPendencia'])
         
     return render_to_response(
         'pendencia/encaminhar.html',
@@ -103,3 +104,24 @@ def acompanhamento(vRequest, vTitulo):
         locals(),
         context_instance=RequestContext(vRequest),
         )
+    
+@login_required     
+def tipo_pendencia(vRequest, vTitulo, vIDVersao=None):
+    
+    iUsuario= Usuario().obtemUsuario(vRequest.user)
+        
+    if vRequest.POST:
+        try :
+            vRequest.session['TipoPendencia'] = vRequest.POST.get('tipo_pendencia')
+            return HttpResponseRedirect('/encaminhar/%s/' % vIDVersao)
+        
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel post tipo_pendencia: ' + str(e))
+        return False
+        
+    return render_to_response(
+        'pendencia/tipo_pendencia.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+        
