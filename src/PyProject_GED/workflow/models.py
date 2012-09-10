@@ -144,7 +144,7 @@ class Workflow(models.Model):
                 iProximaEtapa= self.obtemProximaEtapa(iWorkflow)
                 if iProximaEtapa not in (None, False):
                     Pendencia().criaPendenciaDoWorkflow(iWorkflow, vDocumento)
-                elif iProximaEtapa == None:
+                elif (iProximaEtapa == None):
                     Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             elif (iWorkflow == None) or (iEtapaAtualConcluida == None):
                 return None  
@@ -319,7 +319,7 @@ class Pendencia(models.Model):
                                         iProximaEtapa.descricao, iProximaEtapa.tipo_de_pendencia, 
                                         vWorkflow, iProximaEtapa)
                 Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoEncaminhar, 
-                                       iVersaoAtual.usr_criador, vDocumento.empresa.id_empresa)
+                                       iVersaoAtual.usr_criador.id, vDocumento.empresa.id_empresa)
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia do workflow: ' + str(e))
@@ -431,8 +431,8 @@ class Pendencia(models.Model):
             if vPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaPendente:
                 iNovoEstado= Estado_da_Pendencia.objects.filter(id_estado_da_pendencia= constantes.cntEstadoPendenciaCancelada)[0]
                 vPendencia.estado_da_pendencia= iNovoEstado
-            Historico().salvaHistorico(vPendencia.versao, constantes.cntEventoHistoricoCancelarPendencia, 
-                                   vPendencia.usr_remetente.id, vPendencia.versao.documento.empresa)
+            Historico().salvaHistorico(vPendencia.versao.id_versao, constantes.cntEventoHistoricoCancelarPendencia, 
+                                   vPendencia.usr_remetente.id, vPendencia.versao.documento.empresa.id_empresa)
             vPendencia.save()
             return vPendencia
         except Exception, e:
@@ -463,12 +463,12 @@ class Pendencia(models.Model):
             if vTipoDePendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAprovacao:
                 if vAcao == constantes.cntAcaoPendenciaAprovar:
                     Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoAprovado)
-                    Historico().salvaHistorico(iVersaoAtual, constantes.cntEventoHistoricoAprovar, 
-                                   vUsuario.id, vDocumento.empresa)
+                    Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoAprovar, 
+                                   vUsuario.id, vDocumento.empresa.id_empresa)
                 else:
                     Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoReprovado)
-                    Historico().salvaHistorico(iVersaoAtual, constantes.cntEventoHistoricoReprovar, 
-                                   vUsuario.id, vDocumento.empresa)
+                    Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoReprovar, 
+                                   vUsuario.id, vDocumento.empresa.id_empresa)
             elif vTipoDePendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAssintaura:
                 Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoDisponivel) 
             return True
