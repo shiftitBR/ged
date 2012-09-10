@@ -18,6 +18,7 @@ from PyProject_GED.workflow.models import Pendencia, Tipo_de_Pendencia, Workflow
     Etapa_do_Workflow, Estado_da_Pendencia, Grupo_da_Pendencia
 from PyProject_GED.seguranca.models import Grupo, Grupo_Usuario
 from PyProject_GED import constantes
+from PyProject_GED.historico.models import Tipo_de_Evento
 
 class Test(TestCase):
     
@@ -25,6 +26,7 @@ class Test(TestCase):
         self.mokarEmpresa()
         self.mokarTipoUsuario()
         self.mokarUsuario()
+        self.mokarTipoDeEvento()
         self.mokarPasta()
         self.mokarTipoDocumento()
         self.mokarMultiUploader()
@@ -180,8 +182,9 @@ class Test(TestCase):
     def testAlteraEstadoDoDocumentoDaPendencia(self):
         iWorkflow= Workflow.objects.all()[0]
         iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
-        iDocumento= Documento.objects.filter(id_documento= 2)
-        iEstado= Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, iDocumento, constantes.cntAcaoPendenciaAprovar)
+        iDocumento= Documento.objects.filter(id_documento= 2)[0]
+        iUsuario= Usuario.objects.all()[0]
+        iEstado= Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, iDocumento, constantes.cntAcaoPendenciaAprovar, iUsuario)
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iDocumento)
         self.assertEquals(True, iEstado)
         self.assertEquals(constantes.cntEstadoVersaoAprovado, iVersaoAtual.estado.id_estado_da_versao)
@@ -657,4 +660,10 @@ class Test(TestCase):
         iListaDestinatario.append(iDestinatario1)
         iListaDestinatario.append(iDestinatario2)
         Pendencia().criaPendencia(iRemetente, iListaDestinatario, iVersao, 'descricao', iTipoDePendencia, vEhMultipla= False)
+    
+    def mokarTipoDeEvento(self):
+        for i in range(13):
+            iTipoDeEvento1= Tipo_de_Evento()
+            iTipoDeEvento1.descricao= 'Evento mock %s' % str(i)
+            iTipoDeEvento1.save()
     
