@@ -441,7 +441,7 @@ class Versao(models.Model):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__gt= vDataDeCriacaoInicial)
             if vDataDeCriacaoFinal not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__lt= vDataDeCriacaoFinal)
-            if vItemNorma not in (None, ''):
+            if vItemNorma not in (None, '', 'selected'):
                 mNormaDocumento= get_model('qualidade', 'Norma_Documento')
                 iListaDocumentos= mNormaDocumento().obtemDocumentosPelaNorma(vItemNorma)
                 iListaIDsVersaoAtual= []

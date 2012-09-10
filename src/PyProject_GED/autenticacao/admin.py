@@ -1,8 +1,9 @@
 '''
-Created on Jan 17, 2012
+Created on Jul 19, 2012
 
-@author: spengler
+@author: Shift IT | wwww.shiftit.com.br
 '''
+
 from django.contrib                 import admin
 from django.contrib.auth.admin      import UserAdmin 
 from django.contrib.auth.models     import User
@@ -205,8 +206,8 @@ class AdminFirewallGrupo(admin.ModelAdmin):
         return form
     
 class AdminWorkflow(admin.ModelAdmin): 
-    list_display    = ('descricao', 'tipo_documento', 'pasta', 'empresa')
-    search_fields   = ('descricao', 'tipo_documento', 'pasta')
+    list_display    = ('descricao', 'tipo_de_documento', 'pasta', 'empresa')
+    search_fields   = ('descricao', 'tipo_de_documento', 'pasta')
     ordering        = ('descricao',)  
     exclude         = ('id_workflow',)
     
@@ -214,21 +215,23 @@ class AdminWorkflow(admin.ModelAdmin):
         form = super(AdminWorkflow,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            form.base_fields['tipo_documento'].queryset   = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)
+            form.base_fields['tipo_de_documento'].queryset   = Tipo_de_Documento.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
     
 class AdminEtapaWorkflow(admin.ModelAdmin): 
-    list_display    = ('descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multiplo')
-    search_fields   = ('descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multiplo')
-    ordering        = ('workflow', 'descricao',)  
+    list_display    = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
+    search_fields   = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
+    ordering        = ('workflow', 'ordem_da_etapa', 'descricao',)  
+    #readonly_fields = ('ordem_da_etapa',)
     exclude         = ('id_etapa_do_workflow',)
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminEtapaWorkflow,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
+            #form.base_fields['ordem_da_etapa'] = '1'
             form.base_fields['workflow'].queryset   = Workflow.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form      
