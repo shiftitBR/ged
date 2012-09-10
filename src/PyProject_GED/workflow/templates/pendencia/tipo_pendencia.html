@@ -13,7 +13,7 @@
   		<center>
 		<header class="jumbotron subhead" id="overview">
 		  <h2><strong>Encaminhar Pendência</strong></h2>
-		  <p class="lead">Documento encaminhado para Aprovação ou Reprovação</p>
+		  <p class="lead">Escolha o Tipo de Encaminhamento</p>
 		</header>
 		</center>
 		
@@ -26,20 +26,32 @@
 			</ul>
 		</div>
 		{% endif %}
-		<form class="form-horizontal" action="" method="POST">{% csrf_token %}
-			<label class="radio">
-			  <input type="radio" name="tipo_pendencia" id="aprovar" value="1" checked>
-			  Pendência para aprovar ...
-			</label>
-			<label class="radio">
-			  <input type="radio" name="tipo_pendencia" id="assinar" value="2">
-			  Pendência para assinar ...
-			</label>
-			<div class="form-actions">
-				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Continuar</button>
-			</div>
-		</form>
 		
+		<div class="container-fluid">
+		  <div class="row-fluid">
+		    <div class="span2">
+		      <!--Sidebar content-->
+		    </div>
+		    <div class="span8">
+			    <form class="form-horizontal" action="" method="POST">{% csrf_token %}
+					<label class="radio">
+					  <input type="radio" name="tipo_pendencia" id="aprovar" value="1" checked>
+					  Encaminhar pendência para <strong>APROVAÇÃO</strong>
+					</label>
+					<label class="radio">
+					  <input type="radio" name="tipo_pendencia" id="assinar" value="2">
+					  Encaminhar pendência para <strong>ASSINAR</strong>
+					</label>
+					<div class="form-actions">
+						<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Continuar</button>
+					</div>
+				</form>
+		    </div>
+		    <div class="span2">
+		      <!--Sidebar content-->
+		    </div>
+		  </div>
+		</div>
   </div>
 </body>
 
