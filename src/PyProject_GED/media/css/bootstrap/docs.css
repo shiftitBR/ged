@@ -11,7 +11,7 @@
 body {
   position: relative;
   padding-top: 90px;
-  background-color: #fff;
+  background-color: #f8f8f8;
   background-image: url(../../img/bootstrap/grid-18px-masked.png);
   background-repeat: repeat-x;
   background-position: 0 40px;
@@ -23,10 +23,10 @@ body {
 .navbar-fixed-top .brand {
   padding-right: 10;
   padding-left: 0;
-  margin-left: -10px;
+  margin-left: 0px;
   float: left;
-  color: #c8c1c1;
-  text-shadow: 0 1px 0 rgba(255,255,255,.1), 0 0 30px rgba(255,255,255,.125);
+  color: #d27b00;
+  text-shadow: 0 1px 1px rgba(255,255,255,.1), 0 0 30px rgba(255,255,255,.125);
   -webkit-transition: all .2s linear;
      -moz-transition: all .2s linear;
           transition: all .2s linear;
@@ -62,13 +62,13 @@ hr.soften {
 .jumbotron h1 {
   margin-bottom: 9px;
   font-size: 81px;
-  font-weight: bold;
+  font-weight: 600;
   letter-spacing: -1px;
   line-height: 1;
 }
 .jumbotron p {
   margin-bottom: 18px;
-  font-weight: 300;
+  /* font-weight: 300; testando */
 }
 .jumbotron .btn-large {
   font-size: 20px;
