@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+  		<center>
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Encaminhar Pendência</strong></h2>
+		  <p class="lead">Documento encaminhado para Aprovação ou Reprovação</p>
+		</header>
+		</center>
+		
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+		<form class="form-horizontal" action="" method="POST">{% csrf_token %}
+			<label class="radio">
+			  <input type="radio" name="tipo_pendencia" id="aprovar" value="1" checked>
+			  Pendência para aprovar ...
+			</label>
+			<label class="radio">
+			  <input type="radio" name="tipo_pendencia" id="assinar" value="2">
+			  Pendência para assinar ...
+			</label>
+			<div class="form-actions">
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Continuar</button>
+			</div>
+		</form>
+		
+  </div>
+</body>
+
+</html>
