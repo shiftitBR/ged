@@ -181,7 +181,7 @@ class Test(TestCase):
         iWorkflow= Workflow.objects.all()[0]
         iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
         iDocumento= Documento.objects.filter(id_documento= 2)
-        iEstado= Workflow().alteraEstadoDoDocumentoDoWorkflow(iEtapaAtual, iDocumento)
+        iEstado= Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, iDocumento, constantes.cntAcaoPendenciaAprovar)
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(iDocumento)
         self.assertEquals(True, iEstado)
         self.assertEquals(constantes.cntEstadoVersaoAprovado, iVersaoAtual.estado.id_estado_da_versao)
@@ -193,7 +193,7 @@ class Test(TestCase):
         self.assertEquals(6, Pendencia.objects.count())
         self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
         
-        Workflow().executaWorkflow(iDocumento_SemWorkflow)
+        Workflow().executaWorkflow(iDocumento_SemWorkflow, constantes.cntAcaoPendenciaAprovar)
         self.assertEquals(6, Pendencia.objects.count())
         self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
         
@@ -204,7 +204,7 @@ class Test(TestCase):
         self.assertEquals(2, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
         self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
         self.mokarConcluiPendencia_2()
-        Workflow().executaWorkflow(iDocumento_ComWorkflow)
+        Workflow().executaWorkflow(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar)
         
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         self.assertEquals(0, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
@@ -214,14 +214,28 @@ class Test(TestCase):
         iDocumento_SemWorkflow= Documento.objects.filter(id_documento= 3)[0]
         iDocumento_ComWorkflow= Documento.objects.filter(id_documento= 4)[0]
         iDocumento_ComGrupoPendencia= Documento.objects.filter(id_documento= 5)[0]
-        Pendencia().trataPendencia(iDocumento_SemWorkflow)
-        Pendencia().trataPendencia(iDocumento_ComWorkflow)
-        Pendencia().trataPendencia(iDocumento_ComGrupoPendencia)
+        iUsuario= Usuario.objects.filter(id= 32)[0]
+        
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= iDocumento_SemWorkflow.id_documento)[0])
+        self.mokarCriaPendencia_2(iVersaoAtual, iUsuario)
+        Pendencia().trataPendencia(iDocumento_SemWorkflow, constantes.cntAcaoPendenciaReprovar, iUsuario)
+        
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= iDocumento_ComWorkflow.id_documento)[0])
+        Pendencia.objects.filter(versao= iVersaoAtual).delete()
+        self.mokarCriaPendenciasDoWorkflow_2()
+        Pendencia().trataPendencia(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar, iUsuario)
+        
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= iDocumento_ComGrupoPendencia.id_documento)[0])
+        Pendencia.objects.filter(versao= iVersaoAtual).delete()
+        self.mokarCriaPendenciaMultipla_2()
+        iUsuario= Usuario.objects.all()[1]
+        Pendencia().trataPendencia(iDocumento_ComGrupoPendencia, constantes.cntAcaoPendenciaAssinar, iUsuario)
+        
         iVersaoAtual_3= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 3)[0])
         iVersaoAtual_4= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         iVersaoAtual_5= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 5)[0])
-        self.assertEquals('Disponivel', iVersaoAtual_3.estado.descricao)
-        self.assertEquals('Disponivel', iVersaoAtual_4.estado.descricao)
+        self.assertEquals('Reprovado', iVersaoAtual_3.estado.descricao)
+        self.assertEquals('Aprovado', iVersaoAtual_4.estado.descricao)
         self.assertEquals('Disponivel', iVersaoAtual_5.estado.descricao)
         
         
@@ -502,6 +516,19 @@ class Test(TestCase):
         iPendencia_2.etapa_do_workflow  = Etapa_do_Workflow.objects.all()[0]
         iPendencia_2.save()
     
+    def mokarCriaPendencia_2(self, vVersao, vDestinatario):
+        iRemetente                  = Usuario.objects.all()[0]
+        iTipoDePendencia            = Tipo_de_Pendencia.objects.all()[0]
+        
+        iPendencia_1                    = Pendencia()
+        iPendencia_1.usr_remetente      = iRemetente
+        iPendencia_1.usr_destinatario   = vDestinatario
+        iPendencia_1.versao             = vVersao   
+        iPendencia_1.data               = datetime.datetime(2012, 02, 15, 15, 10, 45)    
+        iPendencia_1.descricao          = 'descricao 1'
+        iPendencia_1.tipo_de_pendencia  = iTipoDePendencia
+        iPendencia_1.save()
+    
     def mokarCriaTipoPendencia(self):
         iDescricao= 'Aprovacao'
         iTipoPendencia= Tipo_de_Pendencia()
@@ -611,6 +638,17 @@ class Test(TestCase):
         iListaDestinatario          = []
         iVersao                     = Versao.objects.filter(id_versao= 5)[0]
         iTipoDePendencia            = Tipo_de_Pendencia.objects.all()[0]
+        iListaDestinatario.append(iDestinatario1)
+        iListaDestinatario.append(iDestinatario2)
+        Pendencia().criaPendencia(iRemetente, iListaDestinatario, iVersao, 'descricao', iTipoDePendencia, vEhMultipla= False)
+    
+    def mokarCriaPendenciaMultipla_2(self):
+        iRemetente                  = Usuario.objects.all()[0]
+        iDestinatario1              = Usuario.objects.all()[1]
+        iDestinatario2              = Usuario.objects.all()[1]
+        iListaDestinatario          = []
+        iVersao                     = Versao.objects.filter(id_versao= 5)[0]
+        iTipoDePendencia            = Tipo_de_Pendencia.objects.filter(id_tipo_de_pendencia= constantes.cntTipoPendenciaAssintaura)[0]
         iListaDestinatario.append(iDestinatario1)
         iListaDestinatario.append(iDestinatario2)
         Pendencia().criaPendencia(iRemetente, iListaDestinatario, iVersao, 'descricao', iTipoDePendencia, vEhMultipla= False)

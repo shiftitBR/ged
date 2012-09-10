@@ -48,6 +48,12 @@ cntEstadoPendenciaCancelada = 3
 cntTipoPendenciaAprovacao   = 1
 cntTipoPendenciaAssintaura  = 2
 
+#Acao da Pendencia
+cntAcaoPendenciaAprovar     = 1
+cntAcaoPendenciaReprovar    = 2
+cntAcaoPendenciaAssinar     = 3
+cntAcaoPendenciaCancelar    = 4
+
 
 #TipoVisualizacao
 cntTipoVisualizacaoPDF      = 1

@@ -131,7 +131,7 @@ class Workflow(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificar se etapa atual esta concluida: ' + str(e))
             return False
     
-    def executaWorkflow(self, vDocumento):
+    def executaWorkflow(self, vDocumento, vAcao):
         try:
             iPasta= vDocumento.pasta
             iTipoDoDocumento= vDocumento.tipo_documento
@@ -144,24 +144,12 @@ class Workflow(models.Model):
                 if iProximaEtapa not in (None, False):
                     Pendencia().criaPendenciaDoWorkflow(iWorkflow, vDocumento)
                 elif iProximaEtapa == None:
-                    self.alteraEstadoDoDocumentoDoWorkflow(iEtapaAtual, vDocumento)
+                    Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, vDocumento, vAcao)
             elif (iWorkflow == None) or (iEtapaAtualConcluida == None):
                 return None  
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel executar o Workflow: ' + str(e))
-            return False
-    
-    def alteraEstadoDoDocumentoDoWorkflow(self, vEtapaAtual, vDocumento):
-        try:
-            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
-            if vEtapaAtual.tipo_de_pendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAprovacao:
-                Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoAprovado)
-            elif vEtapaAtual.tipo_de_pendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAssintaura:
-                Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoDisponivel) 
-            return True
-        except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterar estado do Documento da Pendencia: ' + str(e))
             return False
     
 class Etapa_do_Workflow(models.Model):
@@ -461,6 +449,21 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificar se grupo atual esta concluido: ' + str(e))
             return False
     
+    def alteraEstadoDoDocumento(self, vTipoDePendencia, vDocumento, vAcao):
+        try:
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            if vTipoDePendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAprovacao:
+                if vAcao == constantes.cntAcaoPendenciaAprovar:
+                    Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoAprovado)
+                else:
+                    Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoReprovado)
+            elif vTipoDePendencia.id_tipo_de_pendencia == constantes.cntTipoPendenciaAssintaura:
+                Versao().alterarEstadoVersao(iVersaoAtual.id_versao, constantes.cntEstadoVersaoDisponivel) 
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterar estado do Documento da Pendencia: ' + str(e))
+            return False
+    
     def trataPendencia(self, vDocumento, vAcao, vUsuario):
         try:
             iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
@@ -471,12 +474,11 @@ class Pendencia(models.Model):
             iWorkflow= iPendencia.workflow
             if (iGrupoDaPendencia not in (None, False)) and (self.verificaSeGrupoAtualEstaConcluido(iGrupoDaPendencia)):
                 self.cancelaPendenciasDoGrupo(iGrupoDaPendencia, vDocumento)
-                #altera estado do documento
+                self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao)
             elif (iWorkflow not in (None, False)) and (Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)):
-                Workflow().executaWorkflow(vDocumento)
+                Workflow().executaWorkflow(vDocumento, vAcao)
             else:
-                #altera estado do documento
-                print 'teste'
+                self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao)
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel tratar a pendencia: ' + str(e))
