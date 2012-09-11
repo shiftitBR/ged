@@ -31,7 +31,7 @@ class Tipo_de_Pendencia(models.Model):
         verbose_name_plural = 'Tipos de Pendência'
     
     def __unicode__(self):
-        return str(self.id_tipo_de_pendencia)
+        return self.descricao
     
     def save(self):  
         if self.id_tipo_de_pendencia == '' or self.id_tipo_de_pendencia== None:
@@ -55,7 +55,7 @@ class Workflow(models.Model):
         verbose_name_plural = 'Workflow'
     
     def __unicode__(self):
-        return str(self.id_workflow)
+        return self.descricao
     
     def save(self):  
         if self.id_workflow == '' or self.id_workflow== None:

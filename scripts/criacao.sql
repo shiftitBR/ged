@@ -86,6 +86,10 @@ INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
     VALUES (12, 'Login');
 
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (13, 'Cancelar Pendência');
+
 INSERT INTO tb_tipo_de_indice(
             id_tipo_indice, descricao)
     VALUES (1, 'String');

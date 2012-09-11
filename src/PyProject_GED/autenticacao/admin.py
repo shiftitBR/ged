@@ -17,7 +17,7 @@ from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
-    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo
+    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo, Funcao
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
 from PyProject_GED.documento.models import Tipo_de_Documento
 from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
@@ -77,18 +77,10 @@ class AdminIndice(MultiDBModelAdmin):
         
 class AdminPasta(MultiDBModelAdmin): 
     list_display    = ('nome', 'pasta_pai')
-    search_fields   = ('pasta_pai', 'nome', 'diretorio',)
+    search_fields   = ('pasta_pai', 'nome', 'diretorio', )
     ordering        = ('pasta_pai',)
-    exclude         = ('id_pasta','diretorio',)
+    exclude         = ('id_pasta', )
     
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminPasta,self).get_form(vRequest, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            form.base_fields['empresa'].queryset    = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-            form.base_fields['pasta_pai'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
-        return form
-        
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
     search_fields   = ('usuario',)
@@ -115,6 +107,17 @@ class AdminGrupoPasta(MultiDBModelAdmin):
     ordering        = ('grupo',)  
     exclude         = ('id_grupo_pasta',)  
     
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
+    
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
@@ -129,6 +132,17 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
     ordering        = ('grupo',)   
     exclude         = ('id_grupo_usuario',)  
     
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
+    
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminGrupoUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
@@ -137,11 +151,22 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
             form.base_fields['usuario'].queryset    = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
-class AdminFuncaoGrupo(admin.ModelAdmin): 
+class AdminFuncaoGrupo(MultiDBModelAdmin): 
     list_display    = ('funcao', 'grupo')
     search_fields   = ('funcao', 'grupo')
     ordering        = ('funcao',)  
     exclude         = ('id_funcao_grupo',)
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminFuncaoGrupo,self).get_form(vRequest, obj,**kwargs)
@@ -150,7 +175,7 @@ class AdminFuncaoGrupo(admin.ModelAdmin):
             form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
-class AdminTipoNorma(admin.ModelAdmin): 
+class AdminTipoNorma(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')
     search_fields   = ('descricao', 'empresa')
     ordering        = ('descricao',)  
@@ -163,7 +188,7 @@ class AdminTipoNorma(admin.ModelAdmin):
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
     
-class AdminNorma(admin.ModelAdmin): 
+class AdminNorma(MultiDBModelAdmin): 
     list_display    = ('numero', 'descricao', 'tipo_norma', 'norma_pai', 'empresa')
     search_fields   = ('norma_pai', 'descricao', 'numero', 'tipo_norma', 'empresa')
     ordering        = ('numero',)  
@@ -178,7 +203,7 @@ class AdminNorma(admin.ModelAdmin):
             form.base_fields['norma_pai'].queryset = Norma.objects.filter(empresa=iEmpresa.id_empresa)
         return form
     
-class AdminFirewall(admin.ModelAdmin): 
+class AdminFirewall(MultiDBModelAdmin): 
     list_display    = ('ip', 'descricao')
     search_fields   = ('ip', 'descricao', 'empresa')
     ordering        = ('ip',)  
@@ -191,11 +216,22 @@ class AdminFirewall(admin.ModelAdmin):
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
     
-class AdminFirewallGrupo(admin.ModelAdmin): 
+class AdminFirewallGrupo(MultiDBModelAdmin): 
     list_display    = ('firewall', 'grupo')
     search_fields   = ('firewall', 'grupo')
     ordering        = ('firewall',)  
     exclude         = ('id_firewall_grupo',)
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminFirewallGrupo,self).get_form(vRequest, obj,**kwargs)
@@ -205,7 +241,7 @@ class AdminFirewallGrupo(admin.ModelAdmin):
             form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
-class AdminWorkflow(admin.ModelAdmin): 
+class AdminWorkflow(MultiDBModelAdmin): 
     list_display    = ('descricao', 'tipo_de_documento', 'pasta', 'empresa')
     search_fields   = ('descricao', 'tipo_de_documento', 'pasta')
     ordering        = ('descricao',)  
@@ -220,18 +256,27 @@ class AdminWorkflow(admin.ModelAdmin):
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
     
-class AdminEtapaWorkflow(admin.ModelAdmin): 
+class AdminEtapaWorkflow(MultiDBModelAdmin): 
     list_display    = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
     search_fields   = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
     ordering        = ('workflow', 'ordem_da_etapa', 'descricao',)  
-    #readonly_fields = ('ordem_da_etapa',)
-    exclude         = ('id_etapa_do_workflow',)
+    exclude         = ('id_etapa_do_workflow', 'ordem_da_etapa')
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminEtapaWorkflow,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            #form.base_fields['ordem_da_etapa'] = '1'
             form.base_fields['workflow'].queryset   = Workflow.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form      
