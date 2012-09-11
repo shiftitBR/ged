@@ -323,7 +323,7 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
         try :
             if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
                 iVersao = Versao().obtemVersao(vIDVersao)
-                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
+                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'), iUsuario)
                 Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, iUsuario)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
@@ -349,7 +349,7 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     if vRequest.POST:
         try :
             if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
-                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
+                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'), iUsuario)
             iVersao = Versao().obtemVersao(vIDVersao)
             Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, iUsuario)
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
