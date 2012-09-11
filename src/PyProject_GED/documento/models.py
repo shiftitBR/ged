@@ -45,6 +45,7 @@ class Tipo_de_Documento(models.Model):
                 self.id_tipo_documento= iUltimoRegistro.pk + 1
             else:
                 self.id_tipo_documento= 1
+            self.eh_nativo= False
         super(Tipo_de_Documento, self).save()
     
     def criaTipoDocumento(self, vEmpresa, vDescricao):
