@@ -370,7 +370,7 @@ class Pendencia(models.Model):
         
     def obtemListaPendenciasRemetente(self, vRemetente):
         try:
-            iListaPendencias = Pendencia.objects.filter(usr_remetente= vRemetente).order_by('data')
+            iListaPendencias = Pendencia.objects.filter(usr_remetente= vRemetente).order_by('-data')
             iNomeRemetente   = vRemetente.first_name + ' ' + vRemetente.last_name
             iLista= []
             for i in range(len(iListaPendencias)):
@@ -379,7 +379,7 @@ class Pendencia(models.Model):
                 iPendencia.data         = iListaPendencias[i].data
                 iPendencia.descricao    = iListaPendencias[i].descricao
                 iPendencia.destinatario = iNomeDestinatario
-                iPendencia.estado       = iListaPendencias[i].versao.estado.descricao
+                iPendencia.estadoDoc    = iListaPendencias[i].versao.estado.descricao
                 if iListaPendencias[i].feedback == None:
                     iFeedback= '-- --'
                 else:
@@ -389,6 +389,9 @@ class Pendencia(models.Model):
                 iPendencia.idVersao     = iListaPendencias[i].versao.id_versao
                 iPendencia.protocolo    = iListaPendencias[i].versao.protocolo
                 iPendencia.remetente    = iNomeRemetente
+                iPendencia.idEstadoDoc  = iListaPendencias[i].versao.estado.id_estado_da_versao
+                iPendencia.idEstadoPen  = iListaPendencias[i].estado_da_pendencia.id_estado_da_pendencia
+                iPendencia.estadoPen    = iListaPendencias[i].estado_da_pendencia.descricao
                 iLista.append(iPendencia)
             return iLista
         except Exception, e:
@@ -398,7 +401,7 @@ class Pendencia(models.Model):
     def obtemListaPendenciasDestinatario(self, vDestinatario):
         try:
             iListaPendencias = Pendencia.objects.filter(usr_destinatario= vDestinatario).filter(
-                                                versao__estado__id_estado_da_versao= constantes.cntEstadoVersaoPendente).order_by('data')
+                                                estado_da_pendencia= constantes.cntEstadoPendenciaPendente).order_by('-data')
             iNomeDestinatario= vDestinatario.first_name + ' ' + vDestinatario.last_name
             iLista= []
             for i in range(len(iListaPendencias)):
@@ -407,7 +410,7 @@ class Pendencia(models.Model):
                 iPendencia.data         = iListaPendencias[i].data
                 iPendencia.descricao    = iListaPendencias[i].descricao
                 iPendencia.destinatario = iNomeDestinatario
-                iPendencia.estado       = iListaPendencias[i].versao.estado.descricao
+                iPendencia.estadoDoc    = iListaPendencias[i].versao.estado.descricao
                 iPendencia.tipo         = iListaPendencias[i].tipo_de_pendencia.id_tipo_de_pendencia
                 if iListaPendencias[i].feedback == None:
                     iFeedback= '-- --'
@@ -418,7 +421,9 @@ class Pendencia(models.Model):
                 iPendencia.idVersao     = iListaPendencias[i].versao.id_versao
                 iPendencia.protocolo    = iListaPendencias[i].versao.protocolo
                 iPendencia.remetente    = iNomeRemetente
-                iPendencia.idEstado     = iListaPendencias[i].versao.estado.id_estado_da_versao
+                iPendencia.idEstadoDoc  = iListaPendencias[i].versao.estado.id_estado_da_versao
+                iPendencia.idEstadoPen  = iListaPendencias[i].estado_da_pendencia.id_estado_da_pendencia
+                iPendencia.estadoPen    = iListaPendencias[i].estado_da_pendencia.descricao
                 iLista.append(iPendencia)
             return iLista
         except Exception, e:
@@ -509,7 +514,7 @@ class Pendencia(models.Model):
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             elif (iWorkflow not in (None, False)) and (Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, vDocumento)):
                 Workflow().executaWorkflow(vDocumento, vAcao, vUsuario)
-            else:
+            elif iGrupoDaPendencia == None and iWorkflow == None:
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             return True
         except Exception, e:

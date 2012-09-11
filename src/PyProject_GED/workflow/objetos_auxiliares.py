@@ -10,6 +10,8 @@ class Pendencia():
         descricao   = None
         feedback    = None
         data        = None
-        estado      = None
-        idEstado    = None
+        estadoDoc   = None
+        idEstadoDoc = None
         tipo        = None
+        estadoPen   = None
+        idEstadoPen = None
