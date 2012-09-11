@@ -25,11 +25,12 @@ class Tipo_de_Indice(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Tipo_de_Indice.objects.order_by('-id_tipo_indice')) > 0:   
-            iUltimoRegistro = Tipo_de_Indice.objects.order_by('-id_tipo_indice')[0] 
-            self.id_tipo_indice= iUltimoRegistro.pk + 1
-        else:
-            self.id_tipo_indice= 1
+        if self.id_tipo_indice == None:
+            if len(Tipo_de_Indice.objects.order_by('-id_tipo_indice')) > 0:   
+                iUltimoRegistro = Tipo_de_Indice.objects.order_by('-id_tipo_indice')[0] 
+                self.id_tipo_indice= iUltimoRegistro.pk + 1
+            else:
+                self.id_tipo_indice= 1
         super(Tipo_de_Indice, self).save()
     
     def criaTipoIndice(self, vDescricao):
@@ -57,11 +58,12 @@ class Indice(models.Model):
         return self.descricao
     
     def save(self):  
-        if len(Indice.objects.order_by('-id_indice')) > 0:   
-            iUltimoRegistro = Indice.objects.order_by('-id_indice')[0] 
-            self.id_indice= iUltimoRegistro.pk + 1
-        else:
-            self.id_indice= 1
+        if self.id_indice == None:
+            if len(Indice.objects.order_by('-id_indice')) > 0:   
+                iUltimoRegistro = Indice.objects.order_by('-id_indice')[0] 
+                self.id_indice= iUltimoRegistro.pk + 1
+            else:
+                self.id_indice= 1
         super(Indice, self).save()
     
     def obtemListaIndices(self, vIDEmpresa):
@@ -85,11 +87,12 @@ class Indice_Versao_Valor(models.Model):
         return self.id_indice_versao_valor
     
     def save(self):  
-        if len(Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')) > 0:   
-            iUltimoRegistro = Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')[0] 
-            self.id_indice_versao_valor= iUltimoRegistro.pk + 1
-        else:
-            self.id_indice_versao_valor= 1
+        if self.id_indice_versao_valor == None:
+            if len(Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')) > 0:   
+                iUltimoRegistro = Indice_Versao_Valor.objects.order_by('-id_indice_versao_valor')[0] 
+                self.id_indice_versao_valor= iUltimoRegistro.pk + 1
+            else:
+                self.id_indice_versao_valor= 1
         super(Indice_Versao_Valor, self).save()
     
     def salvaValorIndice(self, vValor, vIDIndice, vIDVersao):

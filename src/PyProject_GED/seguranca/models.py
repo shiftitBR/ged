@@ -107,11 +107,12 @@ class Grupo(models.Model):
         return self.nome
     
     def save(self):  
-        if len(Grupo.objects.order_by('-id_grupo')) > 0:   
-            iUltimoRegistro = Grupo.objects.order_by('-id_grupo')[0] 
-            self.id_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo= 1
+        if self.id_grupo == None:
+            if len(Grupo.objects.order_by('-id_grupo')) > 0:   
+                iUltimoRegistro = Grupo.objects.order_by('-id_grupo')[0] 
+                self.id_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo= 1
         super(Grupo, self).save()
         
     def criaGrupo(self, vEmpresa, vDescricao, vNome):
@@ -142,11 +143,12 @@ class Grupo_Pasta(models.Model):
         return str(self.id_grupo_pasta)
     
     def save(self):  
-        if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
-            iUltimoRegistro = Grupo_Pasta.objects.order_by('-id_grupo_pasta')[0] 
-            self.id_grupo_pasta= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo_pasta= 1
+        if self.id_grupo_pasta == None:
+            if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
+                iUltimoRegistro = Grupo_Pasta.objects.order_by('-id_grupo_pasta')[0] 
+                self.id_grupo_pasta= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo_pasta= 1
         super(Grupo_Pasta, self).save()
         
     def criaGrupo_Pasta(self, vGrupo, vPasta, vEmpresa):
@@ -197,11 +199,12 @@ class Grupo_Usuario(models.Model):
         return str(self.id_grupo_usuario)
     
     def save(self):  
-        if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
-            iUltimoRegistro = Grupo_Usuario.objects.order_by('-id_grupo_usuario')[0] 
-            self.id_grupo_usuario= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo_usuario= 1
+        if self.id_grupo_usuario == None:
+            if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
+                iUltimoRegistro = Grupo_Usuario.objects.order_by('-id_grupo_usuario')[0] 
+                self.id_grupo_usuario= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo_usuario= 1
         super(Grupo_Usuario, self).save()
         
     def criaGrupo_Usuario(self, vGrupo, vUsuario):
@@ -272,11 +275,12 @@ class Funcao_Grupo(models.Model):
         return str(self.id_funcao_grupo)
     
     def save(self):  
-        if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
-            iUltimoRegistro = Funcao_Grupo.objects.order_by('-id_funcao_grupo')[0] 
-            self.id_funcao_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_funcao_grupo= 1
+        if self.id_funcao_grupo == None:
+            if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
+                iUltimoRegistro = Funcao_Grupo.objects.order_by('-id_funcao_grupo')[0] 
+                self.id_funcao_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_funcao_grupo= 1
         super(Funcao_Grupo, self).save()
         
     def criaFuncao_Grupo(self, vFuncao, vGrupo):
@@ -328,11 +332,12 @@ class Firewall(models.Model):
         return self.ip
     
     def save(self):  
-        if len(Firewall.objects.order_by('-id_firewall')) > 0:   
-            iUltimoRegistro = Firewall.objects.order_by('-id_firewall')[0] 
-            self.id_firewall= iUltimoRegistro.pk + 1
-        else:
-            self.id_firewall= 1
+        if self.id_firewall == None:
+            if len(Firewall.objects.order_by('-id_firewall')) > 0:   
+                iUltimoRegistro = Firewall.objects.order_by('-id_firewall')[0] 
+                self.id_firewall= iUltimoRegistro.pk + 1
+            else:
+                self.id_firewall= 1
         super(Firewall, self).save()
         
     def verificaIP (self, vIP, vEmpresa):
@@ -368,9 +373,10 @@ class Firewall_Grupo(models.Model):
         return str(self.id_firewall_grupo)
     
     def save(self):  
-        if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
-            iUltimoRegistro = Firewall_Grupo.objects.order_by('-id_firewall_grupo')[0] 
-            self.id_firewall_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_firewall_grupo= 1
+        if self.id_firewall_grupo == None:
+            if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
+                iUltimoRegistro = Firewall_Grupo.objects.order_by('-id_firewall_grupo')[0] 
+                self.id_firewall_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_firewall_grupo= 1
         super(Firewall_Grupo, self).save()
