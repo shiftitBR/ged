@@ -4,7 +4,6 @@
 import os
 
 PROJECT_ROOT_PATH= os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT_URL= 'http://localhost:8000/'
 
 LOCAL= True
 DEBUG = True

@@ -399,7 +399,7 @@ def download(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        if vIDVersao != '0':
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
             vIDFuncao = 0
             iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
             iFile = open(iArquivo,"r")
