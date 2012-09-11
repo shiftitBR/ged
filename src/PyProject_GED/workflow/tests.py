@@ -176,10 +176,11 @@ class Test(TestCase):
     
     def testVerificaSeGrupoAtualEstaConcluido(self):
         iGrupo= Grupo_da_Pendencia.objects.filter(id_grupo_da_pendencia= 1)[0]
-        iEhConcluido= Pendencia().verificaSeGrupoAtualEstaConcluido(iGrupo)
+        iDocumento= Documento.objects.filter(id_documento= 2)
+        iEhConcluido= Pendencia().verificaSeGrupoAtualEstaConcluido(iGrupo, iDocumento)
         self.assertEquals(False, iEhConcluido)
         self.mokarConcluiPendenciaDoGrupo()
-        iEhConcluido= Pendencia().verificaSeGrupoAtualEstaConcluido(iGrupo)
+        iEhConcluido= Pendencia().verificaSeGrupoAtualEstaConcluido(iGrupo, iDocumento)
         self.assertEquals(True, iEhConcluido)
     
     def testAlteraEstadoDoDocumentoDaPendencia(self):
@@ -204,8 +205,6 @@ class Test(TestCase):
         self.assertEquals(6, Pendencia.objects.count())
         self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
         
-        print '---------------------------------------------------------------------------------------------INICIO'
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>INICIO_ETAPA 0'
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         Pendencia.objects.filter(versao= iVersaoAtual).delete()
         self.mokarCriaPendenciasDoWorkflow_2()
@@ -214,20 +213,16 @@ class Test(TestCase):
         self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
         self.mokarConcluiPendencia_2()
         Workflow().executaWorkflow(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar)
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>FIM_ETAPA 0'
         
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>INICIO_ETAPA 1'
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         self.assertEquals(2, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
         self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
         self.mokarConcluiPendencia_2()
         Workflow().executaWorkflow(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar)
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>FIM_ETAPA 1'
         
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         self.assertEquals(0, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
         self.assertEquals('Aprovado', iVersaoAtual.estado.descricao)
-        print '---------------------------------------------------------------------------------------------FIM'
         
     def testTrataPendencia(self):
         iDocumento_SemWorkflow= Documento.objects.filter(id_documento= 3)[0]
@@ -629,7 +624,6 @@ class Test(TestCase):
         iGrupo_Usuario2.save()
     
     def mokarCriaPendenciasDoWorkflow(self):
-        #iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
         iDocumento= Documento.objects.filter(id_documento= 2)[0]
         Pendencia().criaPendenciasDoWorkflow(iDocumento)
     
@@ -644,7 +638,6 @@ class Test(TestCase):
         iPendencia= Pendencia().concluiPendencia(iPendencia)
     
     def mokarCriaPendenciasDoWorkflow_2(self):
-#        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
         iDocumento= Documento.objects.filter(id_documento= 4)[0]
         Pendencia().criaPendenciasDoWorkflow(iDocumento)
     
@@ -653,9 +646,6 @@ class Test(TestCase):
         iVersao= Versao.objects.filter(id_versao= 4)
         iPendencia1= Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)[0]
         iPendencia2= Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)[1]
-        print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
-        print Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)
-        print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
         Pendencia().concluiPendencia(iPendencia1)
         Pendencia().concluiPendencia(iPendencia2)
     
