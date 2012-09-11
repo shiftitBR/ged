@@ -278,8 +278,7 @@ class Pendencia(models.Model):
         super(Pendencia, self).save()
         
     def criaPendencia(self, vRemetente, vListaDestinatarios, vVersao, vDescricao, vTipoDePendencia, 
-                      vWorkflow=None, vEtapaDoWorkflow=None, vEhMultipla= False, 
-                      vData=str(datetime.datetime.today())[:19]):
+                      vWorkflow=None, vEtapaDoWorkflow=None, vEhMultipla= False):
         try:
             iGrupo_da_Pendencia= None
             if len(vListaDestinatarios) > 1:
@@ -289,7 +288,7 @@ class Pendencia(models.Model):
                 iPendencia.usr_remetente        = vRemetente
                 iPendencia.usr_destinatario     = iDestinatario
                 iPendencia.versao               = vVersao   
-                iPendencia.data                 = vData    
+                iPendencia.data                 = str(datetime.datetime.today())[:19]    
                 iPendencia.descricao            = vDescricao
                 iPendencia.tipo_de_pendencia    = vTipoDePendencia
                 iPendencia.workflow             = vWorkflow
