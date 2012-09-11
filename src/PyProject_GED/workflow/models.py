@@ -425,9 +425,9 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasDestinatario: ' + str(e))
             return False
         
-    def adicionarFeedback(self, vIDVersao, vComentario):
+    def adicionarFeedback(self, vIDVersao, vComentario, vUsuario):
         try:
-            iPendencia= Pendencia.objects.filter(versao__id_versao= str(vIDVersao))[0]
+            iPendencia= Pendencia.objects.filter(versao__id_versao= str(vIDVersao), usr_destinatario= vUsuario)[0]
             iPendencia.feedback= vComentario
             iPendencia.save()
             return True
