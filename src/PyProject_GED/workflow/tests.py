@@ -84,9 +84,9 @@ class Test(TestCase):
         self.assertEquals('Pendente', Versao.objects.filter(id_versao= 1)[0].estado.descricao)
     
     def testCriaPendenciasDoWorkflow(self):
-        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+#        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
         iDocumento= Documento.objects.all()[0]
-        iCriaPendencias= Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+        iCriaPendencias= Pendencia().criaPendenciasDoWorkflow(iDocumento)
         self.assertEquals(True, iCriaPendencias)
         self.assertEquals(8, Pendencia.objects.count())
     
@@ -155,20 +155,23 @@ class Test(TestCase):
     
     def testObtemEtapaAtual(self):
         iWorkflow= Workflow.objects.all()[0]
-        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
+        iVersao= Versao.objects.filter(id_versao= 1)
+        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow, iVersao)
         self.assertEquals(0, iEtapaAtual.ordem_da_etapa)
     
     def testObtemProximaEtapa(self):
         iWorkflow= Workflow.objects.all()[0]
-        iProximaEtapa= Workflow().obtemProximaEtapa(iWorkflow)
+        iVersao= Versao.objects.filter(id_versao= 1)
+        iProximaEtapa= Workflow().obtemProximaEtapa(iWorkflow, iVersao)
         self.assertEquals(1, iProximaEtapa.ordem_da_etapa)
     
     def testVerificaSeEtapaAtualEstaConcluida(self):
         iWorkflow= Workflow.objects.all()[1]
-        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)
+        iVersao= Versao.objects.filter(id_versao= 2)
+        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, iVersao)
         self.assertEquals(False, iEhConcluida)
         self.mokarConcluiPendencia()
-        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)
+        iEhConcluida= Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, iVersao)
         self.assertEquals(True, iEhConcluida)
     
     def testVerificaSeGrupoAtualEstaConcluido(self):
@@ -181,7 +184,8 @@ class Test(TestCase):
     
     def testAlteraEstadoDoDocumentoDaPendencia(self):
         iWorkflow= Workflow.objects.all()[0]
-        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow)
+        iVersao= Versao.objects.filter(id_versao= 1)
+        iEtapaAtual= Workflow().obtemEtapaAtual(iWorkflow, iVersao)
         iDocumento= Documento.objects.filter(id_documento= 2)[0]
         iUsuario= Usuario.objects.all()[0]
         iEstado= Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, iDocumento, constantes.cntAcaoPendenciaAprovar, iUsuario)
@@ -200,6 +204,8 @@ class Test(TestCase):
         self.assertEquals(6, Pendencia.objects.count())
         self.assertEquals(1, len(Pendencia.objects.filter(etapa_do_workflow= 1)))
         
+        print '---------------------------------------------------------------------------------------------INICIO'
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>INICIO_ETAPA 0'
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         Pendencia.objects.filter(versao= iVersaoAtual).delete()
         self.mokarCriaPendenciasDoWorkflow_2()
@@ -208,10 +214,20 @@ class Test(TestCase):
         self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
         self.mokarConcluiPendencia_2()
         Workflow().executaWorkflow(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar)
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>FIM_ETAPA 0'
+        
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>INICIO_ETAPA 1'
+        iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
+        self.assertEquals(2, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
+        self.assertEquals('Pendente', iVersaoAtual.estado.descricao)
+        self.mokarConcluiPendencia_2()
+        Workflow().executaWorkflow(iDocumento_ComWorkflow, constantes.cntAcaoPendenciaAprovar)
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>FIM_ETAPA 1'
         
         iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(Documento.objects.filter(id_documento= 4)[0])
         self.assertEquals(0, len(Pendencia.objects.filter(versao= iVersaoAtual, estado_da_pendencia= constantes.cntEstadoPendenciaPendente)))
         self.assertEquals('Aprovado', iVersaoAtual.estado.descricao)
+        print '---------------------------------------------------------------------------------------------FIM'
         
     def testTrataPendencia(self):
         iDocumento_SemWorkflow= Documento.objects.filter(id_documento= 3)[0]
@@ -613,9 +629,9 @@ class Test(TestCase):
         iGrupo_Usuario2.save()
     
     def mokarCriaPendenciasDoWorkflow(self):
-        iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
+        #iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
         iDocumento= Documento.objects.filter(id_documento= 2)[0]
-        Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+        Pendencia().criaPendenciasDoWorkflow(iDocumento)
     
     def mokarConcluiPendencia(self):
         iWorkflow= Workflow.objects.filter(id_workflow= 2)[0]
@@ -628,14 +644,18 @@ class Test(TestCase):
         iPendencia= Pendencia().concluiPendencia(iPendencia)
     
     def mokarCriaPendenciasDoWorkflow_2(self):
-        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
+#        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
         iDocumento= Documento.objects.filter(id_documento= 4)[0]
-        Pendencia().criaPendenciasDoWorkflow(iWorkflow, iDocumento)
+        Pendencia().criaPendenciasDoWorkflow(iDocumento)
     
     def mokarConcluiPendencia_2(self):
         iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
-        iPendencia1= Pendencia.objects.filter(workflow= iWorkflow)[0]
-        iPendencia2= Pendencia.objects.filter(workflow= iWorkflow)[1]
+        iVersao= Versao.objects.filter(id_versao= 4)
+        iPendencia1= Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)[0]
+        iPendencia2= Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)[1]
+        print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+        print Pendencia.objects.filter(workflow= iWorkflow, versao= iVersao)
+        print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
         Pendencia().concluiPendencia(iPendencia1)
         Pendencia().concluiPendencia(iPendencia2)
     
