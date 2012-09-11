@@ -423,21 +423,22 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasDestinatario: ' + str(e))
             return False
         
-    def adicionarFeedback(self, vIDVersao, vComentario, vUsuario):
+    def adicionarFeedback(self, vComentario, vPendencia):
         try:
-            iPendencia= Pendencia.objects.filter(versao__id_versao= str(vIDVersao), usr_destinatario= vUsuario)[0]
-            iPendencia.feedback= vComentario
-            iPendencia.save()
+            vPendencia.feedback= vComentario
+            vPendencia.save()
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel adicionarFeedback: ' + str(e))
             return False
     
-    def concluiPendencia(self, vPendencia):
+    def concluiPendencia(self, vPendencia, vComentario=None):
         try:
-            if vPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaPendente:
+            if vPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaPendente :
                 iNovoEstado= Estado_da_Pendencia.objects.filter(id_estado_da_pendencia= constantes.cntEstadoPendenciaConcluida)[0]
                 vPendencia.estado_da_pendencia= iNovoEstado
+                if vComentario != None:
+                    self.adicionarFeedback(vComentario, vPendencia)
             vPendencia.save()
             return vPendencia
         except Exception, e:
@@ -495,23 +496,23 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alterar estado do Documento da Pendencia: ' + str(e))
             return False
     
-    def trataPendencia(self, vDocumento, vAcao, vUsuario):
+    def trataPendencia(self, vDocumento, vAcao, vUsuario, vComentario=None):
         try:
             iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
             iPendencia= Pendencia.objects.filter(versao= iVersaoAtual, usr_destinatario= vUsuario,
                                                  estado_da_pendencia= constantes.cntEstadoPendenciaPendente)[0]
-            self.concluiPendencia(iPendencia)
+            self.concluiPendencia(iPendencia, vComentario)
             iGrupoDaPendencia= iPendencia.grupo_da_pendencia
             iWorkflow= iPendencia.workflow
             if (iGrupoDaPendencia not in (None, False)) and (self.verificaSeGrupoAtualEstaConcluido(iGrupoDaPendencia, vDocumento) or vAcao == constantes.cntAcaoPendenciaReprovar):
                 self.cancelaPendenciasDoGrupo(iGrupoDaPendencia, vDocumento)
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             elif iWorkflow not in (None, False):
-                if Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, vDocumento):
-                    Workflow().executaWorkflow(vDocumento, vAcao, vUsuario)
-                elif vAcao == constantes.cntAcaoPendenciaReprovar:
+                if vAcao == constantes.cntAcaoPendenciaReprovar:
                     self.cancelaPendenciasDoWorkflow(iWorkflow, vDocumento)
                     self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
+                elif Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, vDocumento):
+                    Workflow().executaWorkflow(vDocumento, vAcao, vUsuario)
             elif iGrupoDaPendencia == None and iWorkflow == None:
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             return True
