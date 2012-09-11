@@ -78,9 +78,9 @@ class Workflow(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Workflow: ' + str(e))
             return False
     
-    def obtemEtapaAtual(self, vWorkflow):
+    def obtemEtapaAtual(self, vWorkflow, vVersao):
         try:
-            iListaPendenciasDoWorkflow= Pendencia.objects.filter(workflow= vWorkflow)
+            iListaPendenciasDoWorkflow= Pendencia.objects.filter(workflow= vWorkflow, versao=vVersao)
             iOrdemEtapaAtual= -1
             iListaEtapaAtual= Etapa_do_Workflow.objects.filter(workflow= vWorkflow, ordem_da_etapa= 0)
             if len(iListaEtapaAtual) > 0: 
@@ -96,12 +96,12 @@ class Workflow(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a Etapa Atual: ' + str(e))
             return False
     
-    def obtemProximaEtapa(self, vWorkflow):
+    def obtemProximaEtapa(self, vWorkflow, vVersaoAtual):
         try:
             iListaEtapas= Etapa_do_Workflow.objects.filter(workflow= vWorkflow).order_by('ordem_da_etapa')
             if len(iListaEtapas) == 0:
                 return None
-            iOrdemEtapaAtual= self.obtemEtapaAtual(vWorkflow).ordem_da_etapa
+            iOrdemEtapaAtual= self.obtemEtapaAtual(vWorkflow, vVersaoAtual).ordem_da_etapa
             iProximaEtapa= None
             if iOrdemEtapaAtual < len(iListaEtapas) -1:
                 iOrdemProximaEtapa= iOrdemEtapaAtual + 1
@@ -111,12 +111,13 @@ class Workflow(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a Proxima Etapa: ' + str(e))
             return False
     
-    def verificaSeEtapaAtualEstaConcluida(self, vWorkflow):
+    def verificaSeEtapaAtualEstaConcluida(self, vWorkflow, vDocumento):
         try:
-            iEtapaAtual= self.obtemEtapaAtual(vWorkflow)
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            iEtapaAtual= self.obtemEtapaAtual(vWorkflow, iVersaoAtual)
             if iEtapaAtual in (None, False):
                 return None
-            iListaPendenciasDaEtapa= Pendencia.objects.filter(workflow= vWorkflow, etapa_do_workflow= iEtapaAtual)
+            iListaPendenciasDaEtapa= Pendencia.objects.filter(workflow= vWorkflow, etapa_do_workflow= iEtapaAtual, versao= iVersaoAtual)
             iPendenciasConcluidas= 0
             for iPendencia in iListaPendenciasDaEtapa:
                 if iPendencia.estado_da_pendencia.id_estado_da_pendencia == constantes.cntEstadoPendenciaConcluida: 
@@ -134,20 +135,31 @@ class Workflow(models.Model):
     
     def executaWorkflow(self, vDocumento, vAcao=None, vUsuario=None):
         try:
+            print '>>>>>>>>>>>>>>>>>>>>>>>>>>01'
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
             iPasta= vDocumento.pasta
             iTipoDoDocumento= vDocumento.tipo_documento
             iWorkflow= self.obtemWorkflow(iPasta, iTipoDoDocumento)
-            iEtapaAtualConcluida= self.verificaSeEtapaAtualEstaConcluida(iWorkflow)
+            print self.obtemEtapaAtual(iWorkflow, iVersaoAtual).descricao
+            iEtapaAtualConcluida= self.verificaSeEtapaAtualEstaConcluida(iWorkflow, vDocumento)
+            print iEtapaAtualConcluida
+            print Pendencia.objects.filter(workflow= iWorkflow)
             if (iWorkflow not in (None, False)) and (iEtapaAtualConcluida not in (None, False)):
+                print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>02'
                 Pendencia().cancelaPendenciasDoWorkflow(iWorkflow, vDocumento)
-                iEtapaAtual= self.obtemEtapaAtual(iWorkflow)
-                iProximaEtapa= self.obtemProximaEtapa(iWorkflow)
+                iEtapaAtual= self.obtemEtapaAtual(iWorkflow, iVersaoAtual)
+                iProximaEtapa= self.obtemProximaEtapa(iWorkflow, iVersaoAtual)
+                print iProximaEtapa
                 if iProximaEtapa not in (None, False):
-                    Pendencia().criaPendenciaDoWorkflow(iWorkflow, vDocumento)
+                    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>03'
+                    Pendencia().criaPendenciasDoWorkflow(vDocumento, iProximaEtapa)
                 elif (iProximaEtapa == None):
+                    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>04'
                     Pendencia().alteraEstadoDoDocumento(iEtapaAtual.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
             elif (iWorkflow == None) or (iEtapaAtualConcluida == None):
+                print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>05'
                 return None  
+            print Pendencia.objects.all()
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel executar o Workflow: ' + str(e))
@@ -304,23 +316,27 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia: ' + str(e))
             return False
     
-    def criaPendenciasDoWorkflow(self, vDocumento):
+    def criaPendenciasDoWorkflow(self, vDocumento, vProximaEtapa=None):
         try:
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
             iPasta= vDocumento.pasta
             iTipoDoDocumento= vDocumento.tipo_documento
-            iWorkflow= self.obtemWorkflow(iPasta, iTipoDoDocumento)           
-            iProximaEtapa= Workflow().obtemProximaEtapa(iWorkflow)
-            if iProximaEtapa == None:
+            iWorkflow= Workflow().obtemWorkflow(iPasta, iTipoDoDocumento)           
+            if vProximaEtapa != None:
+                iEtapa= vProximaEtapa
+            else:
+                iEtapa= Workflow().obtemEtapaAtual(iWorkflow, iVersaoAtual)
+            if iEtapa == None:
                 return None
-            iGrupo= iProximaEtapa.grupo
+            iGrupo= iEtapa.grupo
             iListaGrupoUsuarios= Grupo_Usuario.objects.filter(grupo= iGrupo)
             iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
             for iGrupoUsuario in iListaGrupoUsuarios:
                 iListaDestinatarios= []
                 iListaDestinatarios.append(iGrupoUsuario.usuario)
                 self.criaPendencia(iVersaoAtual.usr_criador, iListaDestinatarios, iVersaoAtual, 
-                                        iProximaEtapa.descricao, iProximaEtapa.tipo_de_pendencia, 
-                                        iWorkflow, iProximaEtapa)
+                                        iEtapa.descricao, iEtapa.tipo_de_pendencia, 
+                                        iWorkflow, iEtapa)
                 Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoEncaminhar, 
                                        iVersaoAtual.usr_criador.id, vDocumento.empresa.id_empresa)
             return True
@@ -330,7 +346,8 @@ class Pendencia(models.Model):
     
     def cancelaPendenciasDoWorkflow(self, vWorkflow, vDocumento):
         try:
-            iEtapaAtual= Workflow().obtemEtapaAtual(vWorkflow)
+            iVersaoAtual= Versao().obtemVersaoAtualDoDocumento(vDocumento)
+            iEtapaAtual= Workflow().obtemEtapaAtual(vWorkflow, iVersaoAtual)
             iListaPendenciasDaEtapa= Pendencia.objects.filter(workflow= vWorkflow, etapa_do_workflow= iEtapaAtual, 
                                                               estado_da_pendencia= constantes.cntEstadoPendenciaPendente)
             for iPendencia in iListaPendenciasDaEtapa:
@@ -490,7 +507,7 @@ class Pendencia(models.Model):
             if (iGrupoDaPendencia not in (None, False)) and (self.verificaSeGrupoAtualEstaConcluido(iGrupoDaPendencia)):
                 self.cancelaPendenciasDoGrupo(iGrupoDaPendencia, vDocumento)
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
-            elif (iWorkflow not in (None, False)) and (Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow)):
+            elif (iWorkflow not in (None, False)) and (Workflow().verificaSeEtapaAtualEstaConcluida(iWorkflow, vDocumento)):
                 Workflow().executaWorkflow(vDocumento, vAcao, vUsuario)
             else:
                 self.alteraEstadoDoDocumento(iPendencia.tipo_de_pendencia, vDocumento, vAcao, vUsuario)
