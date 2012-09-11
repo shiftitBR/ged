@@ -17,10 +17,11 @@ from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
-    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo, Funcao
+    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
 from PyProject_GED.documento.models import Tipo_de_Documento
 from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
+from PyProject_GED import constantes
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
@@ -46,6 +47,18 @@ class AdminUsuario(MultiDBModelAdmin):
     exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions', 
                        'tipo_usuario', 'username') 
     
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_usuario= constantes.cntTipoUsuarioSistema)
+                self.fields['empresa']= iEmpresa
+            except:
+                return qs.all()
+        else:
+            return qs.all()
+    
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
@@ -55,8 +68,39 @@ class AdminUsuario(MultiDBModelAdmin):
         return form 
     
     def save_model(self, request, obj, form, change):
-        obj.tipo_usuario = Tipo_de_Usuario.objects.all()[0]
+        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_usuario= constantes.cntTipoUsuarioSistema)[0]
         obj.save()
+        
+
+"""class AdminContato(MultiDBModelAdmin): 
+    list_display    = UserAdmin.list_display + ('empresa', 'is_active')
+    search_fields   = UserAdmin.search_fields
+    exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions', 
+                       'tipo_usuario', 'username') 
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_usuario= constantes.cntTipoUsuarioContato)
+                self.fields['empresa']= iEmpresa
+            except:
+                return qs.all()
+        else:
+            return qs.all()
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        form.base_fields['email'].required= True
+        return form 
+    
+    def save_model(self, request, obj, form, change):
+        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(constantes.cntTipoUsuarioContato)[0]
+        obj.save()"""
 
    
 class AdminIndice(MultiDBModelAdmin): 
@@ -281,6 +325,19 @@ class AdminEtapaWorkflow(MultiDBModelAdmin):
             form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
         return form      
 
+class AdminTipoDocumento(MultiDBModelAdmin): 
+    list_display    = ('descricao', 'empresa')
+    search_fields   = ('descricao', 'empresa')
+    ordering        = ('descricao',)  
+    exclude         = ('id_tipo_documento', 'eh_nativo')
+
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminTipoDocumento,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
+
 admin.site.unregister(User)
 admin.site.unregister(Site)
 admin.site.register(Empresa, AdminEmpresa)
@@ -298,3 +355,4 @@ admin.site.register(Firewall, AdminFirewall)
 admin.site.register(Firewall_Grupo, AdminFirewallGrupo)
 admin.site.register(Workflow, AdminWorkflow)
 admin.site.register(Etapa_do_Workflow, AdminEtapaWorkflow)
+admin.site.register(Tipo_de_Documento, AdminTipoDocumento)

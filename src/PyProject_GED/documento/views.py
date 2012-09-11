@@ -204,7 +204,7 @@ def importar(vRequest, vTitulo):
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
-                    Workflow().executaWorkflow(iDocumento)
+                    Workflow().criaPendenciasDoWorkflow(iDocumento)
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -257,7 +257,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
-                    Workflow().executaWorkflow(iDocumento)
+                    Workflow().criaPendenciasDoWorkflow(iDocumento)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False

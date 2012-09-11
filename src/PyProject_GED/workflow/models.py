@@ -304,9 +304,12 @@ class Pendencia(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia: ' + str(e))
             return False
     
-    def criaPendenciasDoWorkflow(self, vWorkflow, vDocumento):
+    def criaPendenciasDoWorkflow(self, vDocumento):
         try:
-            iProximaEtapa= Workflow().obtemProximaEtapa(vWorkflow)
+            iPasta= vDocumento.pasta
+            iTipoDoDocumento= vDocumento.tipo_documento
+            iWorkflow= self.obtemWorkflow(iPasta, iTipoDoDocumento)           
+            iProximaEtapa= Workflow().obtemProximaEtapa(iWorkflow)
             if iProximaEtapa == None:
                 return None
             iGrupo= iProximaEtapa.grupo
@@ -317,7 +320,7 @@ class Pendencia(models.Model):
                 iListaDestinatarios.append(iGrupoUsuario.usuario)
                 self.criaPendencia(iVersaoAtual.usr_criador, iListaDestinatarios, iVersaoAtual, 
                                         iProximaEtapa.descricao, iProximaEtapa.tipo_de_pendencia, 
-                                        vWorkflow, iProximaEtapa)
+                                        iWorkflow, iProximaEtapa)
                 Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoEncaminhar, 
                                        iVersaoAtual.usr_criador.id, vDocumento.empresa.id_empresa)
             return True
