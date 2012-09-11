@@ -79,6 +79,14 @@ class Norma(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar normas: ' + str(e))
             return False
+    
+    def obtemListaNormas(self, vIDEmpresa):
+        try:
+            iListaNormas = Norma.objects.filter(empresa__id_empresa= vIDEmpresa)
+            return iListaNormas
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de normas: ' + str(e))
+            return False
 
 class Norma_Documento(models.Model):
     id_norma_documento      = models.IntegerField(max_length=3, primary_key=True)
