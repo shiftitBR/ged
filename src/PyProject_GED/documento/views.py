@@ -203,8 +203,8 @@ def importar(vRequest, vTitulo):
                         if iValor != '':
                             Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                     vRequest.session['Image']= False
-                    ControleOCR().executaOCR(iVersao)
-                    Workflow().criaPendenciasDoWorkflow(iDocumento)
+                    #ControleOCR().executaOCR(iVersao)
+                    Pendencia().criaPendenciasDoWorkflow(iDocumento)
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:

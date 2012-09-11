@@ -52,7 +52,7 @@ class AdminUsuario(MultiDBModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             try:
-                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_usuario= constantes.cntTipoUsuarioSistema)
+                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)
                 self.fields['empresa']= iEmpresa
             except:
                 return qs.all()
@@ -68,7 +68,7 @@ class AdminUsuario(MultiDBModelAdmin):
         return form 
     
     def save_model(self, request, obj, form, change):
-        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_usuario= constantes.cntTipoUsuarioSistema)[0]
+        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)[0]
         obj.save()
         
 
