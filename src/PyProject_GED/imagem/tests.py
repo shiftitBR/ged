@@ -63,6 +63,14 @@ class Test(TestCase):
         iVersao= Versao.objects.filter(id_versao= 3)[0]
         iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG)
         self.assertEquals(True, len(iConversao) > 0)
+    
+    def testEhExportaval(self):
+        iVersaoExportavel= Versao.objects.filter(id_versao= 3)[0]
+        iVersaoNaoExportavel= Versao.objects.filter(id_versao= 5)[0]
+        iEhExportaval= ControleImagem().verificaSeImagemEhExportavel(iVersaoExportavel)
+        self.assertEquals(True, iEhExportaval)
+        iEhExportaval= ControleImagem().verificaSeImagemEhExportavel(iVersaoNaoExportavel)
+        self.assertEquals(False, iEhExportaval)
 
 
 #-----------------------------------------------------MOKS---------------------------------------------------  
@@ -138,6 +146,13 @@ class Test(TestCase):
         iUpload4.fileName       = 'imagem_bmp.bmp'
         iUpload4.image          = '%s/media_teste/imagem_bmp.bmp' % settings.MEDIA_ROOT
         iUpload4.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload5                 = MultiuploaderImage()
+        iUpload5.key_data        = iUpload5.key_generate
+        iUpload5.upload_date     = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload5.fileName       = 'texto.odt'
+        iUpload5.image          = '%s/media_teste/texto.odt' % settings.MEDIA_ROOT
+        iUpload5.save(iIDPasta, iEmpresa.id_empresa)
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
@@ -188,6 +203,13 @@ class Test(TestCase):
         
         iVersao         = 4
         iUpload         = MultiuploaderImage.objects.filter()[3]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 5
+        iUpload         = MultiuploaderImage.objects.filter()[4]
         iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
                                  upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
                                  eh_versao_atual= iEh_Versao_Atual)

@@ -18,6 +18,7 @@ from PyProject_GED.envioemail.controle  import Controle as ControleEmail
 from objetos_auxiliares                 import Documento as DocumentoAuxiliar
 from objetos_auxiliares                 import Versoes as VersaoAuxiliar
 from controle                           import Controle as DocumentoControle
+from PyProject_GED.imagem.controle      import Controle as ImagemControle
 
 import datetime
 import logging
@@ -295,6 +296,7 @@ class Versao(models.Model):
         iDocumento.nomeArquivo= vVersao.upload.filename.encode('utf-8')
         iDocumento.tipoVisualizacao = DocumentoControle().tipoVisualizavel(vVersao.upload.filename.encode('utf-8'))
         iDocumento.caminhoVisualizar = DocumentoControle().obtemCaminhoVisualizar(str(vVersao.upload.image))
+        iDocumento.ehImagemExportavel= ImagemControle().verificaSeImagemEhExportavel(vVersao)
         return iDocumento
 
     def obtemListaDeDocumentosDaPasta(self, vIDEmpresa, vIDPasta):

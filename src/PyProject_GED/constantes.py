@@ -95,6 +95,7 @@ cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
 
 #Extencoes de Imagem
+cntExtencaoImagemExportavel = ['.jpg', '.png', '.tif', '.bmp']
 cntExtencaoImagemJPG        = 1
 cntExtencaoImagemPNG        = 2
 cntExtencaoImagemBMP        = 3
