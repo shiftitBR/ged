@@ -35,4 +35,6 @@ class MultiuploaderImage(models.Model):
                 field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
         super(MultiuploaderImage, self).save()
 
-
+        
+    def obtemImagePeloId(self, vIDImage):
+        return MultiuploaderImage.objects.filter(id=vIDImage)[0]

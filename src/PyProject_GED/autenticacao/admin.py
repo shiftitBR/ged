@@ -121,9 +121,28 @@ class AdminIndice(MultiDBModelAdmin):
         
 class AdminPasta(MultiDBModelAdmin): 
     list_display    = ('nome', 'pasta_pai')
-    search_fields   = ('pasta_pai', 'nome', 'diretorio', )
+    search_fields   = ('pasta_pai', 'nome', )
     ordering        = ('pasta_pai',)
-    exclude         = ('id_pasta', )
+    exclude         = ('id_pasta', 'diretorio', )
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(usuario__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminPasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            form.base_fields['pasta_pai'].queryset = Pasta.objects.filter(empresa=iEmpresa.id_empresa)
+            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        return form
     
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
@@ -131,6 +150,17 @@ class AdminLogUsuario(MultiDBModelAdmin):
     ordering        = ('data',)
     readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'data', 'empresa')
     exclude         = ('id_log_usuario',)
+    
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            try:
+                return qs.filter(usuario__empresa= iEmpresa.id_empresa)
+            except:
+                return qs.all()
+        else:
+            return qs.all()
     
 class AdminGrupo(MultiDBModelAdmin): 
     list_display    = ('nome', 'descricao')

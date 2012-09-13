@@ -5,11 +5,13 @@ Created on Jul 11, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                          import models
-from django.contrib.auth.models         import User
-from django.conf                        import settings
-from django.db.models                   import get_model
-from controle                           import Controle as ControleAutenticacao
+from django.db                                      import models
+from django.contrib.auth.models                     import User
+from django.conf                                    import settings
+from django.db.models                               import get_model
+from controle                                       import Controle as ControleAutenticacao
+from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
+from datetime                                       import datetime
 
 import constantes #@UnresolvedImport
 import threading
@@ -98,6 +100,13 @@ class Empresa(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter obtemListaEnderecoEmpresas ' + str(e))
             return False 
         
+    def obtemEmpresaPeloID(self, vIDEmpresa):
+        try:
+            iEmpresa= Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
+            return iEmpresa
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Empresa pelo id' + str(e))
+            return False   
         
 #---------------------------USUARIO -----------------------------------
         
@@ -224,9 +233,37 @@ class Usuario(User):
     
     def obtemUsuariosPeloTipo(self, vEmpresa, vIDTipoUsuario):
         try:
-            iTipoUsuario    = Tipo_de_Usuario.objects.filter(empresa= vEmpresa).filter(id_tipo_de_usuario= vIDTipoUsuario)
-            iUsuarios       = Usuario.objects.filter(tipo_usuario= iTipoUsuario)
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iUsuarios       = Usuario.objects.filter(empresa= vEmpresa).filter(tipo_usuario= iTipoUsuario)
             return iUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo tipo de usuario ' + str(e))
+            return False  
+        
+    def obtemUsuariosRelatorio(self, vIDEmpresa, vIDTipoUsuario):
+        try:
+            iEmpresa        = Empresa().obtemEmpresaPeloID(vIDEmpresa)
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iUsuarios       = Usuario.objects.filter(empresa= iEmpresa).filter(tipo_usuario= iTipoUsuario).order_by('id')
+            iListaAux       = []
+            for iUsuario in iUsuarios:
+                iUsuarioAux = UsuarioAuxiliar()
+                iUsuarioAux.id              = iUsuario.id
+                iUsuarioAux.nome            = '%s %s' % (iUsuario.first_name, iUsuario.last_name)
+                iUsuarioAux.username        = iUsuario.username
+                iUsuarioAux.email           = iUsuario.email
+                if iUsuario.is_active:
+                    iUsuarioAux.ehAtivo     = 'Sim' 
+                else:
+                    iUsuarioAux.ehAtivo     = 'Nao'
+                if iUsuario.is_superuser :
+                    iUsuarioAux.ehAdministrador = 'Sim'
+                else:
+                    iUsuarioAux.ehAdministrador = 'Nao'
+                iUsuarioAux.dataUltimoLogin = iUsuario.last_login.strftime('%Y-%m-%d')
+                iUsuarioAux.dataCadastro    = iUsuario.date_joined.strftime('%Y-%m-%d')
+                iListaAux.append(iUsuarioAux)
+            return iListaAux
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Usuarios Relatorio' + str(e))
             return False  

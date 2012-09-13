@@ -12,6 +12,7 @@
 - Leptonica 1.69 (http://code.google.com/p/python-tesseract/wiki/HowToCompilePythonTesseract4Fedora)
 - Tesseract (http://code.google.com/p/tesseract-ocr/wiki/TesseractSvnInstallation)
 - Django-Chronograph (pio install django-chronograph)
+- Reportlab (yum install python-reportlab)
 
 - Image Magick (yum install ImageMagick-devel)
 - PNGcrush (yum install pngcrush)
