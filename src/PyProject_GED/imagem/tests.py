@@ -71,6 +71,12 @@ class Test(TestCase):
         self.assertEquals(True, iEhExportaval)
         iEhExportaval= ControleImagem().verificaSeImagemEhExportavel(iVersaoNaoExportavel)
         self.assertEquals(False, iEhExportaval)
+        
+    def testDeletaImagemTemporaria(self):
+        iVersao= Versao.objects.filter(id_versao= 3)[0]
+        iDiretorio= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG)
+        iDeleta= ControleImagem().deletaImagemTemporaria(iDiretorio)
+        self.assertEquals(True, iDeleta)
 
 
 #-----------------------------------------------------MOKS---------------------------------------------------  
