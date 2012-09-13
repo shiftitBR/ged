@@ -19,6 +19,8 @@ class Tipo_de_Norma(models.Model):
 
     class Meta:
         db_table= 'tb_tipo_de_norma'
+        verbose_name = 'Tipo de Norma'
+        verbose_name_plural = 'Tipos de Norma'
     
     def __unicode__(self):
         return self.descricao
@@ -42,6 +44,8 @@ class Norma(models.Model):
     
     class Meta:
         db_table= 'tb_norma'
+        verbose_name = 'Norma'
+        verbose_name_plural = 'Normas'
     
     def __unicode__(self):
         return self.descricao
@@ -75,6 +79,14 @@ class Norma(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar normas: ' + str(e))
             return False
+    
+    def obtemListaNormas(self, vIDEmpresa):
+        try:
+            iListaNormas = Norma.objects.filter(empresa__id_empresa= vIDEmpresa)
+            return iListaNormas
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de normas: ' + str(e))
+            return False
 
 class Norma_Documento(models.Model):
     id_norma_documento      = models.IntegerField(max_length=3, primary_key=True)
@@ -106,5 +118,16 @@ class Norma_Documento(models.Model):
             return iNorma_Documento
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Norma_Documento: ' + str(e))
+            return False
+    
+    def obtemDocumentosPelaNorma(self, vNorma):
+        try:
+            iListaNormaDocumentos= Norma_Documento.objects.filter(norma= vNorma)
+            iListaDocumentos= []
+            for iDocumentoNorma in iListaNormaDocumentos:
+                iListaDocumentos.append(iDocumentoNorma.documento)
+            return iListaDocumentos
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Documentos pela Norma: ' + str(e))
             return False
         

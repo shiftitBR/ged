@@ -1,20 +1,23 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                  import models
+from django.db                          import models
+from django.db.models                   import get_model
 
-from autenticacao.models        import Empresa #@UnresolvedImport
-from autenticacao.models        import Usuario #@UnresolvedImport
-from seguranca.models           import Pasta #@UnresolvedImport
-from multiuploader.models       import MultiuploaderImage #@UnresolvedImport
-from objetos_auxiliares         import Documento as DocumentoAuxiliar
-from objetos_auxiliares         import Versoes as VersaoAuxiliar
-from controle                   import Controle as DocumentoControle
-from django.db.models           import get_model
-from PyProject_GED.ocr.controle import Controle as ControleOCR
+from PyProject_GED.autenticacao.models  import Empresa 
+from PyProject_GED.autenticacao.models  import Usuario  
+from PyProject_GED.seguranca.models     import Pasta    
+from PyProject_GED.multiuploader.models import MultiuploaderImage
+from PyProject_GED.ocr.controle         import Controle as ControleOCR
+from PyProject_GED.envioemail.controle  import Controle as ControleEmail
+
+from objetos_auxiliares                 import Documento as DocumentoAuxiliar
+from objetos_auxiliares                 import Versoes as VersaoAuxiliar
+from controle                           import Controle as DocumentoControle
 
 import datetime
 import logging
@@ -30,6 +33,8 @@ class Tipo_de_Documento(models.Model):
     
     class Meta:
         db_table= 'tb_tipo_de_documento'
+        verbose_name = 'Tipo de Documento'
+        verbose_name_plural = 'Tipos de Documento'
     
     def __unicode__(self):
         return self.descricao
@@ -41,6 +46,7 @@ class Tipo_de_Documento(models.Model):
                 self.id_tipo_documento= iUltimoRegistro.pk + 1
             else:
                 self.id_tipo_documento= 1
+            self.eh_nativo= False
         super(Tipo_de_Documento, self).save()
     
     def criaTipoDocumento(self, vEmpresa, vDescricao):
@@ -84,6 +90,8 @@ class Documento(models.Model):
     
     class Meta:
         db_table= 'tb_documento'
+        verbose_name = 'Documento'
+        verbose_name_plural = 'Documentos'
     
     def __unicode__(self):
         return self.assunto
@@ -153,9 +161,10 @@ class Documento(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel gerarProtocolo ' + str(e))
             return False
     
-    def buscaDocumentosVencendo(self, iDataInicio, iDiasAntecedencia= constantes.cntConfiguracaoDiasAvisoVencimento):
+    def buscaDocumentosVencendo(self, vDataInicio, vDiasAntecedencia= constantes.cntConfiguracaoDiasAvisoVencimento):
         try:
-            iDataFim= iDataInicio + datetime.timedelta(days= iDiasAntecedencia + 1)
+            iDataInicio= vDataInicio + datetime.timedelta(days= vDiasAntecedencia -1)
+            iDataFim= vDataInicio + datetime.timedelta(days= vDiasAntecedencia + 1)
             iDocumentos  = Documento.objects.filter(data_validade__gt= iDataInicio).filter(data_validade__lt= iDataFim)
             return iDocumentos
         except Exception, e:
@@ -168,7 +177,8 @@ class Documento(models.Model):
             iListaUsuarios= []
             for iDocumento in iListaDocumentosVecendo:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
-                #envia email
+                ControleEmail().enviarEmail('', '', iDocumento.usr_responsavel.email, 
+                                            constantes.cntConfiguracaoEmailAlerta)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
@@ -177,11 +187,10 @@ class Documento(models.Model):
     def alteraEstadoDosDocumentosVencidos(self):
         try:
             iListaDocumentosVecidos= self.buscaDocumentosVencendo(datetime.datetime.today(), 0)
-            iListaUsuarios= []
             for iDocumento in iListaDocumentosVecidos:
-                iListaUsuarios.append(iDocumento.usr_responsavel)
-                #altera estado
-            return iListaUsuarios
+                iVersao = Versao().obtemVersaoAtualDoDocumento(iDocumento)
+                Versao().alterarEstadoVersao(iVersao.id_versao, constantes.cntEstadoVersaoVencido)
+            return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
             return False
@@ -194,6 +203,8 @@ class Estado_da_Versao(models.Model):
     
     class Meta:
         db_table= 'tb_estado_da_versao'
+        verbose_name = 'Estado da Versão'
+        verbose_name_plural = 'Estados da Versão'
     
     def __unicode__(self):
         return self.descricao
@@ -240,9 +251,11 @@ class Versao(models.Model):
     
     class Meta:
         db_table= 'tb_versao'
+        verbose_name = 'Versão'
+        verbose_name_plural = 'Versões'
     
     def __unicode__(self):
-        return str(self.id_versao)
+        return '%s - %s'%(self.protocolo, self.documento.assunto)
     
     def save(self): 
         if self.id_versao == '' or self.id_versao == None:
@@ -407,7 +420,7 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vEhPublico= False):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vEhPublico= False):
         try:
             if vEhPublico:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
@@ -430,6 +443,13 @@ class Versao(models.Model):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__gt= vDataDeCriacaoInicial)
             if vDataDeCriacaoFinal not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(data_criacao__lt= vDataDeCriacaoFinal)
+            if vItemNorma not in (None, '', 'selected'):
+                mNormaDocumento= get_model('qualidade', 'Norma_Documento')
+                iListaDocumentos= mNormaDocumento().obtemDocumentosPelaNorma(vItemNorma)
+                iListaIDsVersaoAtual= []
+                for iDocumento in iListaDocumentos:
+                    iListaIDsVersaoAtual.append(self.obtemVersaoAtualDoDocumento(iDocumento).id_versao)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(id_versao__in = iListaIDsVersaoAtual)
             if vListaIndice not in (None, ''):
                 iListaVersoesIndice= []
                 mIndice_Versao_Valor= get_model('indice', 'Indice_Versao_Valor')

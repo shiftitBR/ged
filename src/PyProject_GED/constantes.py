@@ -10,6 +10,7 @@ from django.conf    import settings
 cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos= 'documentos'
 cntConfiguracaoDiasAvisoVencimento= 5
+cntConfiguracaoEmailAlerta  = 'alerta@trackdoc.com.br'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -27,6 +28,9 @@ cntEventoHistoricoObsoletar = 9
 cntEventoHistoricoEmail     = 10
 cntEventoHistoricoPublicar  = 11
 cntEventoHistoricoLogin     = 12
+cntEventoHistoricoCancelarPendencia= 13
+cntEventoHistoricoRelatorio = 14
+cntEventoHistoricoImportar  = 15
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -36,6 +40,23 @@ cntEstadoVersaoReprovado    = 4
 cntEstadoVersaoExcluida     = 5
 cntEstadoVersaoObsoleto     = 6
 cntEstadoVersaoPendente     = 7
+cntEstadoVersaoVencido      = 8
+
+#Estados da Pendencia
+cntEstadoPendenciaPendente  = 1
+cntEstadoPendenciaConcluida = 2
+cntEstadoPendenciaCancelada = 3
+
+#Tipo da Pendencia
+cntTipoPendenciaAprovacao   = 1
+cntTipoPendenciaAssintaura  = 2
+
+#Acao da Pendencia
+cntAcaoPendenciaAprovar     = 1
+cntAcaoPendenciaReprovar    = 2
+cntAcaoPendenciaAssinar     = 3
+cntAcaoPendenciaCancelar    = 4
+
 
 #TipoVisualizacao
 cntTipoVisualizacaoPDF      = 1
@@ -52,6 +73,10 @@ cntOCRExtencoesPDF          = ['.pdf',]
 #TipoUsuario
 cntTipoUsuarioSistema       = 1
 cntTipoUsuarioContato       = 2
+
+#TipoRelatorio
+cntTipoRelatorioAcessos     = 1
+cntTipoRelatorioUsuario     = 2
 
 #Funcoes
 cntFuncaoDownload           = 1

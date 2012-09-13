@@ -5,11 +5,13 @@ Created on Jul 11, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                          import models
-from django.contrib.auth.models         import User
-from django.conf                        import settings
-from django.db.models                   import get_model
-from controle                           import Controle as ControleAutenticacao
+from django.db                                      import models
+from django.contrib.auth.models                     import User
+from django.conf                                    import settings
+from django.db.models                               import get_model
+from controle                                       import Controle as ControleAutenticacao
+from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
+from datetime                                       import datetime
 
 import constantes #@UnresolvedImport
 import threading
@@ -37,6 +39,8 @@ class Empresa(models.Model):
     
     class Meta:
         db_table= 'tb_empresa'
+        verbose_name = 'Empresa'
+        verbose_name_plural = 'Empresas'
     
     def __unicode__(self):
         return "%s - %s" % (str(self.id_empresa), self.nome)
@@ -63,12 +67,10 @@ class Empresa(models.Model):
                 time.sleep(1)
                 mPasta= get_model('seguranca', 'Pasta')
                 mTipoDocumento= get_model('documento', 'Tipo_de_Documento')
+                ControleAutenticacao().criaPastaEmpresa(vEmpresa.id_empresa) 
                 iPastaRaiz= mPasta().criaPasta(vEmpresa, 'Pasta Raiz')
-                iPastaModelo= mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
+                mPasta().criaPasta(vEmpresa, 'Modelos', iPastaRaiz)
                 mTipoDocumento().criaTipoDocumento(vEmpresa, 'Modelo')
-                ControleAutenticacao().criaPasta(vEmpresa.id_empresa, 
-                                                 iPastaRaiz.id_pasta, 
-                                                 iPastaModelo.id_pasta)
         try:
             iThread = ThreadClass()
             iThread.start()
@@ -98,6 +100,13 @@ class Empresa(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter obtemListaEnderecoEmpresas ' + str(e))
             return False 
         
+    def obtemEmpresaPeloID(self, vIDEmpresa):
+        try:
+            iEmpresa= Empresa.objects.filter(id_empresa= vIDEmpresa)[0]
+            return iEmpresa
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter Empresa pelo id' + str(e))
+            return False   
         
 #---------------------------USUARIO -----------------------------------
         
@@ -107,6 +116,8 @@ class Tipo_de_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_tipo_de_usuario'
+        verbose_name = 'Tipo de Usuário'
+        verbose_name_plural = 'Tipos de Usuário'
     
     def __unicode__(self):
         return self.descricao
@@ -126,9 +137,11 @@ class Usuario(User):
     
     class Meta:
         db_table= 'tb_usuario'
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
     
     def __unicode__(self):
-        return self.username
+        return "%s - %s %s" % (self.username, self.first_name, self.last_name)
     
     def save(self): 
         if self.username == '':
@@ -220,9 +233,37 @@ class Usuario(User):
     
     def obtemUsuariosPeloTipo(self, vEmpresa, vIDTipoUsuario):
         try:
-            iTipoUsuario    = Tipo_de_Usuario.objects.filter(empresa= vEmpresa).filter(id_tipo_de_usuario= vIDTipoUsuario)
-            iUsuarios       = Usuario.objects.filter(tipo_usuario= iTipoUsuario)
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iUsuarios       = Usuario.objects.filter(empresa= vEmpresa).filter(tipo_usuario= iTipoUsuario)
             return iUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo tipo de usuario ' + str(e))
+            return False  
+        
+    def obtemUsuariosRelatorio(self, vIDEmpresa, vIDTipoUsuario):
+        try:
+            iEmpresa        = Empresa().obtemEmpresaPeloID(vIDEmpresa)
+            iTipoUsuario    = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= vIDTipoUsuario)
+            iUsuarios       = Usuario.objects.filter(empresa= iEmpresa).filter(tipo_usuario= iTipoUsuario).order_by('id')
+            iListaAux       = []
+            for iUsuario in iUsuarios:
+                iUsuarioAux = UsuarioAuxiliar()
+                iUsuarioAux.id              = iUsuario.id
+                iUsuarioAux.nome            = '%s %s' % (iUsuario.first_name, iUsuario.last_name)
+                iUsuarioAux.username        = iUsuario.username
+                iUsuarioAux.email           = iUsuario.email
+                if iUsuario.is_active:
+                    iUsuarioAux.ehAtivo     = 'Sim' 
+                else:
+                    iUsuarioAux.ehAtivo     = 'Nao'
+                if iUsuario.is_superuser :
+                    iUsuarioAux.ehAdministrador = 'Sim'
+                else:
+                    iUsuarioAux.ehAdministrador = 'Nao'
+                iUsuarioAux.dataUltimoLogin = iUsuario.last_login.strftime('%Y-%m-%d')
+                iUsuarioAux.dataCadastro    = iUsuario.date_joined.strftime('%Y-%m-%d')
+                iListaAux.append(iUsuarioAux)
+            return iListaAux
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Usuarios Relatorio' + str(e))
             return False  

@@ -8,6 +8,7 @@ Created on Aug 2, 2012
 from django                             import forms
 from PyProject_GED.autenticacao.models  import Usuario, Empresa
 from PyProject_GED.documento.models import Estado_da_Versao, Tipo_de_Documento
+from PyProject_GED.qualidade.models import Norma
 
 class FormBuscaDocumento(forms.Form):
               
@@ -39,6 +40,9 @@ class FormBuscaDocumento(forms.Form):
         
         iListaDeNormas= []
         iListaDeNormas.append(('selected', 'Norma da Qualidade'))
+        iLista= Norma().obtemListaNormas(iEmpresa.id_empresa)
+        for i in range(len(iLista)):
+            iListaDeNormas.append((iLista[i].id_norma, '%s' % iLista[i].descricao))
         
         iListaDeTiposDeDocumento= []
         iListaDeTiposDeDocumento.append(('selected', 'Tipo de Documento'))

@@ -34,10 +34,10 @@ def multiuploader(vRequest):
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
-            image = MultiuploaderImage()
-            image.filename=filename.encode('utf-8')
-            image.image=file
-            image.key_data = image.key_generate
+            image               = MultiuploaderImage()
+            image.filename      =filename.encode('utf-8')
+            image.image         =file
+            image.key_data      = image.key_generate
             image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
             result = []
             result.append({"name":filename})
@@ -46,11 +46,20 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            vRequest.session['Image']= image
+            try: 
+                if vRequest.session['Images'] == False:
+                    iListaImages = '%s' % image.id
+                    vRequest.session['Images'] = iListaImages
+                else:
+                    iListaImages = '%s , %s' % (vRequest.session['Images'], image.id)
+                    vRequest.session['Images'] = iListaImages
+            except:
+                iListaImages = '%s' % image.id
+                vRequest.session['Images'] = iListaImages
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
-                vRequest.session['Image']= False
+                vRequest.session['Images']= False
                 return False
     
 @login_required 

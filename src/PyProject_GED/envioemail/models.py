@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -19,6 +20,8 @@ class Publicacao(models.Model):
     
     class Meta:
         db_table= 'tb_publicacao'
+        verbose_name = 'Publicação'
+        verbose_name_plural = 'Publicações'
     
     def __unicode__(self):
         return self.id_publicacao
@@ -57,6 +60,8 @@ class Publicacao_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_publicacao_usuario'
+        verbose_name = 'Publicação'
+        verbose_name_plural = 'Publicações'
     
     def __unicode__(self):
         return self.id_publicacao_usuario
@@ -96,6 +101,8 @@ class Publicacao_Documento(models.Model):
     
     class Meta:
         db_table= 'tb_publicacao_documento'
+        verbose_name = 'Publicação'
+        verbose_name_plural = 'Publicações'
     
     def __unicode__(self):
         return self.id_publicacao

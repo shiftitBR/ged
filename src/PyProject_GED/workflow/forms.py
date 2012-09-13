@@ -13,11 +13,12 @@ from PyProject_GED.seguranca.models import Funcao_Grupo
 
 class FormEncaminharPendencia(forms.Form):
            
-    usr_destinatario = forms.ChoiceField(choices=[])
+    usr_destinatario = forms.MultipleChoiceField(choices=[])
     descricao = forms.Field(widget=forms.Textarea)
+    eh_multipla      = forms.BooleanField()
     
     def clean_usr_destinatario(self):
-        if self.cleaned_data['usr_destinatario'] == 0:
+        if len(self.cleaned_data['usr_destinatario']) == 0 or len(self.cleaned_data['usr_destinatario']) == None:
             raise forms.ValidationError('O campo Usuário Destinatário é obrigatório')
         return self.cleaned_data['usr_destinatario']
     
@@ -27,17 +28,22 @@ class FormEncaminharPendencia(forms.Form):
         return self.cleaned_data['descricao']
    
     def __init__(self, *args, **kwargs):
-        iIDEmpresa= kwargs.pop('iIDEmpresa')
+        iIDEmpresa          = kwargs.pop('iIDEmpresa')
+        iIDTipoPendencia    = kwargs.pop('iIDTipoPendencia')
         iEmpresa= Empresa.objects.filter(id_empresa= iIDEmpresa)[0]
-        super(FormEncaminharPendencia, self).__init__(*args, **kwargs)  
+        super(FormEncaminharPendencia, self).__init__(*args, **kwargs) 
+        self.fields['eh_multipla'].required = False 
         self.fields['descricao'].error_messages['required'] = u'O campo Descrição é obrigatório' 
-        self.fields['usr_destinatario'].error_messages['required'] = u'O campo Usuário Destinatário é obrigatório'  
+        self.fields['usr_destinatario'].error_messages['required'] = u'O campo Usuário Destinatário é obrigatório' 
         iListaResponsavel= Usuario.objects.filter(empresa= iEmpresa.id_empresa)
         iListaResp = []
-        iListaResp.append((0, '- Selecione -'))
         for i in range(len(iListaResponsavel)): 
             iResp = iListaResponsavel[i]
             iNome= iResp.first_name + ' ' + iResp.last_name
-            if Funcao_Grupo().possuiAcessoFuncao(iListaResponsavel[i], constantes.cntFuncaoAprovarReprovar):
-                iListaResp.append((iResp.id, iNome))    
+            if iIDTipoPendencia== '1':
+                if Funcao_Grupo().possuiAcessoFuncao(iListaResponsavel[i], constantes.cntFuncaoAprovarReprovar):
+                    iListaResp.append((iResp.id, iNome))   
+            elif iIDTipoPendencia== '2':
+                if Funcao_Grupo().possuiAcessoFuncao(iListaResponsavel[i], constantes.cntFuncaoAssinar):
+                    iListaResp.append((iResp.id, iNome))  
         self.fields['usr_destinatario'].choices = iListaResp

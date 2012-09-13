@@ -9,19 +9,20 @@ from PyProject_GED                      import oControle
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
-from PyProject_GED.workflow.models      import Pendencia
+from PyProject_GED.workflow.models      import Pendencia, Workflow
 from PyProject_GED.documento.models     import Tipo_de_Documento
-from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice
+from PyProject_GED.indice.models        import Indice, Indice_Versao_Valor
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from controle                           import Controle as DocumentoControle
 from models                             import Versao, Documento
 from forms                              import FormCheckin, FormUploadDeArquivo
+from PyProject_GED.multiuploader.models import MultiuploaderImage
+from PyProject_GED.qualidade.models     import Norma, Norma_Documento
 
 import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
-from PyProject_GED.qualidade.models import Norma, Norma_Documento
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -32,7 +33,8 @@ def documentos(vRequest, vTitulo):
         iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
-        vRequest.session['PastaRaiz'] = iPasta_Raiz
+        vRequest.session['PastaRaiz']       = iPasta_Raiz
+        vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
             return False
@@ -123,7 +125,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
                     if iEstado == constantes.cntEstadoVersaoDisponivel : #Encaminhar
-                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/encaminhar/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/tipo_pendencia/%(iIDVersao)s/"><i class="icon-share-alt"></i>  Encaminhar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})   
                         
                     if iEstado == constantes.cntEstadoVersaoBloqueado  and iPodeCheckIn: #CheckIn
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkin/%(iIDVersao)s/"><i class="icon-share"></i>  Check-in</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -164,8 +166,9 @@ def importar(vRequest, vTitulo):
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
-                if vRequest.session['Image'] == True or not vRequest.session['Image'] == None:
-                    iImage= vRequest.session['Image']
+                if vRequest.session['Images'] == True or not vRequest.session['Images'] == None:
+                    iListaImages = str(vRequest.session['Images']).split(',')
+                    vRequest.session['Images']= False
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= datetime.datetime.now()
@@ -185,24 +188,35 @@ def importar(vRequest, vTitulo):
                     else:
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
-                                                             iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
-                    iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
-                    iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
-                                                    1, 1, iImage.key_data, iProtocolo)
-                    #Associar Normas
-                    iNormas = vRequest.POST.getlist('norma')
-                    for i in range(len(iNormas)):
-                        iNorma = Norma().obtemNorma(iNormas[i])
-                        Norma_Documento().criaNorma_Documento(iNorma, iDocumento)
-                    #Salvar Indices
-                    for i in range(len(iListaIndices)):
-                        iIndice = iListaIndices[i]
-                        iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
-                        if iValor != '':
-                            Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
-                    vRequest.session['Image']= False
-                    ControleOCR().executaOCR(iVersao)
+                    
+                    for i in range(len(iListaImages)):
+                        iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[i])
+                        if len(iListaImages) > 1:
+                            iAssuntoLote= '%s - %02d' % (iAssunto, i+1)
+                        else:
+                            iAssuntoLote= iAssunto
+                        iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
+                                                                 iAssuntoLote, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
+                        iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
+                        iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                                                        1, 1, iImage.key_data, iProtocolo)
+                        #Associar Normas
+                        iNormas = vRequest.POST.getlist('norma')
+                        for i in range(len(iNormas)):
+                            iNorma = Norma().obtemNorma(iNormas[i])
+                            Norma_Documento().criaNorma_Documento(iNorma, iDocumento)
+                        #Salvar Indices
+                        for i in range(len(iListaIndices)):
+                            iIndice = iListaIndices[i]
+                            iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
+                            if iValor != '':
+                                Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                        ControleOCR().executaOCR(iVersao)
+                        Pendencia().criaPendenciasDoWorkflow(iDocumento)
+                        Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoImportar, 
+                                                   iUsuario.id, vRequest.session['IDEmpresa'])
+                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
+                                                  vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -240,7 +254,8 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         if form.is_valid():
             try:
                 if vRequest.session['Image'] != False  :
-                    iImage= vRequest.session['Image']
+                    iListaImages= str(vRequest.session['Images']).split(',')
+                    iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[0])
                     iDescricao  = vRequest.POST.get('descricao')
                     iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, int(iVersaoBase.versao)+1)
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
@@ -255,6 +270,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
+                    Workflow().criaPendenciasDoWorkflow(iDocumento)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
@@ -319,10 +335,9 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     if vRequest.POST:
         try :
             if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
-                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
-                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoAprovado)
-                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoAprovar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                iVersao = Versao().obtemVersao(vIDVersao)
+                Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, 
+                                           iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
@@ -346,11 +361,9 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     
     if vRequest.POST:
         try :
-            if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
-                Pendencia().adicionarFeedback(vIDVersao, vRequest.POST.get('comentario'))
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoReprovado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoReprovar, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
+            iVersao = Versao().obtemVersao(vIDVersao)
+            Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
+                                       iUsuario, vRequest.POST.get('comentario'))
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
         except Exception, e:
@@ -392,13 +405,13 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
         locals(),
         context_instance=RequestContext(vRequest),
         )
-    
-@login_required 
+
+
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         
-        if vIDVersao != '0':
+        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
             vIDFuncao = 0
             iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
             iFile = open(iArquivo,"r")
@@ -447,7 +460,7 @@ def criaArvore(vRequest, vTitulo):
             oControle.getLogger().error('Nao foi possivel criar arvore: ' + str(e))
             return False
         
-@login_required 
+
 def visualizar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)

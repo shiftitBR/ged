@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 18, 2012
 
@@ -23,11 +24,13 @@ class Pasta(models.Model):
     
     class Meta:
         db_table= 'tb_pasta'
+        verbose_name = 'Pasta'
+        verbose_name_plural = 'Pastas'
     
     def __unicode__(self):
         return self.nome
     
-    def save(self):  
+    def save(self, vCriaPasta=True):  
         if self.id_pasta == '' or self.id_pasta== None:
             if len(Pasta.objects.order_by('-id_pasta')) > 0:   
                 iUltimoRegistro = Pasta.objects.order_by('-id_pasta')[0] 
@@ -37,15 +40,15 @@ class Pasta(models.Model):
             self.diretorio= self.montaDiretorioPasta(self.empresa.id_empresa, 
                                                                self, 
                                                                self.pasta_pai)
-            iDiretorioEmpresa   = constantes.cntConfiguracaoDiretorioDocumentos % self.empresa.id_empresa
-            iDiretorio          = '%s/%s' % (iDiretorioEmpresa, self.diretorio)
-            os.system('mkdir %s' % iDiretorio ) 
+            if vCriaPasta:
+                iDiretorioEmpresa   = constantes.cntConfiguracaoDiretorioDocumentos % self.empresa.id_empresa
+                iDiretorio          = '%s/%s' % (iDiretorioEmpresa, self.diretorio)
+                os.system('mkdir %s' % iDiretorio ) 
         super(Pasta, self).save()
     
     def criaPasta(self, vEmpresa, vNomePasta, vPastaPai=None):
         try:
             iPasta          = Pasta()
-            iPasta.id_pasta = 1
             iPasta.nome     = vNomePasta
             iPasta.empresa  = vEmpresa
             if vPastaPai != None:
@@ -85,9 +88,7 @@ class Pasta(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
-    
-    
-        
+
 #-----------------------------GRUPO----------------------------------------
 
 class Grupo(models.Model):
@@ -98,16 +99,20 @@ class Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_grupo'
+        verbose_name = 'Grupo'
+        verbose_name_plural = 'Grupos'
+        
     
     def __unicode__(self):
         return self.nome
     
     def save(self):  
-        if len(Grupo.objects.order_by('-id_grupo')) > 0:   
-            iUltimoRegistro = Grupo.objects.order_by('-id_grupo')[0] 
-            self.id_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo= 1
+        if self.id_grupo == None:
+            if len(Grupo.objects.order_by('-id_grupo')) > 0:   
+                iUltimoRegistro = Grupo.objects.order_by('-id_grupo')[0] 
+                self.id_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo= 1
         super(Grupo, self).save()
         
     def criaGrupo(self, vEmpresa, vDescricao, vNome):
@@ -131,16 +136,19 @@ class Grupo_Pasta(models.Model):
     
     class Meta:
         db_table= 'tb_grupo_pasta'
+        verbose_name = 'Associar Grupo a Pasta'
+        verbose_name_plural = 'Associar Grupo a Pasta'
     
     def __unicode__(self):
         return str(self.id_grupo_pasta)
     
     def save(self):  
-        if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
-            iUltimoRegistro = Grupo_Pasta.objects.order_by('-id_grupo_pasta')[0] 
-            self.id_grupo_pasta= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo_pasta= 1
+        if self.id_grupo_pasta == None:
+            if len(Grupo_Pasta.objects.order_by('-id_grupo_pasta')) > 0:   
+                iUltimoRegistro = Grupo_Pasta.objects.order_by('-id_grupo_pasta')[0] 
+                self.id_grupo_pasta= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo_pasta= 1
         super(Grupo_Pasta, self).save()
         
     def criaGrupo_Pasta(self, vGrupo, vPasta, vEmpresa):
@@ -184,16 +192,19 @@ class Grupo_Usuario(models.Model):
     
     class Meta:
         db_table= 'tb_grupo_usuario'
+        verbose_name = 'Associar Grupo a Usuário'
+        verbose_name_plural = 'Associar Grupo a Usuário'
     
     def __unicode__(self):
         return str(self.id_grupo_usuario)
     
     def save(self):  
-        if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
-            iUltimoRegistro = Grupo_Usuario.objects.order_by('-id_grupo_usuario')[0] 
-            self.id_grupo_usuario= iUltimoRegistro.pk + 1
-        else:
-            self.id_grupo_usuario= 1
+        if self.id_grupo_usuario == None:
+            if len(Grupo_Usuario.objects.order_by('-id_grupo_usuario')) > 0:   
+                iUltimoRegistro = Grupo_Usuario.objects.order_by('-id_grupo_usuario')[0] 
+                self.id_grupo_usuario= iUltimoRegistro.pk + 1
+            else:
+                self.id_grupo_usuario= 1
         super(Grupo_Usuario, self).save()
         
     def criaGrupo_Usuario(self, vGrupo, vUsuario):
@@ -224,6 +235,8 @@ class Funcao(models.Model):
     
     class Meta:
         db_table= 'tb_funcao'
+        verbose_name = 'Função'
+        verbose_name_plural = 'Funções'
     
     def __unicode__(self):
         return self.nome
@@ -255,16 +268,19 @@ class Funcao_Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_funcao_grupo'
+        verbose_name = 'Associar Função a Grupo'
+        verbose_name_plural = 'Associar Função a Grupo'
     
     def __unicode__(self):
         return str(self.id_funcao_grupo)
     
     def save(self):  
-        if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
-            iUltimoRegistro = Funcao_Grupo.objects.order_by('-id_funcao_grupo')[0] 
-            self.id_funcao_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_funcao_grupo= 1
+        if self.id_funcao_grupo == None:
+            if len(Funcao_Grupo.objects.order_by('-id_funcao_grupo')) > 0:   
+                iUltimoRegistro = Funcao_Grupo.objects.order_by('-id_funcao_grupo')[0] 
+                self.id_funcao_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_funcao_grupo= 1
         super(Funcao_Grupo, self).save()
         
     def criaFuncao_Grupo(self, vFuncao, vGrupo):
@@ -309,16 +325,19 @@ class Firewall(models.Model):
     
     class Meta:
         db_table= 'tb_firewall'
+        verbose_name = 'Firewall'
+        verbose_name_plural = 'Firewall'
     
     def __unicode__(self):
         return self.ip
     
     def save(self):  
-        if len(Firewall.objects.order_by('-id_firewall')) > 0:   
-            iUltimoRegistro = Firewall.objects.order_by('-id_firewall')[0] 
-            self.id_firewall= iUltimoRegistro.pk + 1
-        else:
-            self.id_firewall= 1
+        if self.id_firewall == None:
+            if len(Firewall.objects.order_by('-id_firewall')) > 0:   
+                iUltimoRegistro = Firewall.objects.order_by('-id_firewall')[0] 
+                self.id_firewall= iUltimoRegistro.pk + 1
+            else:
+                self.id_firewall= 1
         super(Firewall, self).save()
         
     def verificaIP (self, vIP, vEmpresa):
@@ -347,14 +366,17 @@ class Firewall_Grupo(models.Model):
     
     class Meta:
         db_table= 'tb_firewall_grupo'
+        verbose_name = 'Associar Firewall a Grupo'
+        verbose_name_plural = 'Associar Firewall a Grupo'
     
     def __unicode__(self):
         return str(self.id_firewall_grupo)
     
     def save(self):  
-        if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
-            iUltimoRegistro = Firewall_Grupo.objects.order_by('-id_firewall_grupo')[0] 
-            self.id_firewall_grupo= iUltimoRegistro.pk + 1
-        else:
-            self.id_firewall_grupo= 1
+        if self.id_firewall_grupo == None:
+            if len(Firewall_Grupo.objects.order_by('-id_firewall_grupo')) > 0:   
+                iUltimoRegistro = Firewall_Grupo.objects.order_by('-id_firewall_grupo')[0] 
+                self.id_firewall_grupo= iUltimoRegistro.pk + 1
+            else:
+                self.id_firewall_grupo= 1
         super(Firewall_Grupo, self).save()

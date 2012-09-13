@@ -34,6 +34,10 @@ INSERT INTO tb_estado_da_versao(
             id_estado_da_versao, descricao)
     VALUES (7, 'Pendente');
 
+INSERT INTO tb_estado_da_versao(
+            id_estado_da_versao, descricao)
+    VALUES (8, 'Vencido');
+
 INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
     VALUES (1, 'Check-in');
@@ -82,9 +86,41 @@ INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
     VALUES (12, 'Login');
 
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (13, 'Cancelar Pendência');
+
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (14, 'Gerar Relatório');
+
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (15, 'Importar Documento(s)');
+
 INSERT INTO tb_tipo_de_indice(
             id_tipo_indice, descricao)
     VALUES (1, 'String');
+
+INSERT INTO tb_estado_da_pendencia(
+            id_estado_da_pendencia, descricao)
+    VALUES (1, 'Pendente');
+
+INSERT INTO tb_estado_da_pendencia(
+            id_estado_da_pendencia, descricao)
+    VALUES (2, 'Concluída');
+
+INSERT INTO tb_estado_da_pendencia(
+            id_estado_da_pendencia, descricao)
+    VALUES (3, 'Cancelada');
+
+INSERT INTO tb_tipo_de_pendencia(
+            id_tipo_de_pendencia, descricao)
+    VALUES (1, 'Aprovação');
+
+INSERT INTO tb_tipo_de_pendencia(
+            id_tipo_de_pendencia, descricao)
+    VALUES (2, 'Assinatura');
 
 INSERT INTO auth_group(
             id, name)
@@ -94,38 +130,4 @@ INSERT INTO auth_group(
             id, name)
     VALUES (2, 'Usuários');
 
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (1, 1, 32);
 
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (2, 1, 33);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (3, 1, 55);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (4, 1, 24);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (5, 1, 22);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (6, 1, 23);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (7, 1, 56);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (8, 1, 57);
-
-INSERT INTO auth_group_permissions(
-            id, group_id, permission_id)
-    VALUES (9, 1, 31);
