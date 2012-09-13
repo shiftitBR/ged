@@ -68,3 +68,11 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel verificar se imagem eh exportavel: ' + str(e))
             return False
+    
+    def deletaImagemTemporaria(self, vDiretorioImagem):
+        try:
+            os.remove(vDiretorioImagem)
+            return True
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
+            return False
