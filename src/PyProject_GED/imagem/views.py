@@ -28,13 +28,16 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
             iFile       = open(iArquivo,"r")
             response    = HttpResponse(iFile.read())
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExportar, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExportar, iUsuario.id, vRequest.session['IDEmpresa'])
             return response
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post relatorios: ' + str(e))
             return False
+        finally:
+            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExportar, 
+                                          iUsuario.id, vRequest.session['IDEmpresa'])
+            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExportar, 
+                                          iUsuario.id, vRequest.session['IDEmpresa'])
+            ImagemControle().deletaImagemTemporaria(iArquivo)
         
     return render_to_response(
         'exportar/tipo_exportar.html',
