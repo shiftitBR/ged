@@ -152,8 +152,8 @@ INSTALLED_APPS = (
     'chronograph',
 #    'scanner',
     'gerenciamento',
-    'smush_it',
-    'smooshy',
+#    'smush_it',
+#    'smooshy',
     'imagem',
     'relatorios',
 )

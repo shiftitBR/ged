@@ -31,6 +31,7 @@ cntEventoHistoricoLogin     = 12
 cntEventoHistoricoCancelarPendencia= 13
 cntEventoHistoricoRelatorio = 14
 cntEventoHistoricoImportar  = 15
+cntEventoHistoricoExportar  = 16
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -93,6 +94,7 @@ cntFuncaoAssociarNorma      = 11
 cntFuncaoEmail              = 12
 cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
+cntFuncaoExportar           = 15
 
 #Extencoes de Imagem
 cntExtencaoImagemJPG        = 1
