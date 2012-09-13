@@ -326,8 +326,6 @@ class Pendencia(models.Model):
                 self.criaPendencia(iVersaoAtual.usr_criador, iListaDestinatarios, iVersaoAtual, 
                                         iEtapa.descricao, iEtapa.tipo_de_pendencia, 
                                         iWorkflow, iEtapa)
-                Historico().salvaHistorico(iVersaoAtual.id_versao, constantes.cntEventoHistoricoEncaminhar, 
-                                       iVersaoAtual.usr_criador.id, vDocumento.empresa.id_empresa)
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia do workflow: ' + str(e))

@@ -29,6 +29,8 @@ cntEventoHistoricoEmail     = 10
 cntEventoHistoricoPublicar  = 11
 cntEventoHistoricoLogin     = 12
 cntEventoHistoricoCancelarPendencia= 13
+cntEventoHistoricoRelatorio = 14
+cntEventoHistoricoImportar  = 15
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -71,6 +73,10 @@ cntOCRExtencoesPDF          = ['.pdf',]
 #TipoUsuario
 cntTipoUsuarioSistema       = 1
 cntTipoUsuarioContato       = 2
+
+#TipoRelatorio
+cntTipoRelatorioAcessos     = 1
+cntTipoRelatorioUsuario     = 2
 
 #Funcoes
 cntFuncaoDownload           = 1

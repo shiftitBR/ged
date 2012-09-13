@@ -6,17 +6,18 @@ Created on Jul 18, 2012
 '''
 
 from django.db                          import models
+from django.db.models                   import get_model
 
-from autenticacao.models                import Empresa #@UnresolvedImport
-from autenticacao.models                import Usuario #@UnresolvedImport
-from seguranca.models                   import Pasta #@UnresolvedImport
-from multiuploader.models               import MultiuploaderImage #@UnresolvedImport
+from PyProject_GED.autenticacao.models  import Empresa 
+from PyProject_GED.autenticacao.models  import Usuario  
+from PyProject_GED.seguranca.models     import Pasta    
+from PyProject_GED.multiuploader.models import MultiuploaderImage
+from PyProject_GED.ocr.controle         import Controle as ControleOCR
+from PyProject_GED.envioemail.controle  import Controle as ControleEmail
+
 from objetos_auxiliares                 import Documento as DocumentoAuxiliar
 from objetos_auxiliares                 import Versoes as VersaoAuxiliar
 from controle                           import Controle as DocumentoControle
-from django.db.models                   import get_model
-from PyProject_GED.ocr.controle         import Controle as ControleOCR
-from PyProject_GED.envioemail.controle  import Controle as ControleEmail
 
 import datetime
 import logging
@@ -254,7 +255,7 @@ class Versao(models.Model):
         verbose_name_plural = 'Versões'
     
     def __unicode__(self):
-        return str(self.id_versao)
+        return '%s - %s'%(self.protocolo, self.documento.assunto)
     
     def save(self): 
         if self.id_versao == '' or self.id_versao == None:
