@@ -14,3 +14,11 @@
 - Django-Chronograph (pio install django-chronograph)
 - Reportlab (yum install python-reportlab)
 
+- Image Magick (yum install ImageMagick-devel)
+- PNGcrush (yum install pngcrush)
+- LibJPEG (yum install libjpeg-turbo-devel)
+- LibPNG (yum install libpng-devel)
+
+
+- Simple Json (pip install simplejson)
+- Smooshy (python setup install)
