@@ -10,9 +10,9 @@
 -------------------------------------------------- */
 body {
   position: relative;
-  padding-top: 90px;
+  padding-top: 40px; /* alterado de 90px para 40px */
   background-color: #f8f8f8;
-  background-image: url(../../img/bootstrap/grid-18px-masked.png);
+  /*background-image: url(../../img/bootstrap/grid-18px-masked.png);*/
   background-repeat: repeat-x;
   background-position: 0 40px;
 }
