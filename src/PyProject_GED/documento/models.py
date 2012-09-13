@@ -302,7 +302,7 @@ class Versao(models.Model):
             iListaDocumentosAuxiliar=[]
             iListaVersao = Versao.objects.filter(documento__empresa= vIDEmpresa).filter(
                                     documento__pasta = vIDPasta).filter(eh_versao_atual=True).exclude(
-                                    estado=constantes.cntEstadoVersaoExcluida).order_by('-data_criacao')
+                                    estado=constantes.cntEstadoVersaoExcluida).order_by('-id_versao')
             for i in range(len(iListaVersao)):    
                 iDocumento = self.obtemDocumentoAuxiliar(iListaVersao[i])
                 iListaDocumentosAuxiliar.append(iDocumento)
@@ -314,7 +314,7 @@ class Versao(models.Model):
     def obtemListaDeVersoesDoDocumento(self, vIDVersao):
         try: 
             iVersaoDoc  = Versao.objects.filter(id_versao= vIDVersao)[0]
-            iListaVersao= Versao.objects.filter(documento= iVersaoDoc.documento).order_by('versao')
+            iListaVersao= Versao.objects.filter(documento= iVersaoDoc.documento).order_by('id_versao')
             iLista      = []
             for i in range(len(iListaVersao)):
                 iVersao= iListaVersao[i]
