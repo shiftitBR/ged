@@ -87,3 +87,9 @@ cntFuncaoAssociarNorma      = 11
 cntFuncaoEmail              = 12
 cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
+
+#Extencoes de Imagem
+cntExtencaoImagemJPG        = 1
+cntExtencaoImagemPNG        = 2
+cntExtencaoImagemBMP        = 3
+cntExtencaoImagemTIF        = 4
