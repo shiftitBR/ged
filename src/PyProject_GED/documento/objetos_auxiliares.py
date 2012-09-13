@@ -27,6 +27,7 @@ class Documento():
         tipoVisualizacao=None
         caminhoVisualizar=None
         nomeArquivo=None
+        ehImagemExportavel=None
 
 class Versoes():
     idVersao=None

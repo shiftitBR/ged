@@ -97,6 +97,7 @@ cntFuncaoRelatorio          = 14
 cntFuncaoExportar           = 15
 
 #Extencoes de Imagem
+cntExtencaoImagemExportavel = ['.jpg', '.png', '.tif', '.bmp']
 cntExtencaoImagemJPG        = 1
 cntExtencaoImagemPNG        = 2
 cntExtencaoImagemBMP        = 3

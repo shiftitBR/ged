@@ -6,7 +6,7 @@ Created on Sep 13, 2012
 
 import logging
 from PIL import Image
-from PyProject_GED.documento.models import Versao
+from django.db.models             import get_model
 import os
 from PyProject_GED import constantes
 
@@ -23,7 +23,8 @@ class Controle(object):
     
     def converteExtencaoImagem(self, vIDVersao, iIDExtencao):
         try:
-            iDiretorioImagem= Versao().obtemCaminhoArquivo(vIDVersao)
+            mVersao= get_model('documento', 'Versao')
+            iDiretorioImagem= mVersao().obtemCaminhoArquivo(vIDVersao)
             if iIDExtencao == constantes.cntExtencaoImagemJPG:
                 iExtencao= 'jpg'
             elif iIDExtencao == constantes.cntExtencaoImagemPNG:
@@ -31,13 +32,39 @@ class Controle(object):
             elif iIDExtencao == constantes.cntExtencaoImagemBMP:
                 iExtencao= 'bmp'
             elif iIDExtencao == constantes.cntExtencaoImagemTIF:
-                iExtencao= 'tif'
-                
+                iExtencao= 'tif'    
             iDiretorioImagemSemExtencao= os.path.splitext(str(iDiretorioImagem))[0]
-            iDiretorioImagemNovo= '%s.%s' % (iDiretorioImagemSemExtencao, iExtencao)
-            im = Image.open(iDiretorioImagem)
-            im.save(iDiretorioImagemNovo) 
-            return True
+            iListaDiretorio= iDiretorioImagemSemExtencao.split('/')
+            iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
+            iPastaImagem= iDiretorioImagemSemExtencao[:len(iDiretorioImagemSemExtencao)-len(iNomeArquivo)]
+            iPastaTemporario= '%s/temp' % iPastaImagem[:len(iPastaImagem)-1]
+            self.criaPastaTemporaria(iPastaTemporario)
+            iDiretorioImagemNovo= '%s/%s.%s' % (iPastaTemporario, iNomeArquivo, iExtencao)
+            iImagem = Image.open(iDiretorioImagem)
+            iImagem.save(iDiretorioImagemNovo) 
+            return iDiretorioImagemNovo
         except Exception, e:
-            self.getLogger().error('Nao foi possivel criar pastas: ' + str(e))
+            self.getLogger().error('Nao foi possivel converter a imagem: ' + str(e))
+            return False
+    
+    def criaPastaTemporaria(self, vPastaTemporario):
+        try:
+            if not os.path.exists(vPastaTemporario):
+                os.system('mkdir %s' % vPastaTemporario)
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
+            return False
+    
+    def verificaSeImagemEhExportavel(self, vVersao):
+        try:
+            mVersao= get_model('documento', 'Versao')
+            iDiretorioImagem= mVersao().obtemCaminhoArquivo(vVersao.id_versao)
+            iExtencao= os.path.splitext(str(iDiretorioImagem))[1]
+            if iExtencao.lower() in constantes.cntExtencaoImagemExportavel:
+                iEhExportavel= True
+            else:
+                iEhExportavel= False
+            return iEhExportavel
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel verificar se imagem eh exportavel: ' + str(e))
             return False

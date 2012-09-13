@@ -120,7 +120,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                             iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         else:
                             iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/download/0/"><i class="icon-download-alt"></i>  Download</a></li>'
-                    if iEstado == constantes.cntEstadoVersaoDisponivel:
+                    if iListaDocumentos[i].ehImagemExportavel:
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/tipo_exportar/%(iIDVersao)s/"><i class="icon-arrow-up"></i>  Exportar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
                     if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
