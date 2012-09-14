@@ -156,6 +156,7 @@ INSTALLED_APPS = (
 #    'smooshy',
     'imagem',
     'relatorios',
+    'signature',
 )
 
 AUTHENTICATION_BACKENDS = (
