@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block conteudo %}
 
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> <!-- Glauco: o que isso faz? -->
 	<header class="jumbotron subhead" id="overview">
 	  <h1>TRACK-DOC</h1>
 	  <p class="lead">Gerenciamento Eletrônico de Documentos</p>
@@ -11,12 +11,14 @@
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true&language=pt-BR"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/googlemaps/mapas.js"></script> 
 	
-		<div class="row-fluid">
+	<div class="container-fluid">
+		<div class="row-fluid">	
 			<div class="span7 offset5">
 				<form class="well">
 					<div id="map_canvas" style="width: 620px; height: 400px;"></div>
 				</form>
 			</div>
 		</div>
+	</div>
 	
 {% endblock conteudo %}
