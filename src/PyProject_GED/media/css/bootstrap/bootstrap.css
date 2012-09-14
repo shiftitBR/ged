@@ -163,16 +163,16 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #333333;
-  background-color: #ffffff;
+  background-color: #f8f8f8;
 }
 
 a {
-  color: #0088cc;
+  color: #007abc;
   text-decoration: none;
 }
 
 a:hover {
-  color: #005580;
+  color: #0088d2;
   text-decoration: underline;
 }
 
@@ -637,7 +637,7 @@ h6 {
   font-weight: 600;
   text-transform: uppercase;
   line-height: 1;
-  color: inherit;
+  color: #aeaeae;
   text-rendering: optimizelegibility;
 }
 

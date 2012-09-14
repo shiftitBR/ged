@@ -37,6 +37,7 @@
 	      <li class=""><a href="javascript:getsupport('publicar')">Enviar Publicação</a></li>
 	    </ul>
 	   </div>
+	   
 	   <form name= "acao" id="formTabela" action="" method="post">{% csrf_token %}
 		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		{% if messages %}
