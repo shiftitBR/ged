@@ -585,8 +585,10 @@ p {
 
 .lead {
   margin-bottom: 20px;
+  font-family: 'Dosis', sans-serif;
+  color: #aeaeae;
   font-size: 21px;
-  font-weight: 200;
+  font-weight: 300;
   line-height: 30px;
 }
 

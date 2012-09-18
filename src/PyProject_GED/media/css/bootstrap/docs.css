@@ -133,6 +133,10 @@ hr.soften {
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
+  font-family: 'Dosis', sans-serif;
+  font-weight: 300;
+  font-size: 14pt;
+  text-transform: uppercase;  
 }
 .subnav .nav {
   margin-bottom: 0;
