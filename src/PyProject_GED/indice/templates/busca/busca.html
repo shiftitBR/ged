@@ -2,11 +2,13 @@
 {% load i18n %}
 {% block conteudo %}
 
-<center><h1>Buscar Documentos</h1></center>
 
 <div class="container">
-	
-	<form name= "acao" id="formTabela" class="form-inline" method="post"> {% csrf_token %}
+	<div class="row">
+		<h1>Buscar Documentos</h1>
+	</div>
+	<div class="row">
+		<form name= "acao" id="formTabela" class="form-inline" method="post"> {% csrf_token %}
 		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		<div class="well">
 		 	<p>	
@@ -167,6 +169,6 @@
 	  </div>
 	</div>
 </form>
-
+</div>
 
 {% endblock conteudo %}
