@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block conteudo %}
-
 <div class="container">
-	<div class="row">
-		<h1>Buscar Documentos</h1>
-	</div>
-	<div class="row">
+  <h1>Buscar Documentos</h1>
+</div>
+<div class="container">
+	
 	<form name= "acao" id="formTabela" class="form-inline" method="post"> {% csrf_token %}
 		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		<div class="well">
@@ -143,7 +142,6 @@
         {% endif %}
         </ul>
     </ul> 
-    </div>
 </div>
     
 <form class="well form-inline" method="post"> {% csrf_token %}
