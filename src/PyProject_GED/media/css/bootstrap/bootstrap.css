@@ -590,7 +590,7 @@ p {
   text-transform: uppercase;
   color: #aeaeae;
   font-size: 21px;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 30px;
 }
 
@@ -5779,3 +5779,10 @@ a.badge:hover {
 .affix {
   position: fixed;
 }
+
+/* classes personalizadas para o alinhamento */
+
+.espacamentovertical {
+	top: 20px;
+}
+
