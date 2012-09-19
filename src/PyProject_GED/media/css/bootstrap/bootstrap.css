@@ -5787,6 +5787,7 @@ a.badge:hover {
 }
 
 .centralizavert {
-	vertical-align: middle;
+	top: 50%;
+	margin-top: -18px;
 }
 
