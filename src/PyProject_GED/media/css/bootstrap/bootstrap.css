@@ -5790,3 +5790,10 @@ a.badge:hover {
 	margin-top: 10px;
 }
 
+.tipotabela {
+	font-family: 'Dosis', sans-serif;
+	font-size: 12pt;
+	font-weight: 500;
+	text-transform: uppercase;
+	color: #aeaeae;
+}
