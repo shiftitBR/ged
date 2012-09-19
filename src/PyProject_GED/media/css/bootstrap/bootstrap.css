@@ -5783,6 +5783,10 @@ a.badge:hover {
 /* classes personalizadas para o alinhamento */
 
 .espacamentovertical {
-	margin-top: 20px;
+	margin-top: 27px;
+}
+
+.centralizavert {
+	vertical-align: middle;
 }
 
