@@ -32,6 +32,7 @@ cntEventoHistoricoCancelarPendencia= 13
 cntEventoHistoricoRelatorio = 14
 cntEventoHistoricoImportar  = 15
 cntEventoHistoricoExportar  = 16
+cntEventoHistoricoAssinar   = 17
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1

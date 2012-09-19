@@ -63,6 +63,11 @@ def documentos(vRequest, vTitulo):
                         iAcao= 2
                     else:
                         messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
+                if 'assinar' in vRequest.POST['supporttype']:
+                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
+                        iAcao= 3
+                    else:
+                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
                 vRequest.session['ListaVersao']= iListaVersao
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
