@@ -76,10 +76,16 @@ class Controle(object):
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtemListaNomesUsuarios: ' + str(e))
     
-    def formataData(self, vDataString):
+    def formataData(self, vData):
         try:
-            iListaData= vDataString.split('/')
-            iData= datetime.datetime(int(iListaData[2]), int(iListaData[1]), int(iListaData[0]), 00, 00, 00)
+            if type(vData) == str:
+                iListaData= vData.split('/')
+                iData= datetime.datetime(int(iListaData[2]), int(iListaData[1]), int(iListaData[0]), 00, 00, 00)
+            else:
+                if vData not in (None, ''):
+                    iData= vData.strftime("%d/%m/%Y")
+                else:
+                    iData= vData
             return iData
         except Exception, e:
             self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))

@@ -140,8 +140,8 @@ class Documento(models.Model):
             iDocumento.dscTipoDoc       = iVersao.documento.tipo_documento.descricao
             iDocumento.nomeResponsavel  = iNomeResponsavel
             iDocumento.nomePasta        = iVersao.documento.pasta.nome
-            iDocumento.dataValidade     = iVersao.documento.data_validade.strftime("%d/%m/%Y")
-            iDocumento.dataDescarte     = iVersao.documento.data_descarte.strftime("%d/%m/%Y")
+            iDocumento.dataValidade     = DocumentoControle().formataData(iVersao.documento.data_validade)
+            iDocumento.dataDescarte     = DocumentoControle().formataData(iVersao.documento.data_descarte)
             iDocumento.ehPublico        = iVersao.documento.eh_publico
             iDocumento.totalDownloads   = mHistorico().calculaQuantidadeDeDownloadsDoDocumento(iVersao)
             iDocumento.totalVisualizacao= mHistorico().calculaQuantidadeDeVisualizacoesDoDocumento(iVersao)
@@ -281,9 +281,9 @@ class Versao(models.Model):
         iDocumento.publico = vVersao.documento.eh_publico
         iDocumento.responsavel = vVersao.documento.usr_responsavel
         iDocumento.id_responsavel = vVersao.documento.usr_responsavel.id
-        iDocumento.descarte = vVersao.documento.data_descarte.strftime("%d/%m/%Y")
-        iDocumento.validade = vVersao.documento.data_validade.strftime("%d/%m/%Y")
-        iDocumento.data_criacao = vVersao.data_criacao.strftime("%d/%m/%Y")
+        iDocumento.descarte = DocumentoControle().formataData(vVersao.documento.data_descarte)
+        iDocumento.validade = DocumentoControle().formataData(vVersao.documento.data_validade)
+        iDocumento.data_criacao = DocumentoControle().formataData(vVersao.data_criacao)
         iDocumento.num_versao = vVersao.versao
         iDocumento.descricao = vVersao.dsc_modificacao
         iDocumento.criador = Usuario().obterNomeUsuario(vVersao.usr_criador.id)
@@ -342,7 +342,7 @@ class Versao(models.Model):
                 iVersaoAux.idEstado        = iVersao.estado.id_estado_da_versao
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
-                iVersaoAux.dataCriacao     = iVersao.data_criacao.strftime("%d/%m/%Y")
+                iVersaoAux.dataCriacao     = DocumentoControle().formataData(iVersao.data_criacao)
                 iVersaoAux.eh_versao_atual = iVersao.eh_versao_atual
                 iLista.append(iVersaoAux)
             return iLista
