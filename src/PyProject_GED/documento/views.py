@@ -97,7 +97,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                     if iListaDocumentos[i].assinado:
                         iAssinado = '<i class="icon-pencil">'
                     else:
-                        iAssinado = ''
+                        iAssinado = ' '
                     iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
                     iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><center>%(iAssinado)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 

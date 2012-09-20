@@ -110,3 +110,9 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel comprimi Arquivo Assinato: ' + str(e))
             return False
         
+    def obtemNomeZipado(self, vCaminhoArquivo):
+        iFileZip        = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
+        iListaArquivo   = iFileZip.split('/')
+        iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
+        print iNomeArquivo
+        return iNomeArquivo
