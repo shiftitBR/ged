@@ -85,7 +85,7 @@
 <div class="accordion-group">
     <div class="accordion-heading">
       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
-        Indices
+        Índices personalizados
       </a>
     </div>
     {%endif%}
@@ -93,9 +93,9 @@
       <div class="accordion-inner">
 	{% for indice in iListaIndices %}
 			<div class="control-group">
-			<label class="control-label" for="input01">{{indice.descricao}}</label>
+			<!-- <label class="control-label" for="input01">{{indice.descricao}}</label> -->
 				<div class="controls">
-			  	<input type="text" class="input-xlarge" id="assunto" name='indice_{{indice.id_indice}}'>
+			  	<input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
 				</div>
 			</div>
 			{% empty %}
