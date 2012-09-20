@@ -84,7 +84,6 @@ class Test(TestCase):
         self.assertEquals('Pendente', Versao.objects.filter(id_versao= 1)[0].estado.descricao)
     
     def testCriaPendenciasDoWorkflow(self):
-#        iWorkflow= Workflow.objects.filter(id_workflow= 1)[0]
         iDocumento= Documento.objects.all()[0]
         iCriaPendencias= Pendencia().criaPendenciasDoWorkflow(iDocumento)
         self.assertEquals(True, iCriaPendencias)
