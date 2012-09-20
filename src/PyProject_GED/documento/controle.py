@@ -5,6 +5,8 @@ from django.conf                    import settings
 import logging
 import datetime
 import constantes #@UnresolvedImport
+import zipfile
+import os
 
 class Controle(object):
     
@@ -91,3 +93,26 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))
             return False
         
+    def comprimiArquivoAssinado(self, vCaminhoArquivo):
+        try:
+            iArquivoP7s = os.path.splitext(str(vCaminhoArquivo))[0] + '.p7s'
+            iFileZip    = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
+            iZipado     = zipfile.ZipFile(iFileZip, mode='a', compression=zipfile.ZIP_DEFLATED)
+            iListaArquivo   = vCaminhoArquivo.split('/')
+            iListaArquivoP7s= iArquivoP7s.split('/')
+            iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
+            iNomeArquivoP7s = iListaArquivoP7s[len(iListaArquivoP7s)-1:][0]
+            iZipado.write(vCaminhoArquivo, arcname= iNomeArquivo)
+            iZipado.write(iArquivoP7s, arcname= iNomeArquivoP7s)
+            iZipado.close()
+            return iFileZip
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel comprimi Arquivo Assinato: ' + str(e))
+            return False
+        
+    def obtemNomeZipado(self, vCaminhoArquivo):
+        iFileZip        = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
+        iListaArquivo   = iFileZip.split('/')
+        iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
+        print iNomeArquivo
+        return iNomeArquivo

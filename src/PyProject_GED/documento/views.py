@@ -97,7 +97,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                     if iListaDocumentos[i].assinado:
                         iAssinado = '<i class="icon-pencil">'
                     else:
-                        iAssinado = ''
+                        iAssinado = ' '
                     iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
                     iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><center>%(iAssinado)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
@@ -425,26 +425,29 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
             vIDFuncao = 0
-            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-            iFile = open(iArquivo,"r")
-            response = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            iArquivo = str(Versao().obtemCaminhoArquivo(vIDVersao))
+            if iVersao.eh_assinado:
+                iArquivo= DocumentoControle().comprimiArquivoAssinado(iArquivo)
+            else:
+                iArquivo= iArquivo
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDownload, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iPossuiPermissao= True
-            return response
+            iFile = open(iArquivo,"r")
+            iResponseP7s = HttpResponse(iFile.read())
+            iResponseP7s["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            return iResponseP7s
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
             return False
-
     return render_to_response(
         'acao/download.html',
         locals(),

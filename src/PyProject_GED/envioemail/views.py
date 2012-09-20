@@ -11,6 +11,9 @@ from PyProject_GED                      import oControle, constantes
 from objetos_auxiliares                 import Destinatario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento, Publicacao_Usuario
+from PyProject_GED.documento.controle   import Controle as DocumentoControle
+
+import os
 
 def email(vRequest, vTitulo):
     iUser = vRequest.user
@@ -48,8 +51,14 @@ def email(vRequest, vTitulo):
                             email.to.append(Usuario().obtemUsuarioPeloID(iDestinatarios[i]).email)
                         for i in range(len(iVersoes)):
                             iArquivo= iVersoes[i].upload
-                            iFile = open(str(iArquivo.image),"rb")
-                            email.attach(filename = iArquivo.filename, content = iFile.read())
+                            if iVersoes[i].eh_assinado:
+                                iFileAnexo  = DocumentoControle().comprimiArquivoAssinado(str(iArquivo.image))
+                                iFile       = open(str(iFileAnexo),"rb")
+                                email.attach(filename = DocumentoControle().obtemNomeZipado(str(iArquivo.image)), content = iFile.read())
+                            else:
+                                iFileAnexo = iArquivo.image
+                                iFile = open(str(iFileAnexo),"rb")
+                                email.attach(filename = iArquivo.filename, content = iFile.read())
                             iFile.close()
                         email.send()
                         for i in range(len(iVersoes)):
