@@ -49,20 +49,45 @@
 		<div class="well wellbranco">
 			<div class="container-fluid">
 		  		<div class="row-fluid">
-		  			<div class="span1"> </div>
-		    		<div class="span5">
+		  			<!-- retirado <div class="span1"> </div>  e adicionado offset 1 na coluna abaixo-->
+		    		<div class="span5 offset1">
 		    			
-						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
-						<p>{{form.usr_responsavel}}</p>
-						<p>{{form.tipo_documento}}</p>
-						<p>{{form.data_validade}}</p>
-		              	<p>{{form.data_descarte}}</p>
+    <div class="accordion" id="accordion2">
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+        Inserir informações básicas (obrigatórias)
+      </a>
+    </div>
+    <div id="collapseOne" class="accordion-body collapse in">
+      <div class="accordion-inner">
+		<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+		<p>{{form.usr_responsavel}}</p>
+		<p>{{form.tipo_documento}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+        Inserir informações avançadas (opcionais)
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+		<p>{{form.data_validade}}</p>
+       	<p>{{form.data_descarte}}</p>
+    	<label><b>Associar Normas:</b></label>
+      	<p>{{form.norma}}</p>
+      </div>
+    </div>
+  </div>
+</div>
 					  
 				    </div>
 				    <div class="span6">
-				    	<label><b>Associar Normas:</b></label>
-		              	<p>{{form.norma}}</p>
-		              	
+				    	<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				    	
 				    </div>
 				 </div>
 			</div>
