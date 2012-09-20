@@ -140,8 +140,8 @@ class Documento(models.Model):
             iDocumento.dscTipoDoc       = iVersao.documento.tipo_documento.descricao
             iDocumento.nomeResponsavel  = iNomeResponsavel
             iDocumento.nomePasta        = iVersao.documento.pasta.nome
-            iDocumento.dataValidade     = iVersao.documento.data_validade
-            iDocumento.dataDescarte     = iVersao.documento.data_descarte
+            iDocumento.dataValidade     = iVersao.documento.data_validade.strftime("%d/%m/%Y")
+            iDocumento.dataDescarte     = iVersao.documento.data_descarte.strftime("%d/%m/%Y")
             iDocumento.ehPublico        = iVersao.documento.eh_publico
             iDocumento.totalDownloads   = mHistorico().calculaQuantidadeDeDownloadsDoDocumento(iVersao)
             iDocumento.totalVisualizacao= mHistorico().calculaQuantidadeDeVisualizacoesDoDocumento(iVersao)
@@ -272,7 +272,7 @@ class Versao(models.Model):
         iDocumento = DocumentoAuxiliar()
         iDocumento.id = vVersao.documento.id_documento
         iDocumento.id_versao = vVersao.id_versao
-        iDocumento.assunto = vVersao.documento.assunto
+        iDocumento.assunto = vVersao.documento.assunto.encode('utf-8')
         iDocumento.pasta = vVersao.documento.pasta
         iDocumento.id_pasta = vVersao.documento.pasta.id_pasta
         iDocumento.tipo_documento = vVersao.documento.tipo_documento
@@ -281,9 +281,9 @@ class Versao(models.Model):
         iDocumento.publico = vVersao.documento.eh_publico
         iDocumento.responsavel = vVersao.documento.usr_responsavel
         iDocumento.id_responsavel = vVersao.documento.usr_responsavel.id
-        iDocumento.descarte = vVersao.documento.data_descarte
-        iDocumento.validade = vVersao.documento.data_validade
-        iDocumento.data_criacao = vVersao.data_criacao
+        iDocumento.descarte = vVersao.documento.data_descarte.strftime("%d/%m/%Y")
+        iDocumento.validade = vVersao.documento.data_validade.strftime("%d/%m/%Y")
+        iDocumento.data_criacao = vVersao.data_criacao.strftime("%d/%m/%Y")
         iDocumento.num_versao = vVersao.versao
         iDocumento.descricao = vVersao.dsc_modificacao
         iDocumento.criador = Usuario().obterNomeUsuario(vVersao.usr_criador.id)
@@ -313,6 +313,16 @@ class Versao(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
     
+    def sinalizaAssinado(self, vIDVersao):
+        try:
+            iVersao  = Versao.objects.filter(id_versao= vIDVersao)[0]
+            iVersao.eh_assinado = True
+            iVersao.save()
+            return iVersao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel sinaliza Assinado: ' + str(e))
+            return False
+    
     def obtemListaDeVersoesDoDocumento(self, vIDVersao):
         try: 
             iVersaoDoc  = Versao.objects.filter(id_versao= vIDVersao)[0]
@@ -332,7 +342,7 @@ class Versao(models.Model):
                 iVersaoAux.idEstado        = iVersao.estado.id_estado_da_versao
                 iVersaoAux.protocolo       = iVersao.protocolo
                 iVersaoAux.ehAssinado      = iVersao.eh_assinado
-                iVersaoAux.dataCriacao     = iVersao.data_criacao
+                iVersaoAux.dataCriacao     = iVersao.data_criacao.strftime("%d/%m/%Y")
                 iVersaoAux.eh_versao_atual = iVersao.eh_versao_atual
                 iLista.append(iVersaoAux)
             return iLista

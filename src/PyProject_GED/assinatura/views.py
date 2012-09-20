@@ -38,12 +38,13 @@ def assinar(vRequest, vTitulo):
                     if iExt == 'pfx':
                         iAssinou = AssinaturaControle().assinarPFX(iCaminhoCertificado, iSenha, iCaminhoArquivo)
                     if iAssinou:
+                        Versao().sinalizaAssinado(iVersoes[i].id_versao)
                         Historico().salvaHistorico(iVersoes[i].id_versao, constantes.cntEventoHistoricoAssinar, 
                                                iUsuario.id, vRequest.session['IDEmpresa'])
                         Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAssinar, iUsuario.id, 
                                                       vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
                     else:
-                        messages.warning(vRequest, 'Ocorreu um problema ao assinar ')
+                        messages.warning(vRequest, 'Ocorreu um erro ao tentar assinar o documento: ' + iVersoes[i].assunto )
                 iCertificado.arquivo.delete()
                 iCertificado.delete()
         except Exception, e:

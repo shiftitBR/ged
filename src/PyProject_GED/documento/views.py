@@ -92,9 +92,13 @@ def tabelaDocumentos(vRequest, vTitulo):
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):  
-                    iEstado = iListaDocumentos[i].id_estado  
+                    iEstado = iListaDocumentos[i].id_estado 
+                    if iListaDocumentos[i].assinado:
+                        iAssinado = '<i class="icon-pencil">'
+                    else:
+                        iAssinado = ''
                     iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
-                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td>' % (
+                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><center>%(iAssinado)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
                                'iProtocolo': str(iListaDocumentos[i].protocolo), 
@@ -102,7 +106,8 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iTipo': str(iListaDocumentos[i].tipo_documento), 
                                'iEstado': str(iListaDocumentos[i].estado), 
                                'iUsuario': str(iListaDocumentos[i].criador), 
-                               'iData': str(iListaDocumentos[i].data_criacao)})
+                               'iData': str(iListaDocumentos[i].data_criacao),
+                               'iAssinado': str(iAssinado)})
                     
                     iLinha= iLinha + '<div class="btn-group">'
                     if iEstado == constantes.cntEstadoVersaoExcluida:
