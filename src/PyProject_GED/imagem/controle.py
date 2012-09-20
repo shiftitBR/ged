@@ -5,10 +5,12 @@ Created on Sep 13, 2012
 '''
 
 import logging
-from PIL import Image
-from django.db.models             import get_model
 import os
-from PyProject_GED import constantes
+
+from PIL                            import Image
+from django.db.models               import get_model
+from PyProject_GED                  import constantes
+from django.conf                    import settings
 
 
 class Controle(object):
@@ -75,4 +77,17 @@ class Controle(object):
             return True
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
+            return False
+    
+    def comprimeImagem(self, vVersao):
+        try:
+            mVersao= get_model('documento', 'Versao')
+            iCaminhoArquivo= mVersao().obtemCaminhoArquivo(vVersao.id_versao)
+            iExtencao = os.path.splitext(str(iCaminhoArquivo))[1]
+            if iExtencao in constantes.cntExtencaoImagemComprimivel:
+                iSmush= '%s/imagem/smush/smush.py' % settings.PROJECT_ROOT_PATH
+                os.system('python %s --quiet %s' % (iSmush, iCaminhoArquivo))
+            return True
+        except Exception, e:
+            self.getLogger().error('PyProject_GED.controle').error('Nao foi possivel comprimir imagens: ' + str(e))
             return False

@@ -78,7 +78,11 @@ class Test(TestCase):
         iDeleta= ControleImagem().deletaImagemTemporaria(iDiretorio)
         self.assertEquals(True, iDeleta)
 
-
+    def testComprimeJPG(self):
+        iVersao= Versao.objects.filter(id_versao= 2)[0]
+        iComprimiu= ControleImagem().comprimeImagem(iVersao)
+        self.assertEquals(True, iComprimiu)
+        
 #-----------------------------------------------------MOKS---------------------------------------------------  
     
     def mokarEmpresa(self):
