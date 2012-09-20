@@ -3,18 +3,15 @@
 {% block conteudo %}
 
 	<div class="container-fluid">
-		<br><br><br><br><br>
 		<div class="row-fluid">
-			<div class="span2">
-		    </div>
-		    <div class="span8">
-		    	<center>
-			    	<header class="jumbotron subhead" id="overview">
-					  <h1><strong>Entrar</strong></h1>
+		    <div class="span4 offset4">
+		    	<!-- retirada a linha <center> e centralizando no css (ainda não realizado) -->
+			    	<header id="overview"> <!-- retirada a classe "jumbotron subhead" da tag head -->
+					  <h1>Entrar</h1>
 					  <p class="lead">Efetuar Login no Sistema</p>
 					</header>
 					
-					<form class="well form-inline"method="post" action="/login/">{% csrf_token %}
+					<form method="post" action="/login/">{% csrf_token %} <!-- retirada a classe class="well form-inline" da tag form -->
 						{% if form.errors %}
 								<script language="JavaScript">
 								       self.location="{% url login_error %}";
@@ -35,10 +32,8 @@
 						</ul>
 					</div>
 					{% endif %}
-				</center>
+				<!-- </center> -->
 			</div>
-			<div class="span2">
-		    </div>
 		</div>
 		<br><br><br><br><br>
 	</div>
