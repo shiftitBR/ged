@@ -395,10 +395,7 @@ class Test(TestCase):
         self.assertEquals(1, len(iLista))
         
         iLista= Versao().buscaDocumentos(iIDEmpresa, vAssunto=iAssunto3, vProtocolo= iProtocolo3)
-        print iLista[0].id_versao
         self.assertEquals(1, len(iLista))
-        
-        
     
     def testCriarVersao(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]

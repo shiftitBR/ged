@@ -12,15 +12,13 @@
 
 <body>
 	<div class="container">
-  		<center>
 		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Importar Documento</strong></h2>
+		  <h2>Importar Documento</h2>
 		</header>
-		</center>
 	</div>	
 	
 	{% if form.errors %}
-		<div class="well">
+		<div class="well well-small wellbranco">
 			<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
 			{% for field in form %}
 		    	{{ field.errors }}
@@ -39,7 +37,7 @@
 	{% endif %}
 	
     {% if iPossuiPermissao %}
-    <div class="well">
+    <div class="well well-small">
 	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 			<div class="container">
 				{% load multiuploader %}
@@ -48,67 +46,83 @@
 		</form>
 	</div>
 	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
-		<div class="well">
+		<div class="well wellbranco well-small">
 			<div class="container-fluid">
 		  		<div class="row-fluid">
-		  			<div class="span1"> </div>
-		    		<div class="span5">
+		    		<div class="span6">
 		    			
-						<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
-						<p>{{form.usr_responsavel}}</p>
-						<p>{{form.tipo_documento}}</p>
-						<p>{{form.data_validade}}</p>
-		              	<p>{{form.data_descarte}}</p>
+    <div class="accordion" id="accordion2">
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+        <i class="icon-circle-arrow-down"></i> Inserir informações básicas (obrigatórias)
+      </a>
+    </div>
+    <div id="collapseOne" class="accordion-body collapse in">
+      <div class="accordion-inner">
+		<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+		<p>{{form.usr_responsavel}}</p>
+		<p>{{form.tipo_documento}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 					  
 				    </div>
 				    <div class="span6">
-				    	<label><b>Associar Normas:</b></label>
-		              	<p>{{form.norma}}</p>
-		              	
+				    	
+				    	<div class="accordion" id="accordion3">
+ <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseTwo">
+        <i class="icon-circle-arrow-down"></i> Inserir informações avançadas (opcionais)
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+		<p>{{form.data_validade}}</p>
+       	<p>{{form.data_descarte}}</p>
+    	<label><b>Associar Normas:</b></label>
+      	<p>{{form.norma}}</p>
+      </div>
+    </div>
+  </div>
+{%if iTamListaIndices > 0%}
+<div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+        <span class="add-on"><i class="icon-circle-arrow-down"></i></span> Índices personalizados
+      </a>
+    </div>
+    {%endif%}
+    <div id="collapseThree" class="accordion-body collapse">
+      <div class="accordion-inner">
+	{% for indice in iListaIndices %}
+			<div class="control-group">
+			<!-- <label class="control-label" for="input01">{{indice.descricao}}</label> -->
+				<div class="controls">
+			  	<input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+				</div>
+			</div>
+			{% empty %}
+			{% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+</div>
+				    	
+				    	<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+				    	<div class="form-actions" style="float: right;">
+							<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Importar Documento</button>
+							<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
+						</div>
 				    </div>
 				 </div>
 			</div>
-			<div class="container">
-			<center>
-				<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
-			</center>
-			<br>
-			<p>(*) Campos Obrigatórios</p>
-			</div>
 		</div>
-			
-		<div class="container">
-			{%if iTamListaIndices > 0%}
-		    <center>
-				<div class="page-header">
-					<h2><strong>Índices</strong></h2>
-				</div>
-			</center>
-			{%endif%}
-			
-			{% for indice in iListaIndices %}
-			  
-			<div class="control-group">
-				<label class="control-label" for="input01">{{indice.descricao}}</label>
-				<div class="controls">
-					<input type="text" class="input-xlarge" id="assunto" name='indice_{{indice.id_indice}}'>
-				</div>
-			</div>
-			  
-			{% empty %}
-			{% endfor %}
-		</div>
-	  		  
-		<div class="container">
-			<div class="form-actions">
-				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Importar Documento</button>
-				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
-			</div>
-		</div>
-	
-	</form>   
-	{% endif %}
-	  
+</form>
 </body>
 
 </html>
