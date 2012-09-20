@@ -18,7 +18,4 @@
 - PNGcrush (yum install pngcrush)
 - LibJPEG (yum install libjpeg-turbo-devel)
 - LibPNG (yum install libpng-devel)
-
-
-- Simple Json (pip install simplejson)
-- Smooshy (python setup install)
+- Chilkat (copiar conteudo da pasta componentes/chilkat para a site-packages)

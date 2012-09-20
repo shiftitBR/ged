@@ -3,22 +3,24 @@ from fabric.api import local, settings, abort, run, cd, env
 from fabric.contrib.console import confirm
 
 import datetime
-import xmlrpclib
 
 env.hosts = ['shift@shift.webfactional.com']
 
 
 def roda_teste():
     with settings(warn_only=True):
-        result1 = local('python ./manage.py test autenticacao', capture=True)
-        result2 = local('python ./manage.py test documento', capture=True)
-        result3 = local('python ./manage.py test historico', capture=True)
-        result4 = local('python ./manage.py test indice', capture=True)
-        result5 = local('python ./manage.py test seguranca', capture=True)
-        result6 = local('python ./manage.py test ocr', capture=True)
-        result7 = local('python ./manage.py test workflow', capture=True)
+        result01 = local('python ./manage.py test autenticacao', capture=True)
+        result02 = local('python ./manage.py test documento', capture=True)
+        result03 = local('python ./manage.py test historico', capture=True)
+        result04 = local('python ./manage.py test indice', capture=True)
+        result05 = local('python ./manage.py test seguranca', capture=True)
+        result06 = local('python ./manage.py test ocr', capture=True)
+        result07 = local('python ./manage.py test workflow', capture=True)
+        result08 = local('python ./manage.py test imagem', capture=True)
+        result09 = local('python ./manage.py test assinatura', capture=True)
+        result10 = local('python ./manage.py test envioemail', capture=True)
         
-    if (result1.failed or result2.failed or result3.failed  or result4.failed  or result5.failed or result6.failed or result7.failed) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
+    if (result01.failed or result02.failed or result03.failed  or result04.failed  or result05.failed or result06.failed or result07.failed or result08.failed or result09.failed or result10.failed) and not confirm("O teste FALHOU! Continuar mesmo assim?"):
         abort("Abortando...")
 
 def roda_teste_remoto(vDiretorio):
