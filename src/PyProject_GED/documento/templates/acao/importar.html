@@ -18,7 +18,7 @@
 	</div>	
 	
 	{% if form.errors %}
-		<div class="well wellsmall wellbranco">
+		<div class="well well-small wellbranco">
 			<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
 			{% for field in form %}
 		    	{{ field.errors }}
@@ -37,7 +37,7 @@
 	{% endif %}
 	
     {% if iPossuiPermissao %}
-    <div class="well wellsmall">
+    <div class="well well-small">
 	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 			<div class="container">
 				{% load multiuploader %}
@@ -46,7 +46,7 @@
 		</form>
 	</div>
 	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
-		<div class="well wellbranco wellsmall">
+		<div class="well wellbranco well-small">
 			<div class="container-fluid">
 		  		<div class="row-fluid">
 		    		<div class="span6">
