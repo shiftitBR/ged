@@ -119,31 +119,6 @@
 			</div>
 		</div>
 			
-		<div class="container">
-			{%if iTamListaIndices > 0%}
-		    <center>
-				<div class="page-header">
-					<h2><strong>Índices</strong></h2>
-				</div>
-			</center>
-			{%endif%}
-			
-			{% for indice in iListaIndices %}
-			  
-			<div class="control-group">
-				<label class="control-label" for="input01">{{indice.descricao}}</label>
-				<div class="controls">
-					<input type="text" class="input-xlarge" id="assunto" name='indice_{{indice.id_indice}}'>
-				</div>
-			</div>
-			  
-			{% empty %}
-			{% endfor %}
-		</div>
-	
-	</form>   
-	{% endif %}
-	  
 </body>
 
 </html>
