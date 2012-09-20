@@ -61,6 +61,7 @@
 		    <th><center>Criador</center></th>
 		    <th><center>Versão</center></th>
 		    <th><center>Criado em</center></th>
+		    <th><center>Ass.</center></th>
 		    <th><center>Ação</center></th>
 		  </tr>
 		</thead>
@@ -80,6 +81,11 @@
 		    <td>{{documento.criador}}</td>
 		    <td><center>{{documento.num_versao}}</center></td>
 		    <td><center>{{documento.data_criacao}}</center></td>
+		    {% if documento.assinado %}
+		    <td><center><i class="icon-pencil"></center></td>
+		    {% else %}
+		    <td> </td>
+		    {% endif %}
 		    <td>
 	            <div class="btn-group">   
 	            	{% if documento.id_estado == 5 %}
