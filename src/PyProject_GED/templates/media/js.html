@@ -78,3 +78,17 @@ $("form[data-fancy=true]").live('submit',function(){
 </script>
 {% endif %}
 
+{% if iAcao == 3 %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $.fancybox({
+	            'autoScale': true,
+	            'transitionIn': 'fade',
+	            'transitionOut': 'fade',
+	            'type': 'iframe',
+	            'href': '/assinar/'
+	        });
+	});
+</script>
+{% endif %}
+

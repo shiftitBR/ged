@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 '''
-Created on Sep 14, 2012
+Created on Jul 19, 2012
 
-@author: spengler
+@author: Shift IT | wwww.shiftit.com.br
 '''
 
 from django.test                        import TestCase
@@ -25,38 +25,23 @@ class Test(TestCase):
     def testAssinaturaPFX(self):
         print '>>>>>>>>>>>>>>>>>>>>>>> testAssinaturaPFX'
         cert = chilkat.CkCert()
-        #  Load the cert from a PEM file;
         cert.LoadPfxFile("/home/diego/Público/certificados/sample.pfx", 'sample')
-
-        #  Use Chilkat Crypt (a non-freeware component) to create
-        #  a digital signature using the certificate w/ private key:
         crypt = chilkat.CkCrypt2()
-        
-        #  Any string argument automatically begins the 30-day trial.
         success = crypt.UnlockComponent("30-day trial")
         if (success != True):
             print crypt.lastErrorText()
             sys.exit()
-        
-        #  Tell the crypt component to use this cert.
         crypt.SetSigningCert(cert)
-        
-        #  A PKCS7 signature for any type of file content can be created:
         success = crypt.CreateP7S("/home/diego/Público/teste_assinar.odt","/home/diego/Público/teste_assinar.p7s")
         if (success == False):
             print crypt.lastErrorText()
             sys.exit()
-        
         print crypt.lastErrorText()
-        
-        #  Verify and restore the original file:
         crypt.SetVerifyCert(cert)
-        
         success = crypt.VerifyP7S("/home/diego/Público/teste_assinar.odt","/home/diego/Público/teste_assinar.p7s")
         if (success == False):
             print crypt.lastErrorText()
             sys.exit()
-        
         self.assertEquals(success, True)
         
     def testAssinaturaCRT(self):
