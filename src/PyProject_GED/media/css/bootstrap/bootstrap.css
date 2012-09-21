@@ -5804,3 +5804,7 @@ a.badge:hover {
 .wellbranco {
 	background-color: white;
 }
+
+.resetamargin {
+	margin: 0px 0px 0px 0px;
+}
