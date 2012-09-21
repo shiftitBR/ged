@@ -152,7 +152,9 @@ INSTALLED_APPS = (
     'chronograph',
 #    'scanner',
     'gerenciamento',
+    'imagem',
     'relatorios',
+    'assinatura',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -194,5 +196,7 @@ EMAIL_SUBJECT_PREFIX = '[FreelaTI.com]'
 MULTI_FILE_DELETE_URL = 'multi_delete'
 MULTI_IMAGE_URL = 'multi_image'
 MULTI_IMAGES_FOLDER = 'documentos'
+
+DATE_INPUT_FORMATS = ('%d-%m-%Y')
 
 

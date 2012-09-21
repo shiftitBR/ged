@@ -4,17 +4,23 @@ from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.http                        import HttpResponseRedirect
 from django.http                        import HttpResponse
+from django.contrib                     import messages
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario, Empresa, Tipo_de_Usuario
 from PyProject_GED.relatorios.generators.pdf import PDFGenerator
 from PyProject_GED.relatorios.relatorios import ultimosAcessos, estadoUsuarios
-from PyProject_GED.historico.models import Log_Usuario
+from PyProject_GED.historico.models     import Log_Usuario
+from PyProject_GED.seguranca.models     import Funcao_Grupo
 
 @login_required     
 def relatorios(vRequest, vTitulo, vIDVersao=None):
     
     iUsuario= Usuario().obtemUsuario(vRequest.user)
+    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoRelatorio):
+        iPossuiPermissao= True
+    else:
+        messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
         
     if vRequest.POST:
         try :

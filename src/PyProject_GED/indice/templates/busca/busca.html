@@ -61,6 +61,7 @@
 		    <th><center>Criador</center></th>
 		    <th><center>Versão</center></th>
 		    <th><center>Criado em</center></th>
+		    <th><center>Ass.</center></th>
 		    <th><center>Ação</center></th>
 		  </tr>
 		</thead>
@@ -80,6 +81,11 @@
 		    <td>{{documento.criador}}</td>
 		    <td><center>{{documento.num_versao}}</center></td>
 		    <td><center>{{documento.data_criacao}}</center></td>
+		    {% if documento.assinado %}
+		    <td><center><i class="icon-pencil"></center></td>
+		    {% else %}
+		    <td> </td>
+		    {% endif %}
 		    <td>
 	            <div class="btn-group">   
 	            	{% if documento.id_estado == 5 %}
@@ -100,6 +106,9 @@
 	            		{% if documento.tipoVisualizacao == 1 or documento.tipoVisualizacao == 2 %}
 	            		<li><a href="/download/{{documento.id_versao}}/"><i class="icon-download-alt"></i>  Download</a></li>
 	            		{% endif %}
+	            		{% if documento.ehImagemExportavel %}
+	            		<li><a class="fancybox fancybox.iframe" href="/tipo_exportar/{{documento.id_versao}}/"><i class="icon-arrow-up"></i>  Exportar</a></li>
+		            	{% endif %}
 		            	{% if documento.id_estado == 7 %}
 		            	<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
 		            	{% endif %}

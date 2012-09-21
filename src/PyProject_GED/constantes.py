@@ -31,6 +31,8 @@ cntEventoHistoricoLogin     = 12
 cntEventoHistoricoCancelarPendencia= 13
 cntEventoHistoricoRelatorio = 14
 cntEventoHistoricoImportar  = 15
+cntEventoHistoricoExportar  = 16
+cntEventoHistoricoAssinar   = 17
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -93,3 +95,14 @@ cntFuncaoAssociarNorma      = 11
 cntFuncaoEmail              = 12
 cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
+cntFuncaoExportar           = 15
+
+#Extencoes de Imagem
+cntExtencaoImagemExportavel = ['.jpg', '.png', '.tif', '.bmp']
+cntExtencaoImagemJPG        = 1
+cntExtencaoImagemPNG        = 2
+cntExtencaoImagemBMP        = 3
+cntExtencaoImagemTIF        = 4
+
+#Extencoes Comprimiveis
+cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']

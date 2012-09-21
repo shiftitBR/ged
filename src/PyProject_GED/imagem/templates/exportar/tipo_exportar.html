@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+<div class="container">
+  		<center>
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Exportar Imagem</strong></h2>
+		  <p class="lead">Selecione a extensão desejada</p>
+		</header>
+		</center>
+		
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+		
+		{% if iPossuiPermissao %}
+		<div class="container-fluid">
+		  <div class="row-fluid">
+		    <div class="span2">
+		      <!--Sidebar content-->
+		    </div>
+		    <div class="span8">
+			    <form class="form-horizontal" action="" method="POST">{% csrf_token %}
+					<label class="radio">
+					  <input type="radio" name="tipo_exportar" id="jpg" value="1" checked>
+					  <strong>Exportar para JPG</strong>
+					</label>
+					<label class="radio">
+					  <input type="radio" name="tipo_exportar" id="png" value="2">
+					  <strong>Exportar para PNG</strong>
+					</label>
+					<label class="radio">
+					  <input type="radio" name="tipo_exportar" id="bmp" value="3">
+					  <strong>Exportar para BMP</strong>
+					</label>
+					<label class="radio">
+					  <input type="radio" name="tipo_exportar" id="tif" value="4">
+					  <strong>Exportar para TIF</strong>
+					</label>
+					<div class="form-actions">
+						<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Exportar</button>
+					</div>
+				</form>
+		    </div>
+		    <div class="span2">
+		      <!--Sidebar content-->
+		    </div>
+		  </div>
+		</div>
+		{% endif %}
+  </div>
+</body>
+
+</html>

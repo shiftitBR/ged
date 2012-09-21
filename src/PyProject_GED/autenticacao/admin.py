@@ -23,6 +23,8 @@ from PyProject_GED.documento.models import Tipo_de_Documento
 from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
 from PyProject_GED import constantes
 
+import logging
+
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
                        'cidade', 'uf', 'eh_ativo', 'eh_publico')
@@ -36,7 +38,8 @@ class AdminEmpresa(MultiDBModelAdmin):
             try:
                 return qs.filter(id_empresa= iEmpresa)
                 self.fields['empresa']= iEmpresa
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminEmpresa: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -52,9 +55,9 @@ class AdminUsuario(MultiDBModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             try:
-                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)
-                self.fields['empresa']= iEmpresa
-            except:
+                return qs.filter(empresa= iEmpresa.id_empresa)
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminUsuario: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -131,7 +134,8 @@ class AdminPasta(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(usuario__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminPasta: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -157,7 +161,8 @@ class AdminLogUsuario(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(usuario__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminLogUsuario: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -187,7 +192,8 @@ class AdminGrupoPasta(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminGrupoPasta: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -212,7 +218,8 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminGrupoUsuario: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -237,7 +244,8 @@ class AdminFuncaoGrupo(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminFuncaoGrupo: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -302,7 +310,8 @@ class AdminFirewallGrupo(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminFirewallGrupo: ' + str(e))
                 return qs.all()
         else:
             return qs.all()
@@ -342,7 +351,8 @@ class AdminEtapaWorkflow(MultiDBModelAdmin):
         if iEmpresa != None:
             try:
                 return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except:
+            except Exception, e:
+                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminEtapaWorkflow: ' + str(e))
                 return qs.all()
         else:
             return qs.all()

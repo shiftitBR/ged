@@ -1,6 +1,3 @@
-import os
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-
 from reportlab.lib.units                import cm
 from reportlab.lib.enums                import TA_CENTER, TA_RIGHT
         
@@ -70,7 +67,7 @@ class estadoUsuarios(Report):
             height = 0.5*cm
             elements = [
                 Label(text='Shift IT', top=0.5*cm, left=0),
-                SystemField(expression='Page # %(page_number)d of %(page_count)d', top=0.1*cm,
+                SystemField(expression='Pagina # %(page_number)d of %(page_count)d', top=0.1*cm,
                     width=BAND_WIDTH, style={'alignment': TA_RIGHT}),
             ]
             borders = {'top': True}
@@ -79,7 +76,7 @@ class estadoUsuarios(Report):
 
 
 class ultimosAcessos(Report):
-    title = 'ultimos Acessos de cada Usuario'
+    title = 'Ultimos Acessos de cada Usuario'
 
     class band_begin(ReportBand):
         try :

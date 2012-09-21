@@ -54,3 +54,7 @@ INSERT INTO tb_funcao(
             id_funcao, nome, descricao)
     VALUES (14, 'Relatório', 'Relatório de Documento(s)');
 
+INSERT INTO tb_funcao(
+            id_funcao, nome, descricao)
+    VALUES (15, 'Exportar', 'Exportar Documento(s)');
+

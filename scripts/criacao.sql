@@ -98,6 +98,14 @@ INSERT INTO tb_tipo_de_evento(
             id_tipo_evento, descricao)
     VALUES (15, 'Importar Documento(s)');
 
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (16, 'Exportar Documento(s)');
+
+INSERT INTO tb_tipo_de_evento(
+            id_tipo_evento, descricao)
+    VALUES (17, 'Assinar Documento(s)');
+
 INSERT INTO tb_tipo_de_indice(
             id_tipo_indice, descricao)
     VALUES (1, 'String');

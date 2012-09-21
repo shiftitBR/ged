@@ -13,6 +13,7 @@ from PyProject_GED.workflow.models      import Pendencia, Workflow
 from PyProject_GED.documento.models     import Tipo_de_Documento
 from PyProject_GED.indice.models        import Indice, Indice_Versao_Valor
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
+from PyProject_GED.imagem.controle      import Controle as ControleImagem
 from controle                           import Controle as DocumentoControle
 from models                             import Versao, Documento
 from forms                              import FormCheckin, FormUploadDeArquivo
@@ -63,6 +64,11 @@ def documentos(vRequest, vTitulo):
                         iAcao= 2
                     else:
                         messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
+                if 'assinar' in vRequest.POST['supporttype']:
+                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
+                        iAcao= 3
+                    else:
+                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
                 vRequest.session['ListaVersao']= iListaVersao
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
@@ -87,9 +93,13 @@ def tabelaDocumentos(vRequest, vTitulo):
             iHtml= []
             if len(iListaDocumentos) > 0:
                 for i in range(len(iListaDocumentos)):  
-                    iEstado = iListaDocumentos[i].id_estado  
+                    iEstado = iListaDocumentos[i].id_estado 
+                    if iListaDocumentos[i].assinado:
+                        iAssinado = '<i class="icon-pencil">'
+                    else:
+                        iAssinado = ' '
                     iPodeCheckIn = Historico().verificaUsuarioAcao(iUsuario.id, constantes.cntEventoHistoricoCheckout, iListaDocumentos[i].id_versao) 
-                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td>' % (
+                    iLinha= '<tr><td><label class="checkbox"><input type="checkbox" name="versao_%(iIDVersao)s" value="option1"></label></td><td><center>%(iProtocolo)s</center></td><td>%(iAssunto)s</td><td>%(iTipo)s</td><td>%(iEstado)s</td><td>%(iUsuario)s</td><td><center>%(iVersao)s</center></td><td><center>%(iData)s</center></td><td><center>%(iAssinado)s</center></td><td>' % (
                               {'iVersao': str(iListaDocumentos[i].num_versao), 
                                'iIDVersao': str(iListaDocumentos[i].id_versao),
                                'iProtocolo': str(iListaDocumentos[i].protocolo), 
@@ -97,7 +107,8 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iTipo': str(iListaDocumentos[i].tipo_documento), 
                                'iEstado': str(iListaDocumentos[i].estado), 
                                'iUsuario': str(iListaDocumentos[i].criador), 
-                               'iData': str(iListaDocumentos[i].data_criacao)})
+                               'iData': str(iListaDocumentos[i].data_criacao),
+                               'iAssinado': str(iAssinado)})
                     
                     iLinha= iLinha + '<div class="btn-group">'
                     if iEstado == constantes.cntEstadoVersaoExcluida:
@@ -120,7 +131,9 @@ def tabelaDocumentos(vRequest, vTitulo):
                             iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         else:
                             iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/download/0/"><i class="icon-download-alt"></i>  Download</a></li>'
-                    
+                    if iListaDocumentos[i].ehImagemExportavel:
+                        iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/tipo_exportar/%(iIDVersao)s/"><i class="icon-arrow-up"></i>  Exportar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
+                        
                     if iEstado == constantes.cntEstadoVersaoDisponivel or iEstado == constantes.cntEstadoVersaoAprovado or iEstado == constantes.cntEstadoVersaoReprovado: #CheckOut
                         iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/checkout/%(iIDVersao)s/"><i class="icon-edit"></i>  Check-out</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                         
@@ -212,6 +225,7 @@ def importar(vRequest, vTitulo):
                             if iValor != '':
                                 Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
                         ControleOCR().executaOCR(iVersao)
+                        ControleImagem().comprimeImagem(iVersao)
                         Pendencia().criaPendenciasDoWorkflow(iDocumento)
                         Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoImportar, 
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
@@ -270,6 +284,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                     vRequest.session['Image']= False
                     ControleOCR().executaOCR(iVersao)
+                    ControleImagem().comprimeImagem(iVersao)
                     Workflow().criaPendenciasDoWorkflow(iDocumento)
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
@@ -410,26 +425,29 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
             vIDFuncao = 0
-            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-            iFile = open(iArquivo,"r")
-            response = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            iArquivo = str(Versao().obtemCaminhoArquivo(vIDVersao))
+            if iVersao.eh_assinado:
+                iArquivo= DocumentoControle().comprimiArquivoAssinado(iArquivo)
+            else:
+                iArquivo= iArquivo
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDownload, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iPossuiPermissao= True
-            return response
+            iFile = open(iArquivo,"r")
+            iResponseP7s = HttpResponse(iFile.read())
+            iResponseP7s["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            return iResponseP7s
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
             return False
-
     return render_to_response(
         'acao/download.html',
         locals(),

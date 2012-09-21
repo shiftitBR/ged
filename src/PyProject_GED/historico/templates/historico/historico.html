@@ -119,6 +119,7 @@
 		<ul id="acessos" class="nav nav-pills">
 		    <li class="active"><a href="#acao" data-toggle="tab">Ações sobre Versão</a></li>
 		    <li class=""><a href="#acesso" data-toggle="tab">Acessos ao Documento</a></li>
+		    <li class=""><a href="#assinatura" data-toggle="tab">Assinaturas</a></li>
 		</ul>
 		<div id="tabela_02" class="tab-content">
 			
@@ -135,19 +136,20 @@
 			        <tbody>
 					{% for iEvento in iListaEventos %}
 						{% if iEvento.idTipoEvento <= 5 or iEvento.idTipoEvento >= 8 %}
-				          <tr>
-				          	<td>{{iEvento.num_versao}}</td>
-				            <td>{{iEvento.nomeUsuario}}</td>
-				            <td>{{iEvento.dataEvento}}</td>
-				            <td>{{iEvento.dscEvento}}</td>
-				          </tr>
+							{% if not iEvento.idTipoEvento == 17 %}
+					          <tr>
+					          	<td>{{iEvento.num_versao}}</td>
+					            <td>{{iEvento.nomeUsuario}}</td>
+					            <td>{{iEvento.dataEvento}}</td>
+					            <td>{{iEvento.dscEvento}}</td>
+					          </tr>
+				          	{% endif %}
 			        	{% endif %}
 		  			{% empty %}
 					{% endfor %}
 			        </tbody>
 		 		</table>
             </div>
-            <br>
             <div class="tab-pane fade" id="acesso">
 			   	<table class="table table-striped">
 			        <thead>
@@ -173,6 +175,29 @@
 			        </tbody>
 				</table>
 			</div>
+            <div class="tab-pane fade" id="assinatura">
+	            <table class="table table-striped">
+			        <thead>
+			          <tr>
+			          	<th>Versão</th>
+			            <th>Usuário</th>
+			            <th>Data e Hora</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+					{% for iEvento in iListaEventos %}
+						{% if iEvento.idTipoEvento == 17%}
+				          <tr>
+				          	<td>{{iEvento.num_versao}}</td>
+				            <td>{{iEvento.nomeUsuario}}</td>
+				            <td>{{iEvento.dataEvento}}</td>
+				          </tr>
+			        	{% endif %}
+		  			{% empty %}
+					{% endfor %}
+			        </tbody>
+		 		</table>
+            </div>
             
     	</div>
   	</div>
