@@ -10,11 +10,14 @@
 
 <body>
 <div class="container">
-  		
+  	<div class="row">
+		<div class="span8 offset2">
 		<header class="jumbotron subhead" id="overview">
 		  <h2>Relatórios</h2>
 		  <p class="lead">Selecione o Relatório desejado</p>
 		</header>
+		</div>
+	</div>
 		
 		
 		{% if messages %}
@@ -28,8 +31,8 @@
 		{% endif %}
 		
 		{% if iPossuiPermissao %}
-		<div class="container-fluid">
-		  <div class="row-fluid">
+		<div class="container">
+		  <div class="row">
 		    <div class="span2">
 		      <!--Sidebar content-->
 		    </div>
