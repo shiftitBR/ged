@@ -5808,3 +5808,9 @@ a.badge:hover {
 .resetamargin {
 	margin: 0px 0px 0px 0px;
 }
+
+.rodape {
+	bottom: 0;
+	position: absolute;
+	padding: 15px 0px;
+} 
