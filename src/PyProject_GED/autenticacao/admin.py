@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Created on Jul 19, 2012
 
@@ -17,13 +18,15 @@ from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
 from PyProject_GED.autenticacao.models import Tipo_de_Usuario
 from PyProject_GED.historico.models import Log_Usuario
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
-    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo
+    Funcao_Grupo, Pasta, Firewall, Firewall_Grupo, Funcao
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
 from PyProject_GED.documento.models import Tipo_de_Documento
 from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
 from PyProject_GED import constantes
 
 import logging
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django import forms
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
@@ -231,32 +234,83 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
             form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['usuario'].queryset    = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
         return form
-    
+
+class AdminFuncaoGrupoForm(forms.ModelForm):
+    funcoes = forms.ModelMultipleChoiceField(
+        queryset=Funcao.objects.all(), 
+        required=True,
+        widget=FilteredSelectMultiple(
+            verbose_name=('Funcoes'),
+            is_stacked=False
+        )
+    )
+
+    class Meta:
+        model = Grupo
+        list_display    = ('grupo',)
+        search_fields   = ('grupo',)
+        ordering        = ('grupo',)  
+        exclude         = ('funcao', 'id_funcao_grupo',)
+
+    def __init__(self, *args, **kwargs):
+        super(AdminFuncaoGrupoForm, self).__init__(*args, **kwargs)
+
+        if self.instance.id_funcao_grupo != None:
+            iListaFuncaoGrupo= Funcao_Grupo.objects.filter(grupo= self.instance.grupo)
+            iListaFuncaoIDs= []
+            for iFuncaoGrupo in iListaFuncaoGrupo:
+                iListaFuncaoIDs.append(iFuncaoGrupo.funcao.id_funcao)
+            self.fields['funcoes'].initial = Funcao.objects.filter(id_funcao__in= iListaFuncaoIDs)
+            iListaGrupos= []
+            iLista = Grupo.objects.filter(id_grupo= self.instance.grupo.id_grupo)
+            for iGrupo in iLista:
+                iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+            
+            self.fields['grupo'].choices = iListaGrupos
+
 class AdminFuncaoGrupo(MultiDBModelAdmin): 
-    list_display    = ('funcao', 'grupo')
-    search_fields   = ('funcao', 'grupo')
-    ordering        = ('funcao',)  
-    exclude         = ('id_funcao_grupo',)
+    list_display    = ('grupo',)
+    search_fields   = ('grupo',)
+    ordering        = ('grupo',)  
     
+    form = AdminFuncaoGrupoForm
+         
     def queryset(self, vRequest):
         qs = super(MultiDBModelAdmin, self).queryset(vRequest)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            try:
-                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except Exception, e:
-                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminFuncaoGrupo: ' + str(e))
-                return qs.all()
+            iListaFuncaoGrupo= Funcao_Grupo.objects.filter(grupo__empresa= iEmpresa.id_empresa).order_by('grupo')
         else:
-            return qs.all()
+            iListaFuncaoGrupo= Funcao_Grupo.objects.order_by('grupo')
+        iListaGrupos= []
+        iListaFuncaoGrupoIDs= []
+        for iFuncaoGrupo in iListaFuncaoGrupo:
+            if iFuncaoGrupo.grupo not in iListaGrupos:
+                iListaGrupos.append(iFuncaoGrupo.grupo)
+                iListaFuncaoGrupoIDs.append(iFuncaoGrupo.id_funcao_grupo)
+        return qs.filter(id_funcao_grupo__in = iListaFuncaoGrupoIDs)
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminFuncaoGrupo,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
+            iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+            iLista = Funcao_Grupo().obtemListaDeGruposSemFuncao(iEmpresa)
+        else:
+            iLista = Funcao_Grupo().obtemListaDeGruposSemFuncao()
+        iListaGrupos= []
+        for iGrupo in iLista:
+            iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+        form.base_fields['grupo'].choices = iListaGrupos
         return form
     
+    def save_model(self, vRequest, obj, form, change):
+        iListaFuncoes= vRequest.POST.getlist('funcoes')
+        iGrupo= vRequest.POST.get('grupo')
+        Funcao_Grupo().excluiFuncoesDoGrupo(None, iGrupo)
+        for iFuncao in iListaFuncoes:
+            Funcao_Grupo().criaFuncao_Grupo(None, None, iFuncao, iGrupo)
+
 class AdminTipoNorma(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')
     search_fields   = ('descricao', 'empresa')
@@ -363,7 +417,7 @@ class AdminEtapaWorkflow(MultiDBModelAdmin):
         if iEmpresa != None:
             form.base_fields['workflow'].queryset   = Workflow.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
-        return form      
+        return form   
 
 class AdminTipoDocumento(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')

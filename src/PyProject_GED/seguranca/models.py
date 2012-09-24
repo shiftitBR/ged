@@ -283,13 +283,33 @@ class Funcao_Grupo(models.Model):
                 self.id_funcao_grupo= 1
         super(Funcao_Grupo, self).save()
         
-    def criaFuncao_Grupo(self, vFuncao, vGrupo):
+    def criaFuncao_Grupo(self, vFuncao, vGrupo, vFuncaoID=None, vGrupoID=None):
         try:
+            if vFuncaoID != None:
+                iFuncao= Funcao.objects.filter(id_funcao= int(vFuncaoID))[0]
+            else:
+                iFuncao= vFuncao
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
             iFuncao_Grupo       = Funcao_Grupo()
-            iFuncao_Grupo.funcao= vFuncao
-            iFuncao_Grupo.grupo = vGrupo
+            iFuncao_Grupo.funcao= iFuncao
+            iFuncao_Grupo.grupo = iGrupo
             iFuncao_Grupo.save()
             return iFuncao_Grupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Funcao_Grupo: ' + str(e))
+            return False
+    
+    def excluiFuncoesDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Funcao_Grupo.objects.filter(grupo= iGrupo).delete()
+            return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Funcao_Grupo: ' + str(e))
             return False
@@ -313,6 +333,25 @@ class Funcao_Grupo(models.Model):
             return iPossuiAcesso
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel possui Acesso Funcao: ' + str(e))
+            return False
+    
+    def obtemListaDeGruposSemFuncao(self, vEmpresa=None):
+        try:
+            iListaGrupos    = Grupo.objects.all()
+            iListaGruposFuncoes     = Funcao_Grupo.objects.all()
+            if vEmpresa != None:
+                iListaGrupos    = iListaGrupos.filter(empresa= vEmpresa)
+                iListaGruposFuncoes     = iListaGruposFuncoes.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemFuncao   = []
+            iListaGruposComFuncoes  = []
+            for iGrupoFuncao in iListaGruposFuncoes:
+                iListaGruposComFuncoes.append(iGrupoFuncao.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComFuncoes:
+                    iListaGruposSemFuncao.append(iGrupo)
+            return iListaGruposSemFuncao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
             return False
         
 #-----------------------------IPs_PERMETIDOS----------------------------------------
