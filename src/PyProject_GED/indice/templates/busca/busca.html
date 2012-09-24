@@ -152,8 +152,8 @@
         </ul>
     </ul> 
 </div>
-    
-<form class="well form-inline" method="post"> {% csrf_token %}
+    <!-- retirada a classe well do form-->
+<form class="form-inline" method="post"> {% csrf_token %}
 	<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
     <div class="modal hide" id="avancado">
 	  <div class="modal-header">
