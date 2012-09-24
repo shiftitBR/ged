@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block conteudo %}
+<br />
+<br />
+<br />
+<br />
 
 	<div class="container-fluid">
 		<div class="row-fluid">
 		    <div class="span4 offset4">
-		    	<!-- retirada a linha <center> e centralizando no css (ainda não realizado) -->
-			    	<header id="overview"> <!-- retirada a classe "jumbotron subhead" da tag head -->
+		    	 	<header id="overview">
 					  <h1>Entrar</h1>
 					  <p class="lead">Efetuar Login no Sistema</p>
 					</header>
 					
-					<form method="post" action="/login/">{% csrf_token %} <!-- retirada a classe class="well form-inline" da tag form -->
+					<form method="post" action="/login/">{% csrf_token %}
 						{% if form.errors %}
 								<script language="JavaScript">
 								       self.location="{% url login_error %}";
