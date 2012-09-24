@@ -228,9 +228,6 @@ a:hover {
 .navbar-fixed-top .container,
 .navbar-fixed-bottom .container {
   width: 940px;
-  height: auto !important;
-  height: 100%;
-  min-height: 100%;
 }
 
 .span12 {
