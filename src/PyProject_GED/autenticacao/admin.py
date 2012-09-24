@@ -182,8 +182,40 @@ class AdminGrupo(MultiDBModelAdmin):
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
+    
+class AdminGrupoPastaForm(forms.ModelForm):
+    pastas = forms.ModelMultipleChoiceField(
+        queryset=Pasta.objects.all(), 
+        required=True,
+        widget=FilteredSelectMultiple(
+            verbose_name=('Pastas'),
+            is_stacked=False
+        )
+    )
+
+    class Meta:
+        model = Grupo
+        list_display    = ('grupo',)
+        search_fields   = ('grupo',)
+        ordering        = ('grupo',)  
+        exclude         = ('pasta', 'id_grupo_pasta',)
+
+    def __init__(self, *args, **kwargs):
+        super(AdminGrupoPastaForm, self).__init__(*args, **kwargs)
+        if self.instance.id_grupo_pasta != None:
+            iListaGrupoPasta= Grupo_Pasta.objects.filter(grupo= self.instance.grupo)
+            iListaPastaIDs= []
+            for iGrupoPasta in iListaGrupoPasta:
+                iListaPastaIDs.append(iGrupoPasta.pasta.id_pasta)
+            self.fields['pastas'].initial = Pasta.objects.filter(id_pasta__in= iListaPastaIDs)
+            iListaGrupos= []
+            iLista = Grupo.objects.filter(id_grupo= self.instance.grupo.id_grupo)
+            for iGrupo in iLista:
+                iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+            
+            self.fields['grupo'].choices = iListaGrupos
         
-class AdminGrupoPasta(MultiDBModelAdmin): 
+class AdminGrupoPasta2(MultiDBModelAdmin): 
     list_display    = ('grupo', 'pasta')
     search_fields   = ('grupo', 'pasta')
     ordering        = ('grupo',)  
@@ -208,32 +240,130 @@ class AdminGrupoPasta(MultiDBModelAdmin):
             form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
             form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
         return form
+
+class AdminGrupoPasta(MultiDBModelAdmin): 
+    list_display    = ('grupo',)
+    search_fields   = ('grupo',)
+    ordering        = ('grupo',)  
     
-class AdminGrupoUsuario(MultiDBModelAdmin): 
-    list_display    = ('grupo', 'usuario')
-    search_fields   = ('grupo', 'usuario')
-    ordering        = ('grupo',)   
-    exclude         = ('id_grupo_usuario',)  
-    
+    form = AdminGrupoPastaForm
+         
     def queryset(self, vRequest):
         qs = super(MultiDBModelAdmin, self).queryset(vRequest)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            try:
-                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except Exception, e:
-                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminGrupoUsuario: ' + str(e))
-                return qs.all()
+            iListaGrupoPasta= Grupo_Pasta.objects.filter(grupo__empresa= iEmpresa.id_empresa).order_by('grupo')
         else:
-            return qs.all()
+            iListaGrupoPasta= Grupo_Pasta.objects.order_by('grupo')
+        iListaGrupos= []
+        iListaGrupoPastaIDs= []
+        for iGrupoPasta in iListaGrupoPasta:
+            if iGrupoPasta.grupo not in iListaGrupos:
+                iListaGrupos.append(iGrupoPasta.grupo)
+                iListaGrupoPastaIDs.append(iGrupoPasta.id_grupo_pasta)
+        return qs.filter(id_grupo_pasta__in = iListaGrupoPastaIDs)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+            iLista = Grupo_Pasta().obtemListaDeGruposSemPasta(iEmpresa)
+            iListaPastas= Pasta.objects.filter(empresa= iEmpresa)
+        else:
+            iLista = Grupo_Pasta().obtemListaDeGruposSemPasta()
+            iListaPastas= Pasta.objects.all()
+        iListaGrupos= []
+        for iGrupo in iLista:
+            iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+        form.base_fields['grupo'].choices = iListaGrupos
+        form.base_fields['pastas'].queryset = iListaPastas
+        return form
+    
+    def save_model(self, vRequest, obj, form, change):
+        iListaIDsPastas= vRequest.POST.getlist('pastas')
+        iIDGrupo= vRequest.POST.get('grupo')
+        Grupo_Pasta().excluiPastasDoGrupo(None, iIDGrupo)
+        for iIDPasta in iListaIDsPastas:
+            Grupo_Pasta().criaGrupo_Pasta(None, None, None, iIDPasta, iIDGrupo)
+
+class AdminGrupoUsuarioForm(forms.ModelForm):
+    usuarios = forms.ModelMultipleChoiceField(
+        queryset=Usuario.objects.all(), 
+        required=True,
+        widget=FilteredSelectMultiple(
+            verbose_name=('Usuarios'),
+            is_stacked=False
+        )
+    )
+
+    class Meta:
+        model = Grupo
+        list_display    = ('grupo',)
+        search_fields   = ('grupo',)
+        ordering        = ('grupo',)  
+        exclude         = ('usuario', 'id_grupo_usuario',)
+
+    def __init__(self, *args, **kwargs):
+        super(AdminGrupoUsuarioForm, self).__init__(*args, **kwargs)
+        if self.instance.id_grupo_usuario != None:
+            iListaGrupoUsuario= Grupo_Usuario.objects.filter(grupo= self.instance.grupo)
+            iListaUsuarioIDs= []
+            for iGrupoUsuario in iListaGrupoUsuario:
+                iListaUsuarioIDs.append(iGrupoUsuario.usuario.id)
+            self.fields['usuarios'].initial = Usuario.objects.filter(id__in= iListaUsuarioIDs)
+            iListaGrupos= []
+            iLista = Grupo.objects.filter(id_grupo= self.instance.grupo.id_grupo)
+            for iGrupo in iLista:
+                iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+            
+            self.fields['grupo'].choices = iListaGrupos
+
+class AdminGrupoUsuario(MultiDBModelAdmin): 
+    list_display    = ('grupo',)
+    search_fields   = ('grupo',)
+    ordering        = ('grupo',)  
+    
+    form = AdminGrupoUsuarioForm
+         
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iListaGrupoUsuario= Grupo_Usuario.objects.filter(grupo__empresa= iEmpresa.id_empresa).order_by('grupo')
+        else:
+            iListaGrupoUsuario= Grupo_Usuario.objects.order_by('grupo')
+        iListaGrupos= []
+        iListaGrupoUSuarioIDs= []
+        for iGrupoUsuario in iListaGrupoUsuario:
+            if iGrupoUsuario.grupo not in iListaGrupos:
+                iListaGrupos.append(iGrupoUsuario.grupo)
+                iListaGrupoUSuarioIDs.append(iGrupoUsuario.id_grupo_usuario)
+        return qs.filter(id_grupo_usuario__in = iListaGrupoUSuarioIDs)
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminGrupoUsuario,self).get_form(vRequest, obj,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
-            form.base_fields['grupo'].queryset      = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
-            form.base_fields['usuario'].queryset    = Usuario.objects.filter(empresa= iEmpresa.id_empresa)
+            iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+            iLista = Grupo_Usuario().obtemListaDeGruposSemUsuario(iEmpresa)
+            iListaUsuarios= Usuario.objects.filter(empresa= iEmpresa)
+        else:
+            iLista = Grupo_Usuario().obtemListaDeGruposSemUsuario()
+            iListaUsuarios= Usuario.objects.all()
+        iListaGrupos= []
+        for iGrupo in iLista:
+            iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+        form.base_fields['grupo'].choices = iListaGrupos
+        form.base_fields['usuarios'].queryset = iListaUsuarios
         return form
+    
+    def save_model(self, vRequest, obj, form, change):
+        iListaIDsUsuarios= vRequest.POST.getlist('usuarios')
+        iIDGrupo= vRequest.POST.get('grupo')
+        Grupo_Usuario().excluiUsuariosDoGrupo(None, iIDGrupo)
+        for iIDUsuario in iListaIDsUsuarios:
+            Grupo_Usuario().criaGrupo_Usuario(None, None, iIDUsuario, iIDGrupo)
 
 class AdminFuncaoGrupoForm(forms.ModelForm):
     funcoes = forms.ModelMultipleChoiceField(
@@ -305,11 +435,11 @@ class AdminFuncaoGrupo(MultiDBModelAdmin):
         return form
     
     def save_model(self, vRequest, obj, form, change):
-        iListaFuncoes= vRequest.POST.getlist('funcoes')
-        iGrupo= vRequest.POST.get('grupo')
-        Funcao_Grupo().excluiFuncoesDoGrupo(None, iGrupo)
-        for iFuncao in iListaFuncoes:
-            Funcao_Grupo().criaFuncao_Grupo(None, None, iFuncao, iGrupo)
+        iListaIDsFuncoes= vRequest.POST.getlist('funcoes')
+        iIDGrupo= vRequest.POST.get('grupo')
+        Funcao_Grupo().excluiFuncoesDoGrupo(None, iIDGrupo)
+        for iIDFuncao in iListaIDsFuncoes:
+            Funcao_Grupo().criaFuncao_Grupo(None, None, iIDFuncao, iIDGrupo)
 
 class AdminTipoNorma(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')

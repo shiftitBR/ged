@@ -168,8 +168,6 @@ class Test(TestCase):
         self.assertEquals(iPossuiAcesso , True)
         
     def testExcluiFuncoesDoGrupo(self):
-        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
-        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iGrupo          = Grupo.objects.all()[1]
         iListaFuncoes   = Funcao_Grupo.objects.filter(grupo= iGrupo.id_grupo)
         self.assertEquals(2, len(iListaFuncoes))
@@ -180,6 +178,32 @@ class Test(TestCase):
     def testObtemListaDeGruposSemFuncao(self):
         iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
         iLista= Funcao_Grupo().obtemListaDeGruposSemFuncao(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testExcluiUsuariosDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaUsuarios  = Grupo_Usuario.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaUsuarios))
+        Grupo_Usuario().excluiUsuariosDoGrupo(iGrupo)
+        iListaUsuarios   = Grupo_Usuario.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaUsuarios))
+    
+    def testObtemListaDeGruposSemUsuario(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Grupo_Usuario().obtemListaDeGruposSemUsuario(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testExcluiPastasDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaPastas    = Grupo_Pasta.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaPastas))
+        Grupo_Pasta().excluiPastasDoGrupo(iGrupo)
+        iListaPastas   = Grupo_Pasta.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaPastas))
+    
+    def testObtemListaDeGruposSemPasta(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Grupo_Pasta().obtemListaDeGruposSemPasta(iEmpresa)
         self.assertEquals(1, len(iLista))
     
     #-----------------------------------------------------MOKS---------------------------------------------------  
