@@ -34,6 +34,7 @@ audio:not([controls]) {
 }
 
 html {
+  height: 100%;
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
@@ -165,6 +166,7 @@ body {
   color: #333333;
   background-color: #f8f8f8;
   padding-top: 50px;
+  height: 100%;
 }
 
 a {
