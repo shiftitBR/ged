@@ -20,12 +20,12 @@ from models                             import Versao, Documento
 from forms                              import FormCheckin, FormUploadDeArquivo
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.qualidade.models     import Norma, Norma_Documento
+from PyProject_GED.assinatura.models    import Assinatura
 
 import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
-from PyProject_GED.assinatura.models import Assinatura
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -331,10 +331,11 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
             iFile = open(iArquivo,"r")
             response = HttpResponse(iFile.read())
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            messages.success(vRequest, 'O Check-out foi efetuado com sucesso!.') 
             return response
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
+            return False
     return render_to_response(
         'documentos/checkout.html',
         locals(),
@@ -346,23 +347,24 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         vIDFuncao = 0
-            
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
         return False
     
     if vRequest.POST:
         try :
-            if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
+            if vRequest.POST.get('comentario') != '' :
                 iVersao = Versao().obtemVersao(vIDVersao)
                 Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, 
                                            iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
+            else:
+                messages.success(vRequest, 'Adicione um Comentário para Aprovar o Documento!.') 
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
+            return False
     return render_to_response(
         'acao/aprovar.html',
         locals(),
@@ -374,22 +376,24 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         vIDFuncao = 0
-            
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
         return False
     
     if vRequest.POST:
         try :
-            iVersao = Versao().obtemVersao(vIDVersao)
-            Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
-                                       iUsuario, vRequest.POST.get('comentario'))
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
-                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
-            return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
+            if vRequest.POST.get('comentario') != '' :
+                iVersao = Versao().obtemVersao(vIDVersao)
+                Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
+                                           iUsuario, vRequest.POST.get('comentario'))
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
+                                        vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
+            else:
+                messages.success(vRequest, 'Adicione um Comentário para Reprovar o Documento!.')
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
+            return False
     return render_to_response(
         'acao/reprovar.html',
         locals(),
@@ -400,13 +404,11 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
 def excluir(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoExcluir):
             vIDFuncao = 0
             iPossuiPermissao= True
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
-            
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get excluir: ' + str(e))
         return False
@@ -420,8 +422,8 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoExcluir) + '/')
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
+            return False
     return render_to_response(
         'acao/excluir.html',
         locals(),
@@ -493,7 +495,7 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoVisualizar):
             iVersao     = Versao().obtemVersao(vIDVersao)
-            iImagem  = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
+            iImagem     = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoVisualizar, iUsuario.id, 

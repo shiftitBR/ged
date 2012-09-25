@@ -4,6 +4,8 @@ from django.template                    import RequestContext
 from django.http                        import HttpResponseRedirect
 from django.conf                        import settings
 from django.contrib                     import messages
+from django.contrib.auth.decorators     import login_required
+
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED                      import oControle, constantes
@@ -11,7 +13,7 @@ from PyProject_GED.assinatura.forms     import FormUploadCertificado
 from PyProject_GED.assinatura.models    import Certificado, Assinatura
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 
-
+@login_required 
 def assinar(vRequest, vTitulo):
     
     iUser = vRequest.user
