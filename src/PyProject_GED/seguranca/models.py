@@ -304,6 +304,43 @@ class Grupo_Usuario(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
             return False
     
+    def obtemUsuariosDisponiveis(self, vEmpresa=None, vGrupo=None):
+        try:
+            iListaUsuarios= Usuario().obtemUsuariosPeloTipo(vEmpresa, constantes.cntTipoUsuarioSistema)
+            iListaGrupoUsuario= Grupo_Usuario.objects.all()
+            iListaUsuariosDoGrupo = []
+            if vEmpresa != None:
+                iListaGrupoUsuario= iListaGrupoUsuario.filter(grupo__empresa= vEmpresa)
+            if vGrupo != None:
+                iListaUsuariosDoGrupo  = self.obtemUsuariosDoGrupo(vGrupo)
+            iListaUsuariosComGrupo= []
+            iListaIDsUsuariosSemGrupo= []
+            for iGrupoUsuario in iListaGrupoUsuario:
+                iListaUsuariosComGrupo.append(iGrupoUsuario.usuario)
+            for iUsuario in iListaUsuarios:
+                if iUsuario not in iListaUsuariosComGrupo:
+                    iListaIDsUsuariosSemGrupo.append(iUsuario.id)
+            iListaUsuariosDoGrupo  = self.obtemUsuariosDoGrupo(vGrupo)
+            for iUsuario in iListaUsuariosDoGrupo:
+                iListaIDsUsuariosSemGrupo.append(iUsuario.id)
+            iListaUsuariosSemGrupo = Usuario.objects.filter(id__in= iListaIDsUsuariosSemGrupo)
+            return iListaUsuariosSemGrupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de usuarios disponiveis: ' + str(e))
+            return False
+    
+    def obtemUsuariosDoGrupo(self, vGrupo):
+        try:
+            iListaGrupoUsuario= Grupo_Usuario.objects.filter(grupo= vGrupo)
+            iListaIDUsuarios= []
+            for iGrupoUsuario in iListaGrupoUsuario:
+                iListaIDUsuarios.append(iGrupoUsuario.usuario.id)
+            iListaUsuarios= Usuario.objects.filter(id__in= iListaIDUsuarios)
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de usuarios do grupo: ' + str(e))
+            return False
+    
 #-----------------------------FUNCAO----------------------------------------
 
 class Funcao(models.Model):

@@ -27,6 +27,7 @@ from PyProject_GED import constantes
 import logging
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django import forms
+from django.db.models.query import QuerySet
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
@@ -266,7 +267,7 @@ class AdminGrupoUsuarioForm(forms.ModelForm):
         queryset=Usuario.objects.all(), 
         required=True,
         widget=FilteredSelectMultiple(
-            verbose_name=('Usuarios'),
+            verbose_name=(u'Usuários'),
             is_stacked=False
         )
     )
@@ -315,13 +316,17 @@ class AdminGrupoUsuario(MultiDBModelAdmin):
                 iListaGrupoUSuarioIDs.append(iGrupoUsuario.id_grupo_usuario)
         return qs.filter(id_grupo_usuario__in = iListaGrupoUSuarioIDs)
     
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminGrupoUsuario,self).get_form(vRequest, obj,**kwargs)
+    def get_form(self, vRequest, vInstancia=None, **kwargs):
+        form = super(AdminGrupoUsuario,self).get_form(vRequest, vInstancia,**kwargs)
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
             iLista = Grupo_Usuario().obtemListaDeGruposSemUsuario(iEmpresa)
-            iListaUsuarios= Usuario.objects.filter(empresa= iEmpresa)
+            if vInstancia != None:
+                iGrupo= vInstancia.grupo
+            else:
+                iGrupo= None
+            iListaUsuarios= Grupo_Usuario().obtemUsuariosDisponiveis(iEmpresa, iGrupo)
         else:
             iLista = Grupo_Usuario().obtemListaDeGruposSemUsuario()
             iListaUsuarios= Usuario.objects.all()

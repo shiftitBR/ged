@@ -219,6 +219,18 @@ class Test(TestCase):
         iLista= Firewall_Grupo().obtemListaDeGruposSemFirewall(iEmpresa)
         self.assertEquals(1, len(iLista))
     
+    def testObtemListaDeUsuariosDisponiveis(self):
+        iEmpresa=  Empresa.objects.filter(id_empresa= 1)[0]
+        iLista  = Grupo_Usuario().obtemUsuariosDisponiveis(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testObtemListaDeUsuariosDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iLista  = Grupo_Usuario().obtemUsuariosDoGrupo(iGrupo)
+        print '>>>>>>>>>>>>>>>'
+        print type(iLista)
+        self.assertEquals(1, len(iLista))
+    
     #-----------------------------------------------------MOKS---------------------------------------------------  
     
     def mokarEmpresa(self):
@@ -302,6 +314,10 @@ class Test(TestCase):
         iEmail          = 'usuario1@teste.com.br'
         iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_1.save()
+                
+        iEmail          = 'usuario2@teste.com.br'
+        iUsuario_2      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
+        iUsuario_2.save()
         
     def mokarGrupo_Usuario(self):
         iEmpresa              = Empresa.objects.filter(id_empresa= 1)[0]
