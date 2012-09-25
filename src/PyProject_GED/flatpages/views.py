@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.http                        import HttpResponse
@@ -8,6 +9,7 @@ from PyProject_GED.documento.models     import Versao
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 
 from objetos_auxiliares                 import Publicacao as PublicacaoAuxiliar
+from PyProject_GED import constantes
 
 def home(vRequest, vTitulo):
     
@@ -47,6 +49,33 @@ def publicacao(vRequest, vTitulo, vIDPublicacao=None):
         
     return render_to_response(
         'publicacao/publicacao.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )
+    
+def sucesso(vRequest, vTitulo, vAcao=None):
+    iAcao = int(vAcao)
+    if iAcao == constantes.cntFuncaoCheckinChekout:
+        iMensagem = 'A ação sobre o documento foi efetuada com sucesso.'
+    elif iAcao == constantes.cntFuncaoAprovarReprovar:
+        iMensagem = 'A ação sobre o documento foi efetuada com sucesso.'
+    elif iAcao == constantes.cntFuncaoEncaminhar:
+        iMensagem = 'O documento foi encaminhado com sucesso.'
+    elif iAcao == constantes.cntFuncaoExcluir:
+        iMensagem = 'O documento foi excluido com sucesso.'
+    elif iAcao == constantes.cntFuncaoDigitalizar:
+        iMensagem = 'O documento foi digitalizado com sucesso'
+    elif iAcao == constantes.cntFuncaoImportar:
+        iMensagem = 'A importação foi feita com sucesso.'
+    elif iAcao == constantes.cntFuncaoAssinar:
+        iMensagem = 'A assinatura foi feita com sucesso.'    
+    elif iAcao == constantes.cntFuncaoEmail:
+        iMensagem = 'O e-mail foi enviado com sucesso.'  
+    elif iAcao == constantes.cntFuncaoPublicar:
+        iMensagem = 'A publicação foi encaminhada com sucesso.'      
+    
+    return render_to_response(
+        'mensagem/sucesso.html',
         locals(),
         context_instance=RequestContext(vRequest),
         )

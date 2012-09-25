@@ -14,6 +14,7 @@ from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento,
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 
 import os
+from django.http import HttpResponseRedirect
 
 def email(vRequest, vTitulo):
     iUser = vRequest.user
@@ -66,6 +67,7 @@ def email(vRequest, vTitulo):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEmail, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEmail) + '/')
                 except Exception, e:
                     oControle.getLogger().error('Nao foi possivel post email: ' + str(e))
                     return False
@@ -141,6 +143,7 @@ def publicar(vRequest, vTitulo):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoPublicar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoPublicar) + '/')
             else:
                 form = FormEmail(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         except Exception, e:
