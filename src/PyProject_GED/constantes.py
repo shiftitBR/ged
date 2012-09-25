@@ -33,6 +33,7 @@ cntEventoHistoricoRelatorio = 14
 cntEventoHistoricoImportar  = 15
 cntEventoHistoricoExportar  = 16
 cntEventoHistoricoAssinar   = 17
+cntEventoHistoricoCadastraContato= 18
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -96,6 +97,11 @@ cntFuncaoEmail              = 12
 cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
 cntFuncaoExportar           = 15
+cntFuncaoCadastrarContato   = 16
+
+#Redireciona Contato
+cntRedirecionaEmail         = 1
+cntRedirecionaPublicacao    = 2
 
 #Extencoes de Imagem
 cntExtencaoImagemExportavel = ['.jpg', '.png', '.tif', '.bmp']

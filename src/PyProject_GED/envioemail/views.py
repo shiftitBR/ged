@@ -15,6 +15,7 @@ from PyProject_GED.documento.controle   import Controle as DocumentoControle
 
 import os
 from django.http import HttpResponseRedirect
+from PyProject_GED.seguranca.models import Funcao_Grupo
 
 def email(vRequest, vTitulo):
     iUser = vRequest.user
@@ -33,7 +34,8 @@ def email(vRequest, vTitulo):
     for i in range(len(iListaVersao)):
         iVersao= Versao().obtemVersao(int(iListaVersao[i]))
         iVersoes.append(iVersao)
-        
+    iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
+
     if vRequest.POST:
         try :
             form = FormEmail(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
@@ -105,6 +107,7 @@ def publicar(vRequest, vTitulo):
     for i in range(len(iListaVersao)):
         iVersao= Versao().obtemVersao(int(iListaVersao[i]))
         iVersoes.append(iVersao)
+    iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
         
     if vRequest.POST:
         try :

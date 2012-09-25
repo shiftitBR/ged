@@ -29,8 +29,7 @@
 		{% if iPossuiPermissao %}
 		<form action="" id="fancy" method="POST">{% csrf_token %}
 			<div class="form-actions">
-				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Check-out</button>
-				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
+				<button type="submit" class="btn btn-primary" data-toggle="button">Check-out</button>
 			</div>
 		</form>
 		{% endif %}
