@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-from django.conf                    import settings
+from django.conf                        import settings
 
 import logging
 import datetime
@@ -93,21 +93,23 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel formatar a data: ' + str(e))
             return False
         
-    def comprimiArquivoAssinado(self, vCaminhoArquivo):
+    def comprimiArquivoAssinado(self, vVersao, vListaAssinaturas):
         try:
-            iArquivoP7s = os.path.splitext(str(vCaminhoArquivo))[0] + '.p7s'
-            iFileZip    = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
-            iZipado     = zipfile.ZipFile(iFileZip, mode='a', compression=zipfile.ZIP_DEFLATED)
-            iListaArquivo   = vCaminhoArquivo.split('/')
-            iListaArquivoP7s= iArquivoP7s.split('/')
+            iCaminhoArquivo   = vVersao.upload.image
+            iFileZip    = os.path.splitext(str(iCaminhoArquivo))[0] + '.zip'
+            iZipado     = zipfile.ZipFile(iFileZip, mode='w', compression=zipfile.ZIP_DEFLATED)
+            iListaArquivo   = str(iCaminhoArquivo).split('/')
             iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
-            iNomeArquivoP7s = iListaArquivoP7s[len(iListaArquivoP7s)-1:][0]
-            iZipado.write(vCaminhoArquivo, arcname= iNomeArquivo)
-            iZipado.write(iArquivoP7s, arcname= iNomeArquivoP7s)
+            iZipado.write(str(iCaminhoArquivo), arcname= iNomeArquivo)
+            for iAssinatura in vListaAssinaturas:
+                iArquivoAss = str(iAssinatura.arquivo)
+                iListaArquivoP7s= iArquivoAss.split('/')
+                iNomeArquivoP7s = iListaArquivoP7s[len(iListaArquivoP7s)-1:][0]
+                iZipado.write(str(iAssinatura.arquivo), arcname= iNomeArquivoP7s)
             iZipado.close()
             return iFileZip
         except Exception, e:
-            self.getLogger().error('Nao foi possivel comprimi Arquivo Assinato: ' + str(e))
+            self.getLogger().error('Nao foi possivel comprimi Arquivo Assinado: ' + str(e))
             return False
         
     def obtemNomeZipado(self, vCaminhoArquivo):

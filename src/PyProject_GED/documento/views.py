@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
-from django.http                        import HttpResponse
+from django.http                        import HttpResponse,\
+    HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
 
@@ -24,6 +25,7 @@ import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
+from PyProject_GED.assinatura.models import Assinatura
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -229,8 +231,9 @@ def importar(vRequest, vTitulo):
                         Pendencia().criaPendenciasDoWorkflow(iDocumento)
                         Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoImportar, 
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
-                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
+                        Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
+                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -286,6 +289,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                     ControleOCR().executaOCR(iVersao)
                     ControleImagem().comprimeImagem(iVersao)
                     Workflow().criaPendenciasDoWorkflow(iDocumento)
+                    return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoCheckinChekout) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
@@ -355,6 +359,7 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
                                            iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
                 return False
@@ -381,6 +386,7 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
                                        iUsuario, vRequest.POST.get('comentario'))
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+            return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
                 return False
@@ -412,6 +418,7 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
                                    iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExcluir, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+            return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoExcluir) + '/')
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
                 return False
@@ -430,7 +437,8 @@ def download(vRequest, vTitulo, vIDVersao=None):
             vIDFuncao = 0
             iArquivo = str(Versao().obtemCaminhoArquivo(vIDVersao))
             if iVersao.eh_assinado:
-                iArquivo= DocumentoControle().comprimiArquivoAssinado(iArquivo)
+                iListaAssinaturas = Assinatura().obtemListaAssDaVersao(iVersao)
+                iArquivo= DocumentoControle().comprimiArquivoAssinado(iVersao, iListaAssinaturas)
             else:
                 iArquivo= iArquivo
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 

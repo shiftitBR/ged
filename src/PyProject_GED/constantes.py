@@ -106,3 +106,6 @@ cntExtencaoImagemTIF        = 4
 
 #Extencoes Comprimiveis
 cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
+
+#Extencoes Certificados
+cntExtencaoCertificado      = ['.pfx']

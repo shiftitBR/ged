@@ -6,6 +6,7 @@ Created on Jul 19, 2012
 '''
 
 from django                     import forms
+from controle                   import Controle as  AssinaturaControle 
 
 class FormUploadCertificado(forms.Form):
     senha       = forms.CharField(max_length=30, widget=forms.PasswordInput)
@@ -22,6 +23,9 @@ class FormUploadCertificado(forms.Form):
         return self.cleaned_data['senha']
 
     def clean_certificado(self):
-        if self.cleaned_data['certificado'] == '':
+        iCertificado = self.cleaned_data['certificado']
+        if iCertificado == '':
             raise forms.ValidationError('O campo certificado é obrigatório')
+        elif not AssinaturaControle().verificaExtCertificadoValido(iCertificado):
+            raise forms.ValidationError('Adicione um Certificado válido')
         return self.cleaned_data['certificado']

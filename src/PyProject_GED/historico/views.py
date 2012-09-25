@@ -9,6 +9,7 @@ from PyProject_GED.documento.models     import Documento
 from PyProject_GED.seguranca.models     import Funcao_Grupo
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED                      import constantes
+from PyProject_GED.assinatura.models import Assinatura
 
 
 def historico(vRequest, vTitulo, vIDVersao=None):
@@ -17,10 +18,12 @@ def historico(vRequest, vTitulo, vIDVersao=None):
         iUsuario= Usuario().obtemUsuario(iUser)
     
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoHistorico):
+        iVersao         = Versao().obtemVersao(vIDVersao)
         iDocumento      = Documento().obtemInformacoesDocumento(vIDVersao)
         iListaVersao    = Versao().obtemListaDeVersoesDoDocumento(vIDVersao)
         iListaEventos   = Historico().obtemListaEventos(vIDVersao)
         iUltimaVersao   = iListaVersao[len(iListaVersao)-1].num_versao
+        iAssinatuas     = Assinatura().obtemListaInfoAss(iVersao)
         iPossuiPermissao= True
     else:
         messages.warning(vRequest, 'Você não possui permissão para executar esta função.')

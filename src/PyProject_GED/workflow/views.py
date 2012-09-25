@@ -54,7 +54,7 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                                           iDescricao, iTipoPendencia, vEhMultipla=iMultipla)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEncaminhar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
-                messages.success(vRequest, 'Pendência Encaminhada com Sucesso!')
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEncaminhar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False

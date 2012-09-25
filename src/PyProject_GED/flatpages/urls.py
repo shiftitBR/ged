@@ -8,4 +8,6 @@ urlpatterns= patterns('flatpages.views',
                           {'vTitulo': trans(u'enderecos')}, name='enderecos'), 
                       url('^publicacao/(?P<vIDPublicacao>\d+)/$', 'publicacao',
                           {'vTitulo': trans(u'publicacao')}, name='publicacao'),
+                      url('^sucesso/(?P<vAcao>\d+)/$', 'sucesso',
+                          {'vTitulo': trans(u'sucesso')}, name='sucesso'),
                       )

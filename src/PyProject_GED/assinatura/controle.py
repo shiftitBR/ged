@@ -4,6 +4,9 @@ import logging
 import sys
 import chilkat
 import os
+from PyProject_GED                  import constantes
+from django.conf                    import settings
+
 
 class Controle(object):
     
@@ -58,10 +61,22 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel verificar p7s: ' + str(e))
             return False
         
-    def obtemCaminhoP7s(self, vArquivo):
+    def obtemCaminhoP7s(self, vArquivo, vIDEmpresa, vPasta, vNumero):
         try:
-            iArquivo = os.path.splitext(str(vArquivo))[0] + '.p7s'
-            return iArquivo
+            iNomeArquivo= os.path.splitext(str(vArquivo))[0]
+            iArquivoP7s = '%s_%03d.%s' % (iNomeArquivo, vNumero+1, 'p7s')
+            return iArquivoP7s
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtem Caminho p7s: ' + str(e))
+            return False
+        
+    def verificaExtCertificadoValido(self, vCertificado):
+        try:
+            iExtencao= os.path.splitext(str(vCertificado))[1]
+            if iExtencao.lower() in constantes.cntExtencaoCertificado:
+                return True 
+            else:
+                return False
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel verifica Ext Certificado Valido: ' + str(e))
             return False

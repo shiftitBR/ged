@@ -28,11 +28,11 @@
 		{% endif %}
 		
 		{% if iPossuiPermissao %}
-		<form class="form" id="fancy" data-fancy='true' action="{% url multi %}" method="POST" enctype="multipart/form-data">
+		<form class="form" id="fancy" action="{% url multi %}" method="POST" enctype="multipart/form-data">
 			{% load multiuploader %}
 			{% multiupform %}
 		</form>
-		<form class="form-horizontal" id="fancy" data-fancy='true' action="" method="POST" >{% csrf_token %}
+		<form class="form-horizontal" id="fancy" action="" method="POST" >{% csrf_token %}
 			<div class="well">
 				<div class="control-group">
 		            <label class="control-label" for="textarea">Descrição da Modificação:</label>
