@@ -5815,3 +5815,7 @@ a.badge:hover {
 	position: absolute;
 	padding: 15px 0px;
 } 
+
+.hasPlaceholder {
+	color: #777;
+}
