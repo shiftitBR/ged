@@ -497,3 +497,53 @@ class Firewall_Grupo(models.Model):
             else:
                 self.id_firewall_grupo= 1
         super(Firewall_Grupo, self).save()
+    
+    def criaFirewall_Grupo(self, vGrupo, vFirewall, vFirewallID=None, vGrupoID=None):
+        try:
+            if vFirewallID != None:
+                iFirewall= Firewall.objects.filter(id_firewall= int(vFirewallID))[0]
+            else:
+                iFirewall= vFirewall
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            iFirewall_Grupo         = Firewall_Grupo()
+            iFirewall_Grupo.grupo   = iGrupo
+            iFirewall_Grupo.firewall= iFirewall
+            iFirewall_Grupo.save()
+            return iFirewall_Grupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Firewall_Grupo: ' + str(e))
+            return False  
+    
+    def excluiFirewallsDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Firewall_Grupo.objects.filter(grupo= iGrupo).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir firewalls do grupo: ' + str(e))
+            return False
+    
+    def obtemListaDeGruposSemFirewall(self, vEmpresa=None):
+        try:
+            iListaGrupos            = Grupo.objects.all()
+            iListaFirewallsGrupo    = Firewall_Grupo.objects.all()
+            if vEmpresa != None:
+                iListaGrupos          = iListaGrupos.filter(empresa= vEmpresa)
+                iListaFirewallsGrupo   = iListaFirewallsGrupo.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemFirewall   = []
+            iListaGruposComFirewall   = []
+            for iFirewallGrupo in iListaFirewallsGrupo:
+                iListaGruposComFirewall.append(iFirewallGrupo.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComFirewall:
+                    iListaGruposSemFirewall.append(iGrupo)
+            return iListaGruposSemFirewall
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de grupos sem firewall: ' + str(e))
+            return False
