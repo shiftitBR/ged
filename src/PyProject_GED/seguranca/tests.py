@@ -205,6 +205,19 @@ class Test(TestCase):
         iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
         iLista= Grupo_Pasta().obtemListaDeGruposSemPasta(iEmpresa)
         self.assertEquals(1, len(iLista))
+        
+    def testExcluiFirewallsDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaFirewalls = Firewall_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaFirewalls))
+        Firewall_Grupo().excluiFirewallsDoGrupo(iGrupo)
+        iListaFirewalls = Firewall_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaFirewalls))
+    
+    def testObtemListaDeGruposSemFirewall(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Firewall_Grupo().obtemListaDeGruposSemFirewall(iEmpresa)
+        self.assertEquals(1, len(iLista))
     
     #-----------------------------------------------------MOKS---------------------------------------------------  
     

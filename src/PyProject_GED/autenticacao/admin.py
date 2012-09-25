@@ -214,32 +214,6 @@ class AdminGrupoPastaForm(forms.ModelForm):
                 iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
             
             self.fields['grupo'].choices = iListaGrupos
-        
-class AdminGrupoPasta2(MultiDBModelAdmin): 
-    list_display    = ('grupo', 'pasta')
-    search_fields   = ('grupo', 'pasta')
-    ordering        = ('grupo',)  
-    exclude         = ('id_grupo_pasta',)  
-    
-    def queryset(self, vRequest):
-        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            try:
-                return qs.filter(grupo__empresa= iEmpresa.id_empresa)
-            except Exception, e:
-                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminGrupoPasta: ' + str(e))
-                return qs.all()
-        else:
-            return qs.all()
-    
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminGrupoPasta,self).get_form(vRequest, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            form.base_fields['grupo'].queryset  = Grupo.objects.filter(empresa= iEmpresa.id_empresa)
-            form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
-        return form
 
 class AdminGrupoPasta(MultiDBModelAdmin): 
     list_display    = ('grupo',)
@@ -482,7 +456,86 @@ class AdminFirewall(MultiDBModelAdmin):
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
     
+class AdminFirewallGrupoForm(forms.ModelForm):
+    firewalls = forms.ModelMultipleChoiceField(
+        queryset=Firewall.objects.all(), 
+        required=True,
+        widget=FilteredSelectMultiple(
+            verbose_name=('IPs'),
+            is_stacked=False
+        )
+    )
+
+    class Meta:
+        model = Grupo
+        list_display    = ('grupo',)
+        search_fields   = ('grupo',)
+        ordering        = ('grupo',)  
+        exclude         = ('firewall', 'id_firewall_grupo',)
+
+    def __init__(self, *args, **kwargs):
+        super(AdminFirewallGrupoForm, self).__init__(*args, **kwargs)
+
+        if self.instance.id_firewall_grupo != None:
+            iListaFirewallGrupo= Firewall_Grupo.objects.filter(grupo= self.instance.grupo)
+            iListaFirewallsIDs= []
+            for iFirewallGrupo in iListaFirewallGrupo:
+                iListaFirewallsIDs.append(iFirewallGrupo.firewall.id_firewall)
+            self.fields['firewalls'].initial = Firewall.objects.filter(id_firewall__in= iListaFirewallsIDs)
+            iListaGrupos= []
+            iLista = Grupo.objects.filter(id_grupo= self.instance.grupo.id_grupo)
+            for iGrupo in iLista:
+                iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+            
+            self.fields['grupo'].choices = iListaGrupos
+    
 class AdminFirewallGrupo(MultiDBModelAdmin): 
+    list_display    = ('grupo',)
+    search_fields   = ('grupo',)
+    ordering        = ('grupo',)  
+    
+    form = AdminFirewallGrupoForm
+         
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iListaFirewallGrupo= Firewall_Grupo.objects.filter(grupo__empresa= iEmpresa.id_empresa).order_by('grupo')
+        else:
+            iListaFirewallGrupo= Firewall_Grupo.objects.order_by('grupo')
+        iListaGrupos= []
+        iListaFirewallGrupoIDs= []
+        for iFirewallGrupo in iListaFirewallGrupo:
+            if iFirewallGrupo.grupo not in iListaGrupos:
+                iListaGrupos.append(iFirewallGrupo.grupo)
+                iListaFirewallGrupoIDs.append(iFirewallGrupo.id_firewall_grupo)
+        return qs.filter(id_firewall_grupo__in = iListaFirewallGrupoIDs)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminFirewallGrupo,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+            iLista = Firewall_Grupo().obtemListaDeGruposSemFirewall(iEmpresa)
+            iListaFirewalls= Firewall.objects.filter(empresa= iEmpresa)
+        else:
+            iLista = Firewall_Grupo().obtemListaDeGruposSemFirewall()
+            iListaFirewalls= Firewall.objects.all()
+        iListaGrupos= []
+        for iGrupo in iLista:
+            iListaGrupos.append((iGrupo.id_grupo, '%s' % iGrupo.nome))
+        form.base_fields['grupo'].choices = iListaGrupos
+        form.base_fields['firewalls'].queryset = iListaFirewalls
+        return form
+    
+    def save_model(self, vRequest, obj, form, change):
+        iListaIDsFirewalls= vRequest.POST.getlist('firewalls')
+        iIDGrupo= vRequest.POST.get('grupo')
+        Firewall_Grupo().excluiFirewallsDoGrupo(None, iIDGrupo)
+        for iIDFirewall in iListaIDsFirewalls:
+            Firewall_Grupo().criaFirewall_Grupo(None, None, iIDFirewall, iIDGrupo)
+
+class AdminFirewallGrupo2(MultiDBModelAdmin): 
     list_display    = ('firewall', 'grupo')
     search_fields   = ('firewall', 'grupo')
     ordering        = ('firewall',)  
