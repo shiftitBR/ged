@@ -5827,12 +5827,15 @@ a.badge:hover {
 }
 
 .notificapendencia {
-    position:absolute;    /* This breaks the div from the normal HTML document. */
-    top: -6px;
-    right:-6px;
-    padding:1px 2px 1px 2px;
-    background-color:red; /* you could use a background image if you'd like as well */
+    position:absolute;
+    top: 18px;
+    right:125px;
+    padding:4px 4px 4px 4px;
+    background-color:red; 
     color:white;
     font-weight:bold;
-    font-size:0.55em;
+    font-size:0.70em;
+    border-radius:30px;
+    box-shadow:1px 1px 1px gray;
+    line-height: 0.60em;
 }
