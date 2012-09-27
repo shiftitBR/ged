@@ -11,10 +11,7 @@ from django.conf                                    import settings
 from django.db.models                               import get_model
 from controle                                       import Controle as ControleAutenticacao
 from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
-<<<<<<< HEAD
 from PyProject_GED                                  import constantes
-=======
->>>>>>> e8a79ca9e8198786dec6abc0d7269bde72c70f98
 
 import threading
 import logging
