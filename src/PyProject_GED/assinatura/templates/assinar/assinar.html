@@ -34,7 +34,7 @@
 	{% endif %}
 	
 	<br>
-	{% if not iPossuiAssinatura %}
+	{% if iPodeAssinar %}
 	<form class="form" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
 		<div class="container-fluid">
 		  <div class="row-fluid">

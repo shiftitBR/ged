@@ -3,6 +3,7 @@ from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.core.mail                   import EmailMessage
 from django.conf                        import settings
+from django.contrib                     import messages
 
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.autenticacao.models  import Usuario, Empresa
@@ -13,28 +14,36 @@ from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento, Publicacao_Usuario
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 
-import os
 from django.http import HttpResponseRedirect
 from PyProject_GED.seguranca.models import Funcao_Grupo
+from PyProject_GED.assinatura.models import Assinatura
 
 def email(vRequest, vTitulo):  
     iUser = vRequest.user
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
-    iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
-    iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
-    iListaDestinatarios= []
-    iLista= Usuario().obtemUsuariosComEmailDaEmpresa(iEmpresa)
-    for i in range(len(iLista)):
-        iDestinatario= Destinatario()
-        iDestinatario.id= iLista[i].id
-        iDestinatario.nome=  '%s %s' % (iLista[i].first_name, iLista[i].last_name)
-        iListaDestinatarios.append(iDestinatario)
-    iVersoes= []
-    for i in range(len(iListaVersao)):
-        iVersao= Versao().obtemVersao(int(iListaVersao[i]))
-        iVersoes.append(iVersao)
-    iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
+        
+    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
+        if vRequest.session['ListaVersao'] != '':
+            iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
+            iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
+            iListaDestinatarios= []
+            iLista= Usuario().obtemUsuariosComEmailDaEmpresa(iEmpresa)
+            for i in range(len(iLista)):
+                iDestinatario= Destinatario()
+                iDestinatario.id= iLista[i].id
+                iDestinatario.nome=  '%s %s' % (iLista[i].first_name, iLista[i].last_name)
+                iListaDestinatarios.append(iDestinatario)
+            iVersoes= []
+            for i in range(len(iListaVersao)):
+                iVersao= Versao().obtemVersao(int(iListaVersao[i]))
+                iVersoes.append(iVersao)
+            iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
+            iPossuiPermissao    = True
+        else:
+            messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
+    else:
+        messages.warning(vRequest, 'Você não possui permissão para executar esta função!')
 
     if vRequest.POST:
         try :
@@ -55,7 +64,8 @@ def email(vRequest, vTitulo):
                         for i in range(len(iVersoes)):
                             iArquivo= iVersoes[i].upload
                             if iVersoes[i].eh_assinado:
-                                iFileAnexo  = DocumentoControle().comprimiArquivoAssinado(str(iArquivo.image))
+                                iListaAssinaturas = Assinatura().obtemListaAssDaVersao(iVersoes[i])
+                                iFileAnexo  = DocumentoControle().comprimiArquivoAssinado(iVersoes[i], iListaAssinaturas)
                                 iFile       = open(str(iFileAnexo),"rb")
                                 email.attach(filename = DocumentoControle().obtemNomeZipado(str(iArquivo.image)), content = iFile.read())
                             else:
@@ -69,6 +79,7 @@ def email(vRequest, vTitulo):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEmail, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                        vRequest.session['ListaVersao'] = ''
                         return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEmail) + '/')
                 except Exception, e:
                     oControle.getLogger().error('Nao foi possivel post email: ' + str(e))
@@ -78,6 +89,7 @@ def email(vRequest, vTitulo):
             else:
                 form = FormEmail(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         except Exception, e:
+            vRequest.session['ListaVersao'] = ''
             oControle.getLogger().error('Nao foi possivel post email: ' + str(e))
             return False
     else: 
@@ -94,20 +106,28 @@ def publicar(vRequest, vTitulo):
     iUser = vRequest.user
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
-    iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
-    iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
-    iListaDestinatarios= []
-    iLista= Usuario().obtemUsuariosComEmailDaEmpresa(iEmpresa)
-    for i in range(len(iLista)):
-        iDestinatario= Destinatario()
-        iDestinatario.id= iLista[i].id
-        iDestinatario.nome=  '%s %s' % (iLista[i].first_name, iLista[i].last_name)
-        iListaDestinatarios.append(iDestinatario)
-    iVersoes= []
-    for i in range(len(iListaVersao)):
-        iVersao= Versao().obtemVersao(int(iListaVersao[i]))
-        iVersoes.append(iVersao)
-    iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
+        
+    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
+        if vRequest.session['ListaVersao'] != '':
+            iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
+            iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
+            iListaDestinatarios= []
+            iLista= Usuario().obtemUsuariosComEmailDaEmpresa(iEmpresa)
+            for i in range(len(iLista)):
+                iDestinatario= Destinatario()
+                iDestinatario.id= iLista[i].id
+                iDestinatario.nome=  '%s %s' % (iLista[i].first_name, iLista[i].last_name)
+                iListaDestinatarios.append(iDestinatario)
+            iVersoes= []
+            for i in range(len(iListaVersao)):
+                iVersao= Versao().obtemVersao(int(iListaVersao[i]))
+                iVersoes.append(iVersao)
+            iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
+            iPossuiPermissao    = True
+        else:
+            messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
+    else:
+        messages.warning(vRequest, 'Você não possui permissão para executar esta função!')
         
     if vRequest.POST:
         try :
@@ -146,10 +166,12 @@ def publicar(vRequest, vTitulo):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoPublicar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                        vRequest.session['ListaVersao'] = ''
                         return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoPublicar) + '/')
             else:
                 form = FormEmail(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         except Exception, e:
+            vRequest.session['ListaVersao'] = ''
             oControle.getLogger().error('Nao foi possivel post email: ' + str(e))
             return False
     else: 

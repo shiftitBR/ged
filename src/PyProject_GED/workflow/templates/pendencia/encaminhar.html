@@ -9,64 +9,61 @@
 {% endblock style %}
 
 <body>
-	<div class="container">
-  		<center>
+	<div class="container" align="center">
 		<header class="jumbotron subhead" id="overview">
 		  <h2><strong>Encaminhar Pendência</strong></h2>
 		  <p class="lead">Documento encaminhado para Aprovação ou Reprovação</p>
 		</header>
-		</center>
-		
-		<div class="container">
-		{% for field in form %}
-	    	<strong>{{ field.errors }}</strong>
-	    {% endfor %}
-		</div>
-		
-		{% if messages %}
-		<div class="alert alert-info">
-			<ul class="messages">
-			    {% for message in messages %}
-			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
-			    {% endfor %}
-			</ul>
-		</div>
-		{% endif %}
-		
-		{% if iPossuiPermissao %}
-		<div class="container">
-			<form class="form-horizontal" action=""  method="POST">{% csrf_token %}
-				<div class="well">
-					<div class="control-group">
-						<label class="control-label" for="select01">Usuário Destinatário *</label>
-						<div class="controls">
-						{{form.usr_destinatario}}
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label" for="select01">Descrição *</label>
-						<div class="controls">
-						<textarea id="id_descricao_encaminhar" rows="10" cols="40" style="width: 500px; height: 100px;" name="descricao"></textarea>
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="checkbox">
-						  {{form.eh_multipla}}
-						  Mútipla - Esta Pendência necessita sofrer a ação de todos os usuários para ser concluída?
-						</label>
+	</div>
+	<div class="container">
+	{% for field in form %}
+    	<strong>{{ field.errors }}</strong>
+    {% endfor %}
+	</div>
+	
+	{% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
+	{% if iPossuiPermissao %}
+	<div class="container">
+		<form class="form-horizontal" action=""  method="POST">{% csrf_token %}
+			<div class="well">
+				<div class="control-group">
+					<label class="control-label" for="select01">Usuário Destinatário *</label>
+					<div class="controls">
+					{{form.usr_destinatario}}
 					</div>
 				</div>
 				
-				<div class="form-actions">
-					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Encaminhar Pendência</button>
+				<div class="control-group">
+					<label class="control-label" for="select01">Descrição *</label>
+					<div class="controls">
+					<textarea id="id_descricao_encaminhar" rows="10" cols="40" style="width: 500px; height: 100px;" name="descricao"></textarea>
+					</div>
 				</div>
-			</form>
-		</div> 
-		{% endif %}
-		
-  </div>
+				
+				<div class="control-group">
+					<label class="checkbox">
+					  {{form.eh_multipla}}
+					  Mútipla - Esta Pendência necessita sofrer a ação de todos os usuários para ser concluída?
+					</label>
+				</div>
+			</div>
+			
+			<div class="form-actions">
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Encaminhar Pendência</button>
+			</div>
+		</form>
+	</div> 
+	{% endif %}
+	
 </body>
 
 </html>

@@ -38,42 +38,9 @@ def documentos(vRequest, vTitulo):
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
         vRequest.session['PastaRaiz']       = iPasta_Raiz
         vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
+        vRequest.session['ListaVersao']     = ''
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
-            return False
-        
-    if vRequest.POST:
-        try :
-            iListaCheck=[]
-            iListaVersao = ''
-            iListaDocumentos= vRequest.session['iListaDocumento']
-            for i in range(len(iListaDocumentos)): 
-                if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
-                    iListaCheck.append(iListaDocumentos[i].id_versao)
-                    iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
-                
-            if len(iListaCheck) == 0:
-                messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
-                iAcao= 0
-            else:
-                if 'email' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
-                        iAcao= 1
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                if 'publicar' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
-                        iAcao= 2
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                if 'assinar' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
-                        iAcao= 3
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                vRequest.session['ListaVersao']= iListaVersao
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
             return False
     return render_to_response(
         'documentos/documentos.html',
@@ -84,7 +51,6 @@ def documentos(vRequest, vTitulo):
 @login_required 
 def obtemPastaRaiz(vRequest, vTitulo):
     try :
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TESTE 2'
         iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
         iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
@@ -98,8 +64,6 @@ def obtemPastaRaiz(vRequest, vTitulo):
 @login_required 
 def versoesSelecionadas(vRequest, vTitulo, vListaIDVersoes):
     try :
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TESTE 1'
-        print vListaIDVersoes
         vRequest.session['ListaVersao']= vListaIDVersoes
         return HttpResponse(True)
     except Exception, e:

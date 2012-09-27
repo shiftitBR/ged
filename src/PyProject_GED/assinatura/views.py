@@ -12,6 +12,7 @@ from PyProject_GED                      import oControle, constantes
 from PyProject_GED.assinatura.forms     import FormUploadCertificado
 from PyProject_GED.assinatura.models    import Certificado, Assinatura
 from PyProject_GED.historico.models     import Historico, Log_Usuario
+from PyProject_GED.seguranca.models     import Funcao_Grupo
 
 @login_required 
 def assinar(vRequest, vTitulo):
@@ -20,18 +21,27 @@ def assinar(vRequest, vTitulo):
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
         
-    iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
-    iVersoes= []
-    for i in range(len(iListaVersao)):
-        iVersao= Versao().obtemVersao(int(iListaVersao[i]))
-        if Assinatura().possuiAssinaturaUsuario(iUsuario, iVersao):
-            messages.warning(vRequest, 'O Documento: ' + str(iVersao.documento.assunto) + ' já possui a sua assinatura!' )
-            iPossuiAssinatura= True
-            break
+    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
+        if vRequest.session['ListaVersao'] != '':
+            iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
+            iVersoes= []
+            for i in range(len(iListaVersao)):
+                iVersao= Versao().obtemVersao(int(iListaVersao[i]))
+                if Assinatura().possuiAssinaturaUsuario(iUsuario, iVersao):
+                    messages.warning(vRequest, 'O Documento: ' + str(iVersao.documento.assunto) + ' já possui a sua assinatura!' )
+                    iPodeAssinar= False
+                    break
+                else:
+                    iPodeAssinar= True
+                    iVersoes.append(iVersao)
         else:
-            iPossuiAssinatura= False
-            iVersoes.append(iVersao)
-        
+            iPodeAssinar   = False
+            messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
+    else:
+        iPodeAssinar    = False
+        messages.warning(vRequest, 'Você não possui permissão para executar esta função!')
+    vRequest.session['ListaVersao'] = ''    
+    
     if vRequest.POST:
         try :
             form = FormUploadCertificado(vRequest.POST, vRequest.FILES)

@@ -9,21 +9,28 @@
 {% endblock style %}
 
 <body>
-	<div class="container">
-		
-		<center>
+	<div class="container" align="center">
 		<header class="jumbotron subhead" id="overview">
 		  <h2><strong>Adicionar Contato</strong></h2>
 		</header>
-		</center>
-		
 	</div>
 	
 	<div class="container">
-		{% for field in form %}
-	    	<strong>{{ field.errors }}</strong>
-	    {% endfor %}
+	{% for field in form %}
+    	<strong>{{ field.errors }}</strong>
+    {% endfor %}
 	</div>
+	
+	{% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
 	
 	<div class="container">
 		<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
