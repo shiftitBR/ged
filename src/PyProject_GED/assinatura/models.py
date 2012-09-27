@@ -107,6 +107,17 @@ class Assinatura(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Lista Ass Da Versao: ' + str(e))
             return False 
         
+    def possuiAssinaturaUsuario(self, vUsuario, vVersao):
+        try:
+            iListaAssinaturas= Assinatura.objects.filter(usuario=vUsuario).filter(versao=vVersao)
+            if len(iListaAssinaturas) > 0:
+                return True
+            else:
+                return False
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel possui Assinatura Usuario: ' + str(e))
+            return False 
+        
     def obtemListaInfoAss(self, vVersao):
         try:
             iAssinaturas    = Assinatura.objects.filter(versao__documento=vVersao.documento).order_by('-id_assinatura')

@@ -4,9 +4,9 @@ from django.conf                        import settings
 
 import logging
 import datetime
-import constantes #@UnresolvedImport
 import zipfile
 import os
+from PyProject_GED import constantes
 
 class Controle(object):
     
@@ -113,8 +113,39 @@ class Controle(object):
             return False
         
     def obtemNomeZipado(self, vCaminhoArquivo):
-        iFileZip        = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
-        iListaArquivo   = iFileZip.split('/')
-        iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
-        print iNomeArquivo
-        return iNomeArquivo
+        try:
+            iFileZip        = os.path.splitext(str(vCaminhoArquivo))[0] + '.zip'
+            iListaArquivo   = iFileZip.split('/')
+            iNomeArquivo    = iListaArquivo[len(iListaArquivo)-1:][0]
+            return iNomeArquivo
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtem Nome Zipado: ' + str(e))
+            return False
+
+    def podeExecutarFuncao(self, vEstadoVersao, vEstadoProximo):
+        try:
+            iListaPosDisponivel = [constantes.cntEstadoVersaoDisponivel, 
+                                   constantes.cntEstadoVersaoPendente, 
+                                   constantes.cntEstadoVersaoExcluida]
+            iListaPosPendente   = [constantes.cntEstadoVersaoAprovado,
+                                   constantes.cntEstadoVersaoReprovado]
+            
+            if vEstadoVersao == constantes.cntEstadoVersaoDisponivel and vEstadoProximo in iListaPosDisponivel:
+                return True
+            elif vEstadoVersao == constantes.cntEstadoVersaoBloqueado and vEstadoProximo == constantes.cntEstadoVersaoObsoleto:
+                return True
+            elif vEstadoVersao == constantes.cntEstadoVersaoAprovado and vEstadoProximo == constantes.cntEstadoVersaoBloqueado:
+                return True
+            elif vEstadoVersao == constantes.cntEstadoVersaoReprovado and vEstadoProximo == constantes.cntEstadoVersaoBloqueado:
+                return True
+            elif vEstadoVersao == constantes.cntEstadoVersaoExcluida :
+                return False
+            elif vEstadoVersao == constantes.cntEstadoVersaoObsoleto :
+                return False
+            elif vEstadoVersao == constantes.cntEstadoVersaoDisponivel and vEstadoProximo in iListaPosPendente:
+                return True
+            else:
+                return False                
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel pode Executar Funcao: ' + str(e))
+            return False

@@ -5,8 +5,9 @@ from django.http                        import HttpResponse,\
     HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
+from django.core                        import serializers
 
-from PyProject_GED                      import oControle
+from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
@@ -25,8 +26,6 @@ from PyProject_GED.assinatura.models    import Assinatura
 import datetime
 import os
 import urllib
-import constantes #@UnresolvedImport
-from django.core import serializers
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -153,8 +152,6 @@ def tabelaDocumentos(vRequest, vTitulo):
                         
                     iEstado = iListaDocumentos[i].id_estado
                     
-                    #if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
-                    #    iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     if iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoPDF or iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoImagem:
                         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
                             iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -191,12 +188,15 @@ def importar(vRequest, vTitulo):
             iUsuario= Usuario().obtemUsuario(iUser)
             
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
-            iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
-            iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
-            iTamListaIndices    = len(iListaIndices)
-            iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
-            iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
-            iPossuiPermissao    = True
+            if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
+                iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
+                iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+                iTamListaIndices    = len(iListaIndices)
+                iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+                iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+                iPossuiPermissao    = True
+            else:
+                messages.warning(vRequest, 'Selecione uma Pasta para Inserir Documento!')
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
         
@@ -281,11 +281,16 @@ def importar(vRequest, vTitulo):
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario    = Usuario().obtemUsuario(vRequest.user)
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
-            iVersaoBase = Versao().obtemVersao(vIDVersao)
-            iDocumento  = iVersaoBase.documento
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoObsoleto):
+                iVersaoBase = Versao().obtemVersao(vIDVersao)
+                iDocumento  = iVersaoBase.documento
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Não é possível fazer o Check-in do Documento!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
@@ -336,10 +341,14 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
 def checkout(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoBloqueado):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Não é possível fazer o Check-out do Documento!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')    
             
@@ -373,7 +382,13 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
 def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        vIDFuncao = 0
+        iVersao = Versao().obtemVersao(vIDVersao)
+        if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoReprovado):
+            vIDFuncao = 0
+            iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Este Documento não pode ser aprovado!') 
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
         return False
@@ -402,7 +417,13 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
 def reprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        vIDFuncao = 0
+        iVersao = Versao().obtemVersao(vIDVersao)
+        if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoReprovado):
+            vIDFuncao = 0
+            iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Este Documento não pode ser reprovado!') 
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
         return False
@@ -431,9 +452,14 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
 def excluir(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoExcluir):
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoExcluida):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Este Documento não pode ser excluido!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
     except Exception, e:
@@ -503,11 +529,12 @@ def criaArvore(vRequest, vTitulo):
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
-                if os.path.isdir(iDiretorioFilho):
-                    iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
-                    if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
-                        iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
-            iHtml.append('</ul>')
+                if not iPasta == 'temp':
+                    if os.path.isdir(iDiretorioFilho):
+                        iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
+                        if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
+                            iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
+                iHtml.append('</ul>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')
@@ -515,7 +542,6 @@ def criaArvore(vRequest, vTitulo):
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel criar arvore: ' + str(e))
             return False
-        
 
 def visualizar(vRequest, vTitulo, vIDVersao=None):
     try :

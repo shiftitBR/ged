@@ -10,13 +10,15 @@ from autenticacao.models                import Usuario #@UnresolvedImport
 from documento.models                   import Versao #@UnresolvedImport
 from objetos_auxiliares                 import Pendencia as PendenciaAuxiliar
 
+from PyProject_GED.autenticacao.models  import Empresa
+from PyProject_GED.documento.models     import Tipo_de_Documento
+from PyProject_GED.seguranca.models     import Pasta, Grupo, Grupo_Usuario
+from PyProject_GED.historico.models     import Historico
+from PyProject_GED                      import constantes
+from PyProject_GED.documento.controle   import Controle as DocumentoControle
+
 import logging
 import datetime
-import constantes #@UnresolvedImport
-from PyProject_GED.autenticacao.models import Empresa
-from PyProject_GED.documento.models import Tipo_de_Documento
-from PyProject_GED.seguranca.models import Pasta, Grupo, Grupo_Usuario
-from PyProject_GED.historico.models import Historico
 
 
 #-----------------------------Workflow----------------------------------------
@@ -255,7 +257,7 @@ class Pendencia(models.Model):
     workflow            = models.ForeignKey(Workflow, null= True)
     etapa_do_workflow   = models.ForeignKey(Etapa_do_Workflow, null= True)
     grupo_da_pendencia  = models.ForeignKey(Grupo_da_Pendencia, null= True)
-    data                = models.CharField(max_length=100, null= False)
+    data                = models.DateTimeField(null= False)
     descricao           = models.CharField(max_length=200, null= False)
     feedback            = models.CharField(max_length=200, null= True)
     
@@ -361,12 +363,12 @@ class Pendencia(models.Model):
     def obtemListaPendenciasRemetente(self, vRemetente):
         try:
             iListaPendencias = Pendencia.objects.filter(usr_remetente= vRemetente).order_by('-data')
-            iNomeRemetente   = vRemetente.first_name + ' ' + vRemetente.last_name
+            iNomeRemetente   = Usuario().obterNomeUsuario(vRemetente.id)
             iLista= []
             for i in range(len(iListaPendencias)):
-                iNomeDestinatario = iListaPendencias[i].usr_destinatario.first_name + ' ' + iListaPendencias[i].usr_destinatario.last_name
+                iNomeDestinatario = Usuario().obterNomeUsuario(iListaPendencias[i].usr_destinatario.id)
                 iPendencia= PendenciaAuxiliar()
-                iPendencia.data         = iListaPendencias[i].data
+                iPendencia.data         = DocumentoControle().formataData(iListaPendencias[i].data)
                 iPendencia.descricao    = iListaPendencias[i].descricao
                 iPendencia.destinatario = iNomeDestinatario
                 iPendencia.estadoDoc    = iListaPendencias[i].versao.estado.descricao
@@ -392,12 +394,12 @@ class Pendencia(models.Model):
         try:
             iListaPendencias = Pendencia.objects.filter(usr_destinatario= vDestinatario).filter(
                                                 estado_da_pendencia= constantes.cntEstadoPendenciaPendente).order_by('-data')
-            iNomeDestinatario= vDestinatario.first_name + ' ' + vDestinatario.last_name
+            iNomeDestinatario= Usuario().obterNomeUsuario(vDestinatario.id)
             iLista= []
             for i in range(len(iListaPendencias)):
-                iNomeRemetente = iListaPendencias[i].usr_remetente.first_name + ' ' + iListaPendencias[i].usr_remetente.last_name
+                iNomeRemetente = Usuario().obterNomeUsuario(iListaPendencias[i].usr_remetente.id)
                 iPendencia= PendenciaAuxiliar()
-                iPendencia.data         = iListaPendencias[i].data
+                iPendencia.data         = DocumentoControle().formataData(iListaPendencias[i].data)
                 iPendencia.descricao    = iListaPendencias[i].descricao
                 iPendencia.destinatario = iNomeDestinatario
                 iPendencia.estadoDoc    = iListaPendencias[i].versao.estado.descricao
