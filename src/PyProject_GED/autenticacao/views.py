@@ -34,17 +34,20 @@ def login(vRequest, vTitulo):
                     messages.warning(vRequest, 'Este Usuário está cadastrado como Contato, não sendo permitido efetuar login no sistema.')
                 elif user.is_active:
                     if Firewall().verificaIP(client_address, iUsuario.empresa):
-                        auth_login(vRequest, user)
-                        vRequest.session.set_expiry(6000)
-                        vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
-                        Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoLogin, iUsuario.id, vRequest.session['IDEmpresa'])
-                        return HttpResponseRedirect('/documentos/')
+                        if iUsuario.empresa.eh_ativo:
+                            auth_login(vRequest, user)
+                            vRequest.session.set_expiry(6000)
+                            vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
+                            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoLogin, iUsuario.id, vRequest.session['IDEmpresa'])
+                            return HttpResponseRedirect('/documentos/')
+                        else:
+                            messages.warning(vRequest, 'Esta Empresa está Inativa. Para mais informações entre em contato com o administrador.')
                     else: 
                         oControle.getLogger().warning('O IP_Address: ' + str(client_address) + ' foi recusado!')
                         auth_logout(vRequest)
                         messages.warning(vRequest, 'Este endereço de IP está bloqueado. Para mais informações entre em contato com o administrador.')
                 else:
-                    messages.warning(vRequest, 'Esta Usuário está Inativo. Para mais informações entre em contato com o administrador.')
+                    messages.warning(vRequest, 'Este Usuário está Inativo. Para mais informações entre em contato com o administrador.')
             else:
                 messages.warning(vRequest, 'E-mail e/ou Senha incorreto(s). Digite novamente seu E-mail e Senha para efetuar o login.')
         except Exception, e:

@@ -4,28 +4,31 @@ from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib                     import messages
+from django.http                        import HttpResponseRedirect
 
-from PyProject_GED                      import oControle
+from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 from PyProject_GED.documento.models     import Versao
-from PyProject_GED.historico.models     import Historico, Log_Usuario
+from PyProject_GED.historico.models     import Log_Usuario
+from PyProject_GED.seguranca.models     import Funcao_Grupo
+from PyProject_GED.workflow.models      import Tipo_de_Pendencia
 from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
-from PyProject_GED.seguranca.models     import Funcao_Grupo
     
-import constantes #@UnresolvedImport
-from django.http import HttpResponseRedirect
-from PyProject_GED.workflow.models import Tipo_de_Pendencia
 
 @login_required     
 def encaminhar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEncaminhar):
-            vIDFuncao = 0
-            iPossuiPermissao    = True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoExcluida):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Este Documento não pode ser Encaminhado!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
