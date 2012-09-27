@@ -26,6 +26,7 @@ import datetime
 import os
 import urllib
 import constantes #@UnresolvedImport
+from django.core import serializers
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -80,14 +81,40 @@ def documentos(vRequest, vTitulo):
         locals(),
         context_instance=RequestContext(vRequest),
         )
-    
+
+@login_required 
+def obtemPastaRaiz(vRequest, vTitulo):
+    try :
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TESTE 2'
+        iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
+        iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
+        iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
+        iHtml= []
+        iHtml.append(iPasta_Raiz)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
+        return False
+    return HttpResponse(''.join(iHtml))
+
+@login_required 
+def versoesSelecionadas(vRequest, vTitulo, vListaIDVersoes):
+    try :
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TESTE 1'
+        print vListaIDVersoes
+        vRequest.session['ListaVersao']= vListaIDVersoes
+        return HttpResponse(True)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
+        return False
+
+
 @login_required 
 def tabelaDocumentos(vRequest, vTitulo):
     try :
         iUser = vRequest.user
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
-        iPasta_Raiz = vRequest.session['IDPasta']
+        iPasta_Raiz = vRequest.session['IDPasta'] #Variavel utilizado na interface
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
             iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
@@ -469,6 +496,7 @@ def criaArvore(vRequest, vTitulo):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
+        vRequest.session['Diretorio_Pasta'] = iDiretorio
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
         iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:

@@ -228,6 +228,7 @@
 			F.cancel();
 
 			if (!F.current || false === F.trigger('beforeClose')) {
+				console.log('>>>>>>>>>>>CLEAN 1');
 				return;
 			}
 
@@ -235,11 +236,13 @@
 
 			//If forced or is still opening then remove immediately
 			if (!F.isOpen || (a && a[0] === true)) {
+				console.log('>>>>>>>>>>>CLEAN 2');
 				$('.fancybox-wrap').stop().trigger('onReset').remove();
 
 				F._afterZoomOut();
 
 			} else {
+				console.log('>>>>>>>>>>>CLEAN 3');
 				F.isOpen = F.isOpened = false;
 
 				$('.fancybox-item, .fancybox-nav').remove();
@@ -248,6 +251,17 @@
 				F.inner.css('overflow', 'hidden');
 
 				F.transitions[F.current.closeMethod]();
+				
+				if (window.location.pathname == '/documentos/')
+				{
+					$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+				    {
+				            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
+				            $('#id_tabelaDocumentos tr:last').after(data);
+				    });
+					$.post('/versoes_selecionadas/-/', { dir: 'teste' }, function(data){});
+					
+				}
 			}
 		},
 
