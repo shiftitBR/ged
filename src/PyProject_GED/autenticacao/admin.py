@@ -27,6 +27,11 @@ from PyProject_GED.workflow.models      import Workflow, Etapa_do_Workflow
 from PyProject_GED                      import constantes
 
 import logging
+<<<<<<< HEAD
+=======
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django import forms
+>>>>>>> e8a79ca9e8198786dec6abc0d7269bde72c70f98
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
@@ -98,18 +103,6 @@ class AdminPasta(MultiDBModelAdmin):
     search_fields   = ('pasta_pai', 'nome', )
     ordering        = ('pasta_pai',)
     exclude         = ('id_pasta', 'diretorio', )
-    
-    def queryset(self, vRequest):
-        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            try:
-                return qs.filter(usuario__empresa= iEmpresa.id_empresa)
-            except Exception, e:
-                logging.getLogger('PyProject_GED.controle').warning('Nao foi possivel AdminPasta: ' + str(e))
-                return qs.all()
-        else:
-            return qs.all()
     
     def get_form(self, vRequest, obj=None, **kwargs):
         form = super(AdminPasta,self).get_form(vRequest, obj,**kwargs)

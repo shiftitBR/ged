@@ -10,9 +10,12 @@ $(document).ready
 		
 		$('#reprovar_feedback').keypress(maximoLength('#reprovar_feedback', 200, true));
 		
+		//$('#id_assunto_importar').keypress(function() {maximoLength('#id_assunto_importar', 100, true);});
 		$('#id_assunto_importar').keypress(maximoLength('#id_assunto_importar', 100, true));
 		
 		$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
+		
+		$('#id_descricao_checkin').keypress(mostrarDocumetnos(''));
 		
 	}
 );
@@ -34,4 +37,13 @@ function maximoLength(vCampoID, vTamanho, vStatus)
 		alertText: "Você excedeu o limite de caracteres.", // Text in alert message   
 		slider: true // True Use counter slider    
 	});
+}
+
+function refreshDocumentos(vCampoID)
+{
+	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+    {
+            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
+            $('#id_tabelaDocumentos tr:last').after(data);
+    });
 }

@@ -23,5 +23,9 @@ urlpatterns= patterns('documento.views',
                         url('^importar/$', 'importar',
                             {'vTitulo': trans(u'importar')}, name='importar'),
                         url('^tabela_documentos/$', 'tabelaDocumentos',
-                            {'vTitulo': trans(u'tabelaDocumentos')}, name='tabelaDocumentos')
+                            {'vTitulo': trans(u'tabelaDocumentos')}, name='tabelaDocumentos'),
+                        url('^versoes_selecionadas/(?P<vListaIDVersoes>[-\w]+)/$', 'versoesSelecionadas',
+                            {'vTitulo': trans(u'versoesSelecionadas')}, name='versoesSelecionadas'),
+                        url('^pasta_raiz/$', 'obtemPastaRaiz',
+                            {'vTitulo': trans(u'obtemPastaRaiz')}, name='obtemPastaRaiz'),
                       )

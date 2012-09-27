@@ -17,7 +17,7 @@ import os
 from django.http import HttpResponseRedirect
 from PyProject_GED.seguranca.models import Funcao_Grupo
 
-def email(vRequest, vTitulo):
+def email(vRequest, vTitulo):  
     iUser = vRequest.user
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
