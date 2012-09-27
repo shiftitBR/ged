@@ -161,12 +161,15 @@ def importar(vRequest, vTitulo):
             iUsuario= Usuario().obtemUsuario(iUser)
             
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
-            iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
-            iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
-            iTamListaIndices    = len(iListaIndices)
-            iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
-            iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
-            iPossuiPermissao    = True
+            if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
+                iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
+                iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+                iTamListaIndices    = len(iListaIndices)
+                iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+                iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+                iPossuiPermissao    = True
+            else:
+                messages.warning(vRequest, 'Selecione uma Pasta para Inserir Documento!')
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
         
@@ -498,11 +501,12 @@ def criaArvore(vRequest, vTitulo):
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
-                if os.path.isdir(iDiretorioFilho):
-                    iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
-                    if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
-                        iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
-            iHtml.append('</ul>')
+                if not iPasta == 'temp':
+                    if os.path.isdir(iDiretorioFilho):
+                        iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
+                        if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
+                            iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
+                iHtml.append('</ul>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')

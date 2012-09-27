@@ -77,38 +77,6 @@ class AdminUsuario(MultiDBModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)[0]
         obj.save()
-        
-
-"""class AdminContato(MultiDBModelAdmin): 
-    list_display    = UserAdmin.list_display + ('empresa', 'is_active')
-    search_fields   = UserAdmin.search_fields
-    exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions', 
-                       'tipo_usuario', 'username') 
-    
-    def queryset(self, vRequest):
-        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            try:
-                return qs.filter(id_empresa= iEmpresa, tipo_usuario__id_tipo_usuario= constantes.cntTipoUsuarioContato)
-                self.fields['empresa']= iEmpresa
-            except:
-                return qs.all()
-        else:
-            return qs.all()
-    
-    def get_form(self, vRequest, obj=None, **kwargs):
-        form = super(AdminUsuario,self).get_form(vRequest, obj,**kwargs)
-        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
-        if iEmpresa != None:
-            form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-        form.base_fields['email'].required= True
-        return form 
-    
-    def save_model(self, request, obj, form, change):
-        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(constantes.cntTipoUsuarioContato)[0]
-        obj.save()"""
-
    
 class AdminIndice(MultiDBModelAdmin): 
     list_display    = ('id_indice', 'descricao')

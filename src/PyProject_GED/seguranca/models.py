@@ -89,6 +89,16 @@ class Pasta(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
 
+    def ehPastaRaiz(self, vIDPasta, vIDEmpresa):
+        try:
+            iPastaRaiz = Pasta.objects.filter(empresa=vIDEmpresa).order_by('id_pasta')[0]
+            if str(iPastaRaiz.id_pasta) == vIDPasta:
+                return True
+            else:
+                return False
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel eh Pasta Raiz: ' + str(e))
+            return False
 #-----------------------------GRUPO----------------------------------------
 
 class Grupo(models.Model):

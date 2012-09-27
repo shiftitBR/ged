@@ -27,14 +27,14 @@
 	<div class="alert alert-info">
 		<ul class="messages">
 		    {% for message in messages %}
-		    	<li>{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+		    	<li><b>{{ message }}</b></li>
 		    {% endfor %}
 		</ul>
 	</div>
 	{% endif %}
 	
 	<br>
-	
+	{% if not iPossuiAssinatura %}
 	<form class="form" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
 		<div class="container-fluid">
 		  <div class="row-fluid">
@@ -83,6 +83,7 @@
 		</div>
 		
 	</form>
+	{% endif %}
 </body>
 
 </html>

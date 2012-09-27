@@ -24,7 +24,13 @@ def assinar(vRequest, vTitulo):
     iVersoes= []
     for i in range(len(iListaVersao)):
         iVersao= Versao().obtemVersao(int(iListaVersao[i]))
-        iVersoes.append(iVersao)
+        if Assinatura().possuiAssinaturaUsuario(iUsuario, iVersao):
+            messages.warning(vRequest, 'O Documento: ' + str(iVersao.documento.assunto) + ' já possui a sua assinatura!' )
+            iPossuiAssinatura= True
+            break
+        else:
+            iPossuiAssinatura= False
+            iVersoes.append(iVersao)
         
     if vRequest.POST:
         try :
