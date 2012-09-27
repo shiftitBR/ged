@@ -5,29 +5,28 @@ Created on Jul 19, 2012
 @author: Shift IT | wwww.shiftit.com.br
 '''
 
-from django.contrib                 import admin
-from django.contrib.auth.admin      import UserAdmin 
-from django.contrib.auth.models     import User
-from django.contrib.sites.models    import Site
+from django.contrib                     import admin
+from django.contrib.auth.admin          import UserAdmin 
+from django.contrib.auth.models         import User
+from django.contrib.sites.models        import Site
+from django.contrib.admin.widgets       import FilteredSelectMultiple
+from django                             import forms
 
-from models                         import Empresa
-from models                         import Usuario
-from multiAdmin                     import MultiDBModelAdmin #@UnresolvedImport
+from models                             import Empresa
+from models                             import Usuario
+from multiAdmin                         import MultiDBModelAdmin #@UnresolvedImport
 
-from PyProject_GED.indice.models    import Indice, Tipo_de_Indice
-from PyProject_GED.autenticacao.models import Tipo_de_Usuario
-from PyProject_GED.historico.models import Log_Usuario
-from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario,\
+from PyProject_GED.indice.models        import Indice, Tipo_de_Indice
+from PyProject_GED.autenticacao.models  import Tipo_de_Usuario
+from PyProject_GED.historico.models     import Log_Usuario
+from PyProject_GED.seguranca.models     import Grupo, Grupo_Pasta, Grupo_Usuario,\
     Funcao_Grupo, Pasta, Firewall, Firewall_Grupo, Funcao
-from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma
-from PyProject_GED.documento.models import Tipo_de_Documento
-from PyProject_GED.workflow.models  import Workflow, Etapa_do_Workflow
-from PyProject_GED import constantes
+from PyProject_GED.qualidade.models     import Tipo_de_Norma, Norma
+from PyProject_GED.documento.models     import Tipo_de_Documento
+from PyProject_GED.workflow.models      import Workflow, Etapa_do_Workflow
+from PyProject_GED                      import constantes
 
 import logging
-from django.contrib.admin.widgets import FilteredSelectMultiple
-from django import forms
-from django.db.models.query import QuerySet
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
