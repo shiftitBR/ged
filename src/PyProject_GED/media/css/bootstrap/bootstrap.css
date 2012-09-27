@@ -5819,3 +5819,21 @@ a.badge:hover {
 .hasPlaceholder {
 	color: #777;
 }
+
+#notpendenciabox {
+	position:relative;
+    border:1px solid blue;
+    width:100%;
+    height:100%;
+}
+
+.notificapendencia {
+    position:absolute;    /* This breaks the div from the normal HTML document. */
+    top: -6px;
+    right:-6px;
+    padding:1px 2px 1px 2px;
+    background-color:red; /* you could use a background image if you'd like as well */
+    color:white;
+    font-weight:bold;
+    font-size:0.55em;
+}
