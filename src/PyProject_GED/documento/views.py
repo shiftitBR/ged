@@ -5,6 +5,7 @@ from django.http                        import HttpResponse,\
     HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
+from django.core                        import serializers
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
@@ -25,11 +26,6 @@ from PyProject_GED.assinatura.models    import Assinatura
 import datetime
 import os
 import urllib
-<<<<<<< HEAD
-=======
-import constantes #@UnresolvedImport
-from django.core import serializers
->>>>>>> e8a79ca9e8198786dec6abc0d7269bde72c70f98
 
 @login_required 
 def documentos(vRequest, vTitulo):

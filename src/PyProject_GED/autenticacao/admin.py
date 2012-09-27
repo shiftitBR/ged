@@ -27,11 +27,6 @@ from PyProject_GED.workflow.models      import Workflow, Etapa_do_Workflow
 from PyProject_GED                      import constantes
 
 import logging
-<<<<<<< HEAD
-=======
-from django.contrib.admin.widgets import FilteredSelectMultiple
-from django import forms
->>>>>>> e8a79ca9e8198786dec6abc0d7269bde72c70f98
 
 class AdminEmpresa(MultiDBModelAdmin): 
     list_display    = ('id_empresa', 'nome', 'cnpj', 'cep', 'rua', 'numero', 'complemento', 'bairro', 
