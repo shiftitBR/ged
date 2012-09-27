@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block conteudo %}
+
+<script src="{{ MEDIA_URL }}js/projeto/documentos.js" type="text/javascript"></script>
+
 <div class="container">
   <h1>Buscar Documentos</h1>
 </div>
@@ -30,9 +33,9 @@
 		</div> 
     <div class="subnav">
 	    <ul class="nav nav-pills">
-	      <li class=""><a href="javascript:getsupport('assinarlote')">Assinar Documento(s)</a></li>
-	      <li class=""><a href="javascript:getsupport('email')">Enviar E-mail</a></li>
-	      <li class=""><a href="javascript:getsupport('publicar')">Enviar Publicação</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/assinar/" id="id_btnAssinar">Assinar Documento(s)</a></li>
+          <li class=""><a class="fancybox fancybox.iframe" href="/email/" id="id_btnEmail">Enviar E-mail</a></li>
+          <li class=""><a class="fancybox fancybox.iframe" href="/publicar/" id="id_btnPublicar">Enviar Publicação</a></li>
 	    </ul>
   	</div> 
   	

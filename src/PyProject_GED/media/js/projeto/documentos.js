@@ -4,9 +4,12 @@ $(document).ready
 	{
 		//------------------------------OnLoad------------------------------
 
-		montaArvoreDeDocumentos();
+		if (window.location.pathname == '/documentos/')
+		{
+			montaArvoreDeDocumentos();
 		
-		intervaloRefreshDocumentos(60000);
+			intervaloRefreshDocumentos(60000);
+		}
 		
 		//------------------------------Eventos------------------------------
 		
@@ -57,13 +60,19 @@ function obtemVersoesSelecionadas(vChecks)
     var iListaVersoes =  $(':checkbox')
     var iTamanhoLista = iListaVersoes.length;
     var iListaIDVersoes= ''; 
+    var iTamanhoListaSelecionadas= 0
     for(i=0;i< iTamanhoLista;i++)
     {
         if (iListaVersoes[i].checked == true)
         { 
-            iListaIDVersoes+= iListaVersoes[i].name.substring(7) + '-'  
+            iListaIDVersoes+= iListaVersoes[i].name.substring(7) + '-'; 
+            iTamanhoListaSelecionadas ++;
         }
         
     } 
-    $.post('/versoes_selecionadas/'+iListaIDVersoes+'/', { dir: 'teste' }, function(data){});
+    
+    if (iTamanhoListaSelecionadas > 0)
+    {
+    	$.post('/versoes_selecionadas/'+iListaIDVersoes+'/', { dir: 'teste' }, function(data){});
+    }
 }

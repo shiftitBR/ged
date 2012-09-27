@@ -4,19 +4,30 @@ $(document).ready
 	{
 	//------------------------------Eventos------------------------------
 		
-		$('#id_descricao_encaminhar').keypress(maximoLength('#id_descricao_encaminhar', 200, true));
+		if (window.location.pathname == '/importar/')
+		{
+			$('#id_assunto_importar').keydown(maximoLength('#id_assunto_importar', 100, true));
+		}
 		
-		$('#aprovar_feedback').keypress(maximoLength('#aprovar_feedback', 200, true));
+		if (window.location.pathname == '/encaminhar/')
+		{
+			$('#id_descricao_encaminhar').keypress(maximoLength('#id_descricao_encaminhar', 200, true));
+		}
 		
-		$('#reprovar_feedback').keypress(maximoLength('#reprovar_feedback', 200, true));
+		if (window.location.pathname == '/aprovar_documento/')
+		{
+			$('#aprovar_feedback').keypress(maximoLength('#aprovar_feedback', 200, true));
+		}
 		
-		//$('#id_assunto_importar').keypress(function() {maximoLength('#id_assunto_importar', 100, true);});
-		$('#id_assunto_importar').keypress(maximoLength('#id_assunto_importar', 100, true));
+		if (window.location.pathname == '/reprovar_documento/')
+		{
+			$('#reprovar_feedback').keypress(maximoLength('#reprovar_feedback', 200, true));
+		}
 		
-		$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
-		
-		$('#id_descricao_checkin').keypress(mostrarDocumetnos(''));
-		
+		if (window.location.pathname == '/checkin/')
+		{
+			$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
+		}		
 	}
 );
 
@@ -26,6 +37,7 @@ $(document).ready
 
 function maximoLength(vCampoID, vTamanho, vStatus)
 {
+	console.log(vCampoID);
 	$(vCampoID).maxlength({   
 		events: [], // Array of events to be triggerd    
 		maxCharacters: vTamanho, // Characters limit   
