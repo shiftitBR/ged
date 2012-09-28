@@ -172,17 +172,17 @@ class Email(models.Model):
                 self.id_email= 1
         super(Email, self).save()
         
-    def enviaEmailPorTipo(self, vRemetente, vDestinatario, vTipoEmail):
+    def enviaEmailPorTipo(self, vEmailRemetente, vEmailDestinatario, vTipoEmail):
         try:
             iEmail      = Email.objects.filter(tipo_email= vTipoEmail)[0]
-            return EmailControle().enviarEmail(iEmail.titulo, iEmail.mensagem, vDestinatario, vRemetente)
+            return EmailControle().enviarEmail(iEmail.titulo, iEmail.mensagem, vEmailDestinatario, vEmailRemetente)
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel envia Email Por Tipo: ' + str(e))
             return False
         
-    def enviaEmail(self, vRemetente, vDestinatario, vTitulo, vMensagem):
+    def enviaEmail(self, vEmailRemetente, vEmailDestinatario, vTitulo, vMensagem):
         try:
-            return EmailControle().enviarEmail(vTitulo, vMensagem, vDestinatario, vRemetente)
+            return EmailControle().enviarEmail(vTitulo, vMensagem, vEmailDestinatario, vEmailRemetente)
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel envia Email: ' + str(e))
             return False

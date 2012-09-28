@@ -13,16 +13,15 @@ from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.seguranca.models     import Pasta    , Grupo_Usuario
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
-from PyProject_GED.envioemail.controle  import Controle as ControleEmail
 
 from objetos_auxiliares                 import Documento as DocumentoAuxiliar
 from objetos_auxiliares                 import Versoes as VersaoAuxiliar
 from controle                           import Controle as DocumentoControle
 from PyProject_GED.imagem.controle      import Controle as ImagemControle
+from PyProject_GED                      import constantes
 
 import datetime
 import logging
-import constantes#@UnresolvedImport
 
 #-----------------------------DOCUMENTO----------------------------------------
 
@@ -178,8 +177,9 @@ class Documento(models.Model):
             iListaUsuarios= []
             for iDocumento in iListaDocumentosVecendo:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
-                ControleEmail().enviarEmail('', '', iDocumento.usr_responsavel.email, 
-                                            constantes.cntConfiguracaoEmailAlerta)
+                mEmail= get_model('envioemail', 'Email')
+                mEmail().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iDocumento.usr_responsavel.email, 
+                                          constantes.cntTipoEmailDocumentoVencendo)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))

@@ -22,7 +22,7 @@ def assinar(vRequest, vTitulo):
         iUsuario= Usuario().obtemUsuario(iUser)
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
-        if vRequest.session['ListaVersao'] != '':
+        if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':
             iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
             iVersoes= []
             for i in range(len(iListaVersao)):
@@ -40,8 +40,7 @@ def assinar(vRequest, vTitulo):
     else:
         iPodeAssinar    = False
         messages.warning(vRequest, 'Você não possui permissão para executar esta função!')
-    vRequest.session['ListaVersao'] = ''    
-    
+
     if vRequest.POST:
         try :
             form = FormUploadCertificado(vRequest.POST, vRequest.FILES)

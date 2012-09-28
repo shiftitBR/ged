@@ -142,7 +142,7 @@ class Controle(object):
                 return False
             elif vEstadoVersao == constantes.cntEstadoVersaoObsoleto :
                 return False
-            elif vEstadoVersao == constantes.cntEstadoVersaoDisponivel and vEstadoProximo in iListaPosPendente:
+            elif vEstadoVersao == constantes.cntEstadoVersaoPendente and vEstadoProximo in iListaPosPendente:
                 return True
             else:
                 return False                

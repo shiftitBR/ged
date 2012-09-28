@@ -332,6 +332,14 @@ class Pendencia(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia do workflow: ' + str(e))
             return False
+        
+    def obtemPendencia(self, vVersao, vDestinatario):
+        try:
+            iPendencia= Pendencia.objects.filter(versao=vVersao.id_versao).filter(usr_destinatario=vDestinatario.id)[0]
+            return iPendencia
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Pendencia: ' + str(e))
+            return False
     
     def cancelaPendenciasDoWorkflow(self, vWorkflow, vDocumento):
         try:

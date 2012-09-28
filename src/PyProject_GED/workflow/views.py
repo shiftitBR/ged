@@ -15,6 +15,7 @@ from PyProject_GED.seguranca.models     import Funcao_Grupo
 from PyProject_GED.workflow.models      import Tipo_de_Pendencia
 from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
+from PyProject_GED.envioemail.models import Email
     
 
 @login_required     
@@ -40,7 +41,6 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
         form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'], iIDTipoPendencia=vRequest.session['TipoPendencia'])
         if form.is_valid():
             try:
-                iDestinatario   = Usuario().obtemUsuarioPeloID(vRequest.POST.get('usr_destinatario'))
                 iDescricao      = vRequest.POST.get('descricao')
                 iVersao         = Versao().obtemVersao(vIDVersao)
                 iUsuarios       = vRequest.POST.getlist('usr_destinatario')
@@ -52,11 +52,13 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 for iUser in iUsuarios:
                     iListaDestinatarios.append(Usuario().obtemUsuarioPeloID(iUser))
                 iTipoPendencia  = Tipo_de_Pendencia.objects.filter(id_tipo_de_pendencia=vRequest.session['TipoPendencia'])[0]
-                
                 Pendencia().criaPendencia(iUsuario, iListaDestinatarios, iVersao, 
                                           iDescricao, iTipoPendencia, vEhMultipla=iMultipla)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEncaminhar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                for iDestinatario in iListaDestinatarios:
+                    Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iDestinatario.email, 
+                                              constantes.cntTipoEmailPendenciaRecebida)
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEncaminhar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))

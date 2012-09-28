@@ -4,6 +4,7 @@ from django.template                    import RequestContext
 from django.core.mail                   import EmailMessage
 from django.conf                        import settings
 from django.contrib                     import messages
+from django.http                        import HttpResponseRedirect
 
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.autenticacao.models  import Usuario, Empresa
@@ -13,10 +14,8 @@ from objetos_auxiliares                 import Destinatario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento, Publicacao_Usuario
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
-
-from django.http import HttpResponseRedirect
-from PyProject_GED.seguranca.models import Funcao_Grupo
-from PyProject_GED.assinatura.models import Assinatura
+from PyProject_GED.seguranca.models     import Funcao_Grupo
+from PyProject_GED.assinatura.models    import Assinatura
 
 def email(vRequest, vTitulo):  
     iUser = vRequest.user
@@ -24,7 +23,7 @@ def email(vRequest, vTitulo):
         iUsuario= Usuario().obtemUsuario(iUser)
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
-        if vRequest.session['ListaVersao'] != '' or vRequest.session['ListaVersao'] != '-':
+        if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':
             iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
             iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
             iListaDestinatarios= []
@@ -108,7 +107,7 @@ def publicar(vRequest, vTitulo):
         iUsuario= Usuario().obtemUsuario(iUser)
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
-        if vRequest.session['ListaVersao'] != '':
+        if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':
             iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
             iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
             iListaDestinatarios= []

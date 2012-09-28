@@ -26,6 +26,7 @@ from PyProject_GED.assinatura.models    import Assinatura
 import datetime
 import os
 import urllib
+from PyProject_GED.envioemail.models import Email
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -361,10 +362,13 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
         try :
             if vRequest.POST.get('comentario') != '' :
                 iVersao = Versao().obtemVersao(vIDVersao)
+                iPendencia = Pendencia().obtemPendencia(iVersao, iUsuario)
                 Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, 
                                            iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iPendencia.usr_remetente.email, 
+                                          constantes.cntTipoEmailPendenciaAprovada)
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
             else:
                 messages.success(vRequest, 'Adicione um Comentário para Aprovar o Documento!.') 
@@ -396,10 +400,13 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
         try :
             if vRequest.POST.get('comentario') != '' :
                 iVersao = Versao().obtemVersao(vIDVersao)
+                iPendencia = Pendencia().obtemPendencia(iVersao, iUsuario)
                 Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
                                            iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iPendencia.usr_remetente.email, 
+                                          constantes.cntTipoEmailPendenciaReprovada)
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
             else:
                 messages.success(vRequest, 'Adicione um Comentário para Reprovar o Documento!.')
