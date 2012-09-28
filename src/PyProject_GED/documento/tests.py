@@ -16,7 +16,6 @@ from controle                                   import Controle as ControleDocum
 import datetime
 from PyProject_GED.indice.models import Tipo_de_Indice, Indice,\
     Indice_Versao_Valor
-from PyProject_GED import constantes
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma, Norma_Documento
 from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario
 

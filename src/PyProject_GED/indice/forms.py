@@ -42,7 +42,7 @@ class FormBuscaDocumento(forms.Form):
         iListaDeNormas.append(('selected', 'Norma da Qualidade'))
         iLista= Norma().obtemListaNormas(iEmpresa.id_empresa)
         for i in range(len(iLista)):
-            iListaDeNormas.append((iLista[i].id_norma, '%s' % iLista[i].descricao))
+            iListaDeNormas.append((iLista[i].id_norma, '%s' % iLista[i]))
         
         iListaDeTiposDeDocumento= []
         iListaDeTiposDeDocumento.append(('selected', 'Tipo de Documento'))
