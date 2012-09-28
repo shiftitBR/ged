@@ -152,8 +152,6 @@ class Usuario(User):
         if not self.comaparaSenha(self.pk, self.password):
             self.set_password(self.password)        
         super(Usuario, self).save()
-        print '>>>>>>>>>>>>>>>>>>>>>>>'   
-        print Usuario.groups
         
     def adicionaContato(self, vEmpresa, vFirstName, vLastName, vEmail):
         try:
@@ -180,20 +178,6 @@ class Usuario(User):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel eh Contato ' + str(e))
             return False
-        
-    def ehDoGrupoAdministrador(self, vUsuario):
-        try:
-            print '>>>>>>>>>>>>>>>>>>>> ehDoGrupoAdministrador'
-            iGrupo = vUsuario.groups.all()[0]
-            print iGrupo
-            print iGrupo.id
-            if iGrupo.id == 1:
-                return True
-            else:
-                return False
-        except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel eh Do Grupo Administrador ' + str(e))
-            return False    
         
     def comaparaSenha(self, vIDUsuario, vSenha):
         try:
