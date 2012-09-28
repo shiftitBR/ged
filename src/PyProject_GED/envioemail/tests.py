@@ -145,7 +145,7 @@ class Test(TestCase):
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'
@@ -192,5 +192,5 @@ class Test(TestCase):
                     Bla bla bla
                     
                     """
-        iEmail1= Email(id_email= iIDEmail, id_tipo_email= iTipoEmail, titulo= iTitulo, mensagem= iMensagem)
+        iEmail1= Email(id_email= iIDEmail, tipo_email= iTipoEmail, titulo= iTitulo, mensagem= iMensagem)
         iEmail1.save()
