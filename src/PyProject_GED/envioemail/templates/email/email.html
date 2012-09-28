@@ -51,11 +51,9 @@
 	<br>
 	{% if iPossuiPermissao %}
 	<form action="" id="fancy" method="POST">{% csrf_token %}
-	<div class="container">
 		{% if iCadastraContato %}
     		<a class="fancybox fancybox.iframe" href="/contato/1/"><i class="icon-retweet"></i> Adicionar novos contatos</a>
     	{% endif %}
-	</div>
 	<div class="container">
 	    	
 		<div class="controls">
