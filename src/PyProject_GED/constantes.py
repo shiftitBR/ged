@@ -7,10 +7,11 @@ from django.conf    import settings
 
 
 #Configuracoes
-cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
-cntConfiguracaoPastaDocumentos= 'documentos'
-cntConfiguracaoDiasAvisoVencimento= 5
-cntConfiguracaoEmailAlerta  = 'alerta@trackdoc.com.br'
+cntConfiguracaoDiretorioDocumentos      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoPastaDocumentos          = 'documentos'
+cntConfiguracaoDiasAvisoVencimento      = 5
+cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
+cntConfiguracaoIDGrupoAdministradores   = '1'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1

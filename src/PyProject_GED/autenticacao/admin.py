@@ -51,7 +51,7 @@ class AdminUsuario(MultiDBModelAdmin):
     list_display    = UserAdmin.list_display + ('empresa', 'is_active')
     search_fields   = UserAdmin.search_fields
     exclude         = ('last_login', 'date_joined', 'is_superuser', 'user_permissions', 
-                       'tipo_usuario', 'username') 
+                       'tipo_usuario', 'username', 'is_staff') 
     
     def queryset(self, vRequest):
         qs = super(MultiDBModelAdmin, self).queryset(vRequest)
@@ -71,11 +71,14 @@ class AdminUsuario(MultiDBModelAdmin):
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         form.base_fields['email'].required= True
+        form.base_fields['password'].help_text= None
         return form 
     
-    def save_model(self, request, obj, form, change):
-        obj.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)[0]
-        obj.save()
+    def save_model(self, vRequest, vUsuario, form, change):
+        vUsuario.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)[0]
+        if vRequest.POST.get('groups') == constantes.cntConfiguracaoIDGrupoAdministradores:
+            vUsuario.is_staff= True
+        vUsuario.save()
    
 class AdminIndice(MultiDBModelAdmin): 
     list_display    = ('id_indice', 'descricao')
