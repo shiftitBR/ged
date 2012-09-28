@@ -150,9 +150,10 @@ class Usuario(User):
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
         if not self.comaparaSenha(self.pk, self.password):
-            self.set_password(self.password)
-        
-        super(Usuario, self).save()   
+            self.set_password(self.password)        
+        super(Usuario, self).save()
+        print '>>>>>>>>>>>>>>>>>>>>>>>'   
+        print Usuario.groups
         
     def adicionaContato(self, vEmpresa, vFirstName, vLastName, vEmail):
         try:
