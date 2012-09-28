@@ -24,7 +24,7 @@ def email(vRequest, vTitulo):
         iUsuario= Usuario().obtemUsuario(iUser)
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
-        if vRequest.session['ListaVersao'] != '':
+        if vRequest.session['ListaVersao'] != '' or vRequest.session['ListaVersao'] != '-':
             iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
             iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
             iListaDestinatarios= []

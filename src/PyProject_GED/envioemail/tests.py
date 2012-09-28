@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from django.test                                import TestCase
 
+from django.core                                import mail
+
 from PyProject_GED.autenticacao.models          import Empresa, Tipo_de_Usuario, Usuario
 from PyProject_GED.envioemail.models            import Publicacao,\
-    Publicacao_Usuario, Publicacao_Documento
+    Publicacao_Usuario, Publicacao_Documento, Tipo_de_Email, Email
 from PyProject_GED.documento.models             import Tipo_de_Documento,\
     Documento
 from PyProject_GED.seguranca.models             import Pasta
+from PyProject_GED                              import constantes
+from controle                                   import Controle as EnvioEmailControle
 
 class Test(TestCase):
     
@@ -20,6 +24,8 @@ class Test(TestCase):
         self.mokarTipoDocumento()
         self.mokarDocumento()
         self.mokarPublicacaoDocumento()
+        self.mokarTipoDeEmail()
+        self.mokarEmail()
         pass
     
     
@@ -73,6 +79,18 @@ class Test(TestCase):
         iPublicacao                 = Publicacao.objects.all()[0]
         iListaPublicacaoDocumento   = Publicacao_Documento.objects.filter(publicacao= iPublicacao)
         self.assertEquals(1, iListaPublicacaoDocumento[0].id_publicacao_documento)
+        
+    def testEnviandoEmail(self):
+        iTitulo = 'Mensagem enviada pelo site'
+        iDestino = 'alexandre.spengler@shiftit.com.br'
+        iRemetente= 'diego.costa@shiftit.com.br'
+        iTexto = """
+        Email enviado!
+        """
+        EnvioEmailControle().enviarEmail(iTitulo, iTexto, iDestino, iRemetente)    
+        
+        self.assertEquals(mail.outbox[0].subject, 'Mensagem enviada pelo site')
+
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -157,3 +175,22 @@ class Test(TestCase):
         iPublicacaoDoc.publicacao       = iPublicacao
         iPublicacaoDoc.documento        = iDocumento
         iPublicacaoDoc.save()
+
+
+    def mokarTipoDeEmail(self):
+        iIDTipo= 1
+        iDescricao= 'Pendencia Recebida'
+        
+        iTipoEmail1= Tipo_de_Email(id_tipo_email= iIDTipo, descricao= iDescricao)
+        iTipoEmail1.save()
+    
+    def mokarEmail(self):
+        iIDEmail= 1
+        iTipoEmail= Tipo_de_Email.objects.filter(id_tipo_email= constantes.cntTipoEmailPendenciaRecebida)[0]
+        iTitulo= """Pendencia Recebida"""
+        iMensagem= """
+                    Bla bla bla
+                    
+                    """
+        iEmail1= Email(id_email= iIDEmail, id_tipo_email= iTipoEmail, titulo= iTitulo, mensagem= iMensagem)
+        iEmail1.save()

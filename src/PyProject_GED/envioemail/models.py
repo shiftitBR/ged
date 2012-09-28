@@ -9,6 +9,7 @@ from django.db                          import models
 
 from PyProject_GED.documento.models     import Documento
 from PyProject_GED.autenticacao.models  import Usuario
+from PyProject_GED.envioemail.controle  import Controle as EmailControle
 
 import logging
 
@@ -133,4 +134,55 @@ class Publicacao_Documento(models.Model):
             return iListaPublicacaoDocumento
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de publicacao_documento ' + str(e))
+            return False
+        
+#---------------------------------- EMAIL -------------------------------------------
+
+class Tipo_de_Email(models.Model):
+    id_tipo_email       = models.IntegerField(max_length=2, primary_key=True)
+    descricao           = models.CharField(max_length=30)
+    
+    class Meta:
+        db_table= 'tb_tipo_de_email'
+    
+    def save(self):  
+        
+        if len(Tipo_de_Email.objects.order_by('-id_tipo_email')) > 0:   
+            iUltimoRegistro = Tipo_de_Email.objects.order_by('-id_tipo_email')[0] 
+            self.id_tipo_email= iUltimoRegistro.pk + 1
+        else:
+            self.id_tipo_email= 1
+        super(Tipo_de_Email, self).save()
+
+class Email(models.Model):
+    id_email        = models.IntegerField(max_length=2, primary_key=True, null= False)
+    tipo_email      = models.ForeignKey(Tipo_de_Email, blank=False, unique=False)
+    titulo          = models.CharField(max_length=100, null= True)
+    mensagem        = models.CharField(max_length=4000, null= True)    
+    
+    class Meta:
+        db_table= 'tb_email'
+    
+    def save(self):  
+        if self.id_email == None: 
+            if len(Email.objects.order_by('-tb_email')) > 0:   
+                iUltimoRegistro = Email.objects.order_by('-tb_email')[0] 
+                self.id_email= iUltimoRegistro.pk + 1
+            else:
+                self.id_email= 1
+        super(Email, self).save()
+        
+    def enviaEmailPorTipo(self, vRemetente, vDestinatario, vTipoEmail):
+        try:
+            iEmail      = Email.objects.filter(tipo_email= vTipoEmail)[0]
+            return EmailControle().enviarEmail(iEmail.titulo, iEmail.mensagem, vDestinatario, vRemetente)
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel envia Email Por Tipo: ' + str(e))
+            return False
+        
+    def enviaEmail(self, vRemetente, vDestinatario, vTitulo, vMensagem):
+        try:
+            return EmailControle().enviarEmail(vTitulo, vMensagem, vDestinatario, vRemetente)
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel envia Email: ' + str(e))
             return False

@@ -116,3 +116,6 @@ cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
 
 #Extencoes Certificados
 cntExtencaoCertificado      = ['.pfx']
+
+#Tipos de Email
+cntTipoEmailPendenciaRecebida = 1
