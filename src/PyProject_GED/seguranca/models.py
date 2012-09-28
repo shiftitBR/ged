@@ -194,7 +194,7 @@ class Grupo_Pasta(models.Model):
     
     def obtemListaGrupoPasta(self, vGrupo):
         try:
-            iLista = Grupo_Pasta.objects.filter(grupo= vGrupo)[0]
+            iLista = Grupo_Pasta.objects.filter(grupo= vGrupo)
             return iLista
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista GrupoPasta: ' + str(e))
@@ -351,6 +351,18 @@ class Grupo_Usuario(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de usuarios do grupo: ' + str(e))
             return False
     
+    def obtemPastasPermitidasDoUsuario(self, vIDUsuario):
+        try:
+            iUsuario= Usuario().obtemUsuarioPeloID(vIDUsuario)
+            iGrupoUsuario= self.obtemGrupoUsuario(iUsuario)
+            iListaDeGrupoPasta= Grupo_Pasta().obtemListaGrupoPasta(iGrupoUsuario.grupo)
+            iListaDePastas= []
+            for iGrupoPasta in iListaDeGrupoPasta:
+                iListaDePastas.append(iGrupoPasta.pasta)
+            return iListaDePastas
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de pastas permitidas: ' + str(e))
+            return False
 #-----------------------------FUNCAO----------------------------------------
 
 class Funcao(models.Model):

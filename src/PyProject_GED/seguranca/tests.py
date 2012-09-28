@@ -227,8 +227,12 @@ class Test(TestCase):
     def testObtemListaDeUsuariosDoGrupo(self):
         iGrupo          = Grupo.objects.all()[1]
         iLista  = Grupo_Usuario().obtemUsuariosDoGrupo(iGrupo)
-        print '>>>>>>>>>>>>>>>'
-        print type(iLista)
+        self.assertEquals(1, len(iLista))
+    
+    def testObtemPastasPermitidasDoUsuario(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iLista          = Grupo_Usuario().obtemPastasPermitidasDoUsuario(iUsuario.id)
         self.assertEquals(1, len(iLista))
     
     #-----------------------------------------------------MOKS---------------------------------------------------  
