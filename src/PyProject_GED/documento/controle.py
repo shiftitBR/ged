@@ -124,7 +124,7 @@ class Controle(object):
 
     def podeExecutarFuncao(self, vEstadoVersao, vEstadoProximo):
         try:
-            iListaPosDisponivel = [constantes.cntEstadoVersaoDisponivel, 
+            iListaPosDisponivel = [constantes.cntEstadoVersaoBloqueado, 
                                    constantes.cntEstadoVersaoPendente, 
                                    constantes.cntEstadoVersaoExcluida]
             iListaPosPendente   = [constantes.cntEstadoVersaoAprovado,

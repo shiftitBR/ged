@@ -103,7 +103,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iData': str(iListaDocumentos[i].data_criacao),
                                'iAssinado': str(iAssinado)})
                     
-                    iLinha= iLinha + '<div class="btn-group">'
+                    iLinha= iLinha + '<div class="btn-group" align="center">'
                     if iEstado == constantes.cntEstadoVersaoExcluida:
                         iLinha= iLinha + '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-plus-sign icon-white"></i> Informações   <span class="caret"></span></a><ul class="dropdown-menu">'
                     else:
@@ -267,7 +267,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False  :
+                if vRequest.session['Images'] != False  :
                     iListaImages= str(vRequest.session['Images']).split(',')
                     iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[0])
                     iDescricao  = vRequest.POST.get('descricao')
@@ -282,7 +282,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                     Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckIn, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                    vRequest.session['Image']= False
+                    vRequest.session['Images']= False
                     ControleOCR().executaOCR(iVersao)
                     ControleImagem().comprimeImagem(iVersao)
                     Workflow().criaPendenciasDoWorkflow(iDocumento)
@@ -323,17 +323,18 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckout, iUsuario.id, 
-                                          vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
-            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-            iFile = open(iArquivo,"r")
-            response = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-            messages.success(vRequest, 'O Check-out foi efetuado com sucesso!.') 
-            return response
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoBloqueado):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckout, iUsuario.id, 
+                                              vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+                iFile = open(iArquivo,"r")
+                response = HttpResponse(iFile.read())
+                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+                return response
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
             return False
