@@ -30,7 +30,7 @@
 	<div class="alert alert-info">
 		<ul class="messages">
 		    {% for message in messages %}
-		    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+		    	<li><b>{{ message }}</b></li>
 		    {% endfor %}
 		</ul>
 	</div>
@@ -45,7 +45,7 @@
 			</div>
 		</form>
 	</div>
-	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
+	<form action="" id="fancy" method="POST">{% csrf_token %}
 		<div class="well wellbranco well-small">
 			<div class="container-fluid">
 		  		<div class="row-fluid">
@@ -110,7 +110,6 @@
       </div>
     </div>
   </div>
-{% endif %}
 </div>
 				    	
 				    	<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
@@ -123,6 +122,7 @@
 			</div>
 		</div>
 </form>
+{% endif %}
 </body>
 
 </html>

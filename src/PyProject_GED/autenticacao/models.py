@@ -11,9 +11,8 @@ from django.conf                                    import settings
 from django.db.models                               import get_model
 from controle                                       import Controle as ControleAutenticacao
 from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
-from datetime                                       import datetime
+from PyProject_GED                                  import constantes
 
-import constantes #@UnresolvedImport
 import threading
 import logging
 import time
@@ -151,9 +150,35 @@ class Usuario(User):
             else:
                 self.username= "%03d-%06d" % (int(self.empresa.pk), 1)
         if not self.comaparaSenha(self.pk, self.password):
-            self.set_password(self.password)   
-        super(Usuario, self).save()   
-    
+            self.set_password(self.password)        
+        super(Usuario, self).save()
+        
+    def adicionaContato(self, vEmpresa, vFirstName, vLastName, vEmail):
+        try:
+            iTipoContato = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioContato)[0]
+            iContato = Usuario()
+            iContato.first_name = vFirstName
+            iContato.last_name  = vLastName
+            iContato.email      = vEmail
+            iContato.empresa    = vEmpresa
+            iContato.tipo_usuario= iTipoContato
+            iContato.save()
+            return iContato
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel adiciona Contato ' + str(e))
+            return False 
+        
+    def ehContato(self, vUsuario):
+        try:
+            iTipoContato = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioContato)[0]
+            if vUsuario.tipo_usuario == iTipoContato:
+                return True
+            else:
+                return False
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel eh Contato ' + str(e))
+            return False
+        
     def comaparaSenha(self, vIDUsuario, vSenha):
         try:
             try:
@@ -215,8 +240,7 @@ class Usuario(User):
     
     def obtemUsuariosComEmailDaEmpresa(self, vEmpresa):
         try:
-            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa).filter(
-                                tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioSistema).filter(email__isnull=False)
+            iListaUsuarios= Usuario.objects.filter(empresa= vEmpresa).filter(email__isnull=False)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter os Usuarios da empresa ' + str(e))

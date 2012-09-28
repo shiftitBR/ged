@@ -44,13 +44,13 @@ class Test(TestCase):
         Usuario.objects.all().delete()
         Grupo_Usuario.objects.all().delete()
         pass
-    
+        
     def testCriarPasta(self):
         iNome            = 'Modelo'
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         self.assertEquals(iPasta.id_pasta, Pasta.objects.filter(id_pasta= 2)[0].id_pasta)
     
     def testCriaPasta(self):
@@ -154,7 +154,7 @@ class Test(TestCase):
         iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
         iGrupo          = Grupo.objects.filter(empresa= iEmpresa.id_empresa)[0]
         iListaFuncoes   = Funcao_Grupo.objects.filter(grupo= iGrupo)
-        self.assertEquals(1 , len(iListaFuncoes))
+        self.assertEquals(2 , len(iListaFuncoes))
         
     def testpossuiAcessoFuncao(self):
         iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
@@ -166,6 +166,74 @@ class Test(TestCase):
             if int(1) == int(iLista[i].funcao.id_funcao):
                 iPossuiAcesso= True
         self.assertEquals(iPossuiAcesso , True)
+        
+    def testExcluiFuncoesDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaFuncoes   = Funcao_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(2, len(iListaFuncoes))
+        Funcao_Grupo().excluiFuncoesDoGrupo(iGrupo)
+        iListaFuncoes   = Funcao_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaFuncoes))
+    
+    def testObtemListaDeGruposSemFuncao(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Funcao_Grupo().obtemListaDeGruposSemFuncao(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testExcluiUsuariosDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaUsuarios  = Grupo_Usuario.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaUsuarios))
+        Grupo_Usuario().excluiUsuariosDoGrupo(iGrupo)
+        iListaUsuarios   = Grupo_Usuario.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaUsuarios))
+    
+    def testObtemListaDeGruposSemUsuario(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Grupo_Usuario().obtemListaDeGruposSemUsuario(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testExcluiPastasDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaPastas    = Grupo_Pasta.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaPastas))
+        Grupo_Pasta().excluiPastasDoGrupo(iGrupo)
+        iListaPastas   = Grupo_Pasta.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaPastas))
+    
+    def testObtemListaDeGruposSemPasta(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Grupo_Pasta().obtemListaDeGruposSemPasta(iEmpresa)
+        self.assertEquals(1, len(iLista))
+        
+    def testExcluiFirewallsDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iListaFirewalls = Firewall_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(1, len(iListaFirewalls))
+        Firewall_Grupo().excluiFirewallsDoGrupo(iGrupo)
+        iListaFirewalls = Firewall_Grupo.objects.filter(grupo= iGrupo.id_grupo)
+        self.assertEquals(0,  len(iListaFirewalls))
+    
+    def testObtemListaDeGruposSemFirewall(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Firewall_Grupo().obtemListaDeGruposSemFirewall(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testObtemListaDeUsuariosDisponiveis(self):
+        iEmpresa=  Empresa.objects.filter(id_empresa= 1)[0]
+        iLista  = Grupo_Usuario().obtemUsuariosDisponiveis(iEmpresa)
+        self.assertEquals(1, len(iLista))
+    
+    def testObtemListaDeUsuariosDoGrupo(self):
+        iGrupo          = Grupo.objects.all()[1]
+        iLista  = Grupo_Usuario().obtemUsuariosDoGrupo(iGrupo)
+        self.assertEquals(1, len(iLista))
+    
+    def testObtemPastasPermitidasDoUsuario(self):
+        iEmpresa        = Empresa.objects.filter(id_empresa= 1)[0]
+        iUsuario        = Usuario.objects.filter(empresa= iEmpresa.id_empresa)[0]
+        iLista          = Grupo_Usuario().obtemPastasPermitidasDoUsuario(iUsuario.id)
+        self.assertEquals(1, len(iLista))
     
     #-----------------------------------------------------MOKS---------------------------------------------------  
     
@@ -181,11 +249,17 @@ class Test(TestCase):
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
         
     def mokarGrupo(self):
         iNome            = 'Teste'
         iDescricao       = 'Colaboradores'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
+        iGrupo.save()
+        
+        iNome            = 'Teste2'
+        iDescricao       = 'Colaboradores2'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
         iGrupo.save()
@@ -202,8 +276,18 @@ class Test(TestCase):
         iFuncao          = Funcao(nome= iNome, descricao= iDescricao)
         iFuncao.save()
         
+        iNome            = 'teste2'
+        iDescricao       = 'teste2'
+        iFuncao          = Funcao(nome= iNome, descricao= iDescricao)
+        iFuncao.save()
+        
     def mokarFuncaoGrupo(self):
         iFuncao          = Funcao.objects.filter()[0]
+        iGrupo           = Grupo.objects.filter(empresa= 1)[0]
+        iFuncaoGrupo     = Funcao_Grupo(funcao= iFuncao, grupo= iGrupo)
+        iFuncaoGrupo.save()
+        
+        iFuncao          = Funcao.objects.filter()[1]
         iGrupo           = Grupo.objects.filter(empresa= 1)[0]
         iFuncaoGrupo     = Funcao_Grupo(funcao= iFuncao, grupo= iGrupo)
         iFuncaoGrupo.save()
@@ -234,6 +318,10 @@ class Test(TestCase):
         iEmail          = 'usuario1@teste.com.br'
         iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_1.save()
+                
+        iEmail          = 'usuario2@teste.com.br'
+        iUsuario_2      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
+        iUsuario_2.save()
         
     def mokarGrupo_Usuario(self):
         iEmpresa              = Empresa.objects.filter(id_empresa= 1)[0]

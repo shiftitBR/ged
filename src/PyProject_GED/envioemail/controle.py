@@ -28,6 +28,7 @@ class Controle(object):
                     from_email=vEmailRemetente,
                     recipient_list=[vEmailDestino],
                     )
+            return True
         except Exception, e:
             self.getLogger().getLogger('PyProject_GED.controle').error('Nao foi possivel enviar email: ' + str(e))
             return False

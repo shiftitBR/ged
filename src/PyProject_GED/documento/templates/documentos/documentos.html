@@ -3,18 +3,7 @@
 {% block conteudo %}
 
 
-
-<script type="text/javascript">
-    $(document).ready( function() {
-        $('#arvore').fileTree({
-            root: '{{iPasta_Raiz}}',
-            script: '/cria_arvore/',
-            expandSpeed: 500,
-            collapseSpeed: 500,
-            multiFolder: false
-        });
-    });
-</script>
+<script src="{{ MEDIA_URL }}js/projeto/documentos.js" type="text/javascript"></script>
 
 <div class="container">
   <div class="row espacamentovertical">
@@ -26,10 +15,10 @@
 	   <div class="subnav">
 	    <ul class="nav nav-pills">
 	      <li class=""><a class="fancybox fancybox.iframe" href="/importar_scanner/">Digitalizar Documento(s)</a></li>
-	      <li class=""><a class="fancybox fancybox.iframe" href="/importar/">Im	portar Documento(s)</a></li>
-	      <li class=""><a href="javascript:getsupport('assinar')">Assinar Documento(s)</a></li>
-	      <li class=""><a href="javascript:getsupport('email')">Enviar E-mail</a></li>
-	      <li class=""><a href="javascript:getsupport('publicar')">Enviar Publicação</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/importar/" id='fb_importar'>Importar Documento(s)</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/assinar/" id="id_btnAssinar">Assinar Documento(s)</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/email/" id="id_btnEmail">Enviar E-mail</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/publicar/" id="id_btnPublicar">Enviar Publicação</a></li>
 	    </ul>
 	   </div>
 	</div>
@@ -43,12 +32,11 @@
 	
 		<div class="span9">
 	   <form name= "acao" id="formTabela" action="" method="post">{% csrf_token %}
-		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		{% if messages %}
 		<div class="alert alert-info">
 			<ul class="messages">
 			    {% for message in messages %}
-			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    	<li><b>{{ message }}</b></li>
 			    {% endfor %}
 			</ul>
 		</div>

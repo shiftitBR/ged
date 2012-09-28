@@ -7,10 +7,11 @@ from django.conf    import settings
 
 
 #Configuracoes
-cntConfiguracaoDiretorioDocumentos= settings.MEDIA_ROOT + '/documentos/empresa_%03d'
-cntConfiguracaoPastaDocumentos= 'documentos'
-cntConfiguracaoDiasAvisoVencimento= 5
-cntConfiguracaoEmailAlerta  = 'alerta@trackdoc.com.br'
+cntConfiguracaoDiretorioDocumentos      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoPastaDocumentos          = 'documentos'
+cntConfiguracaoDiasAvisoVencimento      = 5
+cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
+cntConfiguracaoIDGrupoAdministradores   = '1'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -33,6 +34,7 @@ cntEventoHistoricoRelatorio = 14
 cntEventoHistoricoImportar  = 15
 cntEventoHistoricoExportar  = 16
 cntEventoHistoricoAssinar   = 17
+cntEventoHistoricoCadastraContato= 18
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
@@ -96,6 +98,11 @@ cntFuncaoEmail              = 12
 cntFuncaoPublicar           = 13
 cntFuncaoRelatorio          = 14
 cntFuncaoExportar           = 15
+cntFuncaoCadastrarContato   = 16
+
+#Redireciona Contato
+cntRedirecionaEmail         = 1
+cntRedirecionaPublicacao    = 2
 
 #Extencoes de Imagem
 cntExtencaoImagemExportavel = ['.jpg', '.png', '.tif', '.bmp']
@@ -106,3 +113,12 @@ cntExtencaoImagemTIF        = 4
 
 #Extencoes Comprimiveis
 cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
+
+#Extencoes Certificados
+cntExtencaoCertificado      = ['.pfx']
+
+#Tipos de Email
+cntTipoEmailPendenciaRecebida   = 1
+cntTipoEmailPendenciaAprovada   = 2
+cntTipoEmailPendenciaReprovada  = 3
+cntTipoEmailDocumentoVencendo   = 4

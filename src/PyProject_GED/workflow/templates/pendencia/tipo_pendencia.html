@@ -9,50 +9,47 @@
 {% endblock style %}
 
 <body>
-	<div class="container">
-  		<center>
+	<div class="container" align="center">
 		<header class="jumbotron subhead" id="overview">
 		  <h2><strong>Encaminhar Pendência</strong></h2>
 		  <p class="lead">Escolha o Tipo de Encaminhamento</p>
 		</header>
-		</center>
-		
-		{% if messages %}
-		<div class="alert alert-info">
-			<ul class="messages">
-			    {% for message in messages %}
-			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
-			    {% endfor %}
-			</ul>
-		</div>
-		{% endif %}
-		
-		<div class="container-fluid">
-		  <div class="row-fluid">
-		    <div class="span2">
-		      <!--Sidebar content-->
-		    </div>
-		    <div class="span8">
-			    <form class="form-horizontal" action="" method="POST">{% csrf_token %}
-					<label class="radio">
-					  <input type="radio" name="tipo_pendencia" id="aprovar" value="1" checked>
-					  Encaminhar pendência para <strong>APROVAÇÃO</strong>
-					</label>
-					<label class="radio">
-					  <input type="radio" name="tipo_pendencia" id="assinar" value="2">
-					  Encaminhar pendência para <strong>ASSINAR</strong>
-					</label>
-					<div class="form-actions">
-						<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Continuar</button>
-					</div>
-				</form>
-		    </div>
-		    <div class="span2">
-		      <!--Sidebar content-->
-		    </div>
-		  </div>
-		</div>
-  </div>
+	</div>
+	{% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
+	<div class="container-fluid">
+	  <div class="row-fluid">
+	    <div class="span2">
+	      <!--Sidebar content-->
+	    </div>
+	    <div class="span8">
+		    <form class="form-horizontal" action="" method="POST">{% csrf_token %}
+				<label class="radio">
+				  <input type="radio" name="tipo_pendencia" id="aprovar" value="1" checked>
+				  Encaminhar pendência para <strong>APROVAÇÃO</strong>
+				</label>
+				<label class="radio">
+				  <input type="radio" name="tipo_pendencia" id="assinar" value="2">
+				  Encaminhar pendência para <strong>ASSINAR</strong>
+				</label>
+				<div class="form-actions">
+					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Continuar</button>
+				</div>
+			</form>
+	    </div>
+	    <div class="span2">
+	      <!--Sidebar content-->
+	    </div>
+	  </div>
+	</div>
 </body>
 
 </html>

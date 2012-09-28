@@ -16,8 +16,8 @@ from controle                                   import Controle as ControleDocum
 import datetime
 from PyProject_GED.indice.models import Tipo_de_Indice, Indice,\
     Indice_Versao_Valor
-from PyProject_GED import constantes
 from PyProject_GED.qualidade.models import Tipo_de_Norma, Norma, Norma_Documento
+from PyProject_GED.seguranca.models import Grupo, Grupo_Pasta, Grupo_Usuario
 
 class Test(TestCase):
     
@@ -37,6 +37,9 @@ class Test(TestCase):
         self.mokarTipoNorma()
         self.mokarNorma()
         self.mokarAssociacaoNormaDocumento()
+        self.mokarGrupo()
+        self.mokarGrupoPasta()
+        self.mokarGrupo_Usuario()
         pass
     
     
@@ -298,6 +301,17 @@ class Test(TestCase):
         iLista= Versao().buscaDocumentos(iIDEmpresa, vItemNorma= iNorma)  
         self.assertEquals(1, len(iLista)) 
     
+    def testBuscaDocumentosPorUsuario(self):
+        iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
+        iUsuario_Grupo_1= Usuario.objects.filter(empresa= iEmpresa)[0]
+        iUsuario_Grupo_2= Usuario.objects.filter(empresa= iEmpresa)[1]
+        
+        iLista= Versao().buscaDocumentos(iEmpresa.id_empresa, vIDUsuario= iUsuario_Grupo_1.id)  
+        self.assertEquals(7, len(iLista)) 
+        
+        iLista= Versao().buscaDocumentos(iEmpresa.id_empresa, vIDUsuario= iUsuario_Grupo_2.id)  
+        self.assertEquals(0, len(iLista))
+    
     def testBuscaDocumentosComMultiplosFiltros(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
         iIDEmpresa= iEmpresa.id_empresa
@@ -476,6 +490,12 @@ class Test(TestCase):
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
         iPasta.save(False)
+        
+        iNome            = 'Documentos'
+        iDiretorio       = '/'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iPasta_2         = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
+        iPasta_2.save(False)
         
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'
@@ -698,3 +718,39 @@ class Test(TestCase):
         iDocumento       = Documento.objects.filter(empresa= 1)[2]
         iNormaDocumento  = Norma_Documento(norma= iNorma, documento= iDocumento)
         iNormaDocumento.save()
+    
+    def mokarGrupo(self):
+        iNome            = 'Teste'
+        iDescricao       = 'Colaboradores'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
+        iGrupo.save()
+        
+        iNome            = 'Teste2'
+        iDescricao       = 'Colaboradores2'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo           = Grupo(nome= iNome, descricao= iDescricao, empresa= iEmpresa)
+        iGrupo.save()
+        
+    def mokarGrupoPasta(self):
+        iGrupo           = Grupo.objects.filter(empresa= 1)[0]
+        iPasta           = Pasta.objects.filter(empresa= 1)[0]
+        iGrupoPasta      = Grupo_Pasta(grupo= iGrupo, pasta= iPasta)
+        iGrupoPasta.save()
+        
+        iGrupo_2         = Grupo.objects.filter(empresa= 1)[1]
+        iPasta_2         = Pasta.objects.filter(empresa= 1)[1]
+        iGrupoPasta_2    = Grupo_Pasta(grupo= iGrupo_2, pasta= iPasta_2)
+        iGrupoPasta_2.save()
+    
+    def mokarGrupo_Usuario(self):
+        iEmpresa              = Empresa.objects.filter(id_empresa= 1)[0]
+        iGrupo_Usuario        = Grupo_Usuario()
+        iGrupo_Usuario.grupo  = Grupo.objects.filter(empresa= 1)[0]
+        iGrupo_Usuario.usuario= Usuario.objects.filter(empresa= iEmpresa)[0]
+        iGrupo_Usuario.save()
+        
+        iGrupo_Usuario_2        = Grupo_Usuario()
+        iGrupo_Usuario_2.grupo  = Grupo.objects.filter(empresa= 1)[1]
+        iGrupo_Usuario_2.usuario= Usuario.objects.filter(empresa= iEmpresa)[1]
+        iGrupo_Usuario_2.save()

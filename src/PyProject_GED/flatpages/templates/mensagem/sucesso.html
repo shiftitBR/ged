@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	
+	<div class="container" align="center">
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Sucesso</strong></h2>
+		  <p class="lead">Ação Efetuada com Sucesso</p>
+		</header>
+	</div>
+	
+	<div class="container" align="center">
+		<div class="alert alert-success">
+	      <strong>Sucesso!</strong> {{iMensagem}}
+	    </div>
+    </div>
+	
+</body>
+
+</html>

@@ -20,17 +20,16 @@
 		<div class="alert alert-info">
 			<ul class="messages">
 			    {% for message in messages %}
-			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    	<li><b>{{ message }}</b></li>
 			    {% endfor %}
 			</ul>
 		</div>
 		{% endif %}
 		
 		{% if iPossuiPermissao %}
-		<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
-			<div class="form-actions" style="float: right;">
-				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Check-out</button>
-				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
+		<form action="" id="fancy" method="POST">{% csrf_token %}
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" data-toggle="button">Check-out</button>
 			</div>
 		</form>
 		{% endif %}

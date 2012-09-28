@@ -89,6 +89,16 @@ class Pasta(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
 
+    def ehPastaRaiz(self, vIDPasta, vIDEmpresa):
+        try:
+            iPastaRaiz = Pasta.objects.filter(empresa=vIDEmpresa).order_by('id_pasta')[0]
+            if str(iPastaRaiz.id_pasta) == vIDPasta:
+                return True
+            else:
+                return False
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel eh Pasta Raiz: ' + str(e))
+            return False
 #-----------------------------GRUPO----------------------------------------
 
 class Grupo(models.Model):
@@ -151,23 +161,62 @@ class Grupo_Pasta(models.Model):
                 self.id_grupo_pasta= 1
         super(Grupo_Pasta, self).save()
         
-    def criaGrupo_Pasta(self, vGrupo, vPasta, vEmpresa):
+    def criaGrupo_Pasta(self, vGrupo, vPasta, vEmpresa=None, vPastaID=None, vGrupoID=None):
         try:
+            if vPastaID != None:
+                iPasta= Pasta.objects.filter(id_pasta= int(vPastaID))[0]
+            else:
+                iPasta= vPasta
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
             iGrupo_Pasta        = Grupo_Pasta()
-            iGrupo_Pasta.grupo  = vGrupo
-            iGrupo_Pasta.pasta  = vPasta
+            iGrupo_Pasta.grupo  = iGrupo
+            iGrupo_Pasta.pasta  = iPasta
             iGrupo_Pasta.save()
             return iGrupo_Pasta
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Grupo_Pasta: ' + str(e))
             return False
         
+    def excluiPastasDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Grupo_Pasta.objects.filter(grupo= iGrupo).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir pastas do grupo: ' + str(e))
+            return False 
+    
     def obtemListaGrupoPasta(self, vGrupo):
         try:
-            iLista = Grupo_Pasta.objects.filter(grupo= vGrupo)[0]
+            iLista = Grupo_Pasta.objects.filter(grupo= vGrupo)
             return iLista
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista GrupoPasta: ' + str(e))
+            return False
+    
+    def obtemListaDeGruposSemPasta(self, vEmpresa=None):
+        try:
+            iListaGrupos    = Grupo.objects.all()
+            iListaGruposPasta     = Grupo_Pasta.objects.all()
+            if vEmpresa != None:
+                iListaGrupos    = iListaGrupos.filter(empresa= vEmpresa)
+                iListaGruposPasta     = iListaGruposPasta.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemPastas     = []
+            iListaGruposComPastas     = []
+            for iGrupoPasta in iListaGruposPasta:
+                iListaGruposComPastas.append(iGrupoPasta.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComPastas:
+                    iListaGruposSemPastas.append(iGrupo)
+            return iListaGruposSemPastas
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
             return False
         
     def possuiAcessoPasta(self, vUsuario, vIDPasta):
@@ -207,16 +256,36 @@ class Grupo_Usuario(models.Model):
                 self.id_grupo_usuario= 1
         super(Grupo_Usuario, self).save()
         
-    def criaGrupo_Usuario(self, vGrupo, vUsuario):
+    def criaGrupo_Usuario(self, vGrupo, vUsuario, vUsuarioID=None, vGrupoID=None):
         try:
+            if vUsuarioID != None:
+                iUsuario= Usuario.objects.filter(id= int(vUsuarioID))[0]
+            else:
+                iUsuario= vUsuario
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
             iGrupo_Usuario        = Grupo_Usuario()
-            iGrupo_Usuario.grupo  = vGrupo
-            iGrupo_Usuario.usuario= vUsuario
+            iGrupo_Usuario.grupo  = iGrupo
+            iGrupo_Usuario.usuario= iUsuario
             iGrupo_Usuario.save()
             return iGrupo_Usuario
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Grupo_Usuario: ' + str(e))
-            return False
+            return False  
+    
+    def excluiUsuariosDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Grupo_Usuario.objects.filter(grupo= iGrupo).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir usuarios do grupo: ' + str(e))
+            return False      
         
     def obtemGrupoUsuario(self, vUsuario):
         try:
@@ -226,6 +295,74 @@ class Grupo_Usuario(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem GruposUsuario: ' + str(e))
             return False
     
+    def obtemListaDeGruposSemUsuario(self, vEmpresa=None):
+        try:
+            iListaGrupos    = Grupo.objects.all()
+            iListaGruposUsuario     = Grupo_Usuario.objects.all()
+            if vEmpresa != None:
+                iListaGrupos    = iListaGrupos.filter(empresa= vEmpresa)
+                iListaGruposUsuario     = iListaGruposUsuario.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemUsuarios     = []
+            iListaGruposComUsuarios     = []
+            for iGrupoUsuario in iListaGruposUsuario:
+                iListaGruposComUsuarios.append(iGrupoUsuario.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComUsuarios:
+                    iListaGruposSemUsuarios.append(iGrupo)
+            return iListaGruposSemUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
+            return False
+    
+    def obtemUsuariosDisponiveis(self, vEmpresa=None, vGrupo=None):
+        try:
+            iListaUsuarios= Usuario().obtemUsuariosPeloTipo(vEmpresa, constantes.cntTipoUsuarioSistema)
+            iListaGrupoUsuario= Grupo_Usuario.objects.all()
+            iListaUsuariosDoGrupo = []
+            if vEmpresa != None:
+                iListaGrupoUsuario= iListaGrupoUsuario.filter(grupo__empresa= vEmpresa)
+            if vGrupo != None:
+                iListaUsuariosDoGrupo  = self.obtemUsuariosDoGrupo(vGrupo)
+            iListaUsuariosComGrupo= []
+            iListaIDsUsuariosSemGrupo= []
+            for iGrupoUsuario in iListaGrupoUsuario:
+                iListaUsuariosComGrupo.append(iGrupoUsuario.usuario)
+            for iUsuario in iListaUsuarios:
+                if iUsuario not in iListaUsuariosComGrupo:
+                    iListaIDsUsuariosSemGrupo.append(iUsuario.id)
+            iListaUsuariosDoGrupo  = self.obtemUsuariosDoGrupo(vGrupo)
+            for iUsuario in iListaUsuariosDoGrupo:
+                iListaIDsUsuariosSemGrupo.append(iUsuario.id)
+            iListaUsuariosSemGrupo = Usuario.objects.filter(id__in= iListaIDsUsuariosSemGrupo)
+            return iListaUsuariosSemGrupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de usuarios disponiveis: ' + str(e))
+            return False
+    
+    def obtemUsuariosDoGrupo(self, vGrupo):
+        try:
+            iListaGrupoUsuario= Grupo_Usuario.objects.filter(grupo= vGrupo)
+            iListaIDUsuarios= []
+            for iGrupoUsuario in iListaGrupoUsuario:
+                iListaIDUsuarios.append(iGrupoUsuario.usuario.id)
+            iListaUsuarios= Usuario.objects.filter(id__in= iListaIDUsuarios)
+            return iListaUsuarios
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de usuarios do grupo: ' + str(e))
+            return False
+    
+    def obtemPastasPermitidasDoUsuario(self, vIDUsuario):
+        try:
+            iUsuario= Usuario().obtemUsuarioPeloID(vIDUsuario)
+            iGrupoUsuario= self.obtemGrupoUsuario(iUsuario)
+            iListaDeGrupoPasta= Grupo_Pasta().obtemListaGrupoPasta(iGrupoUsuario.grupo)
+            iListaDePastas= []
+            for iGrupoPasta in iListaDeGrupoPasta:
+                iListaDePastas.append(iGrupoPasta.pasta)
+            return iListaDePastas
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de pastas permitidas: ' + str(e))
+            return False
 #-----------------------------FUNCAO----------------------------------------
 
 class Funcao(models.Model):
@@ -283,15 +420,35 @@ class Funcao_Grupo(models.Model):
                 self.id_funcao_grupo= 1
         super(Funcao_Grupo, self).save()
         
-    def criaFuncao_Grupo(self, vFuncao, vGrupo):
+    def criaFuncao_Grupo(self, vFuncao, vGrupo, vFuncaoID=None, vGrupoID=None):
         try:
+            if vFuncaoID != None:
+                iFuncao= Funcao.objects.filter(id_funcao= int(vFuncaoID))[0]
+            else:
+                iFuncao= vFuncao
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
             iFuncao_Grupo       = Funcao_Grupo()
-            iFuncao_Grupo.funcao= vFuncao
-            iFuncao_Grupo.grupo = vGrupo
+            iFuncao_Grupo.funcao= iFuncao
+            iFuncao_Grupo.grupo = iGrupo
             iFuncao_Grupo.save()
             return iFuncao_Grupo
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Funcao_Grupo: ' + str(e))
+            return False
+    
+    def excluiFuncoesDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Funcao_Grupo.objects.filter(grupo= iGrupo).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir funcoes do grupo: ' + str(e))
             return False
         
     def obtemListaFuncaoGrupo(self, vGrupo):
@@ -313,6 +470,25 @@ class Funcao_Grupo(models.Model):
             return iPossuiAcesso
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel possui Acesso Funcao: ' + str(e))
+            return False
+    
+    def obtemListaDeGruposSemFuncao(self, vEmpresa=None):
+        try:
+            iListaGrupos    = Grupo.objects.all()
+            iListaGruposFuncoes     = Funcao_Grupo.objects.all()
+            if vEmpresa != None:
+                iListaGrupos    = iListaGrupos.filter(empresa= vEmpresa)
+                iListaGruposFuncoes     = iListaGruposFuncoes.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemFuncao   = []
+            iListaGruposComFuncoes  = []
+            for iGrupoFuncao in iListaGruposFuncoes:
+                iListaGruposComFuncoes.append(iGrupoFuncao.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComFuncoes:
+                    iListaGruposSemFuncao.append(iGrupo)
+            return iListaGruposSemFuncao
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem lista FuncoesGrupo: ' + str(e))
             return False
         
 #-----------------------------IPs_PERMETIDOS----------------------------------------
@@ -380,3 +556,53 @@ class Firewall_Grupo(models.Model):
             else:
                 self.id_firewall_grupo= 1
         super(Firewall_Grupo, self).save()
+    
+    def criaFirewall_Grupo(self, vGrupo, vFirewall, vFirewallID=None, vGrupoID=None):
+        try:
+            if vFirewallID != None:
+                iFirewall= Firewall.objects.filter(id_firewall= int(vFirewallID))[0]
+            else:
+                iFirewall= vFirewall
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            iFirewall_Grupo         = Firewall_Grupo()
+            iFirewall_Grupo.grupo   = iGrupo
+            iFirewall_Grupo.firewall= iFirewall
+            iFirewall_Grupo.save()
+            return iFirewall_Grupo
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Firewall_Grupo: ' + str(e))
+            return False  
+    
+    def excluiFirewallsDoGrupo(self, vGrupo, vGrupoID=None):
+        try:
+            if vGrupoID != None:
+                iGrupo= Grupo.objects.filter(id_grupo= int(vGrupoID))[0]
+            else:
+                iGrupo= vGrupo
+            Firewall_Grupo.objects.filter(grupo= iGrupo).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir firewalls do grupo: ' + str(e))
+            return False
+    
+    def obtemListaDeGruposSemFirewall(self, vEmpresa=None):
+        try:
+            iListaGrupos            = Grupo.objects.all()
+            iListaFirewallsGrupo    = Firewall_Grupo.objects.all()
+            if vEmpresa != None:
+                iListaGrupos          = iListaGrupos.filter(empresa= vEmpresa)
+                iListaFirewallsGrupo   = iListaFirewallsGrupo.filter(grupo__empresa= vEmpresa)
+            iListaGruposSemFirewall   = []
+            iListaGruposComFirewall   = []
+            for iFirewallGrupo in iListaFirewallsGrupo:
+                iListaGruposComFirewall.append(iFirewallGrupo.grupo)
+            for iGrupo in iListaGrupos:
+                if iGrupo not in iListaGruposComFirewall:
+                    iListaGruposSemFirewall.append(iGrupo)
+            return iListaGruposSemFirewall
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de grupos sem firewall: ' + str(e))
+            return False

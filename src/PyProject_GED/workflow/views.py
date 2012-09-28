@@ -4,28 +4,32 @@ from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib                     import messages
+from django.http                        import HttpResponseRedirect
 
-from PyProject_GED                      import oControle
+from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 from PyProject_GED.documento.models     import Versao
-from PyProject_GED.historico.models     import Historico, Log_Usuario
+from PyProject_GED.historico.models     import Log_Usuario
+from PyProject_GED.seguranca.models     import Funcao_Grupo
+from PyProject_GED.workflow.models      import Tipo_de_Pendencia
 from forms                              import FormEncaminharPendencia
 from models                             import Pendencia
-from PyProject_GED.seguranca.models     import Funcao_Grupo
+from PyProject_GED.envioemail.models import Email
     
-import constantes #@UnresolvedImport
-from django.http import HttpResponseRedirect
-from PyProject_GED.workflow.models import Tipo_de_Pendencia
 
 @login_required     
 def encaminhar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEncaminhar):
-            vIDFuncao = 0
-            iPossuiPermissao    = True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoExcluida):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Este Documento não pode ser Encaminhado!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
@@ -37,7 +41,6 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
         form = FormEncaminharPendencia(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'], iIDTipoPendencia=vRequest.session['TipoPendencia'])
         if form.is_valid():
             try:
-                iDestinatario   = Usuario().obtemUsuarioPeloID(vRequest.POST.get('usr_destinatario'))
                 iDescricao      = vRequest.POST.get('descricao')
                 iVersao         = Versao().obtemVersao(vIDVersao)
                 iUsuarios       = vRequest.POST.getlist('usr_destinatario')
@@ -49,12 +52,14 @@ def encaminhar(vRequest, vTitulo, vIDVersao=None):
                 for iUser in iUsuarios:
                     iListaDestinatarios.append(Usuario().obtemUsuarioPeloID(iUser))
                 iTipoPendencia  = Tipo_de_Pendencia.objects.filter(id_tipo_de_pendencia=vRequest.session['TipoPendencia'])[0]
-                
                 Pendencia().criaPendencia(iUsuario, iListaDestinatarios, iVersao, 
                                           iDescricao, iTipoPendencia, vEhMultipla=iMultipla)
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEncaminhar, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
-                messages.success(vRequest, 'Pendência Encaminhada com Sucesso!')
+                for iDestinatario in iListaDestinatarios:
+                    Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iDestinatario.email, 
+                                              constantes.cntTipoEmailPendenciaRecebida)
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEncaminhar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post encaminhar: ' + str(e))
                 return False

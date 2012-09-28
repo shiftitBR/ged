@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
-from django.http                        import HttpResponse
+from django.http                        import HttpResponse,\
+    HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
+from django.core                        import serializers
 
-from PyProject_GED                      import oControle
+from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
@@ -19,11 +21,12 @@ from models                             import Versao, Documento
 from forms                              import FormCheckin, FormUploadDeArquivo
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.qualidade.models     import Norma, Norma_Documento
+from PyProject_GED.assinatura.models    import Assinatura
 
 import datetime
 import os
 import urllib
-import constantes #@UnresolvedImport
+from PyProject_GED.envioemail.models import Email
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -36,56 +39,46 @@ def documentos(vRequest, vTitulo):
         iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
         vRequest.session['PastaRaiz']       = iPasta_Raiz
         vRequest.session['IDEmpresa']       = iUsuario.empresa.id_empresa
+        vRequest.session['ListaVersao']     = ''
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get documentos: ' + str(e))
-            return False
-        
-    if vRequest.POST:
-        try :
-            iListaCheck=[]
-            iListaVersao = ''
-            iListaDocumentos= vRequest.session['iListaDocumento']
-            for i in range(len(iListaDocumentos)): 
-                if 'versao_%s' % iListaDocumentos[i].id_versao in vRequest.POST:
-                    iListaCheck.append(iListaDocumentos[i].id_versao)
-                    iListaVersao = str(iListaDocumentos[i].id_versao) + '-' + iListaVersao
-                
-            if len(iListaCheck) == 0:
-                messages.warning(vRequest, 'Selecione pelo menos 1 (um) documento para executar esta função!')
-                iAcao= 0
-            else:
-                if 'email' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
-                        iAcao= 1
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                if 'publicar' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
-                        iAcao= 2
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                if 'assinar' in vRequest.POST['supporttype']:
-                    if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
-                        iAcao= 3
-                    else:
-                        messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
-                vRequest.session['ListaVersao']= iListaVersao
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
             return False
     return render_to_response(
         'documentos/documentos.html',
         locals(),
         context_instance=RequestContext(vRequest),
         )
-    
+
+@login_required 
+def obtemPastaRaiz(vRequest, vTitulo):
+    try :
+        iEmpresa= Usuario.objects.filter(id= vRequest.user.pk)[0].empresa
+        iPasta= Pasta.objects.filter(empresa= iEmpresa.id_empresa).order_by('id_pasta')[0]
+        iPasta_Raiz = iEmpresa.pasta_raiz + '/' + str(iPasta.id_pasta) + '/'
+        iHtml= []
+        iHtml.append(iPasta_Raiz)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
+        return False
+    return HttpResponse(''.join(iHtml))
+
+@login_required 
+def versoesSelecionadas(vRequest, vTitulo, vListaIDVersoes):
+    try :
+        vRequest.session['ListaVersao']= vListaIDVersoes
+        return HttpResponse(True)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
+        return False
+
+
 @login_required 
 def tabelaDocumentos(vRequest, vTitulo):
     try :
         iUser = vRequest.user
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
-        iPasta_Raiz = vRequest.session['IDPasta']
+        iPasta_Raiz = vRequest.session['IDPasta'] #Variavel utilizado na interface
         iListaDocumentos=[]
         if vRequest.session['IDPasta'] != '':
             iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
@@ -110,7 +103,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iData': str(iListaDocumentos[i].data_criacao),
                                'iAssinado': str(iAssinado)})
                     
-                    iLinha= iLinha + '<div class="btn-group">'
+                    iLinha= iLinha + '<div class="btn-group" align="center">'
                     if iEstado == constantes.cntEstadoVersaoExcluida:
                         iLinha= iLinha + '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-plus-sign icon-white"></i> Informações   <span class="caret"></span></a><ul class="dropdown-menu">'
                     else:
@@ -124,8 +117,6 @@ def tabelaDocumentos(vRequest, vTitulo):
                         
                     iEstado = iListaDocumentos[i].id_estado
                     
-                    #if iEstado == constantes.cntEstadoVersaoPendente : #Aprovar/Reprovar
-                    #    iLinha= iLinha + '<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
                     if iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoPDF or iListaDocumentos[i].tipoVisualizacao == constantes.cntTipoVisualizacaoImagem:
                         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
                             iLinha= iLinha + '<li><a href="/download/%(iIDVersao)s/"><i class="icon-download-alt"></i>  Download</a></li>'% ({'iIDVersao': str(iListaDocumentos[i].id_versao)})
@@ -162,12 +153,15 @@ def importar(vRequest, vTitulo):
             iUsuario= Usuario().obtemUsuario(iUser)
             
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
-            iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
-            iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
-            iTamListaIndices    = len(iListaIndices)
-            iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
-            iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
-            iPossuiPermissao    = True
+            if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
+                iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
+                iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+                iTamListaIndices    = len(iListaIndices)
+                iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
+                iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
+                iPossuiPermissao    = True
+            else:
+                messages.warning(vRequest, 'Selecione uma Pasta para Inserir Documento!')
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
         
@@ -229,8 +223,9 @@ def importar(vRequest, vTitulo):
                         Pendencia().criaPendenciasDoWorkflow(iDocumento)
                         Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoImportar, 
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
-                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
+                        Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
+                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -251,11 +246,16 @@ def importar(vRequest, vTitulo):
 def checkin(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario    = Usuario().obtemUsuario(vRequest.user)
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
-            iVersaoBase = Versao().obtemVersao(vIDVersao)
-            iDocumento  = iVersaoBase.documento
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoObsoleto):
+                iVersaoBase = Versao().obtemVersao(vIDVersao)
+                iDocumento  = iVersaoBase.documento
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Não é possível fazer o Check-in do Documento!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')
             
@@ -267,7 +267,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                if vRequest.session['Image'] != False  :
+                if vRequest.session['Images'] != False  :
                     iListaImages= str(vRequest.session['Images']).split(',')
                     iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[0])
                     iDescricao  = vRequest.POST.get('descricao')
@@ -282,10 +282,11 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                     Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckIn, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                    vRequest.session['Image']= False
+                    vRequest.session['Images']= False
                     ControleOCR().executaOCR(iVersao)
                     ControleImagem().comprimeImagem(iVersao)
                     Workflow().criaPendenciasDoWorkflow(iDocumento)
+                    return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoCheckinChekout) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
                 return False
@@ -305,10 +306,14 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
 def checkout(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCheckinChekout):
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoBloqueado):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Não é possível fazer o Check-out do Documento!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.')    
             
@@ -318,19 +323,21 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
-                                   iUsuario.id, vRequest.session['IDEmpresa'])
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckout, iUsuario.id, 
-                                          vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
-            iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
-            iFile = open(iArquivo,"r")
-            response = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
-            return response
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoBloqueado):
+                Versao().alterarEstadoVersao(vIDVersao, constantes.cntEstadoVersaoBloqueado)
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoCheckout, 
+                                       iUsuario.id, vRequest.session['IDEmpresa'])
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoCheckout, iUsuario.id, 
+                                              vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                iArquivo= str(Versao().obtemCaminhoArquivo(vIDVersao))
+                iFile = open(iArquivo,"r")
+                response = HttpResponse(iFile.read())
+                response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+                return response
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post checkout: ' + str(e))
+            return False
     return render_to_response(
         'documentos/checkout.html',
         locals(),
@@ -341,23 +348,34 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
 def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        vIDFuncao = 0
-            
+        iVersao = Versao().obtemVersao(vIDVersao)
+        if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoReprovado):
+            vIDFuncao = 0
+            iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Este Documento não pode ser aprovado!') 
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get aprovar: ' + str(e))
         return False
     
     if vRequest.POST:
         try :
-            if vRequest.POST.get('comentario') != '' and not 'cancelar' in vRequest.POST :
+            if vRequest.POST.get('comentario') != '' :
                 iVersao = Versao().obtemVersao(vIDVersao)
+                iPendencia = Pendencia().obtemPendencia(iVersao, iUsuario)
                 Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAprovar, 
                                            iUsuario, vRequest.POST.get('comentario'))
                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAprovar, iUsuario.id, 
                                         vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iPendencia.usr_remetente.email, 
+                                          constantes.cntTipoEmailPendenciaAprovada)
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
+            else:
+                messages.success(vRequest, 'Adicione um Comentário para Aprovar o Documento!.') 
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post aprovar: ' + str(e))
+            return False
     return render_to_response(
         'acao/aprovar.html',
         locals(),
@@ -368,22 +386,34 @@ def aprovar(vRequest, vTitulo, vIDVersao=None):
 def reprovar(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        vIDFuncao = 0
-            
+        iVersao = Versao().obtemVersao(vIDVersao)
+        if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoReprovado):
+            vIDFuncao = 0
+            iPossuiPermissao= True
+        else:
+            messages.warning(vRequest, 'Este Documento não pode ser reprovado!') 
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get reprovar: ' + str(e))
         return False
     
     if vRequest.POST:
         try :
-            iVersao = Versao().obtemVersao(vIDVersao)
-            Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
-                                       iUsuario, vRequest.POST.get('comentario'))
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
-                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+            if vRequest.POST.get('comentario') != '' :
+                iVersao = Versao().obtemVersao(vIDVersao)
+                iPendencia = Pendencia().obtemPendencia(iVersao, iUsuario)
+                Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaReprovar, 
+                                           iUsuario, vRequest.POST.get('comentario'))
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoReprovar, iUsuario.id, 
+                                        vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+                Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iPendencia.usr_remetente.email, 
+                                          constantes.cntTipoEmailPendenciaReprovada)
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoAprovarReprovar) + '/')
+            else:
+                messages.success(vRequest, 'Adicione um Comentário para Reprovar o Documento!.')
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post reprovar: ' + str(e))
+            return False
     return render_to_response(
         'acao/reprovar.html',
         locals(),
@@ -394,13 +424,16 @@ def reprovar(vRequest, vTitulo, vIDVersao=None):
 def excluir(vRequest, vTitulo, vIDVersao=None):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
-        
+        iVersao = Versao().obtemVersao(vIDVersao)
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoExcluir):
-            vIDFuncao = 0
-            iPossuiPermissao= True
+            if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
+                                                      constantes.cntEstadoVersaoExcluida):
+                vIDFuncao = 0
+                iPossuiPermissao= True
+            else:
+                messages.warning(vRequest, 'Este Documento não pode ser excluido!') 
         else:
             messages.warning(vRequest, 'Você não possui permissão para executar esta função.') 
-            
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel get excluir: ' + str(e))
         return False
@@ -412,9 +445,10 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
                                    iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExcluir, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+            return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoExcluir) + '/')
         except Exception, e:
-                oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
-                return False
+            oControle.getLogger().error('Nao foi possivel post excluir: ' + str(e))
+            return False
     return render_to_response(
         'acao/excluir.html',
         locals(),
@@ -430,7 +464,8 @@ def download(vRequest, vTitulo, vIDVersao=None):
             vIDFuncao = 0
             iArquivo = str(Versao().obtemCaminhoArquivo(vIDVersao))
             if iVersao.eh_assinado:
-                iArquivo= DocumentoControle().comprimiArquivoAssinado(iArquivo)
+                iListaAssinaturas = Assinatura().obtemListaAssDaVersao(iVersao)
+                iArquivo= DocumentoControle().comprimiArquivoAssinado(iVersao, iListaAssinaturas)
             else:
                 iArquivo= iArquivo
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
@@ -459,17 +494,19 @@ def criaArvore(vRequest, vTitulo):
     try :
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         iDiretorio=urllib.unquote(vRequest.POST.get('dir',''))
+        vRequest.session['Diretorio_Pasta'] = iDiretorio
         vRequest.session['IDPasta'] = DocumentoControle().obtemIDPastaArvore(iDiretorio)
         iListaDocumentos = Versao().obtemListaDeDocumentosDaPasta(vRequest.session['IDEmpresa'], vRequest.session['IDPasta'])
         try:
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
-                if os.path.isdir(iDiretorioFilho):
-                    iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
-                    if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
-                        iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
-            iHtml.append('</ul>')
+                if not iPasta == 'temp':
+                    if os.path.isdir(iDiretorioFilho):
+                        iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
+                        if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
+                            iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
+                iHtml.append('</ul>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')
@@ -477,7 +514,6 @@ def criaArvore(vRequest, vTitulo):
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel criar arvore: ' + str(e))
             return False
-        
 
 def visualizar(vRequest, vTitulo, vIDVersao=None):
     try :
@@ -485,7 +521,7 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoVisualizar):
             iVersao     = Versao().obtemVersao(vIDVersao)
-            iImagem  = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
+            iImagem     = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoVisualizar, iUsuario.id, 

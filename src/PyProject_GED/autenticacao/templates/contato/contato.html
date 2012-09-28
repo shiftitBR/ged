@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container" align="center">
+		<header class="jumbotron subhead" id="overview">
+		  <h2><strong>Adicionar Contato</strong></h2>
+		</header>
+	</div>
+	
+	<div class="container">
+	{% for field in form %}
+    	<strong>{{ field.errors }}</strong>
+    {% endfor %}
+	</div>
+	
+	{% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
+	
+	<div class="container">
+		<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
+			<div class="control-group">
+			    <div class="controls">
+			      <input type="text" id="first_name" placeholder="Primeiro Nome *" name="first_name">
+			    </div>
+			</div>
+			<div class="control-group">
+			    <div class="controls">
+			      <input type="text" id="last_name" placeholder="Último Nome *" name="last_name">
+			    </div>
+			</div>
+			<div class="control-group">
+			    <div class="controls">
+			      <input type="text" id="email" placeholder="E-mail *" name="email">
+			    </div>
+			</div>
+			
+			<p>(*) Campos Obrigatórios</p>
+			
+			<div class="form-actions">
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Cadastrar Contato</button>
+				{% if vRedireciona == '1' %}
+					<a class="btn" href="/email/">Voltar</a>
+				{% else %}
+					<a class="btn" href="/publicar/">Voltar</a>
+				{% endif %}
+			</div>
+			
+		</form>
+	</div>
+</body>
+
+</html>

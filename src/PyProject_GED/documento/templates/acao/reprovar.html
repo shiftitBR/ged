@@ -15,9 +15,20 @@
 		  <h2>Reprovar Documento</h2>
 		  <p class="lead">Confirmar reprovação de documento.</p>
 		</header>
+		
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
 		  	
+		{% if iPossuiPermissao %}
 		<div class="container">
-			<form class="form-horizontal" action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
+			<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
 				<div class="well">
 					<div class="control-group">
 			            <label class="control-label" for="textarea">Comentário</label>
@@ -29,10 +40,10 @@
 				
 				<div class="form-actions" style="float: right;">
 					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Reprovar Pendência</button>
-					<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 				</div>
 			</form>
 		</div>
+		{% endif %}
 	</div>
 </body>
 

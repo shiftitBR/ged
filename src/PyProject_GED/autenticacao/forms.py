@@ -81,5 +81,35 @@ class FormConfiguracoesDeUsuario(forms.ModelForm):
         if commit:
             usuario.save()
 
-        return usuario       
+        return usuario      
+    
+class FormCadastroDeContato(forms.Form):
+    class Meta:
+        fields = ('first_name', 'last_name', 'email')
+
+    email       = forms.EmailField(label='E-mail', max_length=75)
+    first_name  = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Primeiro Nome *'}))
+    last_name   = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Último Nome *'}))
+
+    def __init__(self, *args, **kwargs):        
+        super(FormCadastroDeContato, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'first_name',
+            'last_name',
+            'email']
+        self.fields['first_name'].label = trans('Primeiro Nome')
+        self.fields['last_name'].label  = trans('Ultimo Nome')
+        self.fields['email'].label      = trans('E-mail')
+        self.fields['first_name'].error_messages['required']    = u'O campo Primeiro Nome é obrigatório' 
+        self.fields['last_name'].error_messages['required']     = u'O campo Último Nome é obrigatório' 
+        
+    def clean_first_name(self):
+        if self.cleaned_data['first_name']=='':
+            raise forms.ValidationError('O campo Primeiro Nome é obrigatório!')
+        return self.cleaned_data['first_name']
+        
+    def clean_last_name(self):
+        if self.cleaned_data['last_name']=='':
+            raise forms.ValidationError('O campo Último Nome é obrigatório!')
+        return self.cleaned_data['last_name']
         

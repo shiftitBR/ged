@@ -248,6 +248,22 @@
 				F.inner.css('overflow', 'hidden');
 
 				F.transitions[F.current.closeMethod]();
+				
+				if (window.location.pathname == '/documentos/')
+				{
+					$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+				    {
+				            $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
+				            $('#id_tabelaDocumentos tr:last').after(data);
+				    });
+					$.post('/versoes_selecionadas/-/', { dir: 'teste' }, function(data){});
+					
+				}
+				
+				if (window.location.pathname == '/busca/')
+				{
+					$.post('/versoes_selecionadas/-/', { dir: 'teste' }, function(data){});
+				}
 			}
 		},
 

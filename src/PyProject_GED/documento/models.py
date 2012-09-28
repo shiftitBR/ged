@@ -10,19 +10,18 @@ from django.db.models                   import get_model
 
 from PyProject_GED.autenticacao.models  import Empresa 
 from PyProject_GED.autenticacao.models  import Usuario  
-from PyProject_GED.seguranca.models     import Pasta    
+from PyProject_GED.seguranca.models     import Pasta    , Grupo_Usuario
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
-from PyProject_GED.envioemail.controle  import Controle as ControleEmail
 
 from objetos_auxiliares                 import Documento as DocumentoAuxiliar
 from objetos_auxiliares                 import Versoes as VersaoAuxiliar
 from controle                           import Controle as DocumentoControle
 from PyProject_GED.imagem.controle      import Controle as ImagemControle
+from PyProject_GED                      import constantes
 
 import datetime
 import logging
-import constantes#@UnresolvedImport
 
 #-----------------------------DOCUMENTO----------------------------------------
 
@@ -178,8 +177,9 @@ class Documento(models.Model):
             iListaUsuarios= []
             for iDocumento in iListaDocumentosVecendo:
                 iListaUsuarios.append(iDocumento.usr_responsavel)
-                ControleEmail().enviarEmail('', '', iDocumento.usr_responsavel.email, 
-                                            constantes.cntConfiguracaoEmailAlerta)
+                mEmail= get_model('envioemail', 'Email')
+                mEmail().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iDocumento.usr_responsavel.email, 
+                                          constantes.cntTipoEmailDocumentoVencendo)
             return iListaUsuarios
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel notificar documentos vencendo ' + str(e))
@@ -432,13 +432,17 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vEhPublico= False):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vIDUsuario= None, 
+                        vEhPublico= False):
         try:
             if vEhPublico:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
                                                                   documento__eh_publico= True)
             else:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
+            if vIDUsuario not in (None, ''):
+                iListaDePastas= Grupo_Usuario().obtemPastasPermitidasDoUsuario(vIDUsuario)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__pasta__in= iListaDePastas)
             if vAssunto not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):

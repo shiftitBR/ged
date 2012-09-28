@@ -23,24 +23,34 @@
 	</script>
 
 <body>
-	<div class="container">
+	<div class="container" align="center">
 		<header class="jumbotron subhead" id="overview">
 		  <h2>Enviar e-mail</h2>
 		</header>
-		
-		{% if form.errors %}
-		<div class="well">
-			<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
-			{% for field in form %}
-		    	{{ field.errors }}
-		    {% endfor %}
-		</div>
-    	{% endif %}
-		
 	</div>
 	
+	{% if messages %}
+	<div class="alert alert-info">
+		<ul class="messages">
+		    {% for message in messages %}
+		    	<li><b>{{ message }}</b></li>
+		    {% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
+	{% if form.errors %}
+	<div class="well">
+		<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
+		{% for field in form %}
+	    	{{ field.errors }}
+	    {% endfor %}
+	</div>
+	{% endif %}
+		
 	<br>
-	<form action="" id="fancy" data-fancy='true' method="POST">{% csrf_token %}
+	{% if iPossuiPermissao %}
+	<form action="" id="fancy" method="POST">{% csrf_token %}
 	<div class="container">
 	    	
 		<div class="controls">
@@ -82,14 +92,17 @@
 			{% endfor %}	
 		    </tbody>
 		</table>
+		
+		{% if iCadastraContato %}
+    		<a class="fancybox fancybox.iframe" href="/contato/1/"><i class="icon-retweet"></i>  Contato</a>
+    	{% endif %}
 
 		<div class="form-actions" style="float: right;">
 			<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Enviar E-mail</button>
-			<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 		</div>
 	</div>
 	</form>
-	
+	{% endif %}
 </body>
 
 </html>
