@@ -48,7 +48,7 @@ class Norma(models.Model):
         verbose_name_plural = 'Normas'
     
     def __unicode__(self):
-        return self.descricao
+        return '%s - %s' % (self.numero, self.descricao)
     
     def save(self): 
         if self.id_norma == '' or self.id_norma== None: 
@@ -82,7 +82,7 @@ class Norma(models.Model):
     
     def obtemListaNormas(self, vIDEmpresa):
         try:
-            iListaNormas = Norma.objects.filter(empresa__id_empresa= vIDEmpresa)
+            iListaNormas = Norma.objects.filter(empresa__id_empresa= vIDEmpresa).order_by('numero')
             return iListaNormas
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de normas: ' + str(e))
