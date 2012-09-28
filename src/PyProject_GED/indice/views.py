@@ -64,6 +64,7 @@ def busca(vRequest, vTitulo):
                 iEstado= vRequest.POST.get('estado')
                 iConteudo= vRequest.POST.get('conteudo')
                 iListaIDIndices= []
+                iIDUsuario= vRequest.user.id
                 if 'buscaAcancada' in vRequest.POST:
                     for i in range(len(iListaIndices)):
                         iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)
@@ -72,7 +73,7 @@ def busca(vRequest, vTitulo):
                 iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                            iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
                                                            iDataFim, iListaIDIndices, iConteudo, iNormas, 
-                                                           vEhPublico= False)
+                                                           iIDUsuario, vEhPublico= False)
                 vRequest.session['iListaBusca'] = iListaDocumentos
                 iPaginator = Paginator(iListaDocumentos, 10)
                 iDocumentos = iPaginator.page(1)

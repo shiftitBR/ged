@@ -10,7 +10,7 @@ from django.db.models                   import get_model
 
 from PyProject_GED.autenticacao.models  import Empresa 
 from PyProject_GED.autenticacao.models  import Usuario  
-from PyProject_GED.seguranca.models     import Pasta    
+from PyProject_GED.seguranca.models     import Pasta    , Grupo_Usuario
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from PyProject_GED.envioemail.controle  import Controle as ControleEmail
@@ -432,13 +432,17 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vEhPublico= False):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vIDUsuario= None, 
+                        vEhPublico= False):
         try:
             if vEhPublico:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
                                                                   documento__eh_publico= True)
             else:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
+            if vIDUsuario not in (None, ''):
+                iListaDePastas= Grupo_Usuario().obtemPastasPermitidasDoUsuario(vIDUsuario)
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__pasta__in= iListaDePastas)
             if vAssunto not in (None, ''):
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__assunto__icontains= vAssunto)
             if vProtocolo not in (None, ''):
