@@ -31,7 +31,7 @@
 				<a href="#avancado" class="btn btn-success" rel="popover" placement="left" data-toggle="modal" data-content="Busca por índices personalizados adicionados ao sistema." data-original-title="Buscar Avançado">Busca Avançada</a>
 			</p>
 		</div> 
-    <div class="subnav">
+    <div class="subnav espacamentovertical">
 	    <ul class="nav nav-pills">
 	      <li class=""><a class="fancybox fancybox.iframe" href="/assinar/" id="id_btnAssinar">Assinar Documento(s)</a></li>
           <li class=""><a class="fancybox fancybox.iframe" href="/email/" id="id_btnEmail">Enviar E-mail</a></li>
@@ -53,19 +53,19 @@
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		  <tr>
-		    <th colspan="6"><center>Lista de Documentos</center></th>
+		    <th colspan="10" class="tipotabela">Lista de Documentos</th>
 		  </tr>
 		  <tr>
 		  	<th> </th>
-		    <th><center>Protocolo</center></th>
-		    <th><center>Assunto</center></th>
-		    <th><center>Tipo de Documento</center></th>
-		    <th><center>Estado</center></th>
-		    <th><center>Criador</center></th>
-		    <th><center>Versão</center></th>
-		    <th><center>Criado em</center></th>
-		    <th><center>Ass.</center></th>
-		    <th><center>Ação</center></th>
+		    <th class="tipotabela"><center>Protocolo</center></th>
+		    <th class="tipotabela"><center>Assunto</center></th>
+		    <th class="tipotabela"><center>Tipo de Documento</center></th>
+		    <th class="tipotabela"><center>Estado</center></th>
+		    <th class="tipotabela"><center>Criador</center></th>
+		    <th class="tipotabela"><center>Versão</center></th>
+		    <th class="tipotabela"><center>Criado em</center></th>
+		    <th class="tipotabela"><center>Ass.</center></th>
+		    <th class="tipotabela"><center>Ação</center></th>
 		  </tr>
 		</thead>
 		<tbody>
@@ -155,8 +155,8 @@
         </ul>
     </ul> 
 </div>
-    
-<form class="well form-inline" method="post"> {% csrf_token %}
+    <!-- retirada a classe well do form-->
+<form class="form-inline" method="post"> {% csrf_token %}
 	<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
     <div class="modal hide" id="avancado">
 	  <div class="modal-header">

@@ -5,14 +5,14 @@
 
 <script src="{{ MEDIA_URL }}js/projeto/documentos.js" type="text/javascript"></script>
 
-<div class="container-fluid">
-  <div class="row-fluid espacamentovertical">
+<div class="container">
+  <div class="row espacamentovertical">
   	<div class="span3">
-  		<h1>Documentos</h1>
+  		<h1 class="resetamargin">Documentos</h1>
   	</div>
 	
 	<div class="span9">
-	   <div class="subnav centralizavert">
+	   <div class="subnav">
 	    <ul class="nav nav-pills">
 	      <li class=""><a class="fancybox fancybox.iframe" href="/importar_scanner/">Digitalizar Documento(s)</a></li>
 	      <li class=""><a class="fancybox fancybox.iframe" href="/importar/" id='fb_importar'>Importar Documento(s)</a></li>
@@ -23,7 +23,7 @@
 	   </div>
 	</div>
 	</div>
-	<div class="row-fluid espacamentovertical">
+	<div class="row espacamentovertical">
 		<div class="span3">
 		  <div class="well">
 		   <div id="arvore" ></div>
@@ -32,12 +32,11 @@
 	
 		<div class="span9">
 	   <form name= "acao" id="formTabela" action="" method="post">{% csrf_token %}
-		<input type="hidden" name="supporttype" /> <!-- Não Deletar | Usado para submit em link-->
 		{% if messages %}
 		<div class="alert alert-info">
 			<ul class="messages">
 			    {% for message in messages %}
-			    	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}><b>{{ message }}</b></li>
+			    	<li><b>{{ message }}</b></li>
 			    {% endfor %}
 			</ul>
 		</div>

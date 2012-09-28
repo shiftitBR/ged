@@ -10,12 +10,10 @@
 
 <body>
 	<div class="container">
-		<center>
 		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Check-in</strong></h2>
+		  <h2>Check-in</h2>
 		  <p class="lead">Criar uma nova versão de um documento.</p>
 		</header>
-		</center>
 		
 		{% if messages %}
 		<div class="alert alert-info">
@@ -42,7 +40,7 @@
 	          	</div>
 			</div>	
 			
-			<div class="form-actions">
+			<div class="form-actions" style="float: right;">
 				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Check-In de Documento</button>
 				<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
 			</div>

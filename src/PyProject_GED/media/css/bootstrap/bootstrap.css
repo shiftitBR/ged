@@ -164,6 +164,8 @@ body {
   line-height: 20px;
   color: #333333;
   background-color: #f8f8f8;
+  padding-top: 50px;
+  height: 100%;
 }
 
 a {
@@ -3489,7 +3491,10 @@ input[type="submit"].btn.btn-mini {
 
 .btn-group > .btn,
 .btn-group > .dropdown-menu {
-  font-size: 14px;
+  font-size: 12px;
+  font-family: dosis;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .btn-group > .btn-mini {
@@ -5799,4 +5804,38 @@ a.badge:hover {
 
 .wellbranco {
 	background-color: white;
+}
+
+.resetamargin {
+	margin: 0px 0px 0px 0px;
+}
+
+.rodape {
+	bottom: 0;
+	position: absolute;
+	padding: 15px 0px;
+} 
+
+.hasPlaceholder {
+	color: #777;
+}
+
+#notpendenciabox {
+	position:relative;
+    width:100%;
+    height:100%;
+}
+
+.notificapendencia {
+    position:absolute;
+    top: 18px;
+    right:125px;
+    padding:4px 4px 4px 4px;
+    background-color:red; 
+    color:white;
+    font-weight:bold;
+    font-size:0.70em;
+    border-radius:30px;
+    box-shadow:1px 1px 1px gray;
+    line-height: 0.60em;
 }
