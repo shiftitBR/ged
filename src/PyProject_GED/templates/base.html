@@ -15,12 +15,10 @@
     	
     {% block scripts %}
 	{% include "./media/js.html" %}
-	<!--{% endblock scripts %} -->
+	{% endblock scripts %}
 	<!-- FancyBox -->
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/jquery.fancybox.js?v=2.0.6"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/fancy/fancy_config.js"></script>
-    <!-- fix para media queries IE5+ -->
-	<script src="{{ MEDIA_URL }}js/projeto/css3-mediaqueries.js"></script>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
