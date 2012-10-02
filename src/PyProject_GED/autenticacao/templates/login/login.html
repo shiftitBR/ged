@@ -17,7 +17,7 @@
 					  <p class="lead">Efetuar Login no Sistema</p>
 					</header>
 					
-					<form method="post" action="/login/">{% csrf_token %}
+					<form method="post" action="/login/" id="login">{% csrf_token %}
 						{% if form.errors %}
 								<script language="JavaScript">
 								       self.location="{% url login_error %}";
