@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 {% block scripts %}
 {% include "./media/js.html" %}
 <!-- Projeto -->
@@ -7,50 +6,50 @@
 {% endblock scripts %}
 
 {% block style %}
-{% include "./media/css.html" %}
+{% include "./media/css_fbox.html" %}
 {% endblock style %}
 
 <body>
-	<div class="container">
-		<header class="jumbotron subhead" id="overview">
-		  <h2>Importar Documento</h2>
-		</header>
-	</div>	
-	
-	{% if form.errors %}
-		<div class="well well-small wellbranco">
-			<p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>	
-			{% for field in form %}
-		    	{{ field.errors }}
-		    {% endfor %}
-		</div>
+    <div class="container">
+        <header class="jumbotron subhead" id="overview">
+          <h2>Importar Documento</h2>
+        </header>
+    </div>  
+    
+    {% if form.errors %}
+        <div class="well well-small wellbranco">
+            <p><b>O documento não pode ser inserido. Por favor, verifique os erros abaixo:</b></p>  
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+        </div>
     {% endif %}
     
     {% if messages %}
-	<div class="alert alert-info">
-		<ul class="messages">
-		    {% for message in messages %}
-		    	<li><b>{{ message }}</b></li>
-		    {% endfor %}
-		</ul>
-	</div>
-	{% endif %}
-	
+    <div class="alert alert-info">
+        <ul class="messages">
+            {% for message in messages %}
+                <li><b>{{ message }}</b></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
     {% if iPossuiPermissao %}
     <div class="well well-small">
-	    <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
-			<div class="container">
-				{% load multiuploader %}
-				{% multiupform %}
-			</div>
-		</form>
-	</div>
-	<form action="" id="fancy" method="POST">{% csrf_token %}
-		<div class="well wellbranco well-small">
-			<div class="container-fluid">
-		  		<div class="row-fluid">
-		    		<div class="span6">
-		    			
+        <form class="form-horizontal" action="{% url multi %}" method="POST" enctype="multipart/form-data">
+            <div class="container">
+                {% load multiuploader %}
+                {% multiupform %}
+            </div>
+        </form>
+    </div>
+    <form action="" id="fancy" method="POST">{% csrf_token %}
+        <div class="well wellbranco well-small">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span6">
+                        
     <div class="accordion" id="accordion2">
   <div class="accordion-group">
     <div class="accordion-heading">
@@ -60,19 +59,19 @@
     </div>
     <div id="collapseOne" class="accordion-body collapse in">
       <div class="accordion-inner">
-		<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
-		<p>{{form.usr_responsavel}}</p>
-		<p>{{form.tipo_documento}}</p>
+        <p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+        <p>{{form.usr_responsavel}}</p>
+        <p>{{form.tipo_documento}}</p>
       </div>
     </div>
   </div>
 </div>
 
-					  
-				    </div>
-				    <div class="span6">
-				    	
-				    	<div class="accordion" id="accordion3">
+                      
+                    </div>
+                    <div class="span6">
+                        
+                        <div class="accordion" id="accordion3">
  <div class="accordion-group">
     <div class="accordion-heading">
       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseTwo">
@@ -81,10 +80,10 @@
     </div>
     <div id="collapseTwo" class="accordion-body collapse">
       <div class="accordion-inner">
-		<p>{{form.data_validade}}</p>
-       	<p>{{form.data_descarte}}</p>
-    	<label><b>Associar Normas:</b></label>
-      	<p>{{form.norma}}</p>
+        <p>{{form.data_validade}}</p>
+        <p>{{form.data_descarte}}</p>
+        <label><b>Associar Normas:</b></label>
+        <p>{{form.norma}}</p>
       </div>
     </div>
   </div>
@@ -98,29 +97,29 @@
     {%endif%}
     <div id="collapseThree" class="accordion-body collapse">
       <div class="accordion-inner">
-	{% for indice in iListaIndices %}
-			<div class="control-group">
-			<!-- <label class="control-label" for="input01">{{indice.descricao}}</label> -->
-				<div class="controls">
-			  	<input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
-				</div>
-			</div>
-			{% empty %}
-			{% endfor %}
+    {% for indice in iListaIndices %}
+            <div class="control-group">
+            <!-- <label class="control-label" for="input01">{{indice.descricao}}</label> -->
+                <div class="controls">
+                <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+                </div>
+            </div>
+            {% empty %}
+            {% endfor %}
       </div>
     </div>
   </div>
 </div>
-				    	
-				    	<p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
-				    	<div class="form-actions" style="float: right;">
-							<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Importar Documento</button>
-							<!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
-						</div>
-				    </div>
-				 </div>
-			</div>
-		</div>
+                        
+                        <p>{{form.eh_publico}}  -  Este arquivo pode ser visualizado publicamente?</p>
+                        <div class="form-actions" style="float: right;">
+                            <button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary">Importar Documento</button>
+                            <!--<button class="btn" name="cancelar" onClick="parent.jQuery.fancybox.close();">Cancelar</button>-->
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
 </form>
 {% endif %}
 </body>

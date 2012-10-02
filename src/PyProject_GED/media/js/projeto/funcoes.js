@@ -6,6 +6,10 @@ $(document).ready
 		
 		placeholder_IE();
 		
+		intervaloRefreshPendencias(300000);
+		
+		notificaPendencias();
+				
 	//------------------------------Eventos------------------------------
 		
 		if (window.location.pathname == '/importar/')
@@ -56,7 +60,7 @@ function maximoLength(vCampoID, vTamanho, vStatus)
 
 function refreshDocumentos(vCampoID)
 {
-	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+	$.get('/tabela_documentos/', function(data)
     {
             $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
             $('#id_tabelaDocumentos tr:last').after(data);
@@ -88,4 +92,27 @@ function placeholder_IE()
 			});
 		}
 	});
+}
+
+function notificaPendencias()
+{
+	$.get('/quantidade_pendencias/', function(data)
+    {
+		if(data != '0')
+		{
+			$('#id_notificapendencia').text(data);
+		}
+		else
+		{
+			$('#id_notificapendencia').remove();
+		}
+		
+    });
+}
+
+function intervaloRefreshPendencias(vIntervalo)
+{
+	setInterval(function(){
+		notificaPendencias()
+     }, vIntervalo);
 }

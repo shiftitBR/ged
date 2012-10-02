@@ -5,7 +5,6 @@ from django.http                        import HttpResponse,\
     HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
-from django.core                        import serializers
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario

@@ -429,6 +429,15 @@ class Pendencia(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasDestinatario: ' + str(e))
             return False
+    
+    def obtemQuantidadePendenciasDestinatario(self, vDestinatarioID):
+        try:
+            iQuantiadePendencias = Pendencia.objects.filter(usr_destinatario__id= vDestinatarioID).filter(
+                                                estado_da_pendencia= constantes.cntEstadoPendenciaPendente).count()
+            return iQuantiadePendencias
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtemListaPendenciasDestinatario: ' + str(e))
+            return False
         
     def adicionarFeedback(self, vComentario, vPendencia):
         try:

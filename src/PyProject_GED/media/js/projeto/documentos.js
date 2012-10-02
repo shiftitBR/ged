@@ -23,7 +23,7 @@ $(document).ready
 
 function refreshDocumentos()
 {
-	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+	$.get('/tabela_documentos/', function(data)
     {
             $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
             $('#id_tabelaDocumentos tr:last').after(data);
@@ -32,7 +32,7 @@ function refreshDocumentos()
 
 function montaArvoreDeDocumentos()
 {
-	$.post('/pasta_raiz/', { dir: 'teste' }, function(data)
+	$.get('/pasta_raiz/', function(data)
     {
 		$('#arvore').fileTree({
             root: data,
@@ -69,6 +69,6 @@ function obtemVersoesSelecionadas(vChecks)
     
     if (iTamanhoListaSelecionadas > 0)
     {
-    	$.post('/versoes_selecionadas/'+iListaIDVersoes+'/', { dir: 'teste' }, function(data){});
+    	$.get('/versoes_selecionadas/'+iListaIDVersoes+'/', function(data){});
     }
 }
