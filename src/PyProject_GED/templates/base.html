@@ -1,4 +1,8 @@
 ﻿<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="no-js ie6 ie" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7 ie" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8 ie" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <html lang="en">
   <head>
   	{% block meta %}
@@ -31,6 +35,10 @@
     <link rel="apple-touch-icon-precomposed" href="{{ MEDIA_URL }}img/bootstrap/ico/apple-touch-icon-57-precomposed.png">
     <!-- chama a fonte Dosis no gooogle webapps -->
     <link href='http://fonts.googleapis.com/css?family=Dosis:300,500,600' rel='stylesheet' type='text/css'>
+	<!-- chama modernizr-->
+    <meta charset="utf-8">
+    <script src="{{ MEDIA_URL }}img/modernizr/libs/modernizr-2.0.6-min.js"></script>
+
   </head>
 
   <body>
