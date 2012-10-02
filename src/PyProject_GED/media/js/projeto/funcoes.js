@@ -41,7 +41,6 @@ $(document).ready
 
 function maximoLength(vCampoID, vTamanho, vStatus)
 {
-	console.log(vCampoID);
 	$(vCampoID).maxlength({   
 		events: [], // Array of events to be triggerd    
 		maxCharacters: vTamanho, // Characters limit   
@@ -72,7 +71,6 @@ function placeholder_IE()
 		if('placeholder' in test) jQuery.support.placeholder = true;
 	});
 	$(function() {
-		console.log($.support.placeholder);
 		if(!$.support.placeholder) { 
 			$(':input').focus(function () {
 				if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {

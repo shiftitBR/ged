@@ -8,7 +8,7 @@ $(document).ready
 		{
 			montaArvoreDeDocumentos();
 		
-			intervaloRefreshDocumentos(60000);
+			intervaloRefreshDocumentos(300000);
 		}
 		
 		//------------------------------Eventos------------------------------
