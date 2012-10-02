@@ -12,12 +12,8 @@ $(document).ready
 		}
 		
 		//------------------------------Eventos------------------------------
-		
-		$("#id_btnEmail").click(function() {obtemVersoesSelecionadas();});
-		
-		$("#id_btnAssinar").click(function() {obtemVersoesSelecionadas();});
-		
-		$("#id_btnPublicar").click(function() {obtemVersoesSelecionadas();});
+				
+		$('#id_tabelaDocumentos').change(function() {obtemVersoesSelecionadas();});
         
 	}
 );
