@@ -163,18 +163,16 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #333333;
-  background-color: #f8f8f8;
-  padding-top: 50px;
-  height: 100%;
+  background-color: #ffffff;
 }
 
 a {
-  color: #007abc;
+  color: #0088cc;
   text-decoration: none;
 }
 
 a:hover {
-  color: #0088d2;
+  color: #005580;
   text-decoration: underline;
 }
 
@@ -587,12 +585,8 @@ p {
 
 .lead {
   margin-bottom: 20px;
-  font-family: 'Dosis', sans-serif;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: #aeaeae;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 200;
   line-height: 30px;
 }
 
@@ -639,11 +633,10 @@ h4,
 h5,
 h6 {
   margin: 10px 0;
-  font-family: 'Dosis', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: bold;
   line-height: 1;
-  color: #aeaeae;
+  color: inherit;
   text-rendering: optimizelegibility;
 }
 
@@ -1851,7 +1844,7 @@ table {
 }
 
 .table th {
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .table thead th {
@@ -2156,7 +2149,7 @@ table [class*=span],
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../../img/bootstrap/glyphicons-halflings.png");
+  background-image: url("../img/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
 }
@@ -2176,7 +2169,7 @@ table [class*=span],
 .dropdown-menu > li > a:hover > [class*=" icon-"],
 .dropdown-menu > .active > a > [class^="icon-"],
 .dropdown-menu > .active > a > [class*=" icon-"] {
-  background-image: url("../../img/bootstrap/glyphicons-halflings-white.png");
+  background-image: url("../img/glyphicons-halflings-white.png");
 }
 
 .icon-glass {
@@ -2944,7 +2937,7 @@ table [class*=span],
 .well {
   min-height: 20px;
   padding: 19px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   background-color: #f5f5f5;
   border: 1px solid #e3e3e3;
   -webkit-border-radius: 4px;
@@ -3491,10 +3484,7 @@ input[type="submit"].btn.btn-mini {
 
 .btn-group > .btn,
 .btn-group > .dropdown-menu {
-  font-size: 12px;
-  font-family: dosis;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-size: 14px;
 }
 
 .btn-group > .btn-mini {
@@ -4164,18 +4154,18 @@ input[type="submit"].btn.btn-mini {
   min-height: 40px;
   padding-right: 20px;
   padding-left: 20px;
-  background-color: #007ABC;
-  background-image: -moz-linear-gradient(top, #0088D2, #007ABC);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088D2), to(#007ABC));
-  background-image: -webkit-linear-gradient(top, #0088D2, #007ABC);
-  background-image: -o-linear-gradient(top, #0088D2, #007ABC);
-  background-image: linear-gradient(to bottom, #0088D2, #007ABC);
+  background-color: #fafafa;
+  background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+  background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+  background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
   background-repeat: repeat-x;
   border: 1px solid #d4d4d4;
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#000088D2', endColorstr='#00007ABC', GradientType=0);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
   *zoom: 1;
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
@@ -4399,11 +4389,9 @@ input[type="submit"].btn.btn-mini {
 .navbar .nav > li > a {
   float: none;
   padding: 10px 15px 10px;
-  color: #ffffff;
+  color: #777777;
   text-decoration: none;
-  text-transform: uppercase;
-  font-family: 'Dosis', sans-serif;
-  font-size: 14pt;
+  text-shadow: 0 1px 0 #ffffff;
 }
 
 .navbar .nav .dropdown-toggle .caret {
@@ -5783,59 +5771,4 @@ a.badge:hover {
 
 .affix {
   position: fixed;
-}
-
-/* classes personalizadas para o alinhamento */
-
-.espacamentovertical {
-	margin-top: 27px;
-}
-
-.centralizavert {
-	margin-top: 10px;
-}
-
-.tipotabela {
-	font-family: 'Dosis', sans-serif;
-	font-size: 12pt;
-	text-transform: uppercase;
-	color: #aeaeae;
-}
-
-.wellbranco {
-	background-color: white;
-}
-
-.resetamargin {
-	margin: 0px 0px 0px 0px;
-}
-
-.rodape {
-	bottom: 0;
-	position: absolute;
-	padding: 15px 0px;
-} 
-
-.hasPlaceholder {
-	color: #777;
-}
-
-#notpendenciabox {
-	position:relative;
-    width:100%;
-    height:100%;
-}
-
-.notificapendencia {
-    position:absolute;
-    top: 18px;
-    right:125px;
-    padding:4px 4px 4px 4px;
-    background-color:red; 
-    color:white;
-    font-weight:bold;
-    font-size:0.70em;
-    border-radius:30px;
-    box-shadow:1px 1px 1px gray;
-    line-height: 0.60em;
 }
