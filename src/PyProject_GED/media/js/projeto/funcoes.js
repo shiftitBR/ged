@@ -2,6 +2,10 @@ $(document).ready
 (
 	function()
 	{
+	//------------------------------OnLoad------------------------------
+		
+		placeholder_IE();
+		
 	//------------------------------Eventos------------------------------
 		
 		if (window.location.pathname == '/importar/')
@@ -58,4 +62,32 @@ function refreshDocumentos(vCampoID)
             $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
             $('#id_tabelaDocumentos tr:last').after(data);
     });
+}
+
+function placeholder_IE()
+{ 
+	jQuery(function(){
+		jQuery.support.placeholder = false;
+		test = document.createElement('input');
+		if('placeholder' in test) jQuery.support.placeholder = true;
+	});
+	$(function() {
+		console.log($.support.placeholder);
+		if(!$.support.placeholder) { 
+			$(':input').focus(function () {
+				if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
+					$(this).val('').removeClass('hasPlaceholder');
+				}
+			}).blur(function () {
+				if ($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder'))) {
+					$(this).val($(this).attr('placeholder'));
+					$(this).addClass('hasPlaceholder');
+				}
+			});
+			$(':input').blur();
+			$('form').submit(function () {
+				$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
+			});
+		}
+	});
 }

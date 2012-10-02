@@ -19,38 +19,3 @@
 <script src="{{ MEDIA_URL }}js/projeto/funcoes.js"></script>
 <!-- Tree -->
 <script src="{{ MEDIA_URL }}js/tree/jqueryFileTree.js" type="text/javascript"></script>
-<!-- Placeholder fix para o IE -->
-<script>
-jQuery(function(){
-	jQuery.support.placeholder = false;
-	test = document.createElement('input');
-	if('placeholder' in test) jQuery.support.placeholder = true;
-});
-</script>
-<script>
-	if(!$.support.placeholder) {
-// Placeholder text is not supported. 
-}
-</script>
-<script>
-	$(function() {
-	if(!$.support.placeholder) { 
-		var active = document.activeElement;
-		$(':text').focus(function () {
-			if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
-				$(this).val('').removeClass('hasPlaceholder');
-			}
-		}).blur(function () {
-			if ($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder'))) {
-				$(this).val($(this).attr('placeholder'));
-				$(this).addClass('hasPlaceholder');
-			}
-		});
-		$(':text').blur();
-		$(active).focus();
-		$('form').submit(function () {
-			$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
-		});
-	}
-});
-</script>
