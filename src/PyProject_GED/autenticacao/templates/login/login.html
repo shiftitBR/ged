@@ -17,7 +17,7 @@
 					  <p class="lead">Efetuar Login no Sistema</p>
 					</header>
 					
-					<form method="post" action="/login/" id="login">{% csrf_token %}
+					<form method="post" action="/login/">{% csrf_token %}
 						{% if form.errors %}
 								<script language="JavaScript">
 								       self.location="{% url login_error %}";
@@ -25,9 +25,7 @@
 						{% endif %}	
 						<fieldset>
 						  	<input type="text" id="username" name="username" class="input-xlarge" placeholder="Email">
-						  	<label for="username">Email</label>
 						  	<input type="password" id="password" name="password" class="input-xlarge" placeholder="Password">
-						  	<label for="password">Password</label>
 					  	  	<button type="submit" class="btn btn-primary"><span>Efetuar Login</span></button>
 					  	</fieldset>
 					</form>
