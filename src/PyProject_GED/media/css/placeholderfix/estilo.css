@@ -55,3 +55,15 @@ input[type="submit"]{
 }
 
 input[type="submit"]:hover{color: #ff6937;text-shadow: 0 0 1px rgba(255,255,255,.2);}
+
+.ie input{line-height: 35px;}
+.ie input[type="email"]{color: #2F82C2;}
+.ie input[type="password"]{color: #ED1C70;}
+.ie label{right: 10px;}
+
+.ie input[type="email"]:focus, .ie input[type="password"]:focus{
+    background:transparent;
+    -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr=#80ffffff,endColorstr=#80ffffff)";
+    zoom: 1;
+}
+.ie7 label, .ie6 label{display: none;}
