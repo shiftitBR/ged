@@ -8,4 +8,6 @@ urlpatterns= patterns('workflow.views',
                             {'vTitulo': trans(u'acompanhamento')}, name='acompanhamento'),
                       url('^tipo_pendencia/(?P<vIDVersao>\d+)/$', 'tipo_pendencia',
                             {'vTitulo': trans(u'tipo_pendencia')}, name='tipo_pendencia'),
+                      url('^quantidade_pendencias/$', 'obtemQuantidadeDePendencias',
+                            {'vTitulo': trans(u'obtemQuantidadeDePendencias')}, name='obtemQuantidadeDePendencias'),
                       )

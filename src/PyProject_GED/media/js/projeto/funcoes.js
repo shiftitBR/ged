@@ -2,6 +2,14 @@ $(document).ready
 (
 	function()
 	{
+	//------------------------------OnLoad------------------------------
+		
+		placeholder_IE();
+		
+		intervaloRefreshPendencias(300000);
+		
+		notificaPendencias();
+				
 	//------------------------------Eventos------------------------------
 		
 		if (window.location.pathname == '/importar/')
@@ -37,7 +45,6 @@ $(document).ready
 
 function maximoLength(vCampoID, vTamanho, vStatus)
 {
-	console.log(vCampoID);
 	$(vCampoID).maxlength({   
 		events: [], // Array of events to be triggerd    
 		maxCharacters: vTamanho, // Characters limit   
@@ -53,9 +60,59 @@ function maximoLength(vCampoID, vTamanho, vStatus)
 
 function refreshDocumentos(vCampoID)
 {
-	$.post('/tabela_documentos/', { dir: 'teste' }, function(data)
+	$.get('/tabela_documentos/', function(data)
     {
             $("#id_tabelaDocumentos").find("tr:gt(1)").remove();
             $('#id_tabelaDocumentos tr:last').after(data);
     });
+}
+
+function placeholder_IE()
+{ 
+	jQuery(function(){
+		jQuery.support.placeholder = false;
+		test = document.createElement('input');
+		if('placeholder' in test) jQuery.support.placeholder = true;
+	});
+	$(function() {
+		if(!$.support.placeholder) { 
+			$(':input').focus(function () {
+				if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
+					$(this).val('').removeClass('hasPlaceholder');
+				}
+			}).blur(function () {
+				if ($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder'))) {
+					$(this).val($(this).attr('placeholder'));
+					$(this).addClass('hasPlaceholder');
+				}
+			});
+			$(':input').blur();
+			$('form').submit(function () {
+				$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
+			});
+		}
+	});
+}
+
+function notificaPendencias()
+{
+	$.get('/quantidade_pendencias/', function(data)
+    {
+		if(data != '0')
+		{
+			$('#id_notificapendencia').text(data);
+		}
+		else
+		{
+			$('#id_notificapendencia').remove();
+		}
+		
+    });
+}
+
+function intervaloRefreshPendencias(vIntervalo)
+{
+	setInterval(function(){
+		notificaPendencias()
+     }, vIntervalo);
 }

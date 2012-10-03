@@ -4,7 +4,7 @@ from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib                     import messages
-from django.http                        import HttpResponseRedirect
+from django.http                        import HttpResponseRedirect, HttpResponse
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
@@ -138,3 +138,13 @@ def tipo_pendencia(vRequest, vTitulo, vIDVersao=None):
         context_instance=RequestContext(vRequest),
         )
         
+@login_required 
+def obtemQuantidadeDePendencias(vRequest, vTitulo):
+    try :
+        iQuantidade= Pendencia().obtemQuantidadePendenciasDestinatario(vRequest.user.id)
+        iHtml= []
+        iHtml.append(str(iQuantidade))
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter a quantidade de Pendencias: ' + str(e))
+        return False
+    return HttpResponse(''.join(iHtml))

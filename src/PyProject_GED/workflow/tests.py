@@ -256,7 +256,11 @@ class Test(TestCase):
         iDocumento= Documento.objects.all()[0]
         iListaDestinatarios= Pendencia().obtemListaDeDestinatariosPendentes(iDocumento)
         self.assertEquals(1, len(iListaDestinatarios))
-        
+    
+    def testObtemQuantidadeDePendenciasDoDestinatario(self):
+        iUsuario= Usuario.objects.all()[0]
+        iQuantidade= Pendencia().obtemQuantidadePendenciasDestinatario(iUsuario.id)
+        self.assertEquals(1, iQuantidade)
         
     #-----------------------------------------------------MOKS---------------------------------------------------
 
