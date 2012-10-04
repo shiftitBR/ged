@@ -9,6 +9,7 @@ from documento.models           import Versao #@UnresolvedImport
 from autenticacao.models        import Empresa #@UnresolvedImport
 
 import logging
+from PyProject_GED.seguranca.models import Pasta
 
 #-----------------------------INDICE----------------------------------------
 
@@ -72,6 +73,37 @@ class Indice(models.Model):
             return iListaIndices
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de indices: ' + str(e))
+            return False
+
+class Indice_Pasta(models.Model):
+    id_indice_pasta = models.IntegerField(max_length=3, primary_key=True)
+    indice          = models.ForeignKey(Indice, null= False)
+    pasta           = models.ForeignKey(Pasta, null= False)
+    
+    class Meta:
+        db_table= 'tb_indice_pasta'
+    
+    def __unicode__(self):
+        return str(self.id_indice_pasta)
+    
+    def save(self):  
+        if self.id_indice_pasta == None:
+            if len(Indice_Pasta.objects.order_by('-id_indice_pasta')) > 0:   
+                iUltimoRegistro = Indice_Pasta.objects.order_by('-id_indice_pasta')[0] 
+                self.id_indice_pasta= iUltimoRegistro.pk + 1
+            else:
+                self.id_indice_pasta= 1
+        super(Indice_Pasta, self).save()
+    
+    def obtemIndicesDaPasta(self, vIDPasta):
+        try:
+            iListaIndicesPasta = Indice_Pasta.objects.filter(pasta__id_pasta= vIDPasta)
+            iListaIndices= []
+            for iIndicesPasta in iListaIndicesPasta:
+                iListaIndices.append(iIndicesPasta.indice)
+            return iListaIndices
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de indices da pasta: ' + str(e))
             return False
     
 class Indice_Versao_Valor(models.Model):

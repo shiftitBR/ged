@@ -91,15 +91,10 @@
 	    
 	</div>
   <script src="{{ MEDIA_URL }}js/jqueryplaceholder/jquery.placeholder.js"></script>
-    <script>
-   // To test the @id toggling on password inputs in browsers that don’t support changing an input’s @type dynamically (e.g. Firefox 3.6 or IE), uncomment this:
-   // $.fn.hide = function() { return this; }
-   // Then uncomment the last rule in the <style> element (in the <head>).
-   $(function() {
-    // Invoke the plugin
-    $('input, textarea').placeholder();
-    // That’s it, really.
-   });
+  <script>
+	   $(function() {
+	    $('input, textarea').placeholder();
+	   });
   </script>
   </body>
 </html>
