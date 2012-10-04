@@ -82,6 +82,8 @@ class Indice_Pasta(models.Model):
     
     class Meta:
         db_table= 'tb_indice_pasta'
+        verbose_name = 'Associar Índice a Pasta'
+        verbose_name_plural = 'Associar Índices a Pasta'
     
     def __unicode__(self):
         return str(self.id_indice_pasta)
@@ -95,6 +97,37 @@ class Indice_Pasta(models.Model):
                 self.id_indice_pasta= 1
         super(Indice_Pasta, self).save()
     
+    def criaIndice_Pasta(self, vIndice, vPasta, vIndiceID=None, vPastaID=None):
+        try:
+            if vPastaID != None:
+                iPasta= Pasta.objects.filter(id_pasta= int(vPastaID))[0]
+            else:
+                iPasta= vPasta
+            if vIndiceID != None:
+                iIndice= Indice.objects.filter(id_indice= int(vIndiceID))[0]
+            else:
+                iIndice= vIndice
+            iIndice_Pasta       = Indice_Pasta()
+            iIndice_Pasta.indice= iIndice
+            iIndice_Pasta.pasta = iPasta
+            iIndice_Pasta.save()
+            return iIndice_Pasta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar Grupo_Indice: ' + str(e))
+            return False
+        
+    def excluiIndicesDaPasta(self, vPasta, vPastaID=None):
+        try:
+            if vPastaID != None:
+                iPasta= Pasta.objects.filter(id_pasta= int(vPastaID))[0]
+            else:
+                iPasta= vPasta
+            Indice_Pasta.objects.filter(pasta= iPasta).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir indices da pasta: ' + str(e))
+            return False 
+    
     def obtemIndicesDaPasta(self, vIDPasta):
         try:
             iListaIndicesPasta = Indice_Pasta.objects.filter(pasta__id_pasta= vIDPasta)
@@ -104,6 +137,25 @@ class Indice_Pasta(models.Model):
             return iListaIndices
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de indices da pasta: ' + str(e))
+            return False
+    
+    def obtemListaDePastasSemIndice(self, vEmpresa=None):
+        try:
+            iListaPastas        = Pasta.objects.all()
+            iListaIndicePasta   = Indice_Pasta.objects.all()
+            if vEmpresa != None:
+                iListaPasta         = iListaPastas.filter(empresa= vEmpresa)
+                iListaIndicePasta   = iListaIndicePasta.filter(pasta__empresa= vEmpresa)
+            iListaPastasSemIndice   = []
+            iListaPastasComIndice   = []
+            for iIndicePasta in iListaIndicePasta:
+                iListaPastasComIndice.append(iIndicePasta.pasta)
+            for iPasta in iListaPasta:
+                if iPasta not in iListaPastasComIndice:
+                    iListaPastasSemIndice.append(iPasta)
+            return iListaPastasSemIndice
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter lista de pastas sem indice: ' + str(e))
             return False
     
 class Indice_Versao_Valor(models.Model):

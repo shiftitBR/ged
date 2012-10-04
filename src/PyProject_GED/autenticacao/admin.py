@@ -16,7 +16,8 @@ from models                             import Empresa
 from models                             import Usuario
 from multiAdmin                         import MultiDBModelAdmin #@UnresolvedImport
 
-from PyProject_GED.indice.models        import Indice, Tipo_de_Indice
+from PyProject_GED.indice.models        import Indice, Tipo_de_Indice,\
+    Indice_Pasta
 from PyProject_GED.autenticacao.models  import Tipo_de_Usuario
 from PyProject_GED.historico.models     import Log_Usuario
 from PyProject_GED.seguranca.models     import Grupo, Grupo_Pasta, Grupo_Usuario,\
@@ -81,8 +82,8 @@ class AdminUsuario(MultiDBModelAdmin):
         vUsuario.save()
    
 class AdminIndice(MultiDBModelAdmin): 
-    list_display    = ('id_indice', 'descricao', 'pasta')
-    search_fields   = ('id_indice', 'pasta')
+    list_display    = ('id_indice', 'descricao')
+    search_fields   = ('id_indice',)
     exclude         = ('id_indice', 'tipo_indice')
     
     def get_form(self, vRequest, obj=None, **kwargs):
@@ -90,7 +91,6 @@ class AdminIndice(MultiDBModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
-            form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
     def save_model(self, request, obj, form, change):
@@ -110,6 +110,85 @@ class AdminPasta(MultiDBModelAdmin):
             form.base_fields['pasta_pai'].queryset = Pasta.objects.filter(empresa=iEmpresa.id_empresa)
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
         return form
+    
+class AdminIndicePastaForm(forms.ModelForm):
+    indices = forms.ModelMultipleChoiceField(
+        queryset=Indice.objects.all(), 
+        required=True,
+        widget=FilteredSelectMultiple(
+            verbose_name=('Indices'),
+            is_stacked=False
+        )
+    )
+
+    class Meta:
+        model = Pasta
+        list_display    = ('pasta',)
+        search_fields   = ('pasta',)
+        ordering        = ('pasta',)  
+        exclude         = ('indice', 'id_indice_pasta',)
+
+    def __init__(self, *args, **kwargs):
+        super(AdminIndicePastaForm, self).__init__(*args, **kwargs)
+        if self.instance.id_indice_pasta != None:
+            iListaIndicePasta= Indice_Pasta.objects.filter(pasta= self.instance.pasta)
+            iListaIndiceIDs= []
+            for iIndicePasta in iListaIndicePasta:
+                iListaIndiceIDs.append(iIndicePasta.indice.id_indice)
+            self.fields['indices'].initial = Indice.objects.filter(id_indice__in= iListaIndiceIDs)
+            iListaPastas= []
+            iLista = Pasta.objects.filter(id_pasta= self.instance.pasta.id_pasta)
+            for iPasta in iLista:
+                iListaPastas.append((iPasta.id_pasta, '%s' % iPasta.nome))
+            self.fields['pasta'].choices = iListaPastas
+
+class AdminIndicePasta(MultiDBModelAdmin): 
+    list_display    = ('pasta',)
+    search_fields   = ('pasta',)
+    ordering        = ('pasta',)  
+    
+    form = AdminIndicePastaForm
+         
+    def queryset(self, vRequest):
+        qs = super(MultiDBModelAdmin, self).queryset(vRequest)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iListaIndicePasta= Indice_Pasta.objects.filter(pasta__empresa= iEmpresa.id_empresa).order_by('pasta')
+        else:
+            iListaIndicePasta= Indice_Pasta.objects.order_by('pasta')
+        iListaPasta= []
+        iListaIndicePastaIDs= []
+        for iIndicePasta in iListaIndicePasta:
+            if iIndicePasta.pasta not in iListaPasta:
+                iListaPasta.append(iIndicePasta.pasta)
+                iListaIndicePastaIDs.append(iIndicePasta.id_indice_pasta)
+        return qs.filter(id_indice_pasta__in = iListaIndicePastaIDs)
+    
+    def get_form(self, vRequest, obj=None, **kwargs):
+        form = super(AdminIndicePasta,self).get_form(vRequest, obj,**kwargs)
+        iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+        if iEmpresa != None:
+            iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
+            iListaIndices = Indice.objects.filter(empresa= iEmpresa)
+            iLista = Indice_Pasta().obtemListaDePastasSemIndice(iEmpresa)
+        else:
+            iListaIndices = Indice.objects.all()
+            iLista = Indice_Pasta().obtemListaDePastasSemIndice()
+        iListaPastas= []
+        for iPasta in iLista:
+            iListaPastas.append((iPasta.id_pasta, '%s' % iPasta.nome))
+        form.base_fields['pasta'].choices = iListaPastas
+        form.base_fields['indices'].queryset = iListaIndices
+        return form
+    
+    def save_model(self, vRequest, obj, form, change):
+        iListaIDsIndices= vRequest.POST.getlist('indices')
+        iIDPasta= vRequest.POST.get('pasta')
+        Indice_Pasta().excluiIndicesDaPasta(None, iIDPasta)
+        for iIDIndice in iListaIDsIndices:
+            Indice_Pasta().criaIndice_Pasta(None, None, iIDIndice, iIDPasta)    
+    
+    
     
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
@@ -584,6 +663,7 @@ admin.site.unregister(Site)
 admin.site.register(Empresa, AdminEmpresa)
 admin.site.register(Usuario, AdminUsuario)
 admin.site.register(Indice, AdminIndice)
+admin.site.register(Indice_Pasta, AdminIndicePasta)
 admin.site.register(Log_Usuario, AdminLogUsuario)
 admin.site.register(Funcao_Grupo, AdminFuncaoGrupo)
 admin.site.register(Grupo, AdminGrupo)

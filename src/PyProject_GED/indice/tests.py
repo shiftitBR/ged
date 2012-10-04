@@ -53,9 +53,14 @@ class Test(TestCase):
     def testCriarIndicePasta(self):
         iIndice         = Indice.objects.filter(id_indice= 1)[0]
         iPasta          = Pasta.objects.filter(id_pasta= 1)[0]
-        iIndicePasta    = Indice_Pasta(indice= iIndice, pasta= iPasta)
-        iIndicePasta.save()
+        Indice_Pasta().criaIndice_Pasta(iIndice, iPasta)
         self.assertEquals(2, Indice_Pasta.objects.all().count())
+    
+    def testExcluiIndicesDaPasta(self):
+        iPasta          = Pasta.objects.filter(id_pasta= 1)[0]
+        self.assertEquals(1, Indice_Pasta.objects.filter(pasta= iPasta).count())
+        Indice_Pasta().excluiIndicesDaPasta(iPasta)
+        self.assertEquals(0, Indice_Pasta.objects.filter(pasta= iPasta).count())
     
     def testCriarIndiceVersaoValor(self):
         iIDIndice       = Indice.objects.filter(id_indice= 1)[0].id_indice
@@ -77,6 +82,11 @@ class Test(TestCase):
         iIDPasta          = Pasta.objects.filter(id_pasta= 1)[0].id_pasta
         iListaIndices= Indice_Pasta().obtemIndicesDaPasta(iIDPasta)
         self.assertEquals(1, len(iListaIndices))
+    
+    def testOBterListaDePastasSemIndice(self):
+        iEmpresa= Empresa.objects.filter(id_empresa= 1)[0]
+        iLista= Indice_Pasta().obtemListaDePastasSemIndice(iEmpresa)
+        self.assertEquals(1, len(iLista))
     
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -123,6 +133,12 @@ class Test(TestCase):
     def mokarPasta(self):
         iNome            = 'Modelo'
         iDiretorio       = '/'
+        iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
+        iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
+        iPasta.save(False)
+        
+        iNome            = 'Modelo2'
+        iDiretorio       = '/2/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
         iPasta.save(False)

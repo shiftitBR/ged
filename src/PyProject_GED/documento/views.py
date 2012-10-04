@@ -12,7 +12,8 @@ from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
 from PyProject_GED.workflow.models      import Pendencia, Workflow
 from PyProject_GED.documento.models     import Tipo_de_Documento
-from PyProject_GED.indice.models        import Indice, Indice_Versao_Valor
+from PyProject_GED.indice.models        import Indice, Indice_Versao_Valor,\
+    Indice_Pasta
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from PyProject_GED.imagem.controle      import Controle as ControleImagem
 from controle                           import Controle as DocumentoControle
@@ -154,7 +155,7 @@ def importar(vRequest, vTitulo):
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoImportar):
             if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
                 iListaTipoDocumento = Tipo_de_Documento().obtemListaTipoDocumentoDaEmpresa(vRequest.session['IDEmpresa'])
-                iListaIndices       = Indice().obtemListaIndices(vRequest.session['IDEmpresa'])
+                iListaIndices       = Indice_Pasta().obtemIndicesDaPasta(vRequest.session['IDPasta'])
                 iTamListaIndices    = len(iListaIndices)
                 iListaUsuarios      = Usuario.objects.filter(empresa= iUsuario.empresa.id_empresa)
                 iListaNomes         = DocumentoControle().obtemListaNomesUsuarios(iListaUsuarios)
