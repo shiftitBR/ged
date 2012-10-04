@@ -102,7 +102,7 @@ def tabelaDocumentos(vRequest, vTitulo):
                                'iData': str(iListaDocumentos[i].data_criacao),
                                'iAssinado': str(iAssinado)})
                     
-                    iLinha= iLinha + '<div class="btn-group" align="center">'
+                    iLinha= iLinha + '<div class="btn-group">'
                     if iEstado == constantes.cntEstadoVersaoExcluida:
                         iLinha= iLinha + '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-plus-sign icon-white"></i> Informações   <span class="caret"></span></a><ul class="dropdown-menu">'
                     else:

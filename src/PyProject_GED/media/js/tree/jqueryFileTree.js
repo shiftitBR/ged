@@ -45,7 +45,7 @@ if(jQuery) (function($){
 			if( o.collapseSpeed == undefined ) o.collapseSpeed= 500;
 			if( o.expandEasing == undefined ) o.expandEasing = null;
 			if( o.collapseEasing == undefined ) o.collapseEasing = null;
-			if( o.multiFolder == undefined ) o.multiFolder = false;
+			if( o.multiFolder == undefined ) o.multiFolder = true;
 			if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
 			
 			$(this).each( function() {
