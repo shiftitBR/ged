@@ -23,9 +23,9 @@
 	</script>
 
 <body>
-	<div class="container" align="center">
+	<div class="container-fluid" align="center">
 		<header class="jumbotron subhead" id="overview">
-		  <h2><strong>Enviar Link Público do Documento</strong></h2>
+		  <h2>Enviar Link Público do Documento</h2>
 		</header>
 	</div>
 	
@@ -51,7 +51,7 @@
 	<br>
 	{% if iPossuiPermissao %}
 	<form action="" id="fancy" method="POST">{% csrf_token %}
-	<div class="container">
+	<div class="container-fluid">
 	    	
 		<div class="controls">
           	<select id="destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]" style="width: 730px; height: 100px;">
