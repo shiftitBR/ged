@@ -4,13 +4,13 @@
 
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> <!-- Glauco: o que isso faz? -->
 	<header class="jumbotron subhead" id="overview">
+		
 	  <h1>TRACK-DOC</h1>
 	  <p class="lead">Gerenciamento Eletrônico de Documentos</p>
 	</header>
 	
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true&language=pt-BR"></script>
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/googlemaps/mapas.js"></script> 
-	<div style="position: absolute; height: 190px; width:100%; background-color: #007abc; margin-top: 10em;"></div>
 	<div class="container">
 		<div class="row">
 			<div class="span5">
@@ -25,3 +25,4 @@
 	</div>
 	
 {% endblock conteudo %}
+	<div style="position: absolute; height: 190px; width:100%; background-color: #007abc; margin-top: 10em; z-index:0;"></div>
