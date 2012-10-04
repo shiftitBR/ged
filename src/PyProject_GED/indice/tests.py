@@ -14,6 +14,7 @@ from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.seguranca.models     import Pasta
 
 import datetime
+from PyProject_GED.indice.models import Indice_Pasta
 
 
 class Test(TestCase):
@@ -30,6 +31,7 @@ class Test(TestCase):
         self.mokarCriarVersao()
         self.mokarTipoIndice()
         self.mokarIndice()
+        self.mokarIndicePasta()
         pass
     
     
@@ -48,6 +50,12 @@ class Test(TestCase):
         iIndice.save()
         self.assertEquals(iIndice.id_indice, (Indice.objects.filter(empresa= iEmpresa.id_empresa).filter(id_indice= 2)[0].id_indice))
     
+    def testCriarIndicePasta(self):
+        iIndice         = Indice.objects.filter(id_indice= 1)[0]
+        iPasta          = Pasta.objects.filter(id_pasta= 1)[0]
+        iIndicePasta    = Indice_Pasta(indice= iIndice, pasta= iPasta)
+        iIndicePasta.save()
+        self.assertEquals(2, Indice_Pasta.objects.all().count())
     
     def testCriarIndiceVersaoValor(self):
         iIDIndice       = Indice.objects.filter(id_indice= 1)[0].id_indice
@@ -64,6 +72,11 @@ class Test(TestCase):
         iListaIDsVersoes= Indice_Versao_Valor().obtemIDVersoesFiltradosPorIndice(iIDEmpresa, iIDIndice, iValor)
         self.assertEquals(1, len(iListaIDsVersoes))
         self.assertEquals(1, iListaIDsVersoes[0])
+    
+    def testObterListaDeIndicesDaPasta(self):
+        iIDPasta          = Pasta.objects.filter(id_pasta= 1)[0].id_pasta
+        iListaIndices= Indice_Pasta().obtemIndicesDaPasta(iIDPasta)
+        self.assertEquals(1, len(iListaIndices))
     
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -101,12 +114,18 @@ class Test(TestCase):
         iIndice         = Indice(descricao= iDescricao, tipo_indice= iTipo, empresa= iEmpresa)
         iIndice.save()
     
+    def mokarIndicePasta(self):
+        iIndice         = Indice.objects.filter(id_indice= 1)[0]
+        iPasta          = Pasta.objects.filter(id_pasta= 1)[0]
+        iIndicePasta    = Indice_Pasta(indice= iIndice, pasta= iPasta)
+        iIndicePasta.save()
+    
     def mokarPasta(self):
         iNome            = 'Modelo'
         iDiretorio       = '/'
         iEmpresa         = Empresa.objects.filter(id_empresa= 1)[0]
         iPasta           = Pasta(nome= iNome, diretorio= iDiretorio, empresa= iEmpresa)
-        iPasta.save()
+        iPasta.save(False)
     
     def mokarTipoDocumento(self):
         iDescricao      = 'Modelo'

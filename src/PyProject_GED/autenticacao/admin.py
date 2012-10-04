@@ -81,8 +81,8 @@ class AdminUsuario(MultiDBModelAdmin):
         vUsuario.save()
    
 class AdminIndice(MultiDBModelAdmin): 
-    list_display    = ('id_indice', 'descricao')
-    search_fields   = ('id_indice',)
+    list_display    = ('id_indice', 'descricao', 'pasta')
+    search_fields   = ('id_indice', 'pasta')
     exclude         = ('id_indice', 'tipo_indice')
     
     def get_form(self, vRequest, obj=None, **kwargs):
@@ -90,6 +90,7 @@ class AdminIndice(MultiDBModelAdmin):
         iEmpresa= Usuario().obtemEmpresaDoUsuario(vRequest.user.id)
         if iEmpresa != None:
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+            form.base_fields['pasta'].queryset  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)
         return form
     
     def save_model(self, request, obj, form, change):
