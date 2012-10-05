@@ -5824,6 +5824,7 @@ div.shiftit {
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
 	width:92px;
+	cursor:hand;
 }
 
 div.shiftit:hover {
