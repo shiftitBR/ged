@@ -5818,7 +5818,7 @@ a.badge:hover {
 
 div.shiftit {
 	position: absolute;
-	right: 2%; 
+	right: 3%; 
 	bottom: 30px;
 	background-image: url('../../img/creditos/shiftit.png');
 	background-position: 0 0; width: 92px; height: 34px;  
@@ -5828,12 +5828,13 @@ div.shiftit {
 
 div.shiftit:hover {
 	position: absolute;
-	right: 2%; 
+	right: 3%; 
 	bottom: 30px;
 	background-image: url('../../img/creditos/shiftit.png');
 	background-position: 0 -84px; width: 92px; height: 34px;  
 	height: 34px; 
 	width:92px;
+	cursor: hand;
 }
 
 .hasPlaceholder {
