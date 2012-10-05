@@ -312,6 +312,13 @@ class Test(TestCase):
         iLista= Versao().buscaDocumentos(iEmpresa.id_empresa, vIDUsuario= iUsuario_Grupo_2.id)  
         self.assertEquals(0, len(iLista))
     
+    def testBuscaDocumentosPorPasta(self):
+        iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
+        iPasta  = Pasta.objects.filter(empresa= iEmpresa.id_empresa)[0]
+               
+        iLista= Versao().buscaDocumentos(iEmpresa.id_empresa, vIDPasta= iPasta.id_pasta)  
+        self.assertEquals(7, len(iLista))
+    
     def testBuscaDocumentosComMultiplosFiltros(self):
         iEmpresa= Empresa.objects.filter(id_empresa=1)[0]
         iIDEmpresa= iEmpresa.id_empresa

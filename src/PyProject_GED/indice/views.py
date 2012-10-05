@@ -4,13 +4,18 @@ from django.template                    import RequestContext
 from django.core.paginator              import Paginator, EmptyPage, PageNotAnInteger
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.indice.forms         import FormBuscaDocumento
-from PyProject_GED.indice.models        import Indice
-from PyProject_GED                      import oControle
+from PyProject_GED.indice.models        import Indice, Indice_Pasta
+from PyProject_GED                      import oControle, constantes
 
     
-def busca(vRequest, vTitulo):
+def busca(vRequest, vIDTipoBusca, vTitulo):
     iIDEmpresa= vRequest.session['IDEmpresa']
-    iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
+    if int(vIDTipoBusca) == constantes.cntTipoBuscaPorPasta:
+        iIDPastaSelecionada= vRequest.session['IDPasta']
+        iListaIndices= Indice_Pasta().obtemIndicesDaPasta(iIDPastaSelecionada)
+    else:
+        iIDPastaSelecionada= None
+        iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
     
     try:
         iPaginator  = Paginator([], 10)
@@ -50,7 +55,7 @@ def busca(vRequest, vTitulo):
             iListaDocumentos= Versao().buscaDocumentos(iIDEmpresa, iAssunto, iProtocolo, iUsuarioResponsavel, 
                                                        iUsuarioCriador, iTipoDocumento, iEstado, iDataInicio, 
                                                        iDataFim, iListaIDIndices, iConteudo, iNormas, 
-                                                       iIDUsuario, vEhPublico= False)
+                                                       iIDUsuario, iIDPastaSelecionada, vEhPublico= False)
             iPaginator = Paginator(iListaDocumentos, 10)
             iDocumentos = iPaginator.page(1)
         except Exception, e:

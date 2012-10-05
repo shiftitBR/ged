@@ -432,14 +432,16 @@ class Versao(models.Model):
         
     def buscaDocumentos(self, vIDEmpresa, vAssunto= None, vProtocolo= None, vIDUsuarioResponsavel= None, vIDUsuarioCriador= None, 
                         vIDTipoDocumento= None, vIDEstadoDoDocumento= None, vDataDeCriacaoInicial= None, 
-                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vIDUsuario= None, 
-                        vEhPublico= False):
+                        vDataDeCriacaoFinal= None, vListaIndice= None, vConteudo=None, vItemNorma= None, vIDUsuario= None,  
+                        vIDPasta= None, vEhPublico= False):
         try:
             if vEhPublico:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa, 
                                                                   documento__eh_publico= True)
             else:
                 iListaDeVersoesEncontradas= Versao.objects.filter(eh_versao_atual= True, documento__empresa__id_empresa= vIDEmpresa)
+            if vIDPasta not in (None, ''):
+                iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__pasta__id_pasta= vIDPasta)
             if vIDUsuario not in (None, ''):
                 iListaDePastas= Grupo_Usuario().obtemPastasPermitidasDoUsuario(vIDUsuario)
                 iListaDeVersoesEncontradas= iListaDeVersoesEncontradas.filter(documento__pasta__in= iListaDePastas)
