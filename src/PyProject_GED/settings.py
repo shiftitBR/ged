@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'imagem',
     'relatorios',
     'assinatura',
+    'servidor',
 )
 
 AUTHENTICATION_BACKENDS = (
