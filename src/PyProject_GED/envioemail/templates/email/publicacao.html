@@ -52,9 +52,11 @@
 	{% if iPossuiPermissao %}
 	<form action="" id="fancy" method="POST">{% csrf_token %}
 	<div class="container-fluid">
-	    {% if iCadastraContato %}
-    		<a class="fancybox fancybox.iframe" href="/contato/2/"><i class="icon-retweet"></i>  Contato</a>
-    	{% endif %}</br>    	
+
+   		{% if iCadastraContato %}
+    		<a class="fancybox fancybox.iframe" href="/contato/1/"><i class="icon-retweet"></i> Adicionar novo contato</a><br />
+    	{% endif %}
+	
 		<div class="controls">
           	<select id="destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]" style="width: 730px; height: 100px;">
 				{% for destinatario in iListaDestinatarios %}
