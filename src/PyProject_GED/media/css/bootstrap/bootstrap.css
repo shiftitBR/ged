@@ -5826,6 +5826,19 @@ div.shiftit {
 	height: 34px; 
 	width:92px;
 	cursor:hand;
+	float: right;
+}
+
+div.avancodigital {
+	position: absolute;
+	right: 3%; 
+	bottom: 30px;
+	/*background-image: url('../../img/creditos/shiftit.png');*/
+	background-position: 0 0; width: 92px; height: 34px;  
+	height: 34px; 
+	/*width:92px;*/
+	cursor:hand;
+	float: left;
 }
 
 div.shiftit:hover {
