@@ -284,6 +284,10 @@ hr.soften {
 	position: relative;
 }
 
+.acertarodape {
+	padding-bottom: 60px;
+}
+
 .footer {
   position: absolute;
   height: 60px;
