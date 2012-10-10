@@ -93,6 +93,22 @@ class Test(TestCase):
         iListaUsuarios= Usuario.objects.filter(empresa= iEmpresa).filter(
                             tipo_usuario__id_tipo_de_usuario= constantes.cntTipoUsuarioContato).filter(email__isnull=False)
         self.assertEquals(0, len(iListaUsuarios))
+    
+    def testAutenticaUsuario(self):
+        iEmail= 'usuario1@teste.com.br'
+        iSenha= '12346'
+        iAutenticou= Usuario().autenticaUsuario(iEmail, iSenha)
+        self.assertEquals(None, iAutenticou)
+        
+        iEmail= 'usuario1@teste.com.br'
+        iSenha= '12345'
+        iAutenticou= Usuario().autenticaUsuario(iEmail, iSenha)
+        self.assertEquals(iEmail, iAutenticou.email)
+        
+        iEmail= 'usuario5@teste.com.br'
+        iSenha= '12345'
+        iAutenticou= Usuario().autenticaUsuario(iEmail, iSenha)
+        self.assertEquals(None, iAutenticou)
         
     #-----------------------------------------------------MOKS---------------------------------------------------
     
@@ -119,7 +135,9 @@ class Test(TestCase):
         iEmpresa_1      = Empresa.objects.filter(id_empresa= 1)[0]
         iTipoUsuario_1  = Tipo_de_Usuario.objects.all()[0]
         iEmail_1        = 'usuario1@teste.com.br'
-        iUsuario_1      = Usuario(empresa= iEmpresa_1, email= iEmail_1, tipo_usuario= iTipoUsuario_1)
+        iSenha          = '12345'
+        iUsuario_1      = Usuario(empresa= iEmpresa_1, email= iEmail_1, tipo_usuario= iTipoUsuario_1, 
+                                  password= iSenha)
         iUsuario_1.save()
         
         iEmail_2        = 'usuario2@teste.com.br'
