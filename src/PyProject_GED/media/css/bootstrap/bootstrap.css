@@ -5819,7 +5819,7 @@ a.badge:hover {
 div.shiftit {
 	position: absolute;
 	right: 3%; 
-	bottom: 30px;
+	bottom: 8px;
 	background-image: url('../../img/creditos/shiftit.png');
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
@@ -5831,7 +5831,7 @@ div.shiftit {
 div.avancodigital {
 	position: absolute;
 	left: 3%; 
-	bottom: 30px;
+	bottom: 8px;
 	/*background-image: url('../../img/creditos/shiftit.png');*/
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
@@ -5843,7 +5843,7 @@ div.avancodigital {
 div.shiftit:hover {
 	position: absolute;
 	right: 3%; 
-	bottom: 30px;
+	bottom: 8px;
 	background-image: url('../../img/creditos/shiftit.png');
 	background-position: 0 -84px; width: 92px; height: 34px;  
 	height: 34px; 
