@@ -5876,8 +5876,7 @@ div.shiftit:hover {
 }
 
 .trackdocmarca {
-	background-image: src('../../img/projeto/trackdocbrand.png');
-	position: relative;
+	background-image: url('../../img/projeto/trackdocbrand.png');
 	width: 245px;
 	height: 40px;
 	top:0;
