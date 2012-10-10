@@ -5816,6 +5816,41 @@ a.badge:hover {
 	padding: 15px 0px;
 } 
 
+div.shiftit {
+	position: absolute;
+	right: 3%; 
+	bottom: 8px;
+	background-image: url('../../img/creditos/shiftit.png');
+	background-position: 0 0; width: 92px; height: 34px;  
+	height: 34px; 
+	width:92px;
+	cursor:pointer;
+	float: right;
+}
+
+div.avancodigital {
+	position: absolute;
+	left: 3%; 
+	bottom: 8px;
+	/*background-image: url('../../img/creditos/shiftit.png');*/
+	background-position: 0 0; width: 92px; height: 34px;  
+	height: 34px; 
+	/*width:92px;*/
+	cursor:pointer;
+	float: left;
+}
+
+div.shiftit:hover {
+	position: absolute;
+	right: 3%; 
+	bottom: 8px;
+	background-image: url('../../img/creditos/shiftit.png');
+	background-position: 0 -84px; width: 92px; height: 34px;  
+	height: 34px; 
+	width:92px;
+	cursor: hand;
+}
+
 .hasPlaceholder {
 	color: #777;
 }
