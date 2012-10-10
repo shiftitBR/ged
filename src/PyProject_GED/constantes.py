@@ -126,3 +126,19 @@ cntTipoEmailDocumentoVencendo   = 4
 #Tipo de Busca
 cntTipoBuscaGeral               = 1
 cntTipoBuscaPorPasta            = 2
+
+#Importacao FTP
+cntImportacaoFTPPastaRaiz       = '/ftp'
+
+#Servidor FTP
+cntServidorFTPIP                = 'ftp.upspace.com.br'
+cntServidorFTPLogin             = 'teste@upspace.com.br'
+cntServidorFTPSenha             = 'importar@051011'
+
+#Socket TCP
+cntSocketTCPIP                  = '192.168.1.17'
+cntSocketTCPPorta               = 9999
+
+#Tipo Mesagem JSON
+cntTipoMensagemJSONNormal       = "1"
+cntTipoMensagemJSONErro         = "2"

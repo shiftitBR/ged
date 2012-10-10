@@ -15,18 +15,7 @@ from PyProject_GED.autenticacao.forms   import FormConfiguracoesDeUsuario,\
     FormCadastroDeContato
 
 def login(vRequest, vTitulo):
-    
-    print '>>>>>>>>>>>>>>>>>>>> Browser'
-    print vRequest.META['HTTP_USER_AGENT']
-    if 'firefox' in str(vRequest.META['HTTP_USER_AGENT']).lower():
-        print '>>>>>>>>>>>>>>>> firefox'
-    elif 'chrome' in str(vRequest.META['HTTP_USER_AGENT']).lower(): 
-        print '>>>>>>>>>>>>>>>> chrome'
-    elif 'internet explorer' in str(vRequest.META['HTTP_USER_AGENT']).lower():
-        print '>>>>>>>>>>>>>>>> Fudeu'
-    else:
-        print '>>>>>>>>>>>>>>>> nao sei'
-    
+        
     if vRequest.POST:
         try:
             

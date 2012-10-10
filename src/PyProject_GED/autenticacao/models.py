@@ -12,6 +12,7 @@ from django.db.models                               import get_model
 from controle                                       import Controle as ControleAutenticacao
 from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
 from PyProject_GED                                  import constantes
+from django.contrib.auth                            import authenticate 
 
 import threading
 import logging
@@ -290,4 +291,12 @@ class Usuario(User):
             return iListaAux
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Usuarios Relatorio' + str(e))
+            return False  
+    
+    def autenticaUsuario(self, vEmail, vSenha):
+        try:
+            iUsuario= authenticate(username=vEmail, password=vSenha)
+            return iUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel autenticar o usuario' + str(e))
             return False  
