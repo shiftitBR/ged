@@ -8,6 +8,7 @@ Created on Oct 5, 2012
 from django.test                                import TestCase
 from PyProject_GED.servidor.models import Servidor, Importacao_FTP
 from PyProject_GED.autenticacao.models import Empresa, Tipo_de_Usuario, Usuario
+from django.contrib.auth.models import User
 
 
 class Test(TestCase):
@@ -26,9 +27,9 @@ class Test(TestCase):
         pass
     
     def testCriaImportacaoFTP(self):
-        iUsuario= Usuario.objects.filter(id= 1)[0]
+        iUser= User.objects.filter(id= 1)[0]
         iIPOrigem= '192.168.0.1'
-        iImportacao= Importacao_FTP().criaImportacao_FTP(iUsuario, iIPOrigem)
+        iImportacao= Importacao_FTP().criaImportacao_FTP(iUser, iIPOrigem)
         self.assertEquals(1, Importacao_FTP.objects.all().count())
         self.assertEquals('1', iImportacao.pasta_temporaria)
     
@@ -62,7 +63,8 @@ class Test(TestCase):
         iTipoUsuario   = Tipo_de_Usuario.objects.all()[0]
         
         iEmail          = 'usuario1@teste.com.br'
-        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
+        iSenha          = '12345'
+        iUsuario_1      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario, password= iSenha)
         iUsuario_1.save()
                 
         iEmail          = 'usuario2@teste.com.br'

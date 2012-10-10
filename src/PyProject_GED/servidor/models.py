@@ -91,7 +91,7 @@ class Importacao_FTP(models.Model):
     def criaImportacao_FTP(self, vUsuario, vIPOrigem):
         try:
             iImportacao                 = Importacao_FTP()
-            iImportacao.usuario         = vUsuario
+            iImportacao.usuario         = Usuario().obtemUsuario(vUsuario)
             iImportacao.ip_origem       = vIPOrigem
             iImportacao.data_importacao = str(datetime.datetime.today())[:19]
             iImportacao.save()
