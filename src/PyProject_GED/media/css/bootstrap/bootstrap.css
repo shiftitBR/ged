@@ -5874,3 +5874,12 @@ div.shiftit:hover {
     box-shadow:1px 1px 1px gray;
     line-height: 0.60em;
 }
+
+.trackdocmarca {
+	background-image: src('../../img/projeto/trackdocbrand.png');
+	position: relative;
+	width: 245px;
+	height: 40px;
+	top:0;
+	
+}
