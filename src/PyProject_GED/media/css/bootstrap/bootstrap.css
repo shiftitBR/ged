@@ -4204,7 +4204,7 @@ input[type="submit"].btn.btn-mini {
 .navbar .brand {
   display: block;
   float: left;
-  padding: 10px 20px 10px;
+  /*padding: 10px 20px 10px;*/
   margin-left: -20px;
   font-size: 20px;
   font-weight: 200;
@@ -5873,4 +5873,12 @@ div.shiftit:hover {
     border-radius:30px;
     box-shadow:1px 1px 1px gray;
     line-height: 0.60em;
+}
+
+.trackdocmarca {
+	background-image: url('../../img/projeto/trackdocbrand.png');
+	width: 245px;
+	height: 40px;
+	top:0;
+	
 }

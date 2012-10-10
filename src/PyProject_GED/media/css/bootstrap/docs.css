@@ -277,7 +277,7 @@ hr.soften {
 
 
 
-/* Footer + prender o rodapé na base da página
+/* Footer
 -------------------------------------------------- */
 .main {
 	min-height: 100%;
@@ -285,7 +285,7 @@ hr.soften {
 }
 
 .acertarodape {
-	padding-bottom: 60px;
+	padding-bottom: 0px;
 }
 
 .footer {
