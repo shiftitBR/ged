@@ -44,9 +44,9 @@
 	            <span class="icon-bar"></span>
 	          </a>
 	          {% if user.is_authenticated and not user.is_superuser %}
-	          <a class="brand trackdocmarca" href="/documentos/"></a>
+	          <div class="trackdocmarca" onclick="window.location='/documentos/'"></div>
 	          {% else %}	          
-	          <a class="brand trackdocmarca" href="/"></a>
+	          <div class="trackdocmarca" onclick="window.location='/'"></div>
 	          {% endif %}
 	          
 	          {% if user.is_authenticated and not user.is_superuser %}
