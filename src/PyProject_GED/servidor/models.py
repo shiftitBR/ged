@@ -45,7 +45,7 @@ class Socket(SocketServer.BaseRequestHandler):
 
     def handle(self):
         iJSONConectado= '{"tipo": %s, "mensagem": "Conectado"}' % constantes.cntTipoMensagemJSONNormal
-        self.request.sendall(iJSONConectado)
+        self.request.sendall(iJSONConectado + '/n')
         self.data = self.request.recv(1024).strip()
         iIPOrigem= self.client_address[0]
         iMensagemRecebida= self.data
@@ -58,7 +58,7 @@ class Socket(SocketServer.BaseRequestHandler):
             iJSONResposta= Servidor().criaRespostaEmJSON(iImportacao.pasta_temporaria)
         else:
             iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
-        self.request.sendall(iJSONResposta)
+        self.request.sendall(iJSONResposta + '/n')
 
 class Importacao_FTP(models.Model):
     id_importacao_ftp   = models.IntegerField(max_length=5, primary_key=True)
