@@ -5,16 +5,19 @@ Created on Oct 5, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.db                  import models
+from django.db                                  import models
+from django.conf                                import settings
 
-import logging
-import socket
-import SocketServer
-import json
-from PyProject_GED.autenticacao.models import Usuario
-from PyProject_GED import constantes
+from PyProject_GED.autenticacao.models          import Usuario
+from PyProject_GED                              import constantes
+from PyProject_GED.servidor.objetos_auxiliares  import Importar as ImportarAuxiliar
+
 import datetime
 import simplejson
+import logging
+import SocketServer
+import json
+import os
 
 
 class Servidor(models.Model):
@@ -45,7 +48,7 @@ class Socket(SocketServer.BaseRequestHandler):
 
     def handle(self):
         iJSONConectado= '{"tipo": %s, "mensagem": "Conectado"}' % constantes.cntTipoMensagemJSONNormal
-        self.request.sendall(iJSONConectado + '/n')
+        self.request.sendall(iJSONConectado + '\n')
         self.data = self.request.recv(1024).strip()
         iIPOrigem= self.client_address[0]
         iMensagemRecebida= self.data
@@ -58,7 +61,7 @@ class Socket(SocketServer.BaseRequestHandler):
             iJSONResposta= Servidor().criaRespostaEmJSON(iImportacao.pasta_temporaria)
         else:
             iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
-        self.request.sendall(iJSONResposta + '/n')
+        self.request.sendall(iJSONResposta + '\n')
 
 class Importacao_FTP(models.Model):
     id_importacao_ftp   = models.IntegerField(max_length=5, primary_key=True)
@@ -98,4 +101,25 @@ class Importacao_FTP(models.Model):
             return iImportacao
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar importacao_ftp: ' + str(e))
+            return False
+        
+    def obtemListaImportacoes(self, vUsuario):
+        try:
+            iListaImportacoes   = Importacao_FTP.objects.filter(usuario=vUsuario.id)
+            iNumero = 0
+            iListaAuxiliar      = []
+            for Importar in iListaImportacoes:
+                iCaminho            = settings.MEDIA_ROOT + "/documentos/ftp/" +Importar.pasta_temporaria
+                for (path, dirs,files) in os.walk(iCaminho):
+                    for iFile in files:
+                        iImportarAux= ImportarAuxiliar()
+                        iNumero                     = iNumero + 1
+                        iImportarAux.numero         = iNumero
+                        iImportarAux.caminho        = os.path.join(path, iFile)
+                        iImportarAux.tamanho        = "%0.1f KB" % (os.path.getsize(iImportarAux.caminho)/(1024.0))
+                        iImportarAux.nomeArquivo    = os.path.basename(iImportarAux.caminho)
+                        iListaAuxiliar.append(iImportarAux)
+            return iListaAuxiliar
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar obtem obtem Lista Importacoes: ' + str(e))
             return False

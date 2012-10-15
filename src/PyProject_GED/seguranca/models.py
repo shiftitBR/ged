@@ -88,6 +88,14 @@ class Pasta(models.Model):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
             return False
+        
+    def obtemPastaPeloID(self, vIDPasta):
+        try:
+            iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
+            return iPasta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obtem Pasta Pelo ID: ' + str(e))
+            return False
 
     def ehPastaRaiz(self, vIDPasta, vIDEmpresa):
         try:
