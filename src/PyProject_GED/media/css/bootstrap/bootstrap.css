@@ -5884,46 +5884,112 @@ div.shiftit:hover {
 	float: left;
 }
 
-editaimgscontainer {
+.editaimgscontainer {
 	width:100%;
 	bottom: 0px;
 }
 
 .editaimagens {
-	background-color: #f0f0f0;
 	margin-top:15px;
-	margin-right:auto;
-	margin-left:auto;
+	margin-right: auto;
+	margin-left: auto;
 	display:block;
-	width: 400px;
+	width: 158px;
+	height: 26px;
 	padding: 15px;
 	bottom: 0px;
 	position: static;
 }
 
-.editaimagens.sprite-Inverter { 
-	
+.editaimagensinverter { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
 	background-position: 0 0; 
 	width: 26px;
 	height: 26px; 
+	float: left;
+
+	
 } 
 	
-.editaimagens.sprite-RotacionaDireita { 
-	
+.editaimagensdireita { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
 	background-position: 0 -76px; 
 	width: 24px; 
-	height: 26px; 
+	height: 26px;
+	margin-left:20px;
+	float: left; 
 } 
-.editaimagens.sprite-RotacionaEsquerda { 
-	
+
+.editaimagensesquerda { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
 	background-position: 0 -152px; 
 	width: 24px; 
-	height: 26px; 
+	height: 26px;
+	margin-left:20px;
+	float: left;
 } 
-.editaimagens.sprite-Zoom { 
-	
+
+.editaimagenszoom { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
 	background-position: 0 -228px; 
 	width: 24px; 
 	height: 24px; 
+	margin-left:20px;
+	float:left;
+} 
+
+.editaimagensinverter:hover { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
+	background-color: #aeaeae;
+	background-position: 0 0; 
+	width: 26px;
+	height: 26px;
+	float:left;
+	  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+
+} 
+	
+.editaimagensdireita:hover { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
+	background-position: 0 -76px;
+	background-color: #aeaeae; 
+	width: 24px; 
+	height: 26px;
+	margin-left:20px;
+	float: left; 
+	  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+
+} 
+
+.editaimagensesquerda:hover { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
+	background-position: 0 -152px; 
+	background-color: #aeaeae;
+	width: 24px; 
+	height: 26px;
+	margin-left:20px;
+	float: left;
+	  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+
+} 
+
+.editaimagenszoom:hover { 
+	background-image: url('../../img/projeto/iconeseditaimgs.png');
+	background-position: 0 -228px; 
+	background-color: #aeaeae;
+	width: 24px; 
+	height: 24px; 
+	margin-left:20px;
+	float: left;
+	  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+
 } 
 
