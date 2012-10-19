@@ -24,7 +24,7 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            iArquivo    = ImagemControle().converteExtencaoImagem(vIDVersao, int(vRequest.POST.get('tipo_exportar')))
+            iArquivo    = ImagemControle().converteExtencaoImagem(vIDVersao, int(vRequest.POST.get('tipo_exportar')), iUsuario.id)
             iFile       = open(iArquivo,"r")
             response    = HttpResponse(iFile.read())
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]

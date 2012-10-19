@@ -24,7 +24,7 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
     
-    def converteExtencaoImagem(self, vIDVersao, iIDExtencao):
+    def converteExtencaoImagem(self, vIDVersao, iIDExtencao, vIDUsuario):
         try:
             mVersao= get_model('documento', 'Versao')
             iDiretorioImagem= mVersao().obtemCaminhoArquivo(vIDVersao)
@@ -41,8 +41,10 @@ class Controle(object):
             iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
             iPastaImagem= iDiretorioImagemSemExtencao[:len(iDiretorioImagemSemExtencao)-len(iNomeArquivo)]
             iPastaTemporario= '%s/temp' % iPastaImagem[:len(iPastaImagem)-1]
+            iPastaTemporariaDoUsuario= '%s/temp/%s' % (iPastaImagem[:len(iPastaImagem)-1], str(vIDUsuario))
             self.criaPastaTemporaria(iPastaTemporario)
-            iDiretorioImagemNovo= '%s/%s.%s' % (iPastaTemporario, iNomeArquivo, iExtencao)
+            self.criaPastaTemporaria(iPastaTemporariaDoUsuario)
+            iDiretorioImagemNovo= '%s/%s.%s' % (iPastaTemporariaDoUsuario, iNomeArquivo, iExtencao)
             iImagem = Image.open(iDiretorioImagem)
             iImagem.save(iDiretorioImagemNovo) 
             return iDiretorioImagemNovo
@@ -52,10 +54,8 @@ class Controle(object):
     
     def criaPastaTemporaria(self, vPastaTemporario):
         try:
-            print '>>>>>>>>>>>>>>>>>>>>> criaPAsta'
             if not os.path.exists(vPastaTemporario):
                 os.system('mkdir %s' % vPastaTemporario)
-                print '>>>>>>>>>>>>>>>>>>>>> criou!'
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
             return False

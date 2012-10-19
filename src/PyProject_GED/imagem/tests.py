@@ -46,22 +46,26 @@ class Test(TestCase):
     
     def testCoverteImagemJPGparaPNG(self):
         iVersao= Versao.objects.filter(id_versao= 2)[0]
-        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemPNG)
+        iIDUsuario= 1
+        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemPNG, iIDUsuario)
         self.assertEquals(True, len(iConversao) > 0)
     
     def testCoverteImagemJPGparaBMP(self):
         iVersao= Versao.objects.filter(id_versao= 2)[0]
-        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemBMP)
+        iIDUsuario= 1
+        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemBMP, iIDUsuario)
         self.assertEquals(True, len(iConversao) > 0)
     
     def testCoverteImagemJPGparaTIF(self):
         iVersao= Versao.objects.filter(id_versao= 2)[0]
-        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemTIF)
+        iIDUsuario= 1
+        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemTIF, iIDUsuario)
         self.assertEquals(True, len(iConversao) > 0)
     
     def testCoverteImagemPNGparaJPG(self):
         iVersao= Versao.objects.filter(id_versao= 3)[0]
-        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG)
+        iIDUsuario= 1
+        iConversao= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG, iIDUsuario)
         self.assertEquals(True, len(iConversao) > 0)
 
     def testEhExportaval(self):
@@ -74,7 +78,8 @@ class Test(TestCase):
         
     def testDeletaImagemTemporaria(self):
         iVersao= Versao.objects.filter(id_versao= 3)[0]
-        iDiretorio= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG)
+        iIDUsuario= 1
+        iDiretorio= ControleImagem().converteExtencaoImagem(iVersao.id_versao, constantes.cntExtencaoImagemJPG, iIDUsuario)
         iDeleta= ControleImagem().deletaImagemTemporaria(iDiretorio)
         self.assertEquals(True, iDeleta)
 
