@@ -90,16 +90,17 @@ class Test(TestCase):
     
     def testCriaImagemTemporaria(self):    
         iVersao= Versao.objects.filter(id_versao= 2)[0]
-        iDiretorio= ControleImagem().criaImagemTemporaria(iVersao)
-        self.assertEquals('%s/media_teste/temp/imagem_jpg.jpg' % settings.MEDIA_ROOT, iDiretorio)
+        iIDUsuario= 1
+        iDiretorio= ControleImagem().criaImagemTemporaria(iVersao, iIDUsuario)
+        self.assertEquals('%s/media_teste/temp/1/imagem_jpg.jpg' % settings.MEDIA_ROOT, iDiretorio)
         
     def testInverteImagem(self):
-        iDiretorioImagem= '%s/media_teste/temp/imagem_jpg.jpg' % settings.MEDIA_ROOT
+        iDiretorioImagem= '%s/media_teste/temp/1/imagem_jpg.jpg' % settings.MEDIA_ROOT
         iNegativou= ControleImagem().negativaImagem(iDiretorioImagem)
         self.assertEquals(True, iNegativou)
     
     def testRotacionaDocumento(self):
-        iDiretorioImagem= '%s/media_teste/temp/imagem_jpg.jpg' % settings.MEDIA_ROOT
+        iDiretorioImagem= '%s/media_teste/temp/1/imagem_jpg.jpg' % settings.MEDIA_ROOT
         iRotacao= -230
         iRotacionou= ControleImagem().rotacionaImagem(iDiretorioImagem, iRotacao)
         self.assertEquals(True, iRotacionou)

@@ -52,8 +52,10 @@ class Controle(object):
     
     def criaPastaTemporaria(self, vPastaTemporario):
         try:
+            print '>>>>>>>>>>>>>>>>>>>>> criaPAsta'
             if not os.path.exists(vPastaTemporario):
                 os.system('mkdir %s' % vPastaTemporario)
+                print '>>>>>>>>>>>>>>>>>>>>> criou!'
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
             return False
@@ -108,7 +110,7 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel obter diretorio da imagem temporaria: ' + str(e))
             return False
     
-    def criaImagemTemporaria(self, vVersao):
+    def criaImagemTemporaria(self, vVersao, vIDUsuario):
         try:
             mVersao= get_model('documento', 'Versao')
             iDiretorioImagem= mVersao().obtemCaminhoArquivo(vVersao.id_versao)
@@ -116,31 +118,33 @@ class Controle(object):
             iListaDiretorio= iDiretorioImagemSemExtencao.split('/')
             iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
             iPastaImagem= iDiretorioImagemSemExtencao[:len(iDiretorioImagemSemExtencao)-len(iNomeArquivo)]
-            iPastaTemporaria= '%s/temp' % iPastaImagem[:len(iPastaImagem)-1]
+            iPastaTemporaria= '%s/temp' % (iPastaImagem[:len(iPastaImagem)-1])
+            iPastaTemporariaDoUsuario= '%s/temp/%s' % (iPastaImagem[:len(iPastaImagem)-1], str(vIDUsuario))
             self.criaPastaTemporaria(iPastaTemporaria)
+            self.criaPastaTemporaria(iPastaTemporariaDoUsuario)
             iImagem = Image.open(iDiretorioImagem)
-            iDiretorioImagemTemporaria= '%s/%s.%s' % (iPastaTemporaria, iNomeArquivo, iExtencao[1:])
+            iDiretorioImagemTemporaria= '%s/%s.%s' % (iPastaTemporariaDoUsuario, iNomeArquivo, iExtencao[1:])
             iImagem.save(iDiretorioImagemTemporaria)
             return iDiretorioImagemTemporaria
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar a imagem temporaria: ' + str(e))
             return False
     
-    def negativaImagem(self, vCaminhoImagemTemporaria):
+    def negativaImagem(self, vDiretorioImagemTemporaria):
         try:
-            iImagem = Image.open(vCaminhoImagemTemporaria)
+            iImagem = Image.open(vDiretorioImagemTemporaria)
             iImagem = PIL.ImageOps.invert(iImagem)
-            iImagem.save(vCaminhoImagemTemporaria)
+            iImagem.save(vDiretorioImagemTemporaria)
             return True
         except Exception, e:
             self.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
             return False
     
-    def rotacionaImagem(self, vCaminhoImagemTemporaria, vRotacao):
+    def rotacionaImagem(self, vDiretorioImagemTemporaria, vRotacao):
         try:
-            iImagem = Image.open(vCaminhoImagemTemporaria)
+            iImagem = Image.open(vDiretorioImagemTemporaria)
             iImagem = iImagem.rotate(int(vRotacao))
-            iImagem.save(vCaminhoImagemTemporaria)
+            iImagem.save(vDiretorioImagemTemporaria)
             return True
         except Exception, e:
             self.getLogger().error('Nao foi possivel rotacionar a imagem: ' + str(e))

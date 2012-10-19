@@ -12,8 +12,7 @@ from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
 from PyProject_GED.workflow.models      import Pendencia, Workflow
 from PyProject_GED.documento.models     import Tipo_de_Documento
-from PyProject_GED.indice.models        import Indice, Indice_Versao_Valor,\
-    Indice_Pasta
+from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice_Pasta
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from PyProject_GED.imagem.controle      import Controle as ControleImagem
 from controle                           import Controle as DocumentoControle
@@ -522,6 +521,8 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoVisualizar):
             iVersao     = Versao().obtemVersao(vIDVersao)
             iImagem     = Versao().obtemDocumentoAuxiliar(iVersao).caminhoVisualizar
+            iDiretorioImagemTemporaria= ControleImagem().criaImagemTemporaria(iVersao, iUsuario.id)
+            vRequest.session['Imagem_Temporaria']= iDiretorioImagemTemporaria
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoVisualizar, 
                                        iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoVisualizar, iUsuario.id, 

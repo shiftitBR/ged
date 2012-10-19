@@ -30,7 +30,7 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
             return response
         except Exception, e:
-            oControle.getLogger().error('Nao foi possivel post relatorios: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel exportar a imagem: ' + str(e))
             return False
         finally:
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExportar, 
@@ -45,4 +45,30 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
         context_instance=RequestContext(vRequest),
         )
     
+@login_required     
+def negativar_imagem(vRequest, vTitulo):
+    iHtml       = []      
+    if vRequest.POST:
+        try :
+            iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
+            ImagemControle().negativaImagem(iDiretorioImagemTemporaria)
+            iHtml.append(iDiretorioImagemTemporaria)
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
+            return False
         
+    return HttpResponse(''.join(iHtml))
+
+@login_required     
+def rotacionar_imagem(vRequest, vTitulo, vGraus):
+    iHtml       = []      
+    if vRequest.POST:
+        try :
+            iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
+            ImagemControle().rotacionaImagem(iDiretorioImagemTemporaria, vGraus)
+            iHtml.append(iDiretorioImagemTemporaria)
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel rotacionar a imagem: ' + str(e))
+            return False
+        
+    return HttpResponse(''.join(iHtml))
