@@ -6,6 +6,7 @@ Created on Sep 13, 2012
 
 import logging
 import os
+import PIL.ImageOps 
 
 from PIL                            import Image
 from django.db.models               import get_model
@@ -76,7 +77,7 @@ class Controle(object):
             os.remove(vDiretorioImagem)
             return True
         except Exception, e:
-            self.getLogger().error('Nao foi possivel criar a pasta temporaria: ' + str(e))
+            self.getLogger().error('Nao foi possivel deletar imagem temporaria: ' + str(e))
             return False
     
     def comprimeImagem(self, vVersao):
@@ -90,4 +91,57 @@ class Controle(object):
             return True
         except Exception, e:
             self.getLogger().error('PyProject_GED.controle').error('Nao foi possivel comprimir imagens: ' + str(e))
+            return False
+    
+    def obtemDiretorioDaImagemTemporaria(self, vIDVersao):
+        try:
+            mVersao= get_model('documento', 'Versao')
+            iDiretorioImagem= mVersao().obtemCaminhoArquivo(vIDVersao)
+            iDiretorioImagemSemExtencao, iExtencao= os.path.splitext(str(iDiretorioImagem))
+            iListaDiretorio= iDiretorioImagemSemExtencao.split('/')
+            iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
+            iPastaImagem= iDiretorioImagemSemExtencao[:len(iDiretorioImagemSemExtencao)-len(iNomeArquivo)]
+            iPastaTemporaria= '%s/temp' % iPastaImagem[:len(iPastaImagem)-1]
+            iDiretorioImagemTemporaria= '%s/%s.%s' % (iPastaTemporaria, iNomeArquivo, iExtencao[1:])
+            return iDiretorioImagemTemporaria
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obter diretorio da imagem temporaria: ' + str(e))
+            return False
+    
+    def criaImagemTemporaria(self, vVersao):
+        try:
+            mVersao= get_model('documento', 'Versao')
+            iDiretorioImagem= mVersao().obtemCaminhoArquivo(vVersao.id_versao)
+            iDiretorioImagemSemExtencao, iExtencao= os.path.splitext(str(iDiretorioImagem))
+            iListaDiretorio= iDiretorioImagemSemExtencao.split('/')
+            iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
+            iPastaImagem= iDiretorioImagemSemExtencao[:len(iDiretorioImagemSemExtencao)-len(iNomeArquivo)]
+            iPastaTemporaria= '%s/temp' % iPastaImagem[:len(iPastaImagem)-1]
+            self.criaPastaTemporaria(iPastaTemporaria)
+            iImagem = Image.open(iDiretorioImagem)
+            iDiretorioImagemTemporaria= '%s/%s.%s' % (iPastaTemporaria, iNomeArquivo, iExtencao[1:])
+            iImagem.save(iDiretorioImagemTemporaria)
+            return iDiretorioImagemTemporaria
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel criar a imagem temporaria: ' + str(e))
+            return False
+    
+    def negativaImagem(self, vCaminhoImagemTemporaria):
+        try:
+            iImagem = Image.open(vCaminhoImagemTemporaria)
+            iImagem = PIL.ImageOps.invert(iImagem)
+            iImagem.save(vCaminhoImagemTemporaria)
+            return True
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
+            return False
+    
+    def rotacionaImagem(self, vCaminhoImagemTemporaria, vRotacao):
+        try:
+            iImagem = Image.open(vCaminhoImagemTemporaria)
+            iImagem = iImagem.rotate(int(vRotacao))
+            iImagem.save(vCaminhoImagemTemporaria)
+            return True
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel rotacionar a imagem: ' + str(e))
             return False
