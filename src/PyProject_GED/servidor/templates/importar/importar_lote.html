@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css_fbox.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container">
+		<header class="jumbotron subhead" id="overview">
+		  <h2>Importação em Lote</h2>
+		</header>
+		
+		{% if form.errors %}
+        <div class="well well-small wellbranco">
+            <p><b>Os documentos não podem ser importados. Por favor, verifique os erros abaixo:</b></p>  
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+        </div>
+	    {% endif %}
+		
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+	</div>
+	
+	{% if iPossuiImportacao %}
+	<div class="container">
+		<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
+		<h4>Índices</h4>
+		<div class="tabbable"> <!-- Only required for left/right tabs -->
+		  <ul class="nav nav-tabs">
+		    <li class="active"><a href="#tab1" data-toggle="tab">Obrigatórios</a></li>
+		    <li><a href="#tab2" data-toggle="tab">Não Obrigatórios</a></li>
+		    <li><a href="#tab3" data-toggle="tab">Personalizados</a></li>
+		  </ul>
+		  <div class="tab-content">
+		    <div class="tab-pane active" id="tab1">
+		    	<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100">
+		      	{{form.usr_responsavel}}
+        		{{form.tipo_documento}}</p>
+		    </div>
+		    <div class="tab-pane" id="tab2">
+		      	<p>{{form.data_validade}}
+		        {{form.data_descarte}}
+		        <label><b>Associar Normas:</b></label>
+		        {{form.norma}}</p>
+		    </div>
+		    <div class="tab-pane" id="tab3">
+		      	<p>{% for indice in iListaIndices %}
+	            <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+	            {% empty %}
+	            {% endfor %}</p>
+		    </div>
+		  </div>
+		</div>
+		<hr class="bs-docs-separator">
+		<h4>Documentos</h4>
+		<table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Arquivo</th>
+              <th>Tamanho</th>
+            </tr>
+          </thead>
+          <tbody>
+          	{% for importar in iListaImportar %}
+            <tr>
+              <td>{{importar.numero}}</td>
+              <td>{{importar.nomeArquivo}}</td>
+              <td>{{importar.tamanho}}</td>
+            </tr>
+            {% empty %}
+			{% endfor %}
+          </tbody>
+        </table>
+		<div class="form-actions" style="float: right;">
+			<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+		</div>
+		</form>
+	</div>	
+	{% endif %}
+</body>
+
+</html>

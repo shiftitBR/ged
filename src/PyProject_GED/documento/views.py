@@ -506,7 +506,7 @@ def criaArvore(vRequest, vTitulo):
                         iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
                         if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
                             iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))
-                iHtml.append('</ul>')
+            iHtml.append('</ul>')
         except Exception,e:
             iHtml.append('Nao foi possivel carregar o diretorio: %s' % str(e))
         iHtml.append('</ul>')

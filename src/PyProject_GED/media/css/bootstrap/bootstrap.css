@@ -5880,5 +5880,50 @@ div.shiftit:hover {
 	width: 245px;
 	height: 40px;
 	top:0;
-	
+	cursor:pointer;
+	float: left;
 }
+
+editaimgscontainer {
+	width:100%;
+	bottom: 0px;
+}
+
+.editaimagens {
+	background-color: #f0f0f0;
+	margin-top:15px;
+	margin-right:auto;
+	margin-left:auto;
+	display:block;
+	width: 400px;
+	padding: 15px;
+	bottom: 0px;
+	position: static;
+}
+
+.editaimagens.sprite-Inverter { 
+	
+	background-position: 0 0; 
+	width: 26px;
+	height: 26px; 
+} 
+	
+.editaimagens.sprite-RotacionaDireita { 
+	
+	background-position: 0 -76px; 
+	width: 24px; 
+	height: 26px; 
+} 
+.editaimagens.sprite-RotacionaEsquerda { 
+	
+	background-position: 0 -152px; 
+	width: 24px; 
+	height: 26px; 
+} 
+.editaimagens.sprite-Zoom { 
+	
+	background-position: 0 -228px; 
+	width: 24px; 
+	height: 24px; 
+} 
+

@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     (r'^', include('relatorios.urls')),
     (r'^', include('imagem.urls')),
     (r'^', include('assinatura.urls')),
+    (r'^', include('servidor.urls')),
     url(r'', include('multiuploader.urls')),
 )
 

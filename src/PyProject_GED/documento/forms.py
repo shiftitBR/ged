@@ -22,12 +22,12 @@ class FormUploadDeArquivo(forms.Form):
     eh_publico      = forms.BooleanField()
     
     def clean_tipo_documento(self):
-        if self.cleaned_data['tipo_documento'] == 0:
+        if self.cleaned_data['tipo_documento'] == 'Selecione' or self.cleaned_data['tipo_documento'] == 0:
             raise forms.ValidationError('O campo Tipo de Documento é obrigatório')
         return self.cleaned_data['tipo_documento']
     
     def clean_usr_responsavel(self):
-        if self.cleaned_data['usr_responsavel'] == 0:
+        if self.cleaned_data['usr_responsavel'] == 'Selecione' or self.cleaned_data['usr_responsavel'] == 0:
             raise forms.ValidationError('O campo Usuário Responsável é obrigatório')
         return self.cleaned_data['usr_responsavel']
     
