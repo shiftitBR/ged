@@ -142,3 +142,8 @@ cntSocketTCPPorta               = 9999
 #Tipo Mesagem JSON
 cntTipoMensagemJSONNormal       = "1"
 cntTipoMensagemJSONErro         = "2"
+
+#Classe Mesagem JSON
+cntClasseMensagemImportacao     = "1"
+cntClasseMensagemBiometria      = "2"
+cntClasseMensagemCadastro       = "3"

@@ -6,7 +6,8 @@ Created on Oct 5, 2012
 '''
 
 from django.test                                import TestCase
-from PyProject_GED.servidor.models import Servidor, Importacao_FTP
+from PyProject_GED.servidor.models import Servidor, Importacao_FTP,\
+    Cadastro_Biometria
 from PyProject_GED.autenticacao.models import Empresa, Tipo_de_Usuario, Usuario
 from django.contrib.auth.models import User
 
@@ -27,16 +28,29 @@ class Test(TestCase):
         pass
     
     def testCriaImportacaoFTP(self):
-        iUser= User.objects.filter(id= 1)[0]
+        iUser= User.objects.all()[0]
         iIPOrigem= '192.168.0.1'
         iImportacao= Importacao_FTP().criaImportacao_FTP(iUser, iIPOrigem)
         self.assertEquals(1, Importacao_FTP.objects.all().count())
         self.assertEquals('1', iImportacao.pasta_temporaria)
     
-    def testCriaRespostaEmJSON(self):
+    def testCriaCadastroBiometria(self):
+        iUser= User.objects.all()[0]
+        iIPOrigem= '192.168.0.1'
+        iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUser, iIPOrigem)
+        self.assertEquals(1, Cadastro_Biometria.objects.all().count())
+        self.assertEquals('1', iCadastro.pasta_destino)
+    
+    def testCriaRespostaEmJSONParaImportacao(self):
         iPasta= '1'
         iJSON= Servidor().criaRespostaEmJSON(iPasta)
         self.assertEquals('{"pasta": "1", "ip": "ftp.upspace.com.br", "login": "teste@upspace.com.br", "senha": "importar@051011", "tipo": "1"}', iJSON)
+    
+    def testCriaRespostaEmJSONParaCadastroBiometrico(self):
+        iPasta= '1'
+        iIDEmpresa= '1'
+        iJSON= Servidor().criaRespostaEmJSON(iPasta, iIDEmpresa)
+        self.assertEquals('{"tipo": "1", "usuario": "1", "ip": "ftp.upspace.com.br", "senha": "importar@051011", "pasta": "1", "login": "teste@upspace.com.br"}', iJSON)
     
     def testaSocket(self):
         Servidor().iniciaSocket_TCP()
