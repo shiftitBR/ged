@@ -140,10 +140,11 @@ cntSocketTCPIP                  = '192.168.1.17'
 cntSocketTCPPorta               = 9999
 
 #Tipo Mesagem JSON
-cntTipoMensagemJSONNormal       = "1"
-cntTipoMensagemJSONErro         = "2"
+cntTipoMensagemJSONNormal       = '1'
+cntTipoMensagemJSONErro         = '2'
 
 #Classe Mesagem JSON
-cntClasseMensagemImportacao     = "1"
-cntClasseMensagemBiometria      = "2"
-cntClasseMensagemCadastro       = "3"
+cntClasseMensagemImportacao     = '1'
+cntClasseMensagemLogin          = '2'
+cntClasseMensagemCadastro       = '3'
+cntClasseMensagemConfirmacao    = '4'

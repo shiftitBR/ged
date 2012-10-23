@@ -18,6 +18,7 @@ import logging
 import SocketServer
 import json
 import os
+import time
 
 
 class Servidor(models.Model):
@@ -51,7 +52,6 @@ class Servidor(models.Model):
 class Socket(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        
         iJSONConectado= '{"tipo": %s, "mensagem": "Conectado"}' % constantes.cntTipoMensagemJSONNormal
         self.request.sendall(iJSONConectado + '\n')
         self.data = self.request.recv(1024).strip()
@@ -71,21 +71,7 @@ class Socket(SocketServer.BaseRequestHandler):
             else:
                 iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
         
-        elif iClasse == constantes.cntClasseMensagemCadastro:
-            iSenha  = iJSONRecebido['senha']
-            iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
-            if iUsuario != None:
-                iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
-                if iCadastroExistente == None:
-                    iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem)
-                    iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
-                    iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
-                else:
-                    iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
-            else:
-                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
-        
-        elif iClasse == constantes.cntClasseMensagemBiometria:
+        elif iClasse == constantes.cntClasseMensagemLogin:
             iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
             if iUsuario != None:
                 if iUsuario.is_active:
@@ -96,7 +82,7 @@ class Socket(SocketServer.BaseRequestHandler):
                             iLink = 'http://google.com'
                             iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, iUsuario.id, iLink)
                         else:
-                            iJSONResposta= '{"tipo": %s, "mensagem": "A empresa esta inativa!"}' % constantes.cntTipoMensagemJSONErro
+                            iJSONResposta= '{"tipo": %s, "mensagem": "Este usuario nao possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
                     else:
                         iJSONResposta= '{"tipo": %s, "mensagem": "A empresa esta inativa!"}' % constantes.cntTipoMensagemJSONErro
                 else:
@@ -104,17 +90,34 @@ class Socket(SocketServer.BaseRequestHandler):
             else:
                 iJSONResposta= '{"tipo": %s, "mensagem": "Usuario inexistente!"}' % constantes.cntTipoMensagemJSONErro
         
+        elif iClasse == constantes.cntClasseMensagemCadastro:
+            iSenha  = iJSONRecebido['senha']
+            iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
+            if iUsuario != None:
+                iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
+                if iCadastroExistente == None:
+                    iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem, False)
+                    iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                    iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
+                    iCadastro.clean()
+                else:
+                    iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
+            else:
+                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
+                
+        elif iClasse == constantes.cntClasseMensagemConfirmacao:
+            iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
+            iTipo = iJSONRecebido['tipo']
+            if str(iTipo) == constantes.cntTipoMensagemJSONNormal:
+                iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem)
+                iJSONResposta= '{"tipo": %s, "mensagem": "Cadastro efetuado com sucesso"}' % constantes.cntTipoMensagemJSONNormal
+                
+            else:
+                iJSONResposta= '{"tipo": %s, "mensagem": "Erro ao efetuar o cadastro"}' % constantes.cntTipoMensagemJSONErro
+            
         self.request.sendall(iJSONResposta + '\n')
-        
-        if iClasse == constantes.cntClasseMensagemCadastro: 
-            self.data = self.request.recv(1024).strip()
-            iIPOrigem= self.client_address[0]
-            iMensagemRecebida= self.data
-            iJSONRecebido = simplejson.loads(iMensagemRecebida)
-            iMensagem = iJSONRecebido['mensagem']
-            if str(iMensagem).lower() != 'salvou':
-                Cadastro_Biometria().excluiCadastroDeBiometri(iUsuario)
-
+            
+            
 class Importacao_FTP(models.Model):
     id_importacao_ftp   = models.IntegerField(max_length=5, primary_key=True)
     usuario             = models.ForeignKey(Usuario, null= False)
@@ -217,7 +220,7 @@ class Cadastro_Biometria(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar cadastro de biometria: ' + str(e))
             return False
     
-    def criaCadastroDeBiometria(self, vUsuario, vIPOrigem):
+    def criaCadastroDeBiometria(self, vUsuario, vIPOrigem, vSalvar=True):
         try:
             iUsuario                    = Usuario().obtemUsuario(vUsuario)
             iCadastro                   = Cadastro_Biometria()
@@ -225,7 +228,8 @@ class Cadastro_Biometria(models.Model):
             iCadastro.ip_origem         = vIPOrigem
             iCadastro.pasta_destino     = str(iUsuario.empresa.id_empresa)
             iCadastro.data_importacao   = str(datetime.datetime.today())[:19]
-            iCadastro.save()
+            if vSalvar:
+                iCadastro.save()
             return iCadastro
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar cadastro de biometria: ' + str(e))
