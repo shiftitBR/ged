@@ -211,6 +211,17 @@ class Usuario(User):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
             return False   
         
+    def obtemUsuarioPeloEmail(self, vEmail):
+        try:
+            iListaUsuario= Usuario.objects.filter(email= vEmail)
+            iUsuario= None
+            for i in iListaUsuario:
+                iUsuario= i
+            return iUsuario
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o Usuario pelo user ' + str(e))
+            return False
+    
     def obterNomeUsuario(self, vIDUsuario):
         try:
             iUsuario= Usuario.objects.filter(id= vIDUsuario)[0]

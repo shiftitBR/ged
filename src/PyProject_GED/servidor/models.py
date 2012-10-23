@@ -51,6 +51,7 @@ class Servidor(models.Model):
 class Socket(SocketServer.BaseRequestHandler):
 
     def handle(self):
+        
         iJSONConectado= '{"tipo": %s, "mensagem": "Conectado"}' % constantes.cntTipoMensagemJSONNormal
         self.request.sendall(iJSONConectado + '\n')
         self.data = self.request.recv(1024).strip()
@@ -74,8 +75,8 @@ class Socket(SocketServer.BaseRequestHandler):
             iSenha  = iJSONRecebido['senha']
             iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
             if iUsuario != None:
-                iPossuiCadastro= Cadastro_Biometria().verificaExistenciaDeCadastro(iUsuario)
-                if not iPossuiCadastro:
+                iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
+                if iCadastroExistente == None:
                     iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem)
                     iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
                     iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
@@ -85,9 +86,34 @@ class Socket(SocketServer.BaseRequestHandler):
                 iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
         
         elif iClasse == constantes.cntClasseMensagemBiometria:
-            print 'Biometria'
+            iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
+            if iUsuario != None:
+                if iUsuario.is_active:
+                    if iUsuario.empresa.eh_ativo:
+                        iCadastro= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
+                        if iCadastro != None:
+                            iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                            iLink = 'http://google.com'
+                            iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, iUsuario.id, iLink)
+                        else:
+                            iJSONResposta= '{"tipo": %s, "mensagem": "A empresa esta inativa!"}' % constantes.cntTipoMensagemJSONErro
+                    else:
+                        iJSONResposta= '{"tipo": %s, "mensagem": "A empresa esta inativa!"}' % constantes.cntTipoMensagemJSONErro
+                else:
+                    iJSONResposta= '{"tipo": %s, "mensagem": "O usuario esta inativo!"}' % constantes.cntTipoMensagemJSONErro
+            else:
+                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario inexistente!"}' % constantes.cntTipoMensagemJSONErro
         
         self.request.sendall(iJSONResposta + '\n')
+        
+        if iClasse == constantes.cntClasseMensagemCadastro: 
+            self.data = self.request.recv(1024).strip()
+            iIPOrigem= self.client_address[0]
+            iMensagemRecebida= self.data
+            iJSONRecebido = simplejson.loads(iMensagemRecebida)
+            iMensagem = iJSONRecebido['mensagem']
+            if str(iMensagem).lower() != 'salvou':
+                Cadastro_Biometria().excluiCadastroDeBiometri(iUsuario)
 
 class Importacao_FTP(models.Model):
     id_importacao_ftp   = models.IntegerField(max_length=5, primary_key=True)
@@ -205,14 +231,22 @@ class Cadastro_Biometria(models.Model):
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar cadastro de biometria: ' + str(e))
             return False
     
-    def verificaExistenciaDeCadastro(self, vUsuario):
+    def excluiCadastroDeBiometria(self, vUsuario):
+        try:
+            Cadastro_Biometria.objects.filter(usuario= vUsuario).delete()
+            return True
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel excluir cadastro de biometria: ' + str(e))
+            return False
+    
+    def obtemCadastroDeBiometria(self, vUsuario):
         try:
             iListaCadastros= Cadastro_Biometria.objects.filter(usuario= vUsuario)
             if len(iListaCadastros) > 0:
-                iExisteCadastro= True
+                iCadastro= iListaCadastros[0]
             else:
-                iExisteCadastro= False
-            return iExisteCadastro
+                iCadastro= None
+            return iCadastro
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel verificar existencia de cadastro: ' + str(e))
             return False   

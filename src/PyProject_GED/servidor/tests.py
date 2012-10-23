@@ -18,6 +18,7 @@ class Test(TestCase):
         self.mokarEmpresa()
         self.mokarTipoUsuario()
         self.mokarUsuario()
+        self.mokarCriacaoCadastroBiometria()
         pass
     
     
@@ -38,8 +39,14 @@ class Test(TestCase):
         iUser= User.objects.all()[0]
         iIPOrigem= '192.168.0.1'
         iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUser, iIPOrigem)
-        self.assertEquals(1, Cadastro_Biometria.objects.all().count())
+        self.assertEquals(2, Cadastro_Biometria.objects.all().count())
         self.assertEquals('1', iCadastro.pasta_destino)
+    
+    def testExcluiCadastroDeBiometria(self):
+        iUsuario= Usuario.objects.all()[1]
+        self.assertEquals(1, Cadastro_Biometria.objects.count())
+        Cadastro_Biometria().excluiCadastroDeBiometria(iUsuario)
+        self.assertEquals(0, Cadastro_Biometria.objects.count())
     
     def testCriaRespostaEmJSONParaImportacao(self):
         iPasta= '1'
@@ -84,3 +91,8 @@ class Test(TestCase):
         iEmail          = 'usuario2@teste.com.br'
         iUsuario_2      = Usuario(empresa= iEmpresa, email= iEmail, tipo_usuario= iTipoUsuario)
         iUsuario_2.save()
+    
+    def mokarCriacaoCadastroBiometria(self):
+        iUser= User.objects.all()[1]
+        iIPOrigem= '192.168.0.2'
+        iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUser, iIPOrigem)

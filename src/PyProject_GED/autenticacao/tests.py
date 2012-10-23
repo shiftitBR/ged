@@ -60,6 +60,11 @@ class Test(TestCase):
         iUsuario= Usuario().obtemUsuarioPeloID(iIDUsuario)
         self.assertEquals(iIDUsuario, iUsuario.id)
     
+    def testObtemUsuarioPeloEmail(self):
+        iEmail= Usuario.objects.all()[0].email
+        iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
+        self.assertEquals(iEmail, iUsuario.email)
+    
     def testObtemEmpresaDoUsuario(self):
         iUsuario= Usuario.objects.all()[0]
         iEmpresa= Usuario().obtemEmpresaDoUsuario(iUsuario.id)
