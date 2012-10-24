@@ -59,19 +59,58 @@ class Socket(SocketServer.BaseRequestHandler):
         iMensagemRecebida= self.data
         iJSONRecebido = simplejson.loads(iMensagemRecebida)
         iClasse = iJSONRecebido['classe']
-        iEmail  = iJSONRecebido['usuario']
                 
         if iClasse == constantes.cntClasseMensagemImportacao:
-            iSenha  = iJSONRecebido['senha']
+            iJSONResposta= self.importacaoDeArquivos(iJSONRecebido, iIPOrigem)
+        elif iClasse == constantes.cntClasseMensagemLogin:
+            iJSONResposta= self.loginViaBiometria(iJSONRecebido)
+        elif iClasse == constantes.cntClasseMensagemCadastro:
+            iJSONResposta= self.cadastroDeBiometria(iJSONRecebido, iIPOrigem)     
+        elif iClasse == constantes.cntClasseMensagemConfirmacao:
+            iJSONResposta= self.confirmacaoDoCadastroDeBiometria(iJSONRecebido, iIPOrigem)
+            
+        self.request.sendall(iJSONResposta + '\n')
+    
+    def cadastroDeBiometria(self, vJSONRecebido, vIPOrigem):
+        try:
+            iSenha  = vJSONRecebido['senha']
+            iEmail  = vJSONRecebido['usuario']
             iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
             if iUsuario != None:
-                iImportacao= Importacao_FTP().criaImportacao_FTP(iUsuario, iIPOrigem)
-                iPasta= '%s/%s' % (constantes.cntClasseMensagemImportacao, iImportacao.pasta_temporaria)
-                iJSONResposta= Servidor().criaRespostaEmJSON(iPasta)
+                iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
+                if iCadastroExistente == None:
+                    iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem, False)
+                    iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                    iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
+                    iCadastro.clean()
+                else:
+                    iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
             else:
                 iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
+            return iJSONResposta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel cadastrar biometria: ' + str(e))
+            return False
+    
+    def confirmacaoDoCadastroDeBiometria(self, vJSONRecebido, vIPOrigem):
+        try:
+            iEmail  = vJSONRecebido['usuario']
+            iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
+            iTipo = vJSONRecebido['tipo']
+            if str(iTipo) == constantes.cntTipoMensagemJSONNormal:
+                Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem)
+                iJSONResposta= '{"tipo": %s, "mensagem": "Cadastro efetuado com sucesso"}' % constantes.cntTipoMensagemJSONNormal
+                
+            else:
+                iJSONResposta= '{"tipo": %s, "mensagem": "Erro ao efetuar o cadastro"}' % constantes.cntTipoMensagemJSONErro
+            return iJSONResposta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel confirmar o cadastrar de biometria: ' + str(e))
+            return False
         
-        elif iClasse == constantes.cntClasseMensagemLogin:
+    def loginViaBiometria(self, vJSONRecebido):
+        try:
+            iEmail  = vJSONRecebido['usuario']
             iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
             if iUsuario != None:
                 if iUsuario.is_active:
@@ -79,7 +118,7 @@ class Socket(SocketServer.BaseRequestHandler):
                         iCadastro= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
                         if iCadastro != None:
                             iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
-                            iLink = 'http://google.com'
+                            iLink = Usuario().obtemURLDeAutenticacao(iEmail)
                             iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, iUsuario.id, iLink)
                         else:
                             iJSONResposta= '{"tipo": %s, "mensagem": "Este usuario nao possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
@@ -89,33 +128,27 @@ class Socket(SocketServer.BaseRequestHandler):
                     iJSONResposta= '{"tipo": %s, "mensagem": "O usuario esta inativo!"}' % constantes.cntTipoMensagemJSONErro
             else:
                 iJSONResposta= '{"tipo": %s, "mensagem": "Usuario inexistente!"}' % constantes.cntTipoMensagemJSONErro
-        
-        elif iClasse == constantes.cntClasseMensagemCadastro:
-            iSenha  = iJSONRecebido['senha']
-            iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
-            if iUsuario != None:
-                iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
-                if iCadastroExistente == None:
-                    iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem, False)
-                    iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
-                    iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
-                    iCadastro.clean()
-                else:
-                    iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
-            else:
-                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
-                
-        elif iClasse == constantes.cntClasseMensagemConfirmacao:
+            return iJSONResposta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel logar via biometria: ' + str(e))
+            return False
+    
+    def importacaoDeArquivos(self, vJSONRecebido, vIPOrigem):
+        try:
+            iEmail  = vJSONRecebido['usuario']
             iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
-            iTipo = iJSONRecebido['tipo']
-            if str(iTipo) == constantes.cntTipoMensagemJSONNormal:
-                iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, iIPOrigem)
-                iJSONResposta= '{"tipo": %s, "mensagem": "Cadastro efetuado com sucesso"}' % constantes.cntTipoMensagemJSONNormal
-                
+            iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
+            if iCadastroExistente == None:
+                iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem, False)
+                iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
+                iCadastro.clean()
             else:
-                iJSONResposta= '{"tipo": %s, "mensagem": "Erro ao efetuar o cadastro"}' % constantes.cntTipoMensagemJSONErro
-            
-        self.request.sendall(iJSONResposta + '\n')
+                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
+            return iJSONResposta
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel importar os arquivos: ' + str(e))
+            return False
             
             
 class Importacao_FTP(models.Model):

@@ -13,6 +13,7 @@ from controle                                       import Controle as ControleA
 from PyProject_GED.relatorios.objetos_auxiliares    import RelatorioUsuario as UsuarioAuxiliar
 from PyProject_GED                                  import constantes
 from django.contrib.auth                            import authenticate 
+from PyProject_GED.loginurl                         import utils as loginURL
 
 import threading
 import logging
@@ -311,3 +312,13 @@ class Usuario(User):
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel autenticar o usuario' + str(e))
             return False  
+    
+    def obtemURLDeAutenticacao(self, vEmail):
+        try:
+            iUsuario= self.obtemUsuarioPeloEmail(vEmail)
+            key = loginURL.create(iUsuario)
+            url = 'http://%s/loginurl/%s' % (constantes.cntConfiguracaoDominio, key.key)
+            return url
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter url de autenticacao' + str(e))
+            return False 

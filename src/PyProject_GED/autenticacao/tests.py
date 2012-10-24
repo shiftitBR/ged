@@ -115,6 +115,11 @@ class Test(TestCase):
         iAutenticou= Usuario().autenticaUsuario(iEmail, iSenha)
         self.assertEquals(None, iAutenticou)
         
+    def testObtemURLDeAutenticacao(self):
+        iUsuario= Usuario.objects.all()[0]
+        iURL= Usuario().obtemURLDeAutenticacao(iUsuario.email)
+        self.assertEquals(True, len(iURL) > 0)
+    
     #-----------------------------------------------------MOKS---------------------------------------------------
     
     def mokarEmpresa(self):

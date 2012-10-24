@@ -122,6 +122,7 @@ class Documento(models.Model):
             iDocumento.data_descarte    = vDataDescarte
             iDocumento.eh_pulbico       = vEh_Publico
             iDocumento.save()
+            
             return iDocumento
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar o Documento: ' + str(e))

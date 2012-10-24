@@ -12,6 +12,7 @@ cntConfiguracaoPastaDocumentos          = 'documentos'
 cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
+cntConfiguracaoDominio                  = 'trackdoc.com.br'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
