@@ -18,7 +18,6 @@ import logging
 import SocketServer
 import json
 import os
-import time
 
 
 class Servidor(models.Model):
@@ -69,6 +68,9 @@ class Socket(SocketServer.BaseRequestHandler):
         elif iClasse == constantes.cntClasseMensagemConfirmacao:
             iJSONResposta= self.confirmacaoDoCadastroDeBiometria(iJSONRecebido, iIPOrigem)
             
+        if iJSONResposta == False:
+            iJSONResposta= '{"tipo": %s, "mensagem": "Ocorreu um erro desconhecido!"}' % constantes.cntTipoMensagemJSONErro 
+            
         self.request.sendall(iJSONResposta + '\n')
     
     def cadastroDeBiometria(self, vJSONRecebido, vIPOrigem):
@@ -117,7 +119,7 @@ class Socket(SocketServer.BaseRequestHandler):
                     if iUsuario.empresa.eh_ativo:
                         iCadastro= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
                         if iCadastro != None:
-                            iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                            iPasta= '%s/%s' % (constantes.cntClasseMensagemLogin, iCadastro.pasta_destino)
                             iLink = Usuario().obtemURLDeAutenticacao(iEmail)
                             iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, iUsuario.id, iLink)
                         else:
@@ -140,7 +142,7 @@ class Socket(SocketServer.BaseRequestHandler):
             iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
             if iCadastroExistente == None:
                 iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem, False)
-                iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
+                iPasta= '%s/%s' % (constantes.cntClasseMensagemImportacao, iCadastro.pasta_destino)
                 iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
                 iCadastro.clean()
             else:
