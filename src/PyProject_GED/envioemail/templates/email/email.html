@@ -23,7 +23,7 @@
 	</script>
 
 <body>
-	<div class="container-fluid" align="center">
+	<div class="container-fluid">
 		<header class="jumbotron subhead" id="overview">
 		  <h2>Enviar e-mail</h2>
 		</header>
@@ -61,7 +61,7 @@
 			</select>
    		{% if iCadastraContato %}
     		<br />
-    		<a class="fancybox fancybox.iframe" href="/contato/1/" class="pull-right"><i class="icon-retweet"></i> Adicionar novo contato</a><br />
+    		<a class="fancybox fancybox.iframe btn btn-primary" href="/contato/1/" class="pull-right"><i class="icon-retweet icon-white"></i> Adicionar novo contato</a><br />
     	{% endif %}
         </div>
 	    <br>
@@ -79,17 +79,17 @@
 		        <th colspan="3" class="tipotabela"><center>Arquivos Anexos</center></th>
 		      </tr>
 		      <tr>
-		        <th class="tipotabela"><center>Protocolo</center></th>
-		        <th class="tipotabela"><center>Assunto</center></th>
-		        <th class="tipotabela"><center>Arquivo</center></th>
+		        <th class="tipotabela">Protocolo</th>
+		        <th class="tipotabela">Assunto</th>
+		        <th class="tipotabela">Arquivo</th>
 		      </tr>
 		    </thead>
 		    <tbody>
 		    {% for versao in iVersoes %}
 		      <tr>
-		        <td><center>{{versao.protocolo}}</center></td>
-		        <td><center>{{versao.documento.assunto}}</center></td>
-		        <td><center>{{versao.upload.filename}}</center></td>
+		        <td>{{versao.protocolo}}</td>
+		        <td>{{versao.documento.assunto}}</td>
+		        <td>{{versao.upload.filename}}</td>
 		      </tr>
 			{% empty %}
 			{% endfor %}	
