@@ -10,6 +10,8 @@ $(document).ready
 		
 		notificaPendencias();
 				
+		console.log(window.location.pathname)
+		
 	//------------------------------Eventos------------------------------
 		
 		if (window.location.pathname == '/importar/')
@@ -35,7 +37,15 @@ $(document).ready
 		if (window.location.pathname == '/checkin/')
 		{
 			$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
-		}		
+		}
+		
+		if (window.location.pathname == '/visualizar/1/') or (window.location.pathname == '/visualizar/2/')
+		{
+			console.log('visualizando...');
+			$('#id_editaimagensinverter').click(function() {inverteImagem();});
+			$('#id_editaimagensdireita').click(function() {rotacionaImagem(1);});
+			$('#id_editaimagensesquerda').click(function() {rotacionaImagem(2);});
+		}
 	}
 );
 
@@ -115,4 +125,28 @@ function intervaloRefreshPendencias(vIntervalo)
 	setInterval(function(){
 		notificaPendencias()
      }, vIntervalo);
+}
+
+function inverteImagem()
+{
+	console.log('Clickou inverter!');
+	$.post('/negativar_imagem/', function(data){
+		console.log(data);
+		d = new Date();
+		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
+		
+	});
+	
+}
+
+function rotacionaImagem(vLado)
+{
+	console.log('Clickou rotacionar!');
+	console.log(vLado);	
+	$.post('/rotacionar_imagem/'+vLado+'/', function(data){
+		console.log(data);
+		d = new Date();
+		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
+		
+	});
 }

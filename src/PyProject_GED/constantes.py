@@ -149,3 +149,8 @@ cntClasseMensagemImportacao     = '1'
 cntClasseMensagemLogin          = '2'
 cntClasseMensagemCadastro       = '3'
 cntClasseMensagemConfirmacao    = '4'
+
+#Edicao Imagem
+cntEdicaoImagemRotacaoDireita   = 1
+cntEdicaoImagemRotacaoEsquerda  = 2
+cntEdicaoImagemGraus            = 90

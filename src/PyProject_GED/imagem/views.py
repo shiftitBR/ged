@@ -7,9 +7,10 @@ from django.http                        import HttpResponse
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.seguranca.models     import Funcao_Grupo
-from PyProject_GED.autenticacao.models  import Usuario, Empresa
+from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.imagem.controle      import Controle as ImagemControle
 from PyProject_GED.historico.models     import Log_Usuario, Historico
+from django.conf                        import settings
 
 import os
 
@@ -48,27 +49,29 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
 @login_required     
 def negativar_imagem(vRequest, vTitulo):
     iHtml       = []      
-    if vRequest.POST:
-        try :
-            iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
-            ImagemControle().negativaImagem(iDiretorioImagemTemporaria)
-            iHtml.append(iDiretorioImagemTemporaria)
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
-            return False
+    try :
+        iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
+        iDiretorioRoot= settings.PROJECT_ROOT_PATH
+        iDiretorioMediaImagemTemproaria= iDiretorioImagemTemporaria[len(iDiretorioRoot):]
+        ImagemControle().negativaImagem(iDiretorioImagemTemporaria)
+        iHtml.append(iDiretorioMediaImagemTemproaria)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
+        return False
         
     return HttpResponse(''.join(iHtml))
 
 @login_required     
-def rotacionar_imagem(vRequest, vTitulo, vGraus):
+def rotacionar_imagem(vRequest, vTitulo, vLado):
     iHtml       = []      
-    if vRequest.POST:
-        try :
-            iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
-            ImagemControle().rotacionaImagem(iDiretorioImagemTemporaria, vGraus)
-            iHtml.append(iDiretorioImagemTemporaria)
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel rotacionar a imagem: ' + str(e))
-            return False
+    try :
+        iDiretorioImagemTemporaria= vRequest.session['Imagem_Temporaria']
+        iDiretorioRoot= settings.PROJECT_ROOT_PATH
+        iDiretorioMediaImagemTemproaria= iDiretorioImagemTemporaria[len(iDiretorioRoot):]
+        ImagemControle().rotacionaImagem(iDiretorioImagemTemporaria, vLado)
+        iHtml.append(iDiretorioMediaImagemTemproaria)
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel rotacionar a imagem: ' + str(e))
+        return False
         
     return HttpResponse(''.join(iHtml))
