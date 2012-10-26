@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.core.urlresolvers import resolve
 
-from Twain.dynamictwain.models import TempFormData
+from PyProject_GED.dynamictwain.models import TempFormData
 
 
 

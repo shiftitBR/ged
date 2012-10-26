@@ -36,6 +36,7 @@ cntEventoHistoricoImportar  = 15
 cntEventoHistoricoExportar  = 16
 cntEventoHistoricoAssinar   = 17
 cntEventoHistoricoCadastraContato= 18
+cntEventoHistoricoDigitalizar= 19
 
 #Estados da Versao
 cntEstadoVersaoDisponivel   = 1
