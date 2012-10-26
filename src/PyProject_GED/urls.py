@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^', include('assinatura.urls')),
     (r'^', include('servidor.urls')),
     (r'^loginurl/', include('loginurl.urls')),
+    (r'^twain/', include('dynamictwain.urls', 'dynamictwain')),
     url(r'', include('multiuploader.urls')),
 )
 

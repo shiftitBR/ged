@@ -540,3 +540,17 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         locals(),
         context_instance=RequestContext(vRequest),
         )       
+
+@login_required 
+def digitalizar(vRequest, vTitulo):
+    try :
+        print '>>>>>>>>>>>>>>>>>>>>>>>>>>> DIGITALIZANDO'
+    except Exception, e:
+        oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
+        return False
+    
+    return render_to_response(
+        'acao/digitalizar.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )     
