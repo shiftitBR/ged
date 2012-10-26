@@ -1,19 +1,26 @@
-<input id="submit_scan" type="submit" value="Continue">
+<!--<input id="submit_scan" type="submit" value="Continue">-->
+
+<input id="fat-btn" type="submit" value="Continue">
+
 
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
 
         // Grab the underlying form
         var form = $("#submit_scan").parent('form');
+        console.log(form);
 
         var ORIG_ACTION = form.attr('action');
+        console.log(ORIG_ACTION);
         var ORIG_METHOD = form.attr('method');
+        console.log(ORIG_METHOD);
         var UID = null;
 
         form.submit(function(){
 
             /* First, post the form */
             var data = $(this).serialize();
+            console.log(data);
 
             $.ajax({
                 url: '/twain/form/?orig='+ORIG_ACTION,
@@ -27,7 +34,10 @@
                         UPLOAD_PATH,
                         "upload["+UID+"].pdf"
                     );
-                    console.log("UPLOADED");
+                    console.log(SERVER);
+                    console.log(UPLOAD_PATH);
+                    console.log(UPLOAD_PATH);
+                    console.log("upload["+UID+"].pdf");
 
                     window.location.href="/twain/redirect/?uid="+UID;
                 }

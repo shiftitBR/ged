@@ -16,13 +16,17 @@
 				
         {% load dynamictwain %}
 
-        <form action="/foobar/" method="post" accept-charset="utf-8">
+        <form action="" method="POST" accept-charset="utf-8"> {% csrf_token %}
 
             <input type="text" name="some_name" value="">
 
             {% scan_widget "600x800" "False" %}
 
-            {% submit_form_with_scan %}
+            <!--{% submit_form_with_scan %}-->
+            
+            <div class="form-actions" style="float: right;">
+                    <button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Salvar</button>
+            </div>
 
         </form>
   	</div>

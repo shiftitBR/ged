@@ -26,6 +26,8 @@ import datetime
 import os
 import urllib
 from PyProject_GED.envioemail.models import Email
+import json
+import re
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -544,7 +546,14 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def digitalizar(vRequest, vTitulo):
     try :
-        print '>>>>>>>>>>>>>>>>>>>>>>>>>>> DIGITALIZANDO'
+        print '>>>>>>>>>>>>>>>>>>>> digitalizar'
+        if vRequest.POST:
+            print '>>>>>>>>>>>>>>>>>>>>>>>> post'
+            print vRequest.POST.get['some_name']
+            f = vRequest.FILES['RemoteFile']
+            print type(f)
+            print f
+            
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
         return False
