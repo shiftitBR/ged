@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block scripts %}
+{% include "./media/js.html" %}
+{% endblock scripts %}
+
+{% block style %}
+{% include "./media/css_fbox.html" %}
+{% endblock style %}
+
+<body>
+	<div class="container-fluid">
+  		<header class="jumbotron subhead" id="overview">
+		  <h2>Visualizar Documento</h2>
+		</header>
+				
+        {% load dynamictwain %}
+
+        <form action="/foobar/" method="post" accept-charset="utf-8">
+
+            <input type="text" name="some_name" value="">
+
+            {% scan_widget "600x800" "False" %}
+
+            {% submit_form_with_scan %}
+
+        </form>
+  	</div>
+  	
+  	</body>
+
+</html>

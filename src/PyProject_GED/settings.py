@@ -155,6 +155,7 @@ INSTALLED_APPS = (
     'assinatura',
     'servidor',
     'loginurl',
+    'dynamictwain',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -200,4 +201,7 @@ MULTI_IMAGES_FOLDER = 'documentos'
 
 DATE_INPUT_FORMATS = ('%d-%m-%Y')
 
-
+DYNAMIC_TWAIN_MEDIA_ROOT = "/media/twain/"
+DYNAMIC_TWAIN_DEFAULT_RESOLUTION = 150
+DYNAMIC_TWAIN_SERVER = "localhost:8000"
+DYNAMIC_TWAIN_UPLOAD_PATH = "/media/twain/upload/"

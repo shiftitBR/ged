@@ -28,4 +28,6 @@ urlpatterns= patterns('documento.views',
                             {'vTitulo': trans(u'versoesSelecionadas')}, name='versoesSelecionadas'),
                         url('^pasta_raiz/$', 'obtemPastaRaiz',
                             {'vTitulo': trans(u'obtemPastaRaiz')}, name='obtemPastaRaiz'),
+                        url('^digitalizar/$', 'digitalizar',
+                            {'vTitulo': trans(u'digitalizar')}, name='digitalizar'),
                       )
