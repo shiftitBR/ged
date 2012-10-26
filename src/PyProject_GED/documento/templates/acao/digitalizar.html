@@ -32,78 +32,82 @@
 			</ul>
 		</div>
 		{% endif %}
-	</div>
-	
-	<div class="container">
-				
-        {% load dynamictwain %}
-
-        <form action="/foobar/" method="post" accept-charset="utf-8">
-
-            {% scan_widget "400x600" "False" %}
-
-            {% submit_form_with_scan %}
-
-        </form>
-  	</div>
-  	
+	</div> 	
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-		<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
-		<h4>Índices</h4>
-		<div class="tabbable"> <!-- Only required for left/right tabs -->
-		  <ul class="nav nav-tabs">
-		    <li class="active"><a href="#tab1" data-toggle="tab">Obrigatórios</a></li>
-		    <li><a href="#tab2" data-toggle="tab">Não Obrigatórios</a></li>
-		    <li><a href="#tab3" data-toggle="tab">Personalizados</a></li>
-		  </ul>
-		  <div class="tab-content">
-		    <div class="tab-pane active" id="tab1">
-		    	<p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100">
-		      	{{form.usr_responsavel}}
-        		{{form.tipo_documento}}</p>
-		    </div>
-		    <div class="tab-pane" id="tab2">
-		      	<p>{{form.data_validade}}
-		        {{form.data_descarte}}
-		        <label><b>Associar Normas:</b></label>
-		        {{form.norma}}</p>
-		    </div>
-		    <div class="tab-pane" id="tab3">
-		      	<p>{% for indice in iListaIndices %}
-	            <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
-	            {% empty %}
-	            {% endfor %}</p>
-		    </div>
-		  </div>
+		
+		<div class="row">
+			<div class="span7">
+				{% load dynamictwain %}
+
+		        <form action="/foobar/" method="post" accept-charset="utf-8">
+		
+		            {% scan_widget "400x450" "False" %}
+		
+		            {% submit_form_with_scan %}
+		
+		        </form>
+        	</div>
+			<div class="span5">
+				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
+				<h4>Índices</h4>
+				<div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				        Inserir índices obrigatórios
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse in">
+				      <div class="accordion-inner">
+				        <p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+				        <p>{{form.usr_responsavel}}</p>
+				        <p>{{form.tipo_documento}}</p>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				        Inserir índices opcionais
+				      </a>
+				    </div>
+				    <div id="collapseTwo" class="accordion-body collapse">
+				      <div class="accordion-inner">
+						<p>{{form.data_validade}}</p>
+				        <p>{{form.data_descarte}}</p>
+				        <p><label>Associar Normas:</label></p>
+						{{form.norma}}
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+				        Inserir índices personalizados
+				      </a>
+				    </div>
+				    <div id="collapseThree" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        <p>{% for indice in iListaIndices %}
+					    <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+					    {% empty %}
+					    {% endfor %}</p>
+				      </div>
+				    </div>
+				  </div>
+				</div>		
+			
+				<div class="form-actions" style="float: right;">
+					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+			    </div>
+			    </form>	
+			</div>
+				
 		</div>
-		<hr class="bs-docs-separator">
-		<h4>Documentos</h4>
-		<table class="table table-striped">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Arquivo</th>
-              <th>Tamanho</th>
-            </tr>
-          </thead>
-          <tbody>
-          	{% for importar in iListaImportar %}
-            <tr>
-              <td>{{importar.numero}}</td>
-              <td>{{importar.nomeArquivo}}</td>
-              <td>{{importar.tamanho}}</td>
-            </tr>
-            {% empty %}
-			{% endfor %}
-          </tbody>
-        </table>
-		<div class="form-actions" style="float: right;">
-			<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
-		</div>
-		</form>
-	</div>	
+				
+	</div>
 	{% endif %}
   	
   	</body>
