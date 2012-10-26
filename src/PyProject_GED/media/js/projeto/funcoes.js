@@ -9,7 +9,7 @@ $(document).ready
 		intervaloRefreshPendencias(300000);
 		
 		notificaPendencias();
-				
+		
 	//------------------------------Eventos------------------------------
 		
 		if (window.location.pathname == '/importar/')
@@ -35,7 +35,18 @@ $(document).ready
 		if (window.location.pathname == '/checkin/')
 		{
 			$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
-		}		
+		}
+		
+		if ((window.location.pathname).indexOf("visualizar") != -1)
+		{
+			console.log('visualizando...');
+			configuraZoom();
+			$('#id_editaimagensinverter').click(function() {inverteImagem();});
+			$('#id_editaimagensdireita').click(function() {rotacionaImagem(1);});
+			$('#id_editaimagensesquerda').click(function() {rotacionaImagem(2);});
+			$('#id_editaimagenszoommais').click(function() {zoomIn();});
+			$('#id_editaimagenszoommenos').click(function() {zoomOut();});
+		}
 	}
 );
 
@@ -115,4 +126,49 @@ function intervaloRefreshPendencias(vIntervalo)
 	setInterval(function(){
 		notificaPendencias()
      }, vIntervalo);
+}
+
+function inverteImagem()
+{
+	$.post('/negativar_imagem/', function(data){
+		console.log(data);
+		d = new Date();
+		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
+		
+	});
+	
+}
+
+function rotacionaImagem(vLado)
+{
+	$.post('/rotacionar_imagem/'+vLado+'/', function(data){
+		console.log(data);
+		d = new Date();
+		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
+		
+	});
+}
+
+function configuraZoom()
+{
+	$('#id_img-polaroid').smoothZoom({
+        width: '100%',
+        height: '100%',
+        zoom_BUTTONS_SHOW : 'NO',
+        pan_BUTTONS_SHOW : 'NO',
+        pan_LIMIT_BOUNDARY : 'YES',
+        background_COLOR: 'transparent',
+        border_TRANSPARENCY: 0
+    });
+}
+
+
+function zoomIn()
+{
+	$('#id_img-polaroid').smoothZoom('zoomIn');
+}
+
+function zoomOut()
+{
+	$('#id_img-polaroid').smoothZoom('zoomOut');
 }

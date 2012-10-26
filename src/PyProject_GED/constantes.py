@@ -12,6 +12,7 @@ cntConfiguracaoPastaDocumentos          = 'documentos'
 cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
+cntConfiguracaoDominio                  = 'trackdoc.com.br'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -140,5 +141,16 @@ cntSocketTCPIP                  = '127.0.0.1'
 cntSocketTCPPorta               = 9999
 
 #Tipo Mesagem JSON
-cntTipoMensagemJSONNormal       = "1"
-cntTipoMensagemJSONErro         = "2"
+cntTipoMensagemJSONNormal       = '1'
+cntTipoMensagemJSONErro         = '2'
+
+#Classe Mesagem JSON
+cntClasseMensagemImportacao     = '1'
+cntClasseMensagemLogin          = '2'
+cntClasseMensagemCadastro       = '3'
+cntClasseMensagemConfirmacao    = '4'
+
+#Edicao Imagem
+cntEdicaoImagemRotacaoDireita   = 1
+cntEdicaoImagemRotacaoEsquerda  = 2
+cntEdicaoImagemGraus            = 90

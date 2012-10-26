@@ -134,7 +134,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-#    'django.contrib.flatpages',
     'monkey_patch',
     'flatpages',
     'autenticacao',
@@ -150,17 +149,18 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'ocr',
     'chronograph',
-#    'scanner',
     'gerenciamento',
     'imagem',
     'relatorios',
     'assinatura',
     'servidor',
+    'loginurl',
 )
 
 AUTHENTICATION_BACKENDS = (
     'autenticacao.backends.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'loginurl.backends.LoginUrlBackend',
 )
 
 # A sample logging configuration. The only tangible logging

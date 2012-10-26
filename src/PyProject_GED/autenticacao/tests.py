@@ -60,6 +60,11 @@ class Test(TestCase):
         iUsuario= Usuario().obtemUsuarioPeloID(iIDUsuario)
         self.assertEquals(iIDUsuario, iUsuario.id)
     
+    def testObtemUsuarioPeloEmail(self):
+        iEmail= Usuario.objects.all()[0].email
+        iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
+        self.assertEquals(iEmail, iUsuario.email)
+    
     def testObtemEmpresaDoUsuario(self):
         iUsuario= Usuario.objects.all()[0]
         iEmpresa= Usuario().obtemEmpresaDoUsuario(iUsuario.id)
@@ -110,6 +115,11 @@ class Test(TestCase):
         iAutenticou= Usuario().autenticaUsuario(iEmail, iSenha)
         self.assertEquals(None, iAutenticou)
         
+    def testObtemURLDeAutenticacao(self):
+        iUsuario= Usuario.objects.all()[0]
+        iURL= Usuario().obtemURLDeAutenticacao(iUsuario.email)
+        self.assertEquals(True, len(iURL) > 0)
+    
     #-----------------------------------------------------MOKS---------------------------------------------------
     
     def mokarEmpresa(self):

@@ -13,7 +13,6 @@ from django.db.models               import get_model
 from PyProject_GED                  import constantes
 from django.conf                    import settings
 
-
 class Controle(object):
     
     oLogger= logging.getLogger('PyProject_GED.controle')
@@ -140,10 +139,14 @@ class Controle(object):
             self.getLogger().error('Nao foi possivel negativar a imagem: ' + str(e))
             return False
     
-    def rotacionaImagem(self, vDiretorioImagemTemporaria, vRotacao):
+    def rotacionaImagem(self, vDiretorioImagemTemporaria, vLado):
         try:
+            if int(vLado) == constantes.cntEdicaoImagemRotacaoDireita:
+                iRotacao= constantes.cntEdicaoImagemGraus * -1
+            else:
+                iRotacao= constantes.cntEdicaoImagemGraus 
             iImagem = Image.open(vDiretorioImagemTemporaria)
-            iImagem = iImagem.rotate(int(vRotacao))
+            iImagem = iImagem.rotate(int(iRotacao))
             iImagem.save(vDiretorioImagemTemporaria)
             return True
         except Exception, e:
