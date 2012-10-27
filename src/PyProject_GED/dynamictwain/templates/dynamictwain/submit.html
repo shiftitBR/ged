@@ -1,7 +1,4 @@
-<!--<input id="submit_scan" type="submit" value="Continue">-->
-
-<input id="fat-btn" type="submit" value="Continue">
-
+<input id="submit_scan" type="submit" value="Continue">
 
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
@@ -14,6 +11,7 @@
         console.log(ORIG_ACTION);
         var ORIG_METHOD = form.attr('method');
         console.log(ORIG_METHOD);
+                
         var UID = null;
 
         form.submit(function(){
@@ -39,7 +37,9 @@
                     console.log(UPLOAD_PATH);
                     console.log("upload["+UID+"].pdf");
 
-                    window.location.href="/twain/redirect/?uid="+UID;
+                    //window.location.href="/twain/redirect/?uid="+UID;
+                    
+                    $.post('/digitalizar/', function(data){});
                 }
 
             });

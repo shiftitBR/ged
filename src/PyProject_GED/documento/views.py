@@ -21,6 +21,7 @@ from forms                              import FormCheckin, FormUploadDeArquivo
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.qualidade.models     import Norma, Norma_Documento
 from PyProject_GED.assinatura.models    import Assinatura
+from django.views.decorators.csrf       import csrf_exempt
 
 import datetime
 import os
@@ -543,16 +544,15 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         context_instance=RequestContext(vRequest),
         )       
 
-@login_required 
-def digitalizar(vRequest, vTitulo):
+@csrf_exempt
+def digitalizar(request):
     try :
         print '>>>>>>>>>>>>>>>>>>>> digitalizar'
-        if vRequest.POST:
+        print request
+        if request.POST:
             print '>>>>>>>>>>>>>>>>>>>>>>>> post'
-            print vRequest.POST.get['some_name']
-            f = vRequest.FILES['RemoteFile']
-            print type(f)
-            print f
+            print request.POST                    
+            return HttpResponse(True)
             
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel obter pasta raiz: ' + str(e))
@@ -561,5 +561,5 @@ def digitalizar(vRequest, vTitulo):
     return render_to_response(
         'acao/digitalizar.html',
         locals(),
-        context_instance=RequestContext(vRequest),
+        context_instance=RequestContext(request),
         )     

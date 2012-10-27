@@ -15,8 +15,7 @@ def upload(request):
     print '>>>>>>>>>>>>>>>>>>>>>> upload view'
     if not request.method == 'POST':
         pass # gofuckyourself
-
-
+    
     # RemoteFile
     f = request.FILES['RemoteFile']
     print type(f)
