@@ -615,11 +615,11 @@ def digitalizar(vRequest, vTitulo):
                     ControleImagem().comprimeImagem(iVersao)
                 finally:
                     Pendencia().criaPendenciasDoWorkflow(iDocumento)
-                    Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoImportar, 
+                    Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoDigitalizar, 
                                                iUsuario.id, vRequest.session['IDEmpresa'])
-                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
+                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDigitalizar, iUsuario.id, 
                                               vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
+                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoDigitalizar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
                 return False
