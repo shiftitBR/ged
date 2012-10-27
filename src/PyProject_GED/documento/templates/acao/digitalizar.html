@@ -35,21 +35,13 @@
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-		
+		<form id='id_form_scanner' action="" method="post" accept-charset="utf-8">{% csrf_token %}
 		<div class="row">
 			<div class="span7">
 				{% load dynamictwain %}
-
-		        <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
-		
-		            {% scan_widget "400x450" "False" %}
-		
-		            {% submit_form_with_scan %}
-		
-		        </form>
+		        {% scan_widget "400x450" "False" %}
         	</div>
 			<div class="span5">
-				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
 				<h4>Índices</h4>
 				<div class="accordion" id="accordion2">
 				  <div class="accordion-group">
@@ -99,13 +91,12 @@
 				</div>		
 			
 				<div class="form-actions" style="float: right;">
-					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+					<input data-loading-text="Carregando..." class="btn btn-primary" id="submit_scan" type="submit" value="Importar Documento">
 			    </div>
-			    </form>	
 			</div>
 				
 		</div>
-				
+	 	</form>	
 	</div>
 	{% endif %}
   	

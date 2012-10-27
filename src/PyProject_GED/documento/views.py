@@ -570,76 +570,77 @@ def digitalizar(vRequest, vUID=None):
             return False
     
     if vRequest.method == 'POST':
-        if vUID != '0':
+        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+        if vUID == '0':
             vRequest.session['uID']= vUID
+            messages.warning(vRequest, 'Nenhum arquivo Digitalizado para ser adicionado!')
         else:
-            iUID = vRequest.session['uID']
-            iImagemScanner = TempFormData.objects.get(pk=iUID)
-            iArquivo= iImagemScanner.scan
-        """form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
-        if form.is_valid():
-            try :
-                iCaminhoArquivo = ""
-                iNomeArquivo    = ""
-                #Adicionar na tabela documeto e versao
-                if len(vRequest.POST.get('data_validade')) != 10:
-                    iDataValidade= datetime.datetime.now()
-                else:
-                    iListaDataValidade= vRequest.POST.get('data_validade').split('/')
-                    iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
-                if len(vRequest.POST.get('data_descarte')) != 10:
-                    iDataDescarte= datetime.datetime.now()
-                else:
-                    iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
-                    iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
-                iAssunto    = vRequest.POST.get('assunto')
-                iIDResponsavel= vRequest.POST.get('usr_responsavel')
-                iResponsavel= Usuario().obtemUsuarioPeloID(iIDResponsavel)
-                if vRequest.POST.get('eh_publico') != None:
-                    iEh_Publico = True
-                else:
-                    iEh_Publico = False
-                iIDTipo_Documento = vRequest.POST.get('tipo_documento')
-                iPasta = Pasta().obtemPastaPeloID(vRequest.session['IDPasta'])
-                #Salver Multiuploader
-                iCaminhoPasta = constantes.cntConfiguracaoDiretorioDocumentos%vRequest.session['IDEmpresa'] + "/" + iPasta.diretorio
-                shutil.move(iCaminhoArquivo, iCaminhoPasta)
-                iImage               = MultiuploaderImage()
-                iImage.filename      = iNomeArquivo
-                iImage.image         = iCaminhoPasta + "/" + iNomeArquivo
-                iImage.key_data      = iImage.key_generate
-                iImage.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
-                iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
-                                                         iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
-                iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
-                iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
-                                                1, 1, iImage.key_data, iProtocolo)
-                #Associar Normas
-                iNormas = vRequest.POST.getlist('norma')
-                for i in range(len(iNormas)):
-                    iNorma = Norma().obtemNorma(iNormas[i])
-                    Norma_Documento().criaNorma_Documento(iNorma, iDocumento)
-                #Salvar Indices
-                for i in range(len(iListaIndices)):
-                    iIndice = iListaIndices[i]
-                    iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
-                    if iValor != '':
-                        Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
-                try:
-                    ControleOCR().executaOCR(iVersao)
-                    ControleImagem().comprimeImagem(iVersao)
-                finally:
-                    Pendencia().criaPendenciasDoWorkflow(iDocumento)
-                    Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoDigitalizar, 
-                                               iUsuario.id, vRequest.session['IDEmpresa'])
-                    Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDigitalizar, iUsuario.id, 
-                                              vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoDigitalizar) + '/')
-            except Exception, e:
-                oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
-                return False
-        else:
-            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])"""
+            if form.is_valid():
+                try :
+                    iUID = vRequest.session['uID']
+                    iImagemScanner = TempFormData.objects.get(pk=iUID)
+                    iArquivo= iImagemScanner.scan
+                    iCaminhoArquivo = iArquivo
+                    iNomeArquivo    = "teste"
+                    #Adicionar na tabela documeto e versao
+                    if len(vRequest.POST.get('data_validade')) != 10:
+                        iDataValidade= datetime.datetime.now()
+                    else:
+                        iListaDataValidade= vRequest.POST.get('data_validade').split('/')
+                        iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
+                    if len(vRequest.POST.get('data_descarte')) != 10:
+                        iDataDescarte= datetime.datetime.now()
+                    else:
+                        iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
+                        iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
+                    iAssunto    = vRequest.POST.get('assunto')
+                    iIDResponsavel= vRequest.POST.get('usr_responsavel')
+                    iResponsavel= Usuario().obtemUsuarioPeloID(iIDResponsavel)
+                    if vRequest.POST.get('eh_publico') != None:
+                        iEh_Publico = True
+                    else:
+                        iEh_Publico = False
+                    iIDTipo_Documento = vRequest.POST.get('tipo_documento')
+                    iPasta = Pasta().obtemPastaPeloID(vRequest.session['IDPasta'])
+                    #Salver Multiuploader
+                    iCaminhoPasta = constantes.cntConfiguracaoDiretorioDocumentos%vRequest.session['IDEmpresa'] + "/" + iPasta.diretorio
+                    shutil.move(iCaminhoArquivo, iCaminhoPasta)
+                    iImage               = MultiuploaderImage()
+                    iImage.filename      = iNomeArquivo
+                    iImage.image         = iCaminhoPasta + "/" + iNomeArquivo
+                    iImage.key_data      = iImage.key_generate
+                    iImage.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
+                    iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
+                                                             iAssunto, iEh_Publico, iResponsavel, iDataValidade, iDataDescarte)
+                    iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, 1) 
+                    iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
+                                                    1, 1, iImage.key_data, iProtocolo)
+                    #Associar Normas
+                    iNormas = vRequest.POST.getlist('norma')
+                    for i in range(len(iNormas)):
+                        iNorma = Norma().obtemNorma(iNormas[i])
+                        Norma_Documento().criaNorma_Documento(iNorma, iDocumento)
+                    #Salvar Indices
+                    for i in range(len(iListaIndices)):
+                        iIndice = iListaIndices[i]
+                        iValor  = vRequest.POST.get('indice_%s' % iIndice.id_indice)
+                        if iValor != '':
+                            Indice_Versao_Valor().salvaValorIndice(iValor, iIndice.id_indice, iVersao.id_versao)
+                    try:
+                        ControleOCR().executaOCR(iVersao)
+                        ControleImagem().comprimeImagem(iVersao)
+                    finally:
+                        Pendencia().criaPendenciasDoWorkflow(iDocumento)
+                        Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoDigitalizar, 
+                                                   iUsuario.id, vRequest.session['IDEmpresa'])
+                        Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDigitalizar, iUsuario.id, 
+                                                  vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
+                    return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoDigitalizar) + '/')
+                except Exception, e:
+                    oControle.getLogger().error('Nao foi possivel get digitalizar: ' + str(e))
+                    return False
+            else:
+                form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
     return render_to_response(

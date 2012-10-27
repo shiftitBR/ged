@@ -5,9 +5,6 @@ from django.core.urlresolvers import resolve
 
 from PyProject_GED.dynamictwain.models import TempFormData
 
-
-
-
 @csrf_exempt
 def upload(request):
     if not request.method == 'POST':
