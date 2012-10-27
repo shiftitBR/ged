@@ -9,27 +9,105 @@
 {% endblock style %}
 
 <body>
-	<div class="container-fluid">
-  		<header class="jumbotron subhead" id="overview">
-		  <h2>Visualizar Documento</h2>
-		</header>
+  	<div class="container">
+		<header class="jumbotron subhead" id="overview">
+		  <h2>Digitalização de Documento</h2>
+		</header>	
+		{% if form.errors %}
+        <div class="well well-small wellbranco">
+            <p><b>O documento não pode ser Digitalizado. Por favor, verifique os erros abaixo:</b></p>  
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+        </div>
+	    {% endif %}
+		
+		{% if messages %}
+		<div class="alert alert-info">
+			<ul class="messages">
+			    {% for message in messages %}
+			    	<li><b>{{ message }}</b></li>
+			    {% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+	</div> 	
+  	
+  	{% if iPossuiPermissao %}
+	<div class="container">
+		
+		<div class="row">
+			<div class="span7">
+				{% load dynamictwain %}
+
+		        <form action="" method="post" accept-charset="utf-8">
+		
+		            {% scan_widget "400x450" "False" %}
+		
+		            {% submit_form_with_scan %}
+		
+		        </form>
+        	</div>
+			<div class="span5">
+				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
+				<h4>Índices</h4>
+				<div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				        Inserir índices obrigatórios
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse in">
+				      <div class="accordion-inner">
+				        <p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+				        <p>{{form.usr_responsavel}}</p>
+				        <p>{{form.tipo_documento}}</p>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				        Inserir índices opcionais
+				      </a>
+				    </div>
+				    <div id="collapseTwo" class="accordion-body collapse">
+				      <div class="accordion-inner">
+						<p>{{form.data_validade}}</p>
+				        <p>{{form.data_descarte}}</p>
+				        <p><label>Associar Normas:</label></p>
+						{{form.norma}}
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+				        Inserir índices personalizados
+				      </a>
+				    </div>
+				    <div id="collapseThree" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        <p>{% for indice in iListaIndices %}
+					    <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+					    {% empty %}
+					    {% endfor %}</p>
+				      </div>
+				    </div>
+				  </div>
+				</div>		
+			
+				<div class="form-actions" style="float: right;">
+					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+			    </div>
+			    </form>	
+			</div>
 				
-        {% load dynamictwain %}
-
-        <form action="" method="POST" accept-charset="utf-8"> {% csrf_token %}
-
-            <input type="text" name="some_name" value="">
-
-            {% scan_widget "600x800" "False" %}
-
-            {% submit_form_with_scan %}
-            
-            <!--<div class="form-actions" style="float: right;">
-                    <button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Salvar</button>
-            </div>-->
-
-        </form>
-  	</div>
+		</div>
+				
+	</div>
+	{% endif %}
   	
   	</body>
 

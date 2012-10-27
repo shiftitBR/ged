@@ -33,9 +33,7 @@
 	    <center><strong>Informações Gerais sobre o Documento</strong></center>
 	  	</div>
 		<div class="row-fluid">
-			<div class="span1">
-			</div>
-			<div class="span5">
+			<div class="span6">
 				<p><b>Assunto:</b> {{iDocumento.assunto}}</p>
 				<p><b>Tipo de Documento:</b>  {{iDocumento.dscTipoDoc}}</p>
 				<p><b>Versao Atual:</b>  {{iUltimaVersao}}</p>
@@ -81,7 +79,7 @@
 		    {% endif %}
 			   	<div class="container-fluid">
 				  <div class="row-fluid">
-				    <div class="span8">
+				    <div class="span6">
 						<p><b>Criador:</b> {{iVersao.nomeCriador}}</p>
 						<p><b>Nome do Arquivo:</b>  {{iVersao.nomeArquivo}}</p>
 						<p><b>Data de Criação:</b>  {{iVersao.dataCriacao}}</p>
@@ -89,7 +87,7 @@
 						<p><b>Descrição da Modificação:</b>  {{iVersao.dsc_modificacao}}</p>
 						{% endif %}
 				    </div>
-				    <div class="span4">
+				    <div class="span6">
 						<p><b>Estado:</b>  {{iVersao.estado}}</p>
 						<p><b>Protocolo:</b>  {{iVersao.protocolo}}</p>
 						{% if iVersao.ehAssinado %}

@@ -6019,3 +6019,11 @@ div.shiftit:hover {
          -moz-border-radius: 6px;
               border-radius: 6px;
 }
+
+.trackdochome {
+	background-image: url('../../img/projeto/trackdoc.png');
+	width: 500px;
+	height: 59px;
+	margin: auto;
+}
+

@@ -73,6 +73,8 @@ def sucesso(vRequest, vTitulo, vAcao=None):
         iMensagem = 'O e-mail foi enviado com sucesso.'  
     elif iAcao == constantes.cntFuncaoPublicar:
         iMensagem = 'A publicação foi encaminhada com sucesso.'      
+    elif iAcao == constantes.cntFuncaoDigitalizar:
+        iMensagem = 'A Imagem foi Digitalizada com sucesso.' 
     
     return render_to_response(
         'mensagem/sucesso.html',
