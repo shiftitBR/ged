@@ -21,22 +21,21 @@ from forms                              import FormCheckin, FormUploadDeArquivo
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.qualidade.models     import Norma, Norma_Documento
 from PyProject_GED.assinatura.models    import Assinatura
-<<<<<<< HEAD
 from django.views.decorators.csrf       import csrf_exempt
-=======
 from PyProject_GED.envioemail.models    import Email
->>>>>>> 6378853a79bd9c881958c10316e3fcc42a89d83d
+
 
 import datetime
 import os
 import urllib
-<<<<<<< HEAD
+
 from PyProject_GED.envioemail.models import Email
 import json
 import re
-=======
+
 import shutil
->>>>>>> 6378853a79bd9c881958c10316e3fcc42a89d83d
+from PyProject_GED.dynamictwain.models import TempFormData
+
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -553,7 +552,7 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
         )       
 
 @csrf_exempt
-def digitalizar(request):
+def digitalizar(vRequest, vUID=None):
     try :
         iUser = vRequest.user
         if iUser:
@@ -570,8 +569,14 @@ def digitalizar(request):
             oControle.getLogger().error('Nao foi possivel get digitalizar: ' + str(e))
             return False
     
-    if vRequest.POST:
-        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+    if vRequest.method == 'POST':
+        if vUID != '0':
+            vRequest.session['uID']= vUID
+        else:
+            iUID = vRequest.session['uID']
+            iImagemScanner = TempFormData.objects.get(pk=iUID)
+            iArquivo= iImagemScanner.scan
+        """form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try :
                 iCaminhoArquivo = ""
@@ -634,11 +639,11 @@ def digitalizar(request):
                 oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
                 return False
         else:
-            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
+            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])"""
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
     return render_to_response(
         'acao/digitalizar.html',
         locals(),
-        context_instance=RequestContext(request),
+        context_instance=RequestContext(vRequest),
         )     
