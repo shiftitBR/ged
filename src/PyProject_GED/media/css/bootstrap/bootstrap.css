@@ -5820,7 +5820,7 @@ div.shiftit {
 	position: absolute;
 	right: 3%; 
 	bottom: 8px;
-	background-image: url('../../img/creditos/shiftit.png');
+	background-image: url('../../img/projeto/shiftit.png');
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
 	width:92px;
@@ -5832,10 +5832,10 @@ div.avancodigital {
 	position: absolute;
 	left: 3%; 
 	bottom: 8px;
-	/*background-image: url('../../img/creditos/shiftit.png');*/
+	background-image: url('../../img/projeto/avancodigitalfooter.png');
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
-	/*width:92px;*/
+	width:220px;
 	cursor:pointer;
 	float: left;
 }
@@ -5844,7 +5844,7 @@ div.shiftit:hover {
 	position: absolute;
 	right: 3%; 
 	bottom: 8px;
-	background-image: url('../../img/creditos/shiftit.png');
+	background-image: url('../../img/projeto/shiftit.png');
 	background-position: 0 -84px; width: 92px; height: 34px;  
 	height: 34px; 
 	width:92px;
