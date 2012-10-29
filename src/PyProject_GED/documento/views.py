@@ -566,10 +566,10 @@ def digitalizar(vRequest, vUID=None):
             return False
     
     if vRequest.method == 'POST':
-        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if vUID != '0':
             vRequest.session['uID']= vUID
         else:
+            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
             if form.is_valid():
                 try :
                     iUID = vRequest.session['uID']
