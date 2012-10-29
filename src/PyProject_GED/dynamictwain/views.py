@@ -1,26 +1,21 @@
 import json, re
-from django.shortcuts import render_to_response as render
 from django.views.decorators.csrf import csrf_exempt
-from django.template import RequestContext
 from django.http import HttpResponse
 from django.core.urlresolvers import resolve
 
 from PyProject_GED.dynamictwain.models import TempFormData
 
-
-
-
 @csrf_exempt
 def upload(request):
     if not request.method == 'POST':
-        pass # gofuckyourself
-
-
+        pass
+    
     # RemoteFile
     f = request.FILES['RemoteFile']
 
     # Extract the ID.
     uid = re.match('.*\[(.+)\].*', f.name).group(1)
+    request.session['uID']= uid
     real_filename = f.name.replace("[%s]" % uid, '')
 
     # Grab the temp data
@@ -28,7 +23,7 @@ def upload(request):
     tmp.scan = f
     tmp.save()
     
-    return HttpResponse()
+    return HttpResponse(True)
 
 
 @csrf_exempt
@@ -39,9 +34,7 @@ def form(request):
     # Create a temporary object for storing request data
     tmp = TempFormData(orig_url=request.GET['orig'],json_get=get, json_post=post)
     tmp.save()
-
     uid = tmp.pk
-
     response = json.dumps({'uid':uid})
 
     return HttpResponse(response, mimetype='application/json')
@@ -51,7 +44,6 @@ def form(request):
 def redirect(request):
     uid = request.GET['uid']
     data = TempFormData.objects.get(pk=uid)
-
 
     # We create a brand new request that we route internally to the
     # developer's view.

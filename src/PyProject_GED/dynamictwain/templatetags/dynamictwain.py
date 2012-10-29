@@ -8,6 +8,7 @@ register = template.Library()
 
 @register.inclusion_tag('dynamictwain/upload.html')
 def upload_scan():
+    print '>>>>>>>>>>>>>>>>>>>>>> upload tag'
     return {}
 
 @register.inclusion_tag('dynamictwain/submit.html')
@@ -35,7 +36,7 @@ def scan_widget(size="600x800", multiple=True):
     data = {
         'base_url': getattr(settings,'DYNAMIC_TWAIN_MEDIA_ROOT',"/site_media/dynamic_twain/"),
         'default_resolution': getattr(settings,'DYNAMIC_TWAIN_DEFAULT_RESOLUTION', 150),
-        'server': getattr(settings, 'DYNAMIC_TWAIN_SERVER', 'localhost'),
+        'server': getattr(settings, 'DYNAMIC_TWAIN_SERVER', '192.168.1.17'),
         'upload_path': getattr(settings, 'DYNAMIC_TWAIN_UPLOAD_PATH', default_upload_path),
         'width': width,
         'height': height,

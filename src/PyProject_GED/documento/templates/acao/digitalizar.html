@@ -12,8 +12,7 @@
   	<div class="container">
 		<header class="jumbotron subhead" id="overview">
 		  <h2>Digitalização de Documento</h2>
-		</header>
-		
+		</header>	
 		{% if form.errors %}
         <div class="well well-small wellbranco">
             <p><b>O documento não pode ser Digitalizado. Por favor, verifique os erros abaixo:</b></p>  
@@ -22,7 +21,7 @@
             {% endfor %}
         </div>
 	    {% endif %}
-		
+
 		{% if messages %}
 		<div class="alert alert-info">
 			<ul class="messages">
@@ -36,17 +35,17 @@
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-		
+
 		<div class="row">
 			<div class="span7">
 				{% load dynamictwain %}
 
-		        <form action="/foobar/" method="post" accept-charset="utf-8">
-		
+		        <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
+
 		            {% scan_widget "400x450" "False" %}
-		
+
 		            {% submit_form_with_scan %}
-		
+
 		        </form>
         	</div>
 			<div class="span5">
@@ -98,15 +97,15 @@
 				    </div>
 				  </div>
 				</div>		
-			
+
 				<div class="form-actions" style="float: right;">
 					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
 			    </div>
 			    </form>	
 			</div>
-				
+
 		</div>
-				
+
 	</div>
 	{% endif %}
   	
