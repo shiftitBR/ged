@@ -575,7 +575,7 @@ def digitalizar(vRequest, vUID=None):
                     iUID = vRequest.session['uID']
                     iImagemScanner = TempFormData.objects.get(pk=iUID)
                     iArquivo= iImagemScanner.scan
-                    iCaminhoArquivo = settings.MEDIA_ROOT + "/" + iArquivo
+                    iCaminhoArquivo = settings.MEDIA_ROOT + "/" + str(iArquivo)
                     iNomeArquivo    = os.path.basename(iCaminhoArquivo)
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
