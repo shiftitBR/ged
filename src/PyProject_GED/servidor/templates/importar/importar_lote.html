@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% block scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/projeto/mascaras.js"></script> 
 {% include "./media/js.html" %}
 {% endblock scripts %}
 
@@ -52,7 +53,7 @@
 				    </div>
 				    <div id="collapseOne" class="accordion-body collapse in">
 				      <div class="accordion-inner">
-				        <p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+				        <p><input id="id_assunto_lote" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
 				        <p>{{form.usr_responsavel}}</p>
 				        <p>{{form.tipo_documento}}</p>
 				      </div>

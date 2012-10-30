@@ -9,3 +9,6 @@ class TempFormData(models.Model):
     json_post = models.TextField()
     orig_url = models.TextField()
     scan = models.FileField(blank=False, upload_to='dynamictwain_temp')
+    
+    def __unicode__(self):
+        return self.image.name

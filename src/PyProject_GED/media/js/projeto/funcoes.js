@@ -14,27 +14,37 @@ $(document).ready
 		
 		if (window.location.pathname == '/importar/')
 		{
-			$('#id_assunto_importar').keydown(maximoLength('#id_assunto_importar', 100, true));
+			$('#id_assunto_importar').keydown(maximoLength('#id_assunto_importar', 100, false));
 		}
 		
 		if (window.location.pathname == '/encaminhar/')
 		{
-			$('#id_descricao_encaminhar').keypress(maximoLength('#id_descricao_encaminhar', 200, true));
+			$('#id_descricao_encaminhar').keypress(maximoLength('#id_descricao_encaminhar', 200, false));
 		}
 		
 		if (window.location.pathname == '/aprovar_documento/')
 		{
-			$('#aprovar_feedback').keypress(maximoLength('#aprovar_feedback', 200, true));
+			$('#aprovar_feedback').keypress(maximoLength('#aprovar_feedback', 200, false));
 		}
 		
 		if (window.location.pathname == '/reprovar_documento/')
 		{
-			$('#reprovar_feedback').keypress(maximoLength('#reprovar_feedback', 200, true));
+			$('#reprovar_feedback').keypress(maximoLength('#reprovar_feedback', 200, false));
 		}
 		
 		if (window.location.pathname == '/checkin/')
 		{
-			$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, true));
+			$('#id_descricao_checkin').keypress(maximoLength('#id_descricao_checkin', 200, false));
+		}
+		
+		if (window.location.pathname == '/digitalizar/0/')
+		{
+			$('#id_assunto_digitalizar').keydown(maximoLength('#id_assunto_digitalizar', 100, false));
+		}
+		
+		if (window.location.pathname == '/importar_lote/')
+		{
+			$('#id_assunto_lote').keydown(maximoLength('#id_assunto_lote', 100, false));
 		}
 		
 		if ((window.location.pathname).indexOf("visualizar") != -1)
