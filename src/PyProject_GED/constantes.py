@@ -139,7 +139,7 @@ cntServidorFTPLogin             = 'trackdoc'
 cntServidorFTPSenha             = 'trk@D0C+412'
 
 #Socket TCP
-cntSocketTCPIP                  = '127.0.0.1'
+cntSocketTCPIP                  = '0.0.0.0'
 cntSocketTCPPorta               = 7043
 
 #Tipo Mesagem JSON
