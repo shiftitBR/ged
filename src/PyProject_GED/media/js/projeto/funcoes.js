@@ -49,7 +49,6 @@ $(document).ready
 		
 		if ((window.location.pathname).indexOf("visualizar") != -1)
 		{
-			console.log('visualizando...');
 			configuraZoom();
 			$('#id_editaimagensinverter').click(function() {inverteImagem();});
 			$('#id_editaimagensdireita').click(function() {rotacionaImagem(1);});
@@ -141,7 +140,6 @@ function intervaloRefreshPendencias(vIntervalo)
 function inverteImagem()
 {
 	$.post('/negativar_imagem/', function(data){
-		console.log(data);
 		d = new Date();
 		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
 		
@@ -152,7 +150,6 @@ function inverteImagem()
 function rotacionaImagem(vLado)
 {
 	$.post('/rotacionar_imagem/'+vLado+'/', function(data){
-		console.log(data);
 		d = new Date();
 		$("#id_img-polaroid").attr("src", data+'?'+d.getTime());
 		

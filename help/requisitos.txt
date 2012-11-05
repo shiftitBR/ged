@@ -1,17 +1,17 @@
 - Django 1.3
 - Python 2.7
-- South (easy-install south)
-- Fabric (easy-istall fabric)
+- GCC C++ (yum install gcc-c++)
+- South (easy_install south)
+- Fabric (easy_install fabric)
 - Sorl-thumbnail (pip install sorl-thumbnail)
 - PIL
 - python-imaging (yum install python-imaging)
 - PDF Miner (pip install pdfminer)
 - PyUNO (yum install libreoffice-pyuno)
 - LibreOficce
-- GCC C++
 - Leptonica 1.69 (http://code.google.com/p/python-tesseract/wiki/HowToCompilePythonTesseract4Fedora)
 - Tesseract (http://code.google.com/p/tesseract-ocr/wiki/TesseractSvnInstallation)
-- Django-Chronograph (pio install django-chronograph)
+- Django-Chronograph (pip install django-chronograph)
 - Reportlab (yum install python-reportlab)
 - Image Magick (yum install ImageMagick-devel)
 - PNGcrush (yum install pngcrush)
@@ -19,3 +19,4 @@
 - LibPNG (yum install libpng-devel)
 - Chilkat (copiar conteudo da pasta componentes/chilkat para a site-packages)
 - LoginURL (easy_install django-loginurl)
+- PsycoPG2 2.0.14 (pip install psycopg2==2.0.14)
