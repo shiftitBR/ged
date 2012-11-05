@@ -10,6 +10,7 @@ from PyProject_GED.servidor.models import Servidor, Importacao_FTP,\
     Cadastro_Biometria
 from PyProject_GED.autenticacao.models import Empresa, Tipo_de_Usuario, Usuario
 from django.contrib.auth.models import User
+from PyProject_GED import constantes
 
 
 class Test(TestCase):
@@ -51,13 +52,13 @@ class Test(TestCase):
     def testCriaRespostaEmJSONParaImportacao(self):
         iPasta= '1'
         iJSON= Servidor().criaRespostaEmJSON(iPasta)
-        self.assertEquals('{"pasta": "1", "ip": "ftp.upspace.com.br", "login": "teste@upspace.com.br", "senha": "importar@051011", "tipo": "1"}', iJSON)
+        self.assertEquals('{"pasta": "1", "ip": "%s", "login": "%s", "senha": "%s", "tipo": "1"}' % (constantes.cntServidorFTPIP, constantes.cntServidorFTPLogin, constantes.cntServidorFTPSenha), iJSON)
     
     def testCriaRespostaEmJSONParaCadastroBiometrico(self):
         iPasta= '1'
         iIDEmpresa= '1'
         iJSON= Servidor().criaRespostaEmJSON(iPasta, iIDEmpresa)
-        self.assertEquals('{"tipo": "1", "usuario": "1", "ip": "ftp.upspace.com.br", "senha": "importar@051011", "pasta": "1", "login": "teste@upspace.com.br"}', iJSON)
+        self.assertEquals('{"tipo": "1", "usuario": "1", "ip": "%s", "senha": "%s", "pasta": "1", "login": "%s"}' % (constantes.cntServidorFTPIP, constantes.cntServidorFTPSenha, constantes.cntServidorFTPLogin), iJSON)
     
     def testaSocket(self):
         Servidor().iniciaSocket_TCP()
