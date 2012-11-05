@@ -13,6 +13,7 @@ cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
 cntConfiguracaoDominio                  = 'trackdoc.com.br'
+cntConfiguracaoIPServidor               = '54.243.50.54'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
