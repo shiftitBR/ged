@@ -144,13 +144,13 @@ class Indice_Pasta(models.Model):
             iListaPastas        = Pasta.objects.all()
             iListaIndicePasta   = Indice_Pasta.objects.all()
             if vEmpresa != None:
-                iListaPasta         = iListaPastas.filter(empresa= vEmpresa)
+                iListaPastas        = iListaPastas.filter(empresa= vEmpresa)
                 iListaIndicePasta   = iListaIndicePasta.filter(pasta__empresa= vEmpresa)
             iListaPastasSemIndice   = []
             iListaPastasComIndice   = []
             for iIndicePasta in iListaIndicePasta:
                 iListaPastasComIndice.append(iIndicePasta.pasta)
-            for iPasta in iListaPasta:
+            for iPasta in iListaPastas:
                 if iPasta not in iListaPastasComIndice:
                     iListaPastasSemIndice.append(iPasta)
             return iListaPastasSemIndice
