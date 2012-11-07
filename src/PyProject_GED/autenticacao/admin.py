@@ -99,7 +99,7 @@ class AdminIndice(MultiDBModelAdmin):
         
 class AdminPasta(MultiDBModelAdmin): 
     list_display    = ('nome', 'pasta_pai')
-    search_fields   = ('pasta_pai', 'nome', )
+    search_fields   = ('id_pasta', 'diretorio', 'nome', )
     ordering        = ('pasta_pai',)
     exclude         = ('id_pasta', 'diretorio', )
     
@@ -144,7 +144,7 @@ class AdminIndicePastaForm(forms.ModelForm):
 
 class AdminIndicePasta(MultiDBModelAdmin): 
     list_display    = ('pasta',)
-    search_fields   = ('pasta',)
+    search_fields   = ()
     ordering        = ('pasta',)  
     
     form = AdminIndicePastaForm
@@ -192,7 +192,7 @@ class AdminIndicePasta(MultiDBModelAdmin):
     
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
-    search_fields   = ('usuario',)
+    search_fields   = ('id_log_usuario', 'data')
     ordering        = ('data',)
     readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'data', 'empresa')
     exclude         = ('id_log_usuario',)
@@ -256,7 +256,7 @@ class AdminGrupoPastaForm(forms.ModelForm):
 
 class AdminGrupoPasta(MultiDBModelAdmin): 
     list_display    = ('grupo',)
-    search_fields   = ('grupo',)
+    search_fields   = ()
     ordering        = ('grupo',)  
     
     form = AdminGrupoPastaForm
@@ -334,7 +334,7 @@ class AdminGrupoUsuarioForm(forms.ModelForm):
 
 class AdminGrupoUsuario(MultiDBModelAdmin): 
     list_display    = ('grupo',)
-    search_fields   = ('grupo',)
+    search_fields   = ()
     ordering        = ('grupo',)  
     
     form = AdminGrupoUsuarioForm
@@ -417,7 +417,7 @@ class AdminFuncaoGrupoForm(forms.ModelForm):
 
 class AdminFuncaoGrupo(MultiDBModelAdmin): 
     list_display    = ('grupo',)
-    search_fields   = ('grupo',)
+    search_fields   = ()
     ordering        = ('grupo',)  
     
     form = AdminFuncaoGrupoForm
@@ -460,7 +460,7 @@ class AdminFuncaoGrupo(MultiDBModelAdmin):
 
 class AdminTipoNorma(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')
-    search_fields   = ('descricao', 'empresa')
+    search_fields   = ('id_tipo_norma', 'descricao',)
     ordering        = ('descricao',)  
     exclude         = ('id_tipo_norma',)
     
@@ -473,7 +473,7 @@ class AdminTipoNorma(MultiDBModelAdmin):
     
 class AdminNorma(MultiDBModelAdmin): 
     list_display    = ('numero', 'descricao', 'tipo_norma', 'norma_pai', 'empresa')
-    search_fields   = ('norma_pai', 'descricao', 'numero', 'tipo_norma', 'empresa')
+    search_fields   = ('id_norma', 'descricao', 'numero')
     ordering        = ('numero',)  
     exclude         = ('id_norma',)
     
@@ -488,7 +488,7 @@ class AdminNorma(MultiDBModelAdmin):
     
 class AdminFirewall(MultiDBModelAdmin): 
     list_display    = ('ip', 'descricao')
-    search_fields   = ('ip', 'descricao', 'empresa')
+    search_fields   = ('ip', 'descricao')
     ordering        = ('ip',)  
     exclude         = ('id_firewall',)
     
@@ -534,7 +534,7 @@ class AdminFirewallGrupoForm(forms.ModelForm):
     
 class AdminFirewallGrupo(MultiDBModelAdmin): 
     list_display    = ('grupo',)
-    search_fields   = ('grupo',)
+    search_fields   = ()
     ordering        = ('grupo',)  
     
     form = AdminFirewallGrupoForm
@@ -606,7 +606,7 @@ class AdminFirewallGrupo2(MultiDBModelAdmin):
     
 class AdminWorkflow(MultiDBModelAdmin): 
     list_display    = ('descricao', 'tipo_de_documento', 'pasta', 'empresa')
-    search_fields   = ('descricao', 'tipo_de_documento', 'pasta')
+    search_fields   = ('descricao',)
     ordering        = ('descricao',)  
     exclude         = ('id_workflow',)
     
@@ -621,7 +621,7 @@ class AdminWorkflow(MultiDBModelAdmin):
     
 class AdminEtapaWorkflow(MultiDBModelAdmin): 
     list_display    = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
-    search_fields   = ('ordem_da_etapa', 'descricao', 'workflow', 'grupo', 'tipo_de_pendencia', 'eh_multipla')
+    search_fields   = ('ordem_da_etapa', 'descricao', )
     ordering        = ('workflow', 'ordem_da_etapa', 'descricao',)  
     exclude         = ('id_etapa_do_workflow', 'ordem_da_etapa')
     
@@ -647,7 +647,7 @@ class AdminEtapaWorkflow(MultiDBModelAdmin):
 
 class AdminTipoDocumento(MultiDBModelAdmin): 
     list_display    = ('descricao', 'empresa')
-    search_fields   = ('descricao', 'empresa')
+    search_fields   = ('id_tipo_documento', 'descricao', 'eh_nativo')
     ordering        = ('descricao',)  
     exclude         = ('id_tipo_documento', 'eh_nativo')
 
