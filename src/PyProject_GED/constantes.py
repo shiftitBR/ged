@@ -13,6 +13,7 @@ cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
 cntConfiguracaoDominio                  = 'trackdoc.com.br'
+cntConfiguracaoIPServidor               = '54.243.50.54'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -130,16 +131,16 @@ cntTipoBuscaGeral               = 1
 cntTipoBuscaPorPasta            = 2
 
 #Importacao FTP
-cntImportacaoFTPPastaRaiz       = '/ftp'
+cntImportacaoFTPPastaRaiz       = '/home/trackdoc'
 
 #Servidor FTP
-cntServidorFTPIP                = 'ftp.upspace.com.br'
-cntServidorFTPLogin             = 'teste@upspace.com.br'
-cntServidorFTPSenha             = 'importar@051011'
+cntServidorFTPIP                = '54.243.50.54'
+cntServidorFTPLogin             = 'trackdoc'
+cntServidorFTPSenha             = 'trk@D0C+412'
 
 #Socket TCP
-cntSocketTCPIP                  = '127.0.0.1'
-cntSocketTCPPorta               = 9999
+cntSocketTCPIP                  = '0.0.0.0'
+cntSocketTCPPorta               = 7043
 
 #Tipo Mesagem JSON
 cntTipoMensagemJSONNormal       = '1'
