@@ -82,14 +82,29 @@
 		        <th class="tipotabela">Protocolo</th>
 		        <th class="tipotabela">Assunto</th>
 		        <th class="tipotabela">Arquivo</th>
+		        <th class="tipotabela">Extensão</th>
 		      </tr>
 		    </thead>
 		    <tbody>
 		    {% for versao in iVersoes %}
 		      <tr>
 		        <td>{{versao.protocolo}}</td>
-		        <td>{{versao.documento.assunto}}</td>
-		        <td>{{versao.upload.filename}}</td>
+		        <td>{{versao.assunto}}</td>
+		        <td>{{versao.nome}}</td>
+		        <td>
+		        	<select name="extensao" id="id_extensao">
+						<option value="padrao">Padrão</option>
+						{% if versao.img %}
+						<option value="1">JPG</option>
+						<option value="4">TIF</option>
+						<option value="2">PNG</option>
+						<option value="3">BMP</option>
+						{% endif %}
+						{% if versao.pdf %}
+						<option value="pdf">PDF</option>
+						{% endif %}
+					</select>
+				</td>
 		      </tr>
 			{% empty %}
 			{% endfor %}	

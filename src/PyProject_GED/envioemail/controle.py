@@ -4,10 +4,15 @@ Created on Jul 18, 2012
 @author: Shift IT | www.shiftit.com.br
 '''
 
-from django.core                            import mail
-from django.conf                            import settings
+from django.core                                    import mail
+from django.conf                                    import settings
+
+from PyProject_GED.envioemail.objetos_auxiliares    import Arquivo as ArquivoAux
+from PyProject_GED.imagem.controle                  import Controle as ImagemControle
+from PyProject_GED                                  import constantes
 
 import logging
+import os
 
 class Controle(object):
     
@@ -30,5 +35,38 @@ class Controle(object):
                     )
             return True
         except Exception, e:
-            self.getLogger().getLogger('PyProject_GED.controle').error('Nao foi possivel enviar email: ' + str(e))
+            self.getLogger().error('Nao foi possivel enviar email: ' + str(e))
+            return False
+        
+    def obtemArquivoAuxiliar(self, vVersao):
+        try:
+            iArquivo = ArquivoAux()
+            iArquivo.id_versao= vVersao.id_versao
+            iArquivo.protocolo= vVersao.protocolo
+            iArquivo.assunto= vVersao.documento.assunto
+            iArquivo.nome= vVersao.upload.filename
+            iArquivo.img= ImagemControle().verificaSeImagemEhExportavel(vVersao)
+            iArquivo.pdf= False
+            return iArquivo
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtem ArquivoAuxiliar: ' + str(e))
+            return False
+        
+    def obtemNovoNomeArquivo(self, vCaminho, vExtensao):
+        try:
+            iDiretorioImagemSemExtencao= os.path.splitext(str(vCaminho))[0]
+            iListaDiretorio= iDiretorioImagemSemExtencao.split('/')
+            iNomeArquivo= iListaDiretorio[len(iListaDiretorio)-1:][0]
+            if vExtensao == constantes.cntExtencaoImagemJPG:
+                iExtensao= 'jpg'
+            elif vExtensao == constantes.cntExtencaoImagemPNG:
+                iExtensao= 'png'
+            elif vExtensao == constantes.cntExtencaoImagemBMP:
+                iExtensao= 'bmp'
+            elif vExtensao == constantes.cntExtencaoImagemTIF:
+                iExtensao= 'tif'    
+            iNomeNovo= '%s.%s' % (iNomeArquivo, iExtensao)
+            return iNomeNovo
+        except Exception, e:
+            self.getLogger().error('Nao foi possivel obtemNovoNomeArquivo: ' + str(e))
             return False
