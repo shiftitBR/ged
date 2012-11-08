@@ -290,7 +290,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                     vRequest.session['Images']= False
                     ControleOCR().executaOCR(iVersao)
                     ControleImagem().comprimeImagem(iVersao)
-                    Workflow().criaPendenciasDoWorkflow(iDocumento)
+                    Pendencia().criaPendenciasDoWorkflow(iDocumento)
                     return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoCheckinChekout) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
