@@ -230,7 +230,7 @@ def importar(vRequest, vTitulo):
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
                         Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
+                    return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
