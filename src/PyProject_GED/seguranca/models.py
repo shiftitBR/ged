@@ -28,7 +28,7 @@ class Pasta(models.Model):
         verbose_name_plural = 'Pastas'
     
     def __unicode__(self):
-        return self.nome
+        return "%s - %s" % (self.empresa.nome, self.nome)
     
     def save(self, vCriaPasta=True):  
         if self.id_pasta == '' or self.id_pasta== None:

@@ -9,6 +9,7 @@ from django.http                        import HttpResponseRedirect
 from PyProject_GED.documento.models     import Versao
 from PyProject_GED.autenticacao.models  import Usuario, Empresa
 from PyProject_GED.envioemail.forms     import FormEmail
+from PyProject_GED.envioemail.controle  import Controle as EnvioControle
 from PyProject_GED                      import oControle, constantes
 from objetos_auxiliares                 import Destinatario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
@@ -16,6 +17,7 @@ from PyProject_GED.envioemail.models    import Publicacao, Publicacao_Documento,
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
 from PyProject_GED.seguranca.models     import Funcao_Grupo
 from PyProject_GED.assinatura.models    import Assinatura
+from PyProject_GED.imagem.controle      import Controle as ImagemControle
 
 def email(vRequest, vTitulo):  
     iUser = vRequest.user
@@ -36,7 +38,7 @@ def email(vRequest, vTitulo):
             iVersoes= []
             for i in range(len(iListaVersao)):
                 iVersao= Versao().obtemVersao(int(iListaVersao[i]))
-                iVersoes.append(iVersao)
+                iVersoes.append(EnvioControle().obtemArquivoAuxiliar(iVersao))
             iCadastraContato= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoCadastrarContato)
             iPossuiPermissao    = True
         else:
@@ -51,6 +53,7 @@ def email(vRequest, vTitulo):
                 iAssunto        = vRequest.POST.get('assunto')
                 iTexto          = vRequest.POST.get('texto')
                 iDestinatarios  = vRequest.POST.getlist('destinatarios')
+                iExtensao       = vRequest.POST.get('extensao')
 
                 try:
                     if settings.EMAIL:
@@ -61,23 +64,32 @@ def email(vRequest, vTitulo):
                         for i in range(len(iDestinatarios)):
                             email.to.append(Usuario().obtemUsuarioPeloID(iDestinatarios[i]).email)
                         for i in range(len(iVersoes)):
-                            iArquivo= iVersoes[i].upload
-                            if iVersoes[i].eh_assinado:
-                                iListaAssinaturas = Assinatura().obtemListaAssDaVersao(iVersoes[i])
-                                iFileAnexo  = DocumentoControle().comprimiArquivoAssinado(iVersoes[i], iListaAssinaturas)
+                            iVersao= Versao().obtemVersao(iVersoes[i].id_versao)
+                            iArquivo= iVersao.upload
+                            if iVersao.eh_assinado:
+                                iListaAssinaturas = Assinatura().obtemListaAssDaVersao(iVersao)
+                                iFileAnexo  = DocumentoControle().comprimiArquivoAssinado(iVersao, iListaAssinaturas)
                                 iFile       = open(str(iFileAnexo),"rb")
                                 email.attach(filename = DocumentoControle().obtemNomeZipado(str(iArquivo.image)), content = iFile.read())
                             else:
-                                iFileAnexo = iArquivo.image
+                                if      iExtensao == str(constantes.cntExtensaoImagemPDF):
+                                    iCaminho = iArquivo.image #alterar
+                                elif    iExtensao == 'padrao':
+                                    iCaminho = iArquivo.image
+                                else:
+                                    iCaminho = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
+                                iFileAnexo = iCaminho  
                                 iFile = open(str(iFileAnexo),"rb")
-                                email.attach(filename = iArquivo.filename, content = iFile.read())
+                                iNome = EnvioControle().obtemNovoNomeArquivo(iCaminho, int(iExtensao))
+                                email.attach(filename = iNome, content = iFile.read())
                             iFile.close()
                         email.send()
                         for i in range(len(iVersoes)):
-                            Historico().salvaHistorico(iVersoes[i].id_versao, constantes.cntEventoHistoricoEmail, 
+                            iVersao= Versao().obtemVersao(iVersoes[i].id_versao)
+                            Historico().salvaHistorico(iVersao.id_versao, constantes.cntEventoHistoricoEmail, 
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEmail, iUsuario.id, 
-                                    vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                                    vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
                         vRequest.session['ListaVersao'] = ''
                         return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEmail) + '/')
                 except Exception, e:
