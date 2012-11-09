@@ -64,7 +64,9 @@ class Controle(object):
             elif vExtensao == constantes.cntExtencaoImagemBMP:
                 iExtensao= 'bmp'
             elif vExtensao == constantes.cntExtencaoImagemTIF:
-                iExtensao= 'tif'    
+                iExtensao= 'tif' 
+            elif iExtensao == constantes.cntExtensaoImagemPDF: 
+                iExtensao= 'pdf'
             iNomeNovo= '%s.%s' % (iNomeArquivo, iExtensao)
             return iNomeNovo
         except Exception, e:

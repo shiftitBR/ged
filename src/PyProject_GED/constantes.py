@@ -113,6 +113,7 @@ cntExtencaoImagemJPG        = 1
 cntExtencaoImagemPNG        = 2
 cntExtencaoImagemBMP        = 3
 cntExtencaoImagemTIF        = 4
+cntExtensaoImagemPDF        = 5
 
 #Extencoes Comprimiveis
 cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
