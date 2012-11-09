@@ -109,7 +109,12 @@ class Test(TestCase):
         iRotacao= -230
         iRotacionou= ControleImagem().rotacionaImagem(iDiretorioImagem, iRotacao)
         self.assertEquals(True, iRotacionou)
-        
+    
+    def testExportarDocumentoParaPDF(self):
+        iVersao= Versao.objects.filter(id_versao= 5)[0]
+        iIDUsuario= 1
+        iDiretorio= ControleImagem().exportaDocumentoParaPDF(iVersao, iIDUsuario)
+        self.assertEquals(True, len(iDiretorio) > 0)
 #-----------------------------------------------------MOKS---------------------------------------------------  
     
     def mokarEmpresa(self):
@@ -240,6 +245,13 @@ class Test(TestCase):
         
         iVersao         = 4
         iUpload         = MultiuploaderImage.objects.filter()[3]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 5
+        iUpload         = MultiuploaderImage.objects.filter()[4]
         iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
                                  upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
                                  eh_versao_atual= iEh_Versao_Atual)
