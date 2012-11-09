@@ -119,7 +119,7 @@ class Socket(SocketServer.BaseRequestHandler):
                     if iUsuario.empresa.eh_ativo:
                         iCadastro= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
                         if iCadastro != None:
-                            iPasta= '%s/%s' % (constantes.cntClasseMensagemLogin, iCadastro.pasta_destino)
+                            iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
                             iLink = Usuario().obtemURLDeAutenticacao(iEmail)
                             iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, iUsuario.id, iLink)
                         else:
