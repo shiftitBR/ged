@@ -41,12 +41,12 @@ class Controle(object):
     def obtemArquivoAuxiliar(self, vVersao):
         try:
             iArquivo = ArquivoAux()
-            iArquivo.id_versao= vVersao.id_versao
-            iArquivo.protocolo= vVersao.protocolo
-            iArquivo.assunto= vVersao.documento.assunto
-            iArquivo.nome= vVersao.upload.filename
-            iArquivo.img= ImagemControle().verificaSeImagemEhExportavel(vVersao)
-            iArquivo.pdf= False
+            iArquivo.id_versao  = vVersao.id_versao
+            iArquivo.protocolo  = vVersao.protocolo
+            iArquivo.assunto    = vVersao.documento.assunto
+            iArquivo.nome       = vVersao.upload.filename
+            iArquivo.img        = ImagemControle().verificaSeImagemEhExportavel(vVersao)
+            iArquivo.pdf        = False
             return iArquivo
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtem ArquivoAuxiliar: ' + str(e))

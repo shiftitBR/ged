@@ -72,10 +72,12 @@ def email(vRequest, vTitulo):
                                 iFile       = open(str(iFileAnexo),"rb")
                                 email.attach(filename = DocumentoControle().obtemNomeZipado(str(iArquivo.image)), content = iFile.read())
                             else:
-                                if iExtensao != 'padrao':
-                                    iCaminho = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
-                                else :
+                                if iExtensao == 'pdf':
+                                    iCaminho = iArquivo.image #alterar
+                                elif iExtensao == 'padrao':
                                     iCaminho = iArquivo.image
+                                else :
+                                    iCaminho = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
                                 iFileAnexo = iCaminho  
                                 iFile = open(str(iFileAnexo),"rb")
                                 iNome = EnvioControle().obtemNovoNomeArquivo(iCaminho, int(iExtensao))
