@@ -189,7 +189,7 @@ class Controle(object):
             mVersao= get_model('documento', 'Versao')
             iDiretorioImagem= mVersao().obtemCaminhoArquivo(vVersao.id_versao)
             iExtencao= os.path.splitext(str(iDiretorioImagem))[1]
-            if iExtencao.lower() in constantes.cntOCRExtencoesPDF:
+            if iExtencao.lower() in constantes.cntExtencaoExportavelPDF:
                 iEhExportavel= True
             else:
                 iEhExportavel= False

@@ -118,6 +118,9 @@ cntExtensaoImagemPDF        = 5
 #Extencoes Comprimiveis
 cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
 
+#Extensoes Exportaveis PDF
+cntExtencaoExportavelPDF    = ['.odt', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.odp', '.ods']
+
 #Extencoes Certificados
 cntExtencaoCertificado      = ['.pfx']
 

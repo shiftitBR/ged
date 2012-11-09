@@ -46,7 +46,7 @@ class Controle(object):
             iArquivo.assunto    = vVersao.documento.assunto
             iArquivo.nome       = vVersao.upload.filename
             iArquivo.img        = ImagemControle().verificaSeImagemEhExportavel(vVersao)
-            iArquivo.pdf        = False
+            iArquivo.pdf        = ImagemControle().verificaSeDocumentoEhExportavel(vVersao)
             return iArquivo
         except Exception, e:
             self.getLogger().error('Nao foi possivel obtem ArquivoAuxiliar: ' + str(e))
@@ -65,7 +65,7 @@ class Controle(object):
                 iExtensao= 'bmp'
             elif vExtensao == constantes.cntExtencaoImagemTIF:
                 iExtensao= 'tif' 
-            elif iExtensao == constantes.cntExtensaoImagemPDF: 
+            elif vExtensao == constantes.cntExtensaoImagemPDF: 
                 iExtensao= 'pdf'
             iNomeNovo= '%s.%s' % (iNomeArquivo, iExtensao)
             return iNomeNovo
