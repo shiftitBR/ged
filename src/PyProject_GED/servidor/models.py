@@ -175,6 +175,10 @@ class Importacao_FTP(models.Model):
             else:
                 self.id_importacao_ftp= 1
             self.pasta_temporaria= str(self.id_importacao_ftp)
+            iDiretorioArquivo  = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz, 
+                                                    constantes.cntClasseMensagemImportacao, 
+                                                    self.pasta_temporaria)
+            os.system('mkdir %s' % iDiretorioArquivo) 
             super(Importacao_FTP, self).save()
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar importacao_ftp: ' + str(e))
