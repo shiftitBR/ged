@@ -32,7 +32,7 @@ def scan_widget(size="600x800", multiple=True):
         multiple = 'false'
     
     default_upload_path = '/media/twain/upload/'#reverse('twain:upload')
-    
+        
     data = {
         'base_url': getattr(settings,'DYNAMIC_TWAIN_MEDIA_ROOT',"/site_media/dynamic_twain/"),
         'default_resolution': getattr(settings,'DYNAMIC_TWAIN_DEFAULT_RESOLUTION', 150),
