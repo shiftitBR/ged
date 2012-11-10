@@ -217,7 +217,9 @@ class Importacao_FTP(models.Model):
             iNumero = 0
             iListaAuxiliar      = []
             for Importar in iListaImportacoes:
-                iCaminho            = settings.MEDIA_ROOT + "/documentos/ftp/" +Importar.pasta_temporaria
+                iCaminho            = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz,
+                                                    constantes.cntClasseMensagemImportacao,
+                                                    Importar.pasta_temporaria)
                 for (path, dirs,files) in os.walk(iCaminho):
                     for iFile in files:
                         iImportarAux= ImportarAuxiliar()
