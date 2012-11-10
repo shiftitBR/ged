@@ -79,6 +79,8 @@ class AdminUsuario(MultiDBModelAdmin):
         vUsuario.tipo_usuario = Tipo_de_Usuario.objects.filter(id_tipo_de_usuario= constantes.cntTipoUsuarioSistema)[0]
         if vRequest.POST.get('groups') == constantes.cntConfiguracaoIDGrupoAdministradores:
             vUsuario.is_staff= True
+        else:
+            vUsuario.is_staff= False
         vUsuario.save()
    
 class AdminIndice(MultiDBModelAdmin): 
