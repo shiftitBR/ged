@@ -179,6 +179,7 @@ class Importacao_FTP(models.Model):
                                                     constantes.cntClasseMensagemImportacao, 
                                                     self.pasta_temporaria)
             os.system('mkdir %s' % iDiretorioArquivo) 
+            os.system('chown trackdoc:trackdoc %s' % iDiretorioArquivo) 
             super(Importacao_FTP, self).save()
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel salvar importacao_ftp: ' + str(e))
