@@ -137,16 +137,15 @@ class Socket(SocketServer.BaseRequestHandler):
     
     def importacaoDeArquivos(self, vJSONRecebido, vIPOrigem):
         try:
+            iSenha  = vJSONRecebido['senha']
             iEmail  = vJSONRecebido['usuario']
-            iUsuario= Usuario().obtemUsuarioPeloEmail(iEmail)
-            iCadastroExistente= Cadastro_Biometria().obtemCadastroDeBiometria(iUsuario)
-            if iCadastroExistente == None:
-                iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem, False)
-                iPasta= '%s/%s' % (constantes.cntClasseMensagemImportacao, iCadastro.pasta_destino)
-                iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
-                iCadastro.clean()
+            iUsuario= Usuario().autenticaUsuario(iEmail, iSenha)
+            if iUsuario != None:
+                iImportacao= Importacao_FTP().criaImportacao_FTP(iUsuario, vIPOrigem)
+                iPasta= '%s/%s' % (constantes.cntClasseMensagemImportacao, iImportacao.pasta_temporaria)
+                iJSONResposta= Servidor().criaRespostaEmJSON(iPasta)
             else:
-                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
+                iJSONResposta= '{"tipo": %s, "mensagem": "Usuario e Senha nao conferem!"}' % constantes.cntTipoMensagemJSONErro
             return iJSONResposta
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel importar os arquivos: ' + str(e))
