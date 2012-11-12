@@ -8,11 +8,13 @@ from django.conf    import settings
 
 #Configuracoes
 cntConfiguracaoDiretorioDocumentos      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoDiretorioImportacao      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoDiretorioBiometria       = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos          = 'documentos'
 cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
-cntConfiguracaoDominio                  = 'trackdoc.com.br'
+cntConfiguracaoDominio                  = 'track-doc.com.br'
 cntConfiguracaoIPServidor               = '54.243.50.54'
 
 #Servicos
