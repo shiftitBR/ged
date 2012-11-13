@@ -226,7 +226,7 @@ class Usuario(User):
     def obterNomeUsuario(self, vIDUsuario):
         try:
             iUsuario= Usuario.objects.filter(id= vIDUsuario)[0]
-            iNome= iUsuario.first_name + ' ' + iUsuario.last_name[:1] + '.'
+            iNome= iUsuario.first_name.encode('utf-8') + ' ' + iUsuario.last_name[:1].encode('utf-8') + '.'
             return iNome
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter o nome do usuario ' + str(e))
