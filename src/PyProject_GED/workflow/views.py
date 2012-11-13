@@ -141,10 +141,14 @@ def tipo_pendencia(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def obtemQuantidadeDePendencias(vRequest, vTitulo):
     try :
+        print '>>>>>>>>>>> obtemQuantidadeDePendencias'
+        print vRequest.user
         if vRequest.user != None :
+            print vRequest.user
             iQuantidade= Pendencia().obtemQuantidadePendenciasDestinatario(vRequest.user.id)
             iHtml= []
             iHtml.append(str(iQuantidade))
+            print iQuantidade
     except Exception, e:
         oControle.getLogger().error('Nao foi possivel obter a quantidade de Pendencias: ' + str(e))
         return False
