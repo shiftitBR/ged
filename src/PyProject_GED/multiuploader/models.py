@@ -10,8 +10,8 @@ except AttributeError:
 
 class MultiuploaderImage(models.Model):
     """Model for storing uploaded photos"""
-    filename = models.CharField(max_length=60, blank=True, null=True)
-    image = models.FileField(max_length=300, upload_to=storage)
+    filename = models.CharField(max_length=200, blank=True, null=True)
+    image = models.FileField(max_length=500, upload_to=storage)
     key_data = models.CharField(max_length=90, unique=True, blank=True, null=True)
     upload_date = models.DateTimeField(auto_now_add=True)
 

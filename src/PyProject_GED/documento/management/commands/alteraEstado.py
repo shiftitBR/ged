@@ -4,15 +4,15 @@ Created on May 22, 2012
 @author: spengler
 '''
 
-from django.core.management.base    import BaseCommand, CommandError
+from django.core.management.base    import CommandError
+from django.core.management.base import NoArgsCommand
 from PyProject_GED.documento.models import Documento
 
 
-class Command(BaseCommand):
-    args = '<vLinhaDeComando vLinhaDeComando...>'
+class Command(NoArgsCommand):
     help = 'Executa Servicos'
 
-    def handle(self, *args, **options):
+    def handle_noargs(self, **options):
         iNomeServico= 'AlteraEstado'
         try:
             self.stdout.write('Servico "%s" iniciado!\n' % iNomeServico)

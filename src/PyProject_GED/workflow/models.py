@@ -183,7 +183,7 @@ class Etapa_do_Workflow(models.Model):
                 else:
                     self.id_etapa_do_workflow= 1
                 
-                iListaEtapas= Etapa_do_Workflow.objects.filter(workflow= self.workflow).order_by('-ordem_da_etapa')
+                iListaEtapas= Etapa_do_Workflow.objects.filter(workflow= self.workflow).order_by('ordem_da_etapa')
                 if len(iListaEtapas) == 0:
                     self.ordem_da_etapa= 0
                 else:

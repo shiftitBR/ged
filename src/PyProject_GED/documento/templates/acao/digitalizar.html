@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% block scripts %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/projeto/mascaras.js"></script> 
 {% include "./media/js.html" %}
 {% endblock scripts %}
 
@@ -21,7 +22,7 @@
             {% endfor %}
         </div>
 	    {% endif %}
-		
+
 		{% if messages %}
 		<div class="alert alert-info">
 			<ul class="messages">
@@ -35,13 +36,21 @@
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-		<form id='id_form_scanner' action="" method="post" accept-charset="utf-8">{% csrf_token %}
+
 		<div class="row">
 			<div class="span7">
 				{% load dynamictwain %}
-		        {% scan_widget "400x450" "False" %}
+
+		        <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
+
+		            {% scan_widget "400x450" "False" %}
+
+		            {% submit_form_with_scan %}
+
+		        </form>
         	</div>
 			<div class="span5">
+				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
 				<h4>Índices</h4>
 				<div class="accordion" id="accordion2">
 				  <div class="accordion-group">
@@ -52,7 +61,7 @@
 				    </div>
 				    <div id="collapseOne" class="accordion-body collapse in">
 				      <div class="accordion-inner">
-				        <p><input id="id_assunto_importar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+				        <p><input id="id_assunto_digitalizar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
 				        <p>{{form.usr_responsavel}}</p>
 				        <p>{{form.tipo_documento}}</p>
 				      </div>
@@ -89,14 +98,15 @@
 				    </div>
 				  </div>
 				</div>		
-			
+
 				<div class="form-actions" style="float: right;">
-					<input data-loading-text="Carregando..." class="btn btn-primary" id="submit_scan" type="submit" value="Importar Documento">
+					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
 			    </div>
+			    </form>	
 			</div>
-				
+
 		</div>
-	 	</form>	
+
 	</div>
 	{% endif %}
   	

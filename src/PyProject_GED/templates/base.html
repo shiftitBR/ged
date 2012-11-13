@@ -1,6 +1,9 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
   <head>
+  	<link rel="icon" 
+      type="image/png" 
+      href="{{ MEDIA_URL }}img/projeto/favicon.png">
   	{% block meta %}
     <meta charset="utf-8">
     <title>Sistema GED</title>
@@ -92,11 +95,13 @@
 	    
 	
 	
-	<footer class="footer">
+	<div class="footer container">
 		
-			<div class="avancodigital"><p>Avanço Digital</p></div><div class="shiftit" onclick="window.location='http://www.shiftit.com.br'"></div>
+			<div class="avancodigital" onclick="window.location='http://www.avancodigital.com.br'"></div>
+			<div class="shiftit" onclick="window.location='http://www.shiftit.com.br'"></div>
+			<div style="float:right; color: #aeaeae; padding-top:8px;"><smaller>Desenvolvido por &nbsp</smaller></div>
 		
-	</footer>
+	</div>
 	</div>
 
   <script src="{{ MEDIA_URL }}js/jqueryplaceholder/jquery.placeholder.js"></script>

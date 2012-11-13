@@ -8,11 +8,14 @@ from django.conf    import settings
 
 #Configuracoes
 cntConfiguracaoDiretorioDocumentos      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoDiretorioImportacao      = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
+cntConfiguracaoDiretorioBiometria       = settings.MEDIA_ROOT + '/documentos/empresa_%03d'
 cntConfiguracaoPastaDocumentos          = 'documentos'
 cntConfiguracaoDiasAvisoVencimento      = 5
 cntConfiguracaoEmailAlerta              = 'alerta@trackdoc.com.br'
 cntConfiguracaoIDGrupoAdministradores   = '1'
-cntConfiguracaoDominio                  = 'trackdoc.com.br'
+cntConfiguracaoDominio                  = 'track-doc.com.br'
+cntConfiguracaoIPServidor               = '54.243.50.54'
 
 #Servicos
 cntServicosEnviaAlertaPendencia= 1
@@ -112,9 +115,13 @@ cntExtencaoImagemJPG        = 1
 cntExtencaoImagemPNG        = 2
 cntExtencaoImagemBMP        = 3
 cntExtencaoImagemTIF        = 4
+cntExtensaoImagemPDF        = 5
 
 #Extencoes Comprimiveis
 cntExtencaoImagemComprimivel= ['.jpg', '.gif', '.png', '.jpeg']
+
+#Extensoes Exportaveis PDF
+cntExtencaoExportavelPDF    = ['.odt', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.odp', '.ods']
 
 #Extencoes Certificados
 cntExtencaoCertificado      = ['.pfx']
@@ -130,16 +137,16 @@ cntTipoBuscaGeral               = 1
 cntTipoBuscaPorPasta            = 2
 
 #Importacao FTP
-cntImportacaoFTPPastaRaiz       = '/ftp'
+cntImportacaoFTPPastaRaiz       = '/home/trackdoc'
 
 #Servidor FTP
-cntServidorFTPIP                = 'ftp.upspace.com.br'
-cntServidorFTPLogin             = 'teste@upspace.com.br'
-cntServidorFTPSenha             = 'importar@051011'
+cntServidorFTPIP                = '54.243.50.54'
+cntServidorFTPLogin             = 'trackdoc'
+cntServidorFTPSenha             = 'trk@D0C+412'
 
 #Socket TCP
-cntSocketTCPIP                  = '127.0.0.1'
-cntSocketTCPPorta               = 9999
+cntSocketTCPIP                  = '0.0.0.0'
+cntSocketTCPPorta               = 7043
 
 #Tipo Mesagem JSON
 cntTipoMensagemJSONNormal       = '1'

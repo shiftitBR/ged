@@ -5,6 +5,7 @@ from django.http                        import HttpResponse,\
     HttpResponseRedirect
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
+from django.conf                        import settings
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
@@ -23,19 +24,14 @@ from PyProject_GED.qualidade.models     import Norma, Norma_Documento
 from PyProject_GED.assinatura.models    import Assinatura
 from django.views.decorators.csrf       import csrf_exempt
 from PyProject_GED.envioemail.models    import Email
-
+from PyProject_GED.dynamictwain.models  import TempFormData
 
 import datetime
 import os
 import urllib
-
-from PyProject_GED.envioemail.models import Email
 import json
 import re
-
 import shutil
-from PyProject_GED.dynamictwain.models import TempFormData
-
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -234,7 +230,7 @@ def importar(vRequest, vTitulo):
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
                         Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
-                        return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
+                    return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
                 else:
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
@@ -294,7 +290,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
                     vRequest.session['Images']= False
                     ControleOCR().executaOCR(iVersao)
                     ControleImagem().comprimeImagem(iVersao)
-                    Workflow().criaPendenciasDoWorkflow(iDocumento)
+                    Pendencia().criaPendenciasDoWorkflow(iDocumento)
                     return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoCheckinChekout) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel post checkin: ' + str(e))
@@ -570,18 +566,17 @@ def digitalizar(vRequest, vUID=None):
             return False
     
     if vRequest.method == 'POST':
-        form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
-        if vUID == '0':
+        if vUID != '0':
             vRequest.session['uID']= vUID
-            messages.warning(vRequest, 'Nenhum arquivo Digitalizado para ser adicionado!')
         else:
+            form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
             if form.is_valid():
                 try :
                     iUID = vRequest.session['uID']
                     iImagemScanner = TempFormData.objects.get(pk=iUID)
                     iArquivo= iImagemScanner.scan
-                    iCaminhoArquivo = iArquivo
-                    iNomeArquivo    = "teste"
+                    iCaminhoArquivo = settings.MEDIA_ROOT + "/" + str(iArquivo)
+                    iNomeArquivo    = os.path.basename(iCaminhoArquivo)
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= datetime.datetime.now()
