@@ -81,3 +81,13 @@ def sucesso(vRequest, vTitulo, vAcao=None):
         locals(),
         context_instance=RequestContext(vRequest),
         )
+    
+    
+def ajuda(vRequest, vTitulo):
+    
+    
+    return render_to_response(
+        'ajuda/ajuda.html',
+        locals(),
+        context_instance=RequestContext(vRequest),
+        )

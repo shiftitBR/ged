@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block conteudo %}
+
+<div align="center">
+	<h1>Ajuda</h1>
+</div>
+	
+<div class="container">
+	
+	<div class="row">
+	  <div class="span9">
+	    <p><h2>Software Desktop</h2></p>
+	    <div class="row">
+	      	<div class="span6"> 
+		      	<p>
+		      		Link Importação em lote e Biometria
+		      	</p>
+	      	</div>
+	      	<div class="span3" align="center">
+	      		<p>
+	      			<a href="#" target="_blank"> Importação em Lote</a>
+	      		</p>	
+	      		<p>
+	      			<a href="#" target="_blank"> Login Biométrico</a>
+	      		</p>
+			</div>
+	    </div>
+	  </div>
+	</div>
+	
+	<br><br>
+	
+	<div class="row">
+	  <div class="span9">
+	    <p><h2>Manual</h2></p>
+	    <div class="row">
+	      	<div class="span6"> 
+		      	<p>
+		      		Manual para utilização do Track-Doc.
+		      	</p>
+	      	</div>
+	      	<div class="span3" align="center">
+	      		<p>
+	      			<a href="{{ MEDIA_URL }}ajuda/Manual_TrackDoc.pdf" target="_blank"> Manual do Usuário Track-Doc</a>
+	      		</p>	
+	      		{% if user.is_staff %}
+	      		<p>
+	      			<a href="{{ MEDIA_URL }}ajuda/Manual_TrackDoc.pdf" target="_blank"> Manual do Administrador Track-Doc</a>
+	      		</p>
+	      		{% endif %}
+			</div>
+	    </div>
+	  </div>
+	</div>
+	
+	<br><br>
+	
+	<div class="row">
+	  <div class="span9">
+	    <p><h2>Contato</h2></p>
+	    <div class="row">
+	      	<div class="span6"> 
+		      	<p>
+		      		Link para Contato.
+		      	</p>
+	      	</div>
+	      	<div class="span3" align="center">
+	      		<p>
+	      			<a href="http://avancodigital.com.br/contato/" target="_blank"> Contato</a>
+	      		</p>	
+			</div>
+	    </div>
+	  </div>
+	</div>
+</div>
+{% endblock conteudo %}

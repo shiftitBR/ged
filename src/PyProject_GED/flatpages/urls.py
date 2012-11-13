@@ -10,4 +10,6 @@ urlpatterns= patterns('flatpages.views',
                           {'vTitulo': trans(u'publicacao')}, name='publicacao'),
                       url('^sucesso/(?P<vAcao>\d+)/$', 'sucesso',
                           {'vTitulo': trans(u'sucesso')}, name='sucesso'),
+                      url('^ajuda/$', 'ajuda',
+                          {'vTitulo': trans(u'ajuda')}, name='ajuda'),
                       )
