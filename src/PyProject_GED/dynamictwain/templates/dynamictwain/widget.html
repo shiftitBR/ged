@@ -43,8 +43,10 @@
     var url = default_url;
 
     /* Switch for the XPI when using Firefox */
-    if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)){
-        url = firefox_url;
+    
+    if ((jQuery.browser.webkit) ||(jQuery.browser.mozilla))
+    {
+        url = firefox_url;      
     }
 
     /* Snippet to insert in the page */
@@ -276,7 +278,7 @@
         $("#source option").first().attr("selected", "selected");
 
         /* Set the view mode (ratio, AFAIK) */
-        twain_instance.SetViewMode(1,1);
+        //twain_instance.SetViewMode(1,1);
 
         /* Bind the scan and upload buttons */
         $("btnScan").click(btnScan_onclick);
