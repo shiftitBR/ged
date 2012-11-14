@@ -24,7 +24,7 @@ def multiuploader_delete(request, pk):
 
 @login_required 
 @csrf_exempt
-def multiuploader(vRequest):
+def multiuploader(vRequest):    
     if vRequest.method == 'POST':
         try:
             if vRequest.FILES == None:
@@ -46,7 +46,10 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            try: 
+            try:
+                print '>>>>>>>>>>>>>>>>> ' 
+                print vRequest.session['Images']
+                
                 if vRequest.session['Images'] == False:
                     iListaImages = '%s' % image.id
                     vRequest.session['Images'] = iListaImages
@@ -54,6 +57,7 @@ def multiuploader(vRequest):
                     iListaImages = '%s , %s' % (vRequest.session['Images'], image.id)
                     vRequest.session['Images'] = iListaImages
             except:
+                print '>>>>>>>>>>>> entrou'
                 iListaImages = '%s' % image.id
                 vRequest.session['Images'] = iListaImages
             return HttpResponse(response_data, mimetype=mimetype)
