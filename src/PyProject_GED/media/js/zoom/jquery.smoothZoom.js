@@ -43,7 +43,7 @@
 		pan_REVERSE: false,
 		
 		reset_ALIGN_TO: 'center center', 			//Image can be aligned to desired position on reset. Example: 'Top Left'
-		reset_TO_ZOOM_MIN: true,					//How it should behave if zoom_MIN value set and while clicking reset button, 
+		reset_TO_ZOOM_MIN: false,					//How it should behave if zoom_MIN value set and while clicking reset button, 
 
 		button_SIZE: 18,							//Button width and height (in pixels)
 		button_SIZE_TOUCH_DEVICE: 30,				//Button width and height (in pixels) on touch devices
