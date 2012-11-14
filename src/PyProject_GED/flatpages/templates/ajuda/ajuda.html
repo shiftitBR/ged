@@ -1,100 +1,63 @@
-{% extends "base.html" %}
+{% extends "base.html"%}
 {% load i18n %}
 {% block conteudo %}
 
-<div align="center">
+<div class="container">
 	<h1>Ajuda</h1>
 </div>
-	
 <div class="container">
-	
 	<div class="row">
-	  <div class="span9">
-	    <p><h2>Software Desktop</h2></p>
-	    <div class="row">
-	      	<div class="span6"> 
-		      	<p>
-		      		Link Importação em lote e Biometria
-		      	</p>
-	      	</div>
-	      	<div class="span3" align="center">
-	      		<p>
-	      			<a href="#" target="_blank"> Importação em Lote</a>
-	      		</p>	
-	      		<p>
-	      			<a href="#" target="_blank"> Login Biométrico</a>
-	      		</p>
-			</div>
-	    </div>
-	  </div>
+	<div class="span3">
+		<h3>Aplicativos Desktop</h3>
+		<p>Faça o Download dos aplicativos desktop para Importação em Lote e Login Biométrico do Track-Doc.</p>
+		<ul>
+			<li><a href="{{ MEDIA_URL }}ajuda/Importador.rar" target="_blank"> Importação em Lote</a></li>
+			<li><a href="#" target="_blank"> Login Biométrico</a></li>
+		</ul>
 	</div>
-	
-	<br><br>
-	
-	<div class="row">
-	  <div class="span9">
-	    <p><h2>Manual</h2></p>
-	    <div class="row">
-	      	<div class="span6"> 
-		      	<p>
-		      		Manual para utilização do Track-Doc.
-		      	</p>
-	      	</div>
-	      	<div class="span3" align="center">
-	      		<p>
-	      			<a href="{{ MEDIA_URL }}ajuda/Manual_TrackDoc.pdf" target="_blank"> Manual do Usuário Track-Doc</a>
-	      		</p>	
-	      		{% if user.is_staff %}
-	      		<p>
-	      			<a href="{{ MEDIA_URL }}ajuda/Manual_TrackDoc.pdf" target="_blank"> Manual do Administrador Track-Doc</a>
-	      		</p>
-	      		{% endif %}
-			</div>
-	    </div>
-	  </div>
+	<div class="span3">
+		<h3>Manual</h3>
+		<p>Manual para facilitar e otimizar a utilização do Track-Doc.</p>
+		<ul>
+			<li><a href="{{ MEDIA_URL }}ajuda/Manual_TrackDoc.pdf" target="_blank"> Manual do Usuário Track-Doc</a></li>
+			{% if user.is_staff %}
+			<li><a href="{{ MEDIA_URL }}ajuda/Manual Track-Doc - Admin.pdf" target="_blank"> Manual do Administrador Track-Doc</a></li>
+			{% endif %}
+		</ul>
 	</div>
-	
-	<br><br>
-	
-	<div class="row">
-	  <div class="span9">
-	    <p><h2>Contato</h2></p>
-	    <div class="row">
-	      	<div class="span6"> 
-		      	<p>
-		      		Link para Contato.
-		      	</p>
-	      	</div>
-	      	<div class="span3" align="center">
-	      		<p>
-	      			<a href="http://avancodigital.com.br/contato/" target="_blank"> Contato</a>
-	      		</p>	
-			</div>
-	    </div>
-	  </div>
+	<div class="span3">
+		<h3>Contato</h3>
+		<p>Para entrar em contato com a nossa equide de suporte clique no link abaixo.</p>
+		<ul>
+			<li><a href="http://avancodigital.com.br/contato/" target="_blank"> Contato</a></li>
+		</ul>
 	</div>
-	
-	<br><br>
-	
-	<div class="row">
-      <div class="span9">
-        <p><h2>Digitalização</h2></p>
-        <div class="row">
-            <div class="span6"> 
-                <p>
-                    Plugin de Digitalização.
-                </p>
-            </div>
-            <div class="span3" align="center">
-                <p>
-                    <a href="{{ MEDIA_URL }}twain/componente/DynamicWebTWAINPlugIn.exe" target="_blank"> Internet Explorer</a>
-                </p>    
-                <p>
-                    <a href="{{ MEDIA_URL }}twain/componente/DynamicWebTwain.xpi" target="_blank"> Chrome e Firefox</a>
-                </p>  
-            </div>
-        </div>
-      </div>
-    </div>
+	<div class="span3">
+		<h3>Digitalização</h3>
+		<p>Para Fazer a Digitalização dos documentos é necessário fazer o download do(s) plug-in(s) abaixo. </p>
+		<ul>
+			<li><a href="{{ MEDIA_URL }}twain/componente/DynamicWebTWAINPlugIn.exe" target="_blank"> Internet Explorer</a></li>
+			<li><a href="{{ MEDIA_URL }}twain/componente/DynamicWebTwain.xpi" target="_blank"> Chrome e Firefox</a></li>
+		</ul>
+	</div>
+	</div>
 </div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 {% endblock conteudo %}

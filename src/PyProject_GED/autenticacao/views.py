@@ -31,6 +31,7 @@ def login(vRequest, vTitulo):
             if user is not None:
                 iUsuario= Usuario().obtemUsuario(user)
                 if Usuario().ehContato(iUsuario):
+                    auth_logout(vRequest)
                     messages.warning(vRequest, 'Este Usuário está cadastrado como Contato, não sendo permitido efetuar login no sistema.')
                 elif user.is_active:
                     if Firewall().verificaIP(client_address, iUsuario.empresa):
@@ -44,12 +45,13 @@ def login(vRequest, vTitulo):
                             messages.warning(vRequest, 'Esta Empresa está Inativa. Para mais informações entre em contato com o administrador.')
                     else: 
                         oControle.getLogger().warning('O IP_Address: ' + str(client_address) + ' foi recusado!')
-                        auth_logout(vRequest)
                         messages.warning(vRequest, 'Este endereço de IP está bloqueado. Para mais informações entre em contato com o administrador.')
                 else:
                     messages.warning(vRequest, 'Este Usuário está Inativo. Para mais informações entre em contato com o administrador.')
             else:
                 messages.warning(vRequest, 'E-mail e/ou Senha incorreto(s). Digite novamente seu E-mail e Senha para efetuar o login.')
+            auth_logout(vRequest)
+            return HttpResponseRedirect('/login/')
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel get login: ' + str(e))
             return False
