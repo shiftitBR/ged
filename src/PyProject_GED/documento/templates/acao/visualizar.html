@@ -1,10 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-{% block scripts %}
-{% include "./media/js.html" %}
-<script src="{{ MEDIA_URL }}js/zoom/jquery.smoothZoom.js"></script>
-{% endblock scripts %}
-
 {% block style %}
 {% include "./media/css_fbox.html" %}
 {% endblock style %}
@@ -41,5 +36,10 @@
   	</div>
   	
   	</body>
+  	
+{% block scripts %}
+{% include "./media/js.html" %}
+    <script src="{{ MEDIA_URL }}js/zoom/jquery.smoothZoom.js"></script>
+{% endblock scripts %}
 
 </html>

@@ -24,8 +24,16 @@ class Controle(object):
     
     def criaPastaEmpresa(self, vIDEmpresa):
         try:
-            iDiretorioEmpresa= constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa
+            iDiretorioEmpresa       = constantes.cntConfiguracaoDiretorioDocumentos % vIDEmpresa
+            iDiretorioFTPImportacao = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz, 
+                                                    constantes.cntClasseMensagemImportacao, 
+                                                    vIDEmpresa)
+            iDiretorioFTPBiometria  = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz, 
+                                                    constantes.cntClasseMensagemCadastro, 
+                                                    vIDEmpresa)
             os.system('mkdir %s' % iDiretorioEmpresa) 
+            os.system('mkdir %s' % iDiretorioFTPImportacao) 
+            os.system('mkdir %s' % iDiretorioFTPBiometria) 
         except Exception, e:
             self.getLogger().error('Nao foi possivel criar pastas: ' + str(e))
             return False
