@@ -14,7 +14,7 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, *args, **options):
         iNomeServico= 'LibreOffice'
-        try:
+        try:            
             self.stdout.write('Servico "%s" iniciado!\n' % iNomeServico)
             os.system('unset DISPLAY')
             os.system('libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --nologo --headless --invisible --nofirststartwizard')
