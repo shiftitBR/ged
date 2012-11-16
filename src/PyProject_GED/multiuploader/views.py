@@ -34,14 +34,13 @@ def multiuploader(vRequest):
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
-            iFileName= MultiuploaderImage().limpaNomeImagem(filename.encode('utf-8'))
             image               = MultiuploaderImage()
-            image.filename      = iFileName
+            image.filename      = filename.encode('utf-8')
             image.image         = file
             image.key_data      = image.key_generate
             image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
             result = []
-            result.append({"name":filename})
+            result.append({"name":filename.encode('utf-8')})
             response_data = simplejson.dumps(result)
             if "application/json" in vRequest.META['HTTP_ACCEPT_ENCODING']:
                 mimetype = 'application/json'
