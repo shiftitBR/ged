@@ -34,8 +34,11 @@ def multiuploader(vRequest):
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
+            print '>>>>>>>>>>>>>>>'
+            iFileName= MultiuploaderImage().limpaNomeImagem(filename.encode('utf-8'))
+            print iFileName
             image               = MultiuploaderImage()
-            image.filename      = filename.encode('utf-8')
+            image.filename      = iFileName
             image.image         = file
             image.key_data      = image.key_generate
             image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
