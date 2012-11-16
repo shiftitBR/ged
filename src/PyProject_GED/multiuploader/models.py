@@ -33,7 +33,11 @@ class MultiuploaderImage(models.Model):
         mPasta= get_model('seguranca', 'Pasta')()
         for field in self._meta.fields:
             if field.name == 'image':
+                print '>>>>>>>>>>>>>>>>>'
                 field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
+        print self.image.name
+        self.image.name= self.limpaNomeImagem(self.image.name.encode('utf-8'))
+        print self.image.name
         super(MultiuploaderImage, self).save()
 
         

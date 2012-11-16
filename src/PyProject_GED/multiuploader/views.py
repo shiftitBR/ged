@@ -34,9 +34,7 @@ def multiuploader(vRequest):
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
-            print '>>>>>>>>>>>>>>>'
             iFileName= MultiuploaderImage().limpaNomeImagem(filename.encode('utf-8'))
-            print iFileName
             image               = MultiuploaderImage()
             image.filename      = iFileName
             image.image         = file
