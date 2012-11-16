@@ -15,13 +15,15 @@ from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Funcao_Grupo
 
 @login_required 
-def assinar(vRequest, vTitulo):
+def assinar(vRequest, vTitulo, vIDVersao=None):
     
     iUser = vRequest.user
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoAssinar):
+        if vIDVersao != '0':
+            vRequest.session['ListaVersao'] = vIDVersao + "-"
         if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':
             iListaVersao= vRequest.session['ListaVersao'].split('-')[:-1]
             iVersoes= []
@@ -50,7 +52,6 @@ def assinar(vRequest, vTitulo):
                     iCertificado = Certificado(arquivo = vRequest.FILES['certificado'])
                     iCertificado.save()
                 except:
-                    print ">>>>>>>>>>>> entrou"
                     messages.warning(vRequest, 'Certificado inválido.' )
                 else:
                     iCaminhoCertificado = settings.MEDIA_ROOT + '/' + str(iCertificado.arquivo)

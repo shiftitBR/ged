@@ -16,11 +16,16 @@ def busca(vRequest, vIDTipoBusca, vTitulo):
     else:
         iIDPastaSelecionada= None
         iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
+        
+    try:
+        iListaDoc = vRequest.session['ListaBusta']
+    except:
+        iListaDoc = []
     
     try:
-        iPaginator  = Paginator([], 10)
+        iPaginator  = Paginator(iListaDoc, 10)
         iPage       = vRequest.GET.get('page')
-        if iPage ==None:
+        if iPage == None:
             iPage = 1
         try:
             iDocumentos = iPaginator.page(iPage)
@@ -58,6 +63,7 @@ def busca(vRequest, vIDTipoBusca, vTitulo):
                                                        iIDUsuario, iIDPastaSelecionada, vEhPublico= False)
             iPaginator = Paginator(iListaDocumentos, 10)
             iDocumentos = iPaginator.page(1)
+            vRequest.session['ListaBusta']= iListaDocumentos
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel post documentos: ' + str(e))
             return False

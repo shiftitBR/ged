@@ -47,9 +47,6 @@ def multiuploader(vRequest):
             else:
                 mimetype = 'text/plain'
             try:
-                print '>>>>>>>>>>>>>>>>> ' 
-                print vRequest.session['Images']
-                
                 if vRequest.session['Images'] == False:
                     iListaImages = '%s' % image.id
                     vRequest.session['Images'] = iListaImages
@@ -57,7 +54,6 @@ def multiuploader(vRequest):
                     iListaImages = '%s , %s' % (vRequest.session['Images'], image.id)
                     vRequest.session['Images'] = iListaImages
             except:
-                print '>>>>>>>>>>>> entrou'
                 iListaImages = '%s' % image.id
                 vRequest.session['Images'] = iListaImages
             return HttpResponse(response_data, mimetype=mimetype)

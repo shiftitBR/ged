@@ -33,7 +33,7 @@
 		</div> 
     <div class="subnav espacamentovertical">
 	    <ul class="nav nav-pills">
-	      <li class=""><a class="fancybox fancybox.iframe" href="/assinar/" id="id_btnAssinar">Assinar Documento(s)</a></li>
+	      <li class=""><a class="fancybox fancybox.iframe" href="/assinar/0/" id="id_btnAssinar">Assinar Documento(s)</a></li>
           <li class=""><a class="fancybox fancybox.iframe" href="/email/" id="id_btnEmail">Enviar E-mail</a></li>
           <li class=""><a class="fancybox fancybox.iframe" href="/publicar/" id="id_btnPublicar">Enviar Publicação</a></li>
 	    </ul>
@@ -111,9 +111,6 @@
 	            		{% endif %}
 	            		{% if documento.ehImagemExportavel %}
 	            		<li><a class="fancybox fancybox.iframe" href="/tipo_exportar/{{documento.id_versao}}/"><i class="icon-arrow-up"></i>  Exportar</a></li>
-		            	{% endif %}
-		            	{% if documento.id_estado == 7 %}
-		            	<li><a class="fancybox fancybox.iframe" href="/aprovar_documento/{{documento.id_versao}}/"><i class="icon-thumbs-up"></i>  Aprovar</a></li><li><a class="fancybox fancybox.iframe" href="/reprovar_documento/%(iIDVersao)s/"><i class="icon-thumbs-down"></i>  Reprovar</a></li>
 		            	{% endif %}
 		            	{% if documento.id_estado == 1 or documento.id_estado == 3 or documento.id_estado == 4 %}
 		            	<li><a class="fancybox fancybox.iframe" href="/checkout/{{documento.id_versao}}/"><i class="icon-edit"></i>  Check-out</a></li>
