@@ -39,6 +39,8 @@ class MultiuploaderImage(models.Model):
                 if field.name == 'image':
                     field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
             self.image.name= smart_str(self.image.name.encode('utf-8'))
+            self.filename= smart_str(self.filename.encode('utf-8'))
+            self.image.file.name= smart_str(self.image.file.name.encode('utf-8'))
             super(MultiuploaderImage, self).save()
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
