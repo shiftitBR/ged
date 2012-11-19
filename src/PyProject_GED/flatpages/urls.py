@@ -14,4 +14,6 @@ urlpatterns= patterns('flatpages.views',
                           {'vTitulo': trans(u'ajuda')}, name='ajuda'),
                       url('^download_importador/$', 'download_importador',
                           {'vTitulo': trans(u'download_importador')}, name='download_importador'),
+                      url('^download_biometria/$', 'download_biometria',
+                          {'vTitulo': trans(u'download_biometria')}, name='download_biometria'),
                       )
