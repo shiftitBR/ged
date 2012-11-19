@@ -111,7 +111,7 @@ def download_importador(vRequest, vTitulo):
 @login_required 
 def download_biometria(vRequest, vTitulo):
     try :
-        iCaminhoArquivo = settings.PROJECT_ROOT_PATH + "/" + settings.MEDIA_URL + "ajuda/Biometria.rar"
+        iCaminhoArquivo = settings.PROJECT_ROOT_PATH + "/" + settings.MEDIA_URL + "ajuda/Biometria.zip"
         iFile = open(iCaminhoArquivo,"r")
         iResponseP7s = HttpResponse(iFile.read())
         iResponseP7s["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iCaminhoArquivo)[1]
