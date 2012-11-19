@@ -35,3 +35,8 @@ TUTORIAL INSTALACAO FEDORA 17 / CENTOS 6
 
 	crontab -e
 	adicionar: * * * * * python /project/path/manage.py cron
+
+##Daemon
+	# pip install zdaemon
+	Ex.: zdaemon -p "/home/webapps/GED/bin/python manage.py servidor" -z /home/webapps/GED/PyProject_GED/ -l /home/webapps/GED/logs/servidor.log -d start
+

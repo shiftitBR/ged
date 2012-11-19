@@ -51,6 +51,11 @@ class Test(TestCase):
         iString= ControleOCR().obtemTextoDaImagem(iVersao)
         self.assertEquals(True, len(iString) > 0)
     
+    def testOCRImagemTIFF_G4(self):
+        iVersao= Versao.objects.all()[10]
+        iString= ControleOCR().obtemTextoDaImagem(iVersao)
+        self.assertEquals(None, iString)
+    
     def testOCRImagemJPEG(self):
         iVersao= Versao.objects.all()[1]
         iString= ControleOCR().obtemTextoDaImagem(iVersao)
@@ -247,6 +252,13 @@ class Test(TestCase):
         iUpload10.fileName       = 'imagem2_jpg.jpg'
         iUpload10.image          = '%s/media_teste/imagem2_jpg.jpg' % settings.MEDIA_ROOT
         iUpload10.save(iIDPasta, iEmpresa.id_empresa)
+        
+        iUpload11                = MultiuploaderImage()
+        iUpload11.key_data       = iUpload10.key_generate
+        iUpload11.upload_date    = datetime.datetime(2012, 02, 15, 15, 10, 45)
+        iUpload11.fileName       = 'imagem_tif_g4.jpg'
+        iUpload11.image          = '%s/media_teste/imagem_tif_g4.tif' % settings.MEDIA_ROOT
+        iUpload11.save(iIDPasta, iEmpresa.id_empresa)
 
     def mokarDocumento(self):
         iEmpresa        = Empresa.objects.filter(id_empresa=1)[0]
@@ -339,6 +351,13 @@ class Test(TestCase):
         
         iVersao         = 10
         iUpload         = MultiuploaderImage.objects.filter()[9]
+        iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
+                                 upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
+                                 eh_versao_atual= iEh_Versao_Atual)
+        iVersao1.save()
+        
+        iVersao         = 11
+        iUpload         = MultiuploaderImage.objects.filter()[10]
         iVersao1        = Versao(documento= iDocumento, usr_criador= iCriador, estado= iEstado, versao= iVersao, 
                                  upload= iUpload, data_criacao= iDataCriacao, eh_assinado= iEh_Assinado, 
                                  eh_versao_atual= iEh_Versao_Atual)

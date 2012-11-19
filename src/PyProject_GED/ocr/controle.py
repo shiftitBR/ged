@@ -20,6 +20,7 @@ import os
 import uno
 import constantes #@UnresolvedImport
 import unicodedata
+import pytiff #@UnresolvedImport
 
 class Controle(object):
     
@@ -36,13 +37,16 @@ class Controle(object):
             iExtencao= os.path.splitext(str(vVersao.upload.image))[1].lower()
             if iExtencao in constantes.cntOCRExtencoesPDF:
                 iTexto= self.obtemTextoDoPDF(vVersao)
-                iExecutou= len(iTexto) > 0
             elif iExtencao in constantes.cntOCRExtencoesImagens:
                 iTexto= self.obtemTextoDaImagem(vVersao)
+            else:
+                iTexto= None
+            
+            if iTexto != None:
                 iExecutou= len(iTexto) > 0
             else:
-                iTexto= 'Nao foi possivel passar o OCR'
                 iExecutou= None
+                iTexto= 'Nao foi possivel passar o OCR'
             return iExecutou
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
@@ -51,8 +55,11 @@ class Controle(object):
     def obtemTextoDaImagem(self, vVersao):
         try:
             iEnderecoImagem= vVersao.upload.image
-            iTexto= image_to_string(OpenImage(iEnderecoImagem))
-            self.criaArquivoOCR(iEnderecoImagem, iTexto)
+            try:
+                iTexto= image_to_string(OpenImage(iEnderecoImagem))
+                self.criaArquivoOCR(iEnderecoImagem, iTexto)
+            except:
+                iTexto = None
             return iTexto
         except Exception, e:
             self.getLogger().error('Nao foi possivel obter texto da imagem: ' + str(e))
@@ -61,8 +68,11 @@ class Controle(object):
     def obtemTextoDoPDF(self, vVersao):
         try:
             iEnderecoDocumento= vVersao.upload.image
-            iTexto= self.lePDF(str(iEnderecoDocumento))
-            self.criaArquivoOCR(iEnderecoDocumento, iTexto)
+            try:
+                iTexto= self.lePDF(str(iEnderecoDocumento))
+                self.criaArquivoOCR(iEnderecoDocumento, iTexto)
+            except:
+                iTexto = None
             return iTexto
         except Exception, e:
             self.getLogger().error('Nao foi possivel buscar texto do pdf: ' + str(e))
