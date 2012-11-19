@@ -3,6 +3,7 @@ from django.db.models                   import get_model
 import random
 
 from django.conf import settings
+import os
 try:
     storage = settings.MULTI_IMAGES_FOLDER+'/'
 except AttributeError:
@@ -33,8 +34,17 @@ class MultiuploaderImage(models.Model):
         for field in self._meta.fields:
             if field.name == 'image':
                 field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
+        self.image.name= self.image.name.encode('utf-8')
         super(MultiuploaderImage, self).save()
 
         
     def obtemImagePeloId(self, vIDImage):
         return MultiuploaderImage.objects.filter(id=vIDImage)[0]
+    
+    def limpaNomeImagem(self, vNomeImagem):
+        try:
+            iNomeImagem, iExtencao= os.path.splitext(str(vNomeImagem))
+            iNomeLimpo= ''.join(e for e in iNomeImagem if e.isalnum())
+            return '%s%s' % (iNomeLimpo.lower(), iExtencao.lower())
+        except:
+            return False
