@@ -2,8 +2,11 @@ from django.db                          import models
 from django.db.models                   import get_model
 import random
 
-from django.conf import settings
+from django.conf                        import settings
+from PyProject_GED                      import oControle
+from django.utils.encoding              import smart_str, smart_unicode
 import os
+
 try:
     storage = settings.MULTI_IMAGES_FOLDER+'/'
 except AttributeError:
@@ -30,12 +33,18 @@ class MultiuploaderImage(models.Model):
         return self.image.name
 
     def save(self, vIDPasta, vIDEmpresa):
-        mPasta= get_model('seguranca', 'Pasta')()
-        for field in self._meta.fields:
-            if field.name == 'image':
-                field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
-        self.image.name= self.image.name.encode('utf-8')
-        super(MultiuploaderImage, self).save()
+        try:
+            mPasta= get_model('seguranca', 'Pasta')()
+            for field in self._meta.fields:
+                if field.name == 'image':
+                    field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
+            self.image.name= smart_str(self.image.name)
+            self.filename= smart_str(self.filename)
+            self.image.file.name= smart_str(self.image.file.name)
+            super(MultiuploaderImage, self).save()
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
+            return False
 
         
     def obtemImagePeloId(self, vIDImage):

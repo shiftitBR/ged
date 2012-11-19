@@ -20,7 +20,6 @@ import os
 import uno
 import constantes #@UnresolvedImport
 import unicodedata
-import pytiff #@UnresolvedImport
 
 class Controle(object):
     
