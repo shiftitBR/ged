@@ -10,10 +10,10 @@ Created on Aug 9, 2012
 from Image                  import open as OpenImage
 from tesseract              import image_to_string
 
-from pdfminer.pdfinterp import PDFResourceManager, process_pdf
-from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
-from cStringIO import StringIO
+from pdfminer.pdfinterp     import PDFResourceManager, process_pdf
+from pdfminer.converter     import TextConverter
+from pdfminer.layout        import LAParams
+from cStringIO              import StringIO
 
 import logging
 import os

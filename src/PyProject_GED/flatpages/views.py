@@ -90,8 +90,6 @@ def sucesso(vRequest, vTitulo, vAcao=None):
     
 def ajuda(vRequest, vTitulo):
     
-    
-    
     return render_to_response(
         'ajuda/ajuda.html',
         locals(),
@@ -107,5 +105,17 @@ def download_importador(vRequest, vTitulo):
         iResponseP7s["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iCaminhoArquivo)[1]
         return iResponseP7s        
     except Exception, e:
-            oControle.getLogger().error('Nao foi possivel fazer download do arquivo: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel fazer download do arquivo Importador: ' + str(e))
+            return False
+        
+@login_required 
+def download_biometria(vRequest, vTitulo):
+    try :
+        iCaminhoArquivo = settings.PROJECT_ROOT_PATH + "/" + settings.MEDIA_URL + "ajuda/Biometria.rar"
+        iFile = open(iCaminhoArquivo,"r")
+        iResponseP7s = HttpResponse(iFile.read())
+        iResponseP7s["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iCaminhoArquivo)[1]
+        return iResponseP7s        
+    except Exception, e:
+            oControle.getLogger().error('Nao foi possivel fazer download do arquivo Biometria: ' + str(e))
             return False
