@@ -9,7 +9,6 @@ from django.views.decorators.csrf   import csrf_exempt
 
 from models                         import MultiuploaderImage
 from PyProject_GED                  import oControle
-from django.utils.encoding          import smart_str, smart_unicode
 
 @csrf_exempt
 @login_required 
@@ -38,12 +37,12 @@ def multiuploader(vRequest):
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
             image               = MultiuploaderImage()
-            image.filename      = smart_str(filename.encode('utf-8'))
+            image.filename      = filename.encode('utf-8')
             image.image         = file
             image.key_data      = image.key_generate
             image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
             result = []
-            result.append({"name":smart_str(filename.encode('utf-8'))})
+            result.append({"name":filename.encode('utf-8')})
             response_data = simplejson.dumps(result)
             if "application/json" in vRequest.META['HTTP_ACCEPT_ENCODING']:
                 mimetype = 'application/json'
