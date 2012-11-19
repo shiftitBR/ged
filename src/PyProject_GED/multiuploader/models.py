@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db                          import models
 from django.db.models                   import get_model
 import random
@@ -38,9 +39,12 @@ class MultiuploaderImage(models.Model):
             for field in self._meta.fields:
                 if field.name == 'image':
                     field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
-            self.image.name= smart_str(self.image.name)
-            self.filename= smart_str(self.filename)
-            self.image.file.name= smart_str(self.image.file.name)
+#            self.image.name= smart_str(self.image.name)
+#            self.filename= smart_str(self.filename)
+#            self.image.file.name= smart_str(self.image.file.name)
+            self.image.name= self.limpaNomeImagemSuave(smart_str(self.image.name))
+            self.filename= self.limpaNomeImagemSuave(smart_str(self.filename))
+            self.image.file.name= self.limpaNomeImagemSuave(smart_str(self.image.file.name))
             super(MultiuploaderImage, self).save()
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
@@ -54,6 +58,12 @@ class MultiuploaderImage(models.Model):
         try:
             iNomeImagem, iExtencao= os.path.splitext(str(vNomeImagem))
             iNomeLimpo= ''.join(e for e in iNomeImagem if e.isalnum())
-            return '%s%s' % (iNomeLimpo.lower(), iExtencao.lower())
+            return u'%s%s' % (iNomeLimpo.lower(), iExtencao.lower())
+        except:
+            return False
+    
+    def limpaNomeImagemSuave(self, vNomeImagem):
+        try:
+            return vNomeImagem.replace('ª', 'a')
         except:
             return False

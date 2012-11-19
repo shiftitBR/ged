@@ -31,7 +31,7 @@ def multiuploader(vRequest):
         try:
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
-            file = vRequest.FILES[u'files[]']
+            file = vRequest.FILES[u'files[]'.encode('utf-8')]
             wrapped_file = UploadedFile(file)
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
