@@ -4,6 +4,7 @@ import random
 
 from django.conf                        import settings
 from PyProject_GED                      import oControle
+from django.utils.encoding              import smart_str, smart_unicode
 import os
 
 try:
@@ -37,9 +38,9 @@ class MultiuploaderImage(models.Model):
             for field in self._meta.fields:
                 if field.name == 'image':
                     field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
-            self.image.name= self.image.name.encode('utf-8')
-            self.filename= self.filename.encode('utf-8')
-            self.image.file.name= self.image.file.name.encode('utf-8')
+            self.image.name= smart_str(self.image.name)
+            self.filename= smart_str(self.filename)
+            self.image.file.name= smart_str(self.image.file.name)
             super(MultiuploaderImage, self).save()
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
