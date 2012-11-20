@@ -45,10 +45,15 @@ class Controle(object):
             iPastaTemporariaDoUsuario= '%s/temp/%s' % (iPastaImagem[:len(iPastaImagem)-1], str(vIDUsuario))
             self.criaPastaTemporaria(iPastaTemporario)
             self.criaPastaTemporaria(iPastaTemporariaDoUsuario)
-            iDiretorioImagemNovo= '%s/%s.%s' % (iPastaTemporariaDoUsuario, iNomeArquivo, iExtencao)
-            iImagem = Image.open(iDiretorioImagem)
-            iImagem.save(iDiretorioImagemNovo) 
-            return iDiretorioImagemNovo
+            try:
+                iDiretorioImagemNovo= '%s/%s.%s' % (iPastaTemporariaDoUsuario, iNomeArquivo, iExtencao)
+                iImagem = Image.open(iDiretorioImagem)
+                iImagem.save(iDiretorioImagemNovo)
+                iEhOriginal = False
+            except:
+                iDiretorioImagemNovo= str(iDiretorioImagem)
+                iEhOriginal= True
+            return iDiretorioImagemNovo, iEhOriginal
         except Exception, e:
             self.getLogger().error('Nao foi possivel converter a imagem: ' + str(e))
             return False

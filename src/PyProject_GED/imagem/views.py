@@ -3,7 +3,8 @@ from django.shortcuts                   import render_to_response
 from django.template                    import RequestContext
 from django.contrib.auth.decorators     import login_required
 from django.contrib                     import messages
-from django.http                        import HttpResponse
+from django.http                        import HttpResponse,\
+    HttpResponseRedirect
 
 from PyProject_GED                      import oControle, constantes
 from PyProject_GED.seguranca.models     import Funcao_Grupo
@@ -25,7 +26,11 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            iArquivo    = ImagemControle().converteExtencaoImagem(vIDVersao, int(vRequest.POST.get('tipo_exportar')), iUsuario.id)
+            iArquivo, iEhOriginal= ImagemControle().converteExtencaoImagem(vIDVersao, int(vRequest.POST.get('tipo_exportar')), iUsuario.id)
+            if iEhOriginal:
+                messages.warning(vRequest, 'Não foi possível exportar o arquivo para a extenção solicitada.')
+                return HttpResponseRedirect('/tipo_exportar/' + str(vIDVersao) + '/')
+            
             iFile       = open(iArquivo,"r")
             response    = HttpResponse(iFile.read())
             response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
@@ -38,7 +43,8 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
                                           iUsuario.id, vRequest.session['IDEmpresa'])
             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoExportar, 
                                           iUsuario.id, vRequest.session['IDEmpresa'])
-            ImagemControle().deletaImagemTemporaria(iArquivo)
+            if not iEhOriginal:
+                ImagemControle().deletaImagemTemporaria(iArquivo)
         
     return render_to_response(
         'exportar/tipo_exportar.html',
