@@ -25,17 +25,17 @@ class Controle(object):
     def getLogger(self):
         return self.oLogger
     
-    def converteExtencaoImagem(self, vIDVersao, iIDExtencao, vIDUsuario):
+    def converteExtencaoImagem(self, vIDVersao, vIDExtencao, vIDUsuario):
         try:
             mVersao= get_model('documento', 'Versao')
             iDiretorioImagem= mVersao().obtemCaminhoArquivo(vIDVersao)
-            if iIDExtencao == constantes.cntExtencaoImagemJPG:
+            if vIDExtencao == constantes.cntExtencaoImagemJPG:
                 iExtencao= 'jpg'
-            elif iIDExtencao == constantes.cntExtencaoImagemPNG:
+            elif vIDExtencao == constantes.cntExtencaoImagemPNG:
                 iExtencao= 'png'
-            elif iIDExtencao == constantes.cntExtencaoImagemBMP:
+            elif vIDExtencao == constantes.cntExtencaoImagemBMP:
                 iExtencao= 'bmp'
-            elif iIDExtencao == constantes.cntExtencaoImagemTIF:
+            elif vIDExtencao == constantes.cntExtencaoImagemTIF:
                 iExtencao= 'tif'    
             iDiretorioImagemSemExtencao= os.path.splitext(str(iDiretorioImagem))[0]
             iListaDiretorio= iDiretorioImagemSemExtencao.split('/')

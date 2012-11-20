@@ -61,6 +61,7 @@ def email(vRequest, vTitulo):
                         email.subject   = iAssunto
                         email.body      = iTexto
                         email.from_email= iUsuario.email
+                        iEhOriginal= True
                         for i in range(len(iDestinatarios)):
                             email.to.append(Usuario().obtemUsuarioPeloID(iDestinatarios[i]).email)
                         for i in range(len(iVersoes)):
@@ -79,8 +80,9 @@ def email(vRequest, vTitulo):
                                     iCaminho = iArquivo.image
                                     iNome = iArquivo.filename
                                 else:
-                                    iCaminho = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
+                                    iCaminho, iEhOriginal = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
                                     iNome = EnvioControle().obtemNovoNomeArquivo(iCaminho, int(iExtensao))
+                                print iCaminho
                                 iFileAnexo = iCaminho  
                                 iFile = open(str(iFileAnexo),"rb")
                                 email.attach(filename = iNome, content = iFile.read())
@@ -92,6 +94,9 @@ def email(vRequest, vTitulo):
                                            iUsuario.id, vRequest.session['IDEmpresa'])
                             Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoEmail, iUsuario.id, 
                                     vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
+                            if not iEhOriginal:
+                                ImagemControle().deletaImagemTemporaria(iCaminho)
+                                
                         vRequest.session['ListaVersao'] = ''
                         return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoEmail) + '/')
                 except Exception, e:
