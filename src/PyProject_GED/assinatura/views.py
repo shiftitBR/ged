@@ -13,6 +13,8 @@ from PyProject_GED.assinatura.forms     import FormUploadCertificado
 from PyProject_GED.assinatura.models    import Certificado, Assinatura
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Funcao_Grupo
+from PyProject_GED.workflow.models import Pendencia
+from PyProject_GED.envioemail.models import Email
 
 @login_required 
 def assinar(vRequest, vTitulo, vIDVersao=None):
@@ -65,6 +67,14 @@ def assinar(vRequest, vTitulo, vIDVersao=None):
                                                        iUsuario.id, vRequest.session['IDEmpresa'])
                                 Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoAssinar, iUsuario.id, 
                                                               vRequest.session['IDEmpresa'], vIDVersao=iVersoes[i].id_versao)
+                            if vIDVersao != '0': #Tratamento de pendência
+                                iVersao = Versao().obtemVersao(vIDVersao)
+                                iPendencia = Pendencia().obtemPendencia(iVersao, iUsuario)
+                                Pendencia().trataPendencia(iVersao.documento, constantes.cntAcaoPendenciaAssinar, 
+                                                           iUsuario)
+    
+                                Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iPendencia.usr_remetente.email, 
+                                                          constantes.cntTipoEmailPendenciaAprovada)
                             else:
                                 messages.warning(vRequest, 'Ocorreu um erro ao tentar assinar o documento: ' + iVersoes[i].assunto )
                                 break

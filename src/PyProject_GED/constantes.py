@@ -131,6 +131,7 @@ cntTipoEmailPendenciaRecebida   = 1
 cntTipoEmailPendenciaAprovada   = 2
 cntTipoEmailPendenciaReprovada  = 3
 cntTipoEmailDocumentoVencendo   = 4
+cntTipoEmailPendenciaAssinada   = 5
 
 #Tipo de Busca
 cntTipoBuscaGeral               = 1
