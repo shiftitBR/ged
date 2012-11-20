@@ -219,7 +219,8 @@ class Grupo_da_Pendencia(models.Model):
         
     def criaGrupoDaPendencia(self, vEhMultipla):
         try:
-            iGrupoDaPendencia= Grupo_da_Pendencia(vEhMultipla)
+            iGrupoDaPendencia= Grupo_da_Pendencia()
+            iGrupoDaPendencia.eh_multipla= vEhMultipla
             iGrupoDaPendencia.save()
             return iGrupoDaPendencia
         except Exception, e:
