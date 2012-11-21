@@ -240,6 +240,7 @@ def importar(vRequest, vTitulo):
             form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
+        vRequest.session['Images'] = False
                                            
     return render_to_response(
         'acao/importar.html',

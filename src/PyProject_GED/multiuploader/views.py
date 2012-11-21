@@ -25,7 +25,7 @@ def multiuploader_delete(request, pk):
 @login_required 
 @csrf_exempt
 def multiuploader(vRequest):    
-    vRequest.session['Images'] = False
+    #vRequest.session['Images'] = False
     
     if vRequest.method == 'POST':
         try:
