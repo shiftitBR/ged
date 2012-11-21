@@ -12,6 +12,7 @@ from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.imagem.controle      import Controle as ImagemControle
 from PyProject_GED.historico.models     import Log_Usuario, Historico
 from django.conf                        import settings
+from PyProject_GED.envioemail.controle  import Controle as EnvioControle
 
 import os
 
@@ -26,18 +27,20 @@ def tipo_exportar(vRequest, vTitulo, vIDVersao=None):
         
     if vRequest.POST:
         try :
-            iArquivo, iEhOriginal= ImagemControle().converteExtencaoImagem(vIDVersao, int(vRequest.POST.get('tipo_exportar')), iUsuario.id)
+            iExtensao= int(vRequest.POST.get('tipo_exportar'))
+            iArquivo, iEhOriginal= ImagemControle().converteExtencaoImagem(vIDVersao, iExtensao, iUsuario.id)
             if iEhOriginal:
-                messages.warning(vRequest, 'Não foi possível exportar o arquivo para a extenção solicitada.')
-                return HttpResponseRedirect('/tipo_exportar/' + str(vIDVersao) + '/')
-            
+                iNome       = EnvioControle().obtemNovoNomeArquivo(iArquivo, int(iExtensao))
+            else:
+                iNome= os.path.split(iArquivo)[1]
             iFile       = open(iArquivo,"r")
             response    = HttpResponse(iFile.read())
-            response["Content-Disposition"] = "attachment; filename=%s" % os.path.split(iArquivo)[1]
+            response["Content-Disposition"] = "attachment; filename=%s" % iNome
             return response
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel exportar a imagem: ' + str(e))
-            return False
+            messages.warning(vRequest, 'Não foi possível exportar o arquivo para a extenção solicitada.')
+            return HttpResponseRedirect('/tipo_exportar/' + str(vIDVersao) + '/')
         finally:
             Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoExportar, 
                                           iUsuario.id, vRequest.session['IDEmpresa'])
