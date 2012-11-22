@@ -8,6 +8,9 @@ from PyProject_GED                      import oControle
 from django.utils.encoding              import smart_str, smart_unicode
 import os
 
+oListaUploads= []
+
+
 try:
     storage = settings.MULTI_IMAGES_FOLDER+'/'
 except AttributeError:
@@ -33,16 +36,13 @@ class MultiuploaderImage(models.Model):
     def __unicode__(self):
         return self.image.name
 
-    def save(self, vIDPasta, vIDEmpresa, vSession=None):
+    def save(self, vIDPasta, vIDEmpresa):
         try:
             mPasta= get_model('seguranca', 'Pasta')()
             for field in self._meta.fields:
                 if field.name == 'image':
                     field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
             super(MultiuploaderImage, self).save()
-            if vSession != None:
-                vSession['Images'].append(self.id)
-                vSession.save()
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
             return False
@@ -64,3 +64,28 @@ class MultiuploaderImage(models.Model):
             return vNomeImagem.replace('ª', 'a')
         except:
             return False
+    
+    def insereUploadDoUsuario(self, vIDUsuario, vIDUpload):
+        try:
+            oListaUploads.append((vIDUsuario, vIDUpload))
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel iserir upload na lista: ' + str(e))
+            return False
+    
+    def obtemListaDeUploadsDoUsuario(self, vIDUsuario):
+        try:
+            iListaUploads= []
+            iListaIndices=[]
+            for i in range(len(oListaUploads)):
+                if oListaUploads[i][0] == vIDUsuario:
+                    iListaUploads.append(oListaUploads[i][1])
+                    iListaIndices.append(i)
+            iListaIndices.reverse()
+            for iIndice in iListaIndices:
+                oListaUploads.pop(iIndice)            
+            return iListaUploads
+        
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel iserir upload na lista: ' + str(e))
+            return False
+        

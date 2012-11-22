@@ -180,7 +180,7 @@ def importar(vRequest, vTitulo):
             try:
                 if vRequest.session['Images'] == True or not vRequest.session['Images'] == None:
                     #iListaImages = str(vRequest.session['Images']).split(',')
-                    iListaImages= vRequest.session['Images']
+                    iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user) #vRequest.session['Images']
                     vRequest.session['Images']= []
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
