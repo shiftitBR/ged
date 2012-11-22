@@ -18,6 +18,7 @@ import logging
 import SocketServer
 import json
 import os
+import shutil
 
 
 class Servidor(models.Model):
@@ -46,6 +47,22 @@ class Servidor(models.Model):
             return iJSON
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a resposta para o cliente: ' + str(e))
+            return False
+    
+    def copiaArquivo(self, vArquivo, vPastaDestino):
+        try:      
+            iCount= 0
+            iNomeArquivo = os.path.basename(vArquivo)
+            iNomeArquivoSemExtencao, iExtencaoArquivo = os.path.splitext(iNomeArquivo)
+            iArquivoDestino = os.path.join(vPastaDestino, iNomeArquivo)
+            while os.path.exists(iArquivoDestino):
+                iCount += 1
+                iArquivoDestino = os.path.join(vPastaDestino, '%s-%d%s' % (iNomeArquivoSemExtencao, iCount, iExtencaoArquivo))
+            iNomeArquivoDestino= os.path.basename(iArquivoDestino)
+            shutil.move(vArquivo, iArquivoDestino)
+            return iNomeArquivoDestino
+        except Exception, e:
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel copiar o arquivo: ' + str(e))
             return False
         
 class Socket(SocketServer.BaseRequestHandler):

@@ -11,7 +11,7 @@ from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.documento.forms      import FormUploadDeArquivo
 from PyProject_GED.seguranca.models     import Pasta
 from PyProject_GED.indice.models        import Indice_Pasta, Indice_Versao_Valor
-from PyProject_GED.servidor.models      import Importacao_FTP
+from PyProject_GED.servidor.models      import Importacao_FTP, Servidor
 from PyProject_GED.multiuploader.models import MultiuploaderImage
 from PyProject_GED.documento.models     import Documento, Versao
 from PyProject_GED.qualidade.models     import Norma, Norma_Documento
@@ -70,10 +70,12 @@ def importar_lote(vRequest, vTitulo):
                 
                 for i in range(len(iListaImportar)):
                     iCaminhoPasta = constantes.cntConfiguracaoDiretorioDocumentos%vRequest.session['IDEmpresa'] + "/" + iPasta.diretorio
-                    shutil.move(iListaImportar[i].caminho, iCaminhoPasta)
+                    iNomeArquivo= Servidor().copiaArquivo(iListaImportar[i].caminho, iCaminhoPasta)
+                    if iNomeArquivo == False:
+                        raise
                     iImage               = MultiuploaderImage()
-                    iImage.filename      = iListaImportar[i].nomeArquivo
-                    iImage.image         = iCaminhoPasta + "/" + iListaImportar[i].nomeArquivo
+                    iImage.filename      = iNomeArquivo
+                    iImage.image         = iCaminhoPasta + "/" + iNomeArquivo
                     iImage.key_data      = iImage.key_generate
                     iImage.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
                     iAssuntoLote= '%s - %02d' % (iAssunto, i+1)
@@ -105,7 +107,8 @@ def importar_lote(vRequest, vTitulo):
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
-                return False
+                messages.warning(vRequest, 'Não foi possível importar os arquivos solicitados!')
+                return HttpResponseRedirect('/importar_lote/')
         else:
             form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
