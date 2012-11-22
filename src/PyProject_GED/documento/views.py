@@ -179,8 +179,9 @@ def importar(vRequest, vTitulo):
         if form.is_valid():
             try:
                 if vRequest.session['Images'] == True or not vRequest.session['Images'] == None:
-                    iListaImages = str(vRequest.session['Images']).split(',')
-                    vRequest.session['Images']= False
+                    #iListaImages = str(vRequest.session['Images']).split(',')
+                    iListaImages= vRequest.session['Images']
+                    vRequest.session['Images']= []
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= None
@@ -235,12 +236,13 @@ def importar(vRequest, vTitulo):
                     messages.warning(vRequest, 'Faça o Upload de 1 (um) documento para executar esta função!')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel importar: ' + str(e))
-                return False
+                messages.warning(vRequest, 'Não foi possível importar o(s) arquivo(s) solicitados!')
+                return HttpResponseRedirect('/importar/')
         else:
             form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
-        vRequest.session['Images'] = False
+        vRequest.session['Images'] = []
                                            
     return render_to_response(
         'acao/importar.html',

@@ -48,16 +48,8 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            try:
-                if vRequest.session['Images'] == False:
-                    iListaImages = '%s' % image.id
-                    vRequest.session['Images'] = iListaImages
-                else:
-                    iListaImages = '%s , %s' % (vRequest.session['Images'], image.id)
-                    vRequest.session['Images'] = iListaImages
-            except:
-                iListaImages = '%s' % image.id
-                vRequest.session['Images'] = iListaImages
+            vRequest.session['Images'].append(image.id)
+            vRequest.session.modified = True
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
