@@ -33,13 +33,16 @@ class MultiuploaderImage(models.Model):
     def __unicode__(self):
         return self.image.name
 
-    def save(self, vIDPasta, vIDEmpresa):
+    def save(self, vIDPasta, vIDEmpresa, vSession=None):
         try:
             mPasta= get_model('seguranca', 'Pasta')()
             for field in self._meta.fields:
                 if field.name == 'image':
                     field.upload_to = mPasta.obtemDiretorioUpload(vIDPasta, vIDEmpresa)
             super(MultiuploaderImage, self).save()
+            if vSession != None:
+                vSession['Images'].append(self.id)
+                vSession.save()
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel salvar - multiuploader: ' + str(e))
             return False
