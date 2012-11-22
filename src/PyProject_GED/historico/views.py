@@ -20,6 +20,10 @@ def historico(vRequest, vTitulo, vIDVersao=None):
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoHistorico):
         iVersao         = Versao().obtemVersao(vIDVersao)
         iDocumento      = Documento().obtemInformacoesDocumento(vIDVersao)
+        if iDocumento.dataDescarte == None:
+            iDocumento.dataDescarte= 'Não informado'
+        if iDocumento.dataValidade == None:
+            iDocumento.dataValidade= 'Não informado'
         iListaVersao    = Versao().obtemListaDeVersoesDoDocumento(vIDVersao)
         iListaEventos   = Historico().obtemListaEventos(vIDVersao)
         iUltimaVersao   = iListaVersao[len(iListaVersao)-1].num_versao

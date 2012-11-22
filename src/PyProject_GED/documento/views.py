@@ -183,12 +183,12 @@ def importar(vRequest, vTitulo):
                     vRequest.session['Images']= False
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
-                        iDataValidade= datetime.datetime.now()
+                        iDataValidade= None
                     else:
                         iListaDataValidade= vRequest.POST.get('data_validade').split('/')
                         iDataValidade= datetime.datetime(int(iListaDataValidade[2]), int(iListaDataValidade[1]), int(iListaDataValidade[0]), 00, 00, 00)
                     if len(vRequest.POST.get('data_descarte')) != 10:
-                        iDataDescarte= datetime.datetime.now()
+                        iDataDescarte= None
                     else:
                         iListaDataDescarte= vRequest.POST.get('data_descarte').split('/')
                         iDataDescarte= datetime.datetime(int(iListaDataDescarte[2]), int(iListaDataDescarte[1]), int(iListaDataDescarte[0]), 00, 00, 00)
