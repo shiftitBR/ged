@@ -9,6 +9,8 @@ from PyProject_GED.autenticacao.models  import Usuario
 
 import os
 from django.db.models.aggregates import Max
+import unicodedata
+import string
 
 try:
     storage = settings.MULTI_IMAGES_FOLDER+'/'
@@ -54,9 +56,9 @@ class MultiuploaderImage(models.Model):
     
     def limpaNomeImagem(self, vNomeImagem):
         try:
-            iNomeImagem, iExtencao= os.path.splitext(str(vNomeImagem))
-            iNomeLimpo= ''.join(e for e in iNomeImagem if e.isalnum())
-            return u'%s%s' % (iNomeLimpo.lower(), iExtencao.lower())
+            iNomeImagem, iExtencao= vNomeImagem.split('.')
+            iNomeLimpo= ''.join(x for x in unicodedata.normalize('NFKD', iNomeImagem) if x in string.ascii_letters).lower()
+            return u'%s.%s' % (iNomeLimpo.lower(), iExtencao.lower())
         except:
             return False
     

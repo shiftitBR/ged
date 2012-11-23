@@ -57,7 +57,7 @@ class Servidor(models.Model):
             iArquivoDestino = os.path.join(vPastaDestino, iNomeArquivo)
             while os.path.exists(iArquivoDestino):
                 iCount += 1
-                iArquivoDestino = os.path.join(vPastaDestino, '%s-%d%s' % (iNomeArquivoSemExtencao, iCount, iExtencaoArquivo))
+                iArquivoDestino = os.path.join(vPastaDestino, '%s_%d%s' % (iNomeArquivoSemExtencao, iCount, iExtencaoArquivo))
             iNomeArquivoDestino= os.path.basename(iArquivoDestino)
             shutil.move(vArquivo, iArquivoDestino)
             return iNomeArquivoDestino

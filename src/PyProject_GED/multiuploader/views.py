@@ -12,6 +12,7 @@ from PyProject_GED                  import oControle
 from threading import BoundedSemaphore
 import Queue
 from PyProject_GED.autenticacao.models import Usuario
+import re
 
 @csrf_exempt
 @login_required 
@@ -35,12 +36,13 @@ def multiuploader(vRequest):
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
             file = vRequest.FILES[u'files[]'.encode('utf-8')]
+            file.name= MultiuploaderImage().limpaNomeImagem(file.name)
             wrapped_file = UploadedFile(file)
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             #salvar imagem - tabela multiuploader
             image               = MultiuploaderImage()
-            image.filename      = filename
+            image.filename      = image.limpaNomeImagem(filename)
             image.image         = file
             image.key_data      = image.key_generate
             image.usuario       = Usuario().obtemUsuario(vRequest.user)
