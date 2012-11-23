@@ -8,6 +8,7 @@ from PyProject_GED                      import oControle
 from django.utils.encoding              import smart_str, smart_unicode
 import os
 from threading import BoundedSemaphore, Thread
+import threading
 
 oListaUploads= []
 oSemafaros= {}
@@ -118,3 +119,27 @@ class MultiuploaderImage(models.Model):
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel obter o semafaro: ' + str(e))
             return False
+
+class Downloader(threading.Thread):
+    """Threaded File Downloader"""
+ 
+    #----------------------------------------------------------------------
+    def __init__(self, queue):
+        threading.Thread.__init__(self)
+        self.queue = queue
+ 
+    #----------------------------------------------------------------------
+    def run(self):
+        while True:
+            # gets the url from the queue
+            iSession, iIDUpload = self.queue.get()
+            print '>>>>>>>>>>>>>>>>>>>>>>>'
+            print iSession
+            print iIDUpload
+            # download the file
+            iSession['Images'].append(iIDUpload)
+            iSession.save()
+ 
+            # send a signal to the queue that the job is done
+            self.queue.task_done()
+ 

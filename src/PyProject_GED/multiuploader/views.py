@@ -10,6 +10,8 @@ from django.views.decorators.csrf   import csrf_exempt
 from models                         import MultiuploaderImage
 from PyProject_GED                  import oControle
 from threading import BoundedSemaphore
+from PyProject_GED.multiuploader.models import Downloader
+import Queue
 
 oListaUploads= {}
 iConexoesSimultaneas = 1
@@ -34,7 +36,7 @@ def multiuploader(vRequest):
     
     if vRequest.method == 'POST':
         try:
-            iSemafaroGeral.acquire()
+            #iSemafaroGeral.acquire()
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
             file = vRequest.FILES[u'files[]'.encode('utf-8')]
@@ -54,12 +56,27 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user.id)
-            iSemaforo.acquire()
-            vRequest.session['Images'].append(image.id)
-            vRequest.session.modified = True
-            iSemaforo.release()
-            iSemafaroGeral.release()
+            #iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user.id)
+            #iSemaforo.acquire()
+            
+            
+            queue = Queue.Queue()
+            # create a thread pool and give them a queue
+            t = Downloader(queue)
+            t.setDaemon(True)
+            t.start()
+         
+            # give the queue some data
+            queue.put((vRequest.session, image.id))
+         
+            # wait for the queue to finish
+            queue.join()
+            
+            
+            #vRequest.session['Images'].append(image.id)
+            #vRequest.session.modified = True
+            #iSemaforo.release()
+            #iSemafaroGeral.release()
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
