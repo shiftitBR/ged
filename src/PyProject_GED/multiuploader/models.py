@@ -7,8 +7,10 @@ from django.conf                        import settings
 from PyProject_GED                      import oControle
 from django.utils.encoding              import smart_str, smart_unicode
 import os
+from threading import BoundedSemaphore
 
 oListaUploads= []
+oSemafaros= {}
 
 
 try:
@@ -89,3 +91,19 @@ class MultiuploaderImage(models.Model):
             oControle.getLogger().error('Nao foi possivel iserir upload na lista: ' + str(e))
             return False
         
+    def criaSemafaro(self, vIDUsuario):
+        try:
+            iConexoesSimultaneas = 1
+            iSemafaro = BoundedSemaphore(value=iConexoesSimultaneas)
+            oSemafaros[vIDUsuario]= iSemafaro
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel criar o semafaro: ' + str(e))
+            return False
+
+    def obtemSemaforo(self, vIDUsuario):
+        try:
+            iSemafaro = oSemafaros[vIDUsuario]
+            return iSemafaro
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel armazenar o upload: ' + str(e))
+            return False

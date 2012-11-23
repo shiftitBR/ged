@@ -32,6 +32,7 @@ import urllib
 import json
 import re
 import shutil
+from threading import BoundedSemaphore
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -180,7 +181,8 @@ def importar(vRequest, vTitulo):
             try:
                 if vRequest.session['Images'] == True or not vRequest.session['Images'] == None:
                     #iListaImages = str(vRequest.session['Images']).split(',')
-                    iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user) #vRequest.session['Images']
+#                    iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user) 
+                    iListaImages= vRequest.session['Images']
                     vRequest.session['Images']= []
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
@@ -243,6 +245,7 @@ def importar(vRequest, vTitulo):
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
         vRequest.session['Images'] = []
+        MultiuploaderImage().criaSemafaro(vRequest.user)
                                            
     return render_to_response(
         'acao/importar.html',

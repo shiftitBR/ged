@@ -9,6 +9,7 @@ from django.views.decorators.csrf   import csrf_exempt
 
 from models                         import MultiuploaderImage
 from PyProject_GED                  import oControle
+from threading import BoundedSemaphore
 
 oListaUploads= {}
 
@@ -31,6 +32,7 @@ def multiuploader(vRequest):
     
     if vRequest.method == 'POST':
         try:
+            print 4
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
             file = vRequest.FILES[u'files[]'.encode('utf-8')]
@@ -50,16 +52,17 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            #vRequest.session['Images'].append(image.id)
-            #vRequest.session['Images']= iListaUploads
-            #vRequest.session.modified = True
-            MultiuploaderImage().insereUploadDoUsuario(vRequest.user, image.id)
+            iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user)
+            iSemaforo.acquire()
+            vRequest.session['Images'].append(image.id)
+            vRequest.session.modified = True
+            iSemaforo.release()
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
                 vRequest.session['Images']= False
                 return False
-    
+                
 @login_required 
 def multi_show_uploaded(request, key):
     """Simple file view helper.
