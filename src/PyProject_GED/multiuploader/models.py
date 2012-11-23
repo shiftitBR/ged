@@ -56,10 +56,11 @@ class MultiuploaderImage(models.Model):
     
     def limpaNomeImagem(self, vNomeImagem):
         try:
-            iNomeImagem, iExtencao= vNomeImagem.split('.')
+            iNomeImagem, iExtencao = os.path.splitext(vNomeImagem)
             iNomeLimpo= ''.join(x for x in unicodedata.normalize('NFKD', iNomeImagem) if x in string.ascii_letters).lower()
-            return u'%s.%s' % (iNomeLimpo.lower(), iExtencao.lower())
-        except:
+            return u'%s%s' % (iNomeLimpo.lower(), iExtencao.lower())
+        except Exception, e:
+            oControle.getLogger().error('Nao foi possivel limpar o nome do arquivo: ' + str(e))
             return False
     
     def obtemListaDeUploadsDoUsuario(self, vUser, vIDGrupo):
