@@ -13,6 +13,7 @@ oListaUploads= []
 oSemafaros= {}
 iConexoesSimultaneas = 1
 iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
+print '>>>>>>>>>>>>>>>>>>>>cre'
 
 
 try:
@@ -104,9 +105,15 @@ class MultiuploaderImage(models.Model):
 
     def obtemSemaforo(self, vIDUsuario):
         try:
-            iSemafaroGeral.acquire()
-            iSemafaro = oSemafaros[vIDUsuario]
-            iSemafaroGeral.release()
+            iObteve= False
+            while not iObteve:    
+                try:
+                    iSemafaroGeral.acquire()
+                    iSemafaro = oSemafaros[vIDUsuario]
+                    iObteve= True
+                    iSemafaroGeral.release()
+                except:
+                    iObteve= False
             return iSemafaro
         except Exception, e:
             oControle.getLogger().error('Nao foi possivel obter o semafaro: ' + str(e))
