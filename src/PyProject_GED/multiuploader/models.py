@@ -7,10 +7,12 @@ from django.conf                        import settings
 from PyProject_GED                      import oControle
 from django.utils.encoding              import smart_str, smart_unicode
 import os
-from threading import BoundedSemaphore
+from threading import BoundedSemaphore, Thread
 
 oListaUploads= []
 oSemafaros= {}
+iConexoesSimultaneas = 1
+iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
 
 
 try:
@@ -24,7 +26,7 @@ class MultiuploaderImage(models.Model):
     image = models.FileField(max_length=500, upload_to=storage)
     key_data = models.CharField(max_length=90, unique=True, blank=True, null=True)
     upload_date = models.DateTimeField(auto_now_add=True)
-
+    
     @property
     def key_generate(self):
         """returns a string based unique key with length 80 chars"""
@@ -102,8 +104,10 @@ class MultiuploaderImage(models.Model):
 
     def obtemSemaforo(self, vIDUsuario):
         try:
+            iSemafaroGeral.acquire()
             iSemafaro = oSemafaros[vIDUsuario]
+            iSemafaroGeral.release()
             return iSemafaro
         except Exception, e:
-            oControle.getLogger().error('Nao foi possivel armazenar o upload: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel obter o semafaro: ' + str(e))
             return False

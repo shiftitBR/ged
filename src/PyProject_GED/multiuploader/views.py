@@ -52,7 +52,7 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user)
+            iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user.id)
             iSemaforo.acquire()
             vRequest.session['Images'].append(image.id)
             vRequest.session.modified = True

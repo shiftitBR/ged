@@ -245,7 +245,7 @@ def importar(vRequest, vTitulo):
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
         vRequest.session['Images'] = []
-        MultiuploaderImage().criaSemafaro(vRequest.user)
+        MultiuploaderImage().criaSemafaro(vRequest.user.id)
                                            
     return render_to_response(
         'acao/importar.html',
