@@ -41,7 +41,8 @@ def importar_lote(vRequest, vTitulo):
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
-            return False
+            messages.warning(vRequest, 'Não foi possível obter os arquivos solicitados!')
+            return HttpResponseRedirect('/importar_lote/')
     
     if vRequest.POST:
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
