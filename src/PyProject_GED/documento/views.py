@@ -11,7 +11,7 @@ from PyProject_GED                      import oControle, constantes
 from PyProject_GED.autenticacao.models  import Usuario
 from PyProject_GED.historico.models     import Historico, Log_Usuario
 from PyProject_GED.seguranca.models     import Pasta, Grupo_Pasta, Funcao_Grupo
-from PyProject_GED.workflow.models      import Pendencia, Workflow
+from PyProject_GED.workflow.models      import Pendencia
 from PyProject_GED.documento.models     import Tipo_de_Documento
 from PyProject_GED.indice.models        import Indice_Versao_Valor, Indice_Pasta
 from PyProject_GED.ocr.controle         import Controle as ControleOCR
@@ -29,10 +29,7 @@ from PyProject_GED.dynamictwain.models  import TempFormData
 import datetime
 import os
 import urllib
-import json
-import re
 import shutil
-from threading import BoundedSemaphore
 
 @login_required 
 def documentos(vRequest, vTitulo):
@@ -181,10 +178,6 @@ def importar(vRequest, vTitulo):
             try:
                 iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user, vRequest.session['IDGrupo_Upload'])
                 if iListaImages == True or not iListaImages == None:
-                    #iListaImages = str(vRequest.session['Images']).split(',')
-#                    iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user) 
-#                    iListaImages= vRequest.session['Images']
-#                    vRequest.session['Images']= []
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= None

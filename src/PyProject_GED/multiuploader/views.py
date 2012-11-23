@@ -13,11 +13,6 @@ from threading import BoundedSemaphore
 import Queue
 from PyProject_GED.autenticacao.models import Usuario
 
-oListaUploads= {}
-iConexoesSimultaneas = 1
-iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
-queue = Queue.Queue(1)
-
 @csrf_exempt
 @login_required 
 def multiuploader_delete(request, pk):
