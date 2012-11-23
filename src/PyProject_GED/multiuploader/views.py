@@ -10,12 +10,13 @@ from django.views.decorators.csrf   import csrf_exempt
 from models                         import MultiuploaderImage
 from PyProject_GED                  import oControle
 from threading import BoundedSemaphore
-from PyProject_GED.multiuploader.models import Downloader
 import Queue
+from PyProject_GED.autenticacao.models import Usuario
 
 oListaUploads= {}
 iConexoesSimultaneas = 1
 iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
+queue = Queue.Queue(1)
 
 @csrf_exempt
 @login_required 
@@ -36,7 +37,6 @@ def multiuploader(vRequest):
     
     if vRequest.method == 'POST':
         try:
-            #iSemafaroGeral.acquire()
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
             file = vRequest.FILES[u'files[]'.encode('utf-8')]
@@ -48,6 +48,8 @@ def multiuploader(vRequest):
             image.filename      = filename
             image.image         = file
             image.key_data      = image.key_generate
+            image.usuario       = Usuario().obtemUsuario(vRequest.user)
+            image.grupo         = vRequest.session['IDGrupo_Upload']
             image.save(vRequest.session['IDPasta'], vRequest.session['IDEmpresa'])
             result = []
             result.append({"name":filename})
@@ -56,27 +58,6 @@ def multiuploader(vRequest):
                 mimetype = 'application/json'
             else:
                 mimetype = 'text/plain'
-            #iSemaforo = MultiuploaderImage().obtemSemaforo(vRequest.user.id)
-            #iSemaforo.acquire()
-            
-            
-            queue = Queue.Queue()
-            # create a thread pool and give them a queue
-            t = Downloader(queue)
-            t.setDaemon(True)
-            t.start()
-         
-            # give the queue some data
-            queue.put((vRequest.session, image.id))
-         
-            # wait for the queue to finish
-            queue.join()
-            
-            
-            #vRequest.session['Images'].append(image.id)
-            #vRequest.session.modified = True
-            #iSemaforo.release()
-            #iSemafaroGeral.release()
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))

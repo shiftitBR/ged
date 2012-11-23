@@ -5,17 +5,10 @@ import random
 
 from django.conf                        import settings
 from PyProject_GED                      import oControle
-from django.utils.encoding              import smart_str, smart_unicode
+from PyProject_GED.autenticacao.models  import Usuario
+
 import os
-from threading import BoundedSemaphore, Thread
-import threading
-
-oListaUploads= []
-oSemafaros= {}
-iConexoesSimultaneas = 1
-iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
-print '>>>>>>>>>>>>>>>>>>>>cre'
-
+from django.db.models.aggregates import Max
 
 try:
     storage = settings.MULTI_IMAGES_FOLDER+'/'
@@ -28,6 +21,8 @@ class MultiuploaderImage(models.Model):
     image = models.FileField(max_length=500, upload_to=storage)
     key_data = models.CharField(max_length=90, unique=True, blank=True, null=True)
     upload_date = models.DateTimeField(auto_now_add=True)
+    usuario= models.ForeignKey(Usuario, blank=True, null=True)
+    grupo= models.IntegerField(max_length=10, blank=True, null=True)
     
     @property
     def key_generate(self):
@@ -65,81 +60,26 @@ class MultiuploaderImage(models.Model):
         except:
             return False
     
-    def limpaNomeImagemSuave(self, vNomeImagem):
+    def obtemListaDeUploadsDoUsuario(self, vUser, vIDGrupo):
         try:
-            return vNomeImagem.replace('ª', 'a')
-        except:
-            return False
-    
-    def insereUploadDoUsuario(self, vIDUsuario, vIDUpload):
-        try:
-            oListaUploads.append((vIDUsuario, vIDUpload))
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel iserir upload na lista: ' + str(e))
-            return False
-    
-    def obtemListaDeUploadsDoUsuario(self, vIDUsuario):
-        try:
-            iListaUploads= []
-            iListaIndices=[]
-            for i in range(len(oListaUploads)):
-                if oListaUploads[i][0] == vIDUsuario:
-                    iListaUploads.append(oListaUploads[i][1])
-                    iListaIndices.append(i)
-            iListaIndices.reverse()
-            for iIndice in iListaIndices:
-                oListaUploads.pop(iIndice)            
+            iUsuario= Usuario().obtemUsuario(vUser)
+            iListaUploads= MultiuploaderImage.objects.filter(usuario= iUsuario, grupo= vIDGrupo)
             return iListaUploads
-        
         except Exception, e:
-            oControle.getLogger().error('Nao foi possivel iserir upload na lista: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel obter lista de uploads: ' + str(e))
             return False
-        
-    def criaSemafaro(self, vIDUsuario):
+    
+    def obtemGrupoDeUpload(self):
         try:
-            iConexoesSimultaneas = 1
-            iSemafaro = BoundedSemaphore(value=iConexoesSimultaneas)
-            oSemafaros[vIDUsuario]= iSemafaro
+            iUltimoGrupo= MultiuploaderImage.objects.all().aggregate(Max('grupo'))['grupo__max']
+            if iUltimoGrupo == None:
+                iProximoGrupo= 1
+            else:
+                iProximoGrupo= iUltimoGrupo +1
+            return iProximoGrupo
         except Exception, e:
-            oControle.getLogger().error('Nao foi possivel criar o semafaro: ' + str(e))
+            oControle.getLogger().error('Nao foi possivel obter o grupo de upload: ' + str(e))
             return False
+    
 
-    def obtemSemaforo(self, vIDUsuario):
-        try:
-            iObteve= False
-            while not iObteve:    
-                try:
-                    iSemafaroGeral.acquire()
-                    iSemafaro = oSemafaros[vIDUsuario]
-                    iObteve= True
-                    iSemafaroGeral.release()
-                except:
-                    iObteve= False
-            return iSemafaro
-        except Exception, e:
-            oControle.getLogger().error('Nao foi possivel obter o semafaro: ' + str(e))
-            return False
-
-class Downloader(threading.Thread):
-    """Threaded File Downloader"""
- 
-    #----------------------------------------------------------------------
-    def __init__(self, queue):
-        threading.Thread.__init__(self)
-        self.queue = queue
- 
-    #----------------------------------------------------------------------
-    def run(self):
-        while True:
-            # gets the url from the queue
-            iSession, iIDUpload = self.queue.get()
-            print '>>>>>>>>>>>>>>>>>>>>>>>'
-            print iSession
-            print iIDUpload
-            # download the file
-            iSession['Images'].append(iIDUpload)
-            iSession.save()
- 
-            # send a signal to the queue that the job is done
-            self.queue.task_done()
  

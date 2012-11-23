@@ -179,11 +179,12 @@ def importar(vRequest, vTitulo):
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
         if form.is_valid():
             try:
-                if vRequest.session['Images'] == True or not vRequest.session['Images'] == None:
+                iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user, vRequest.session['IDGrupo_Upload'])
+                if iListaImages == True or not iListaImages == None:
                     #iListaImages = str(vRequest.session['Images']).split(',')
 #                    iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user) 
-                    iListaImages= vRequest.session['Images']
-                    vRequest.session['Images']= []
+#                    iListaImages= vRequest.session['Images']
+#                    vRequest.session['Images']= []
                     #Adicionar na tabela documeto e versao
                     if len(vRequest.POST.get('data_validade')) != 10:
                         iDataValidade= None
@@ -204,10 +205,11 @@ def importar(vRequest, vTitulo):
                         iEh_Publico = False
                     iIDTipo_Documento = vRequest.POST.get('tipo_documento')
                     
-                    for i in range(len(iListaImages)):
-                        iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[i])
+                    iCount=0
+                    for iImage in iListaImages:
+                        iCount= iCount + 1
                         if len(iListaImages) > 1:
-                            iAssuntoLote= '%s - %02d' % (iAssunto, i+1)
+                            iAssuntoLote= '%s - %02d' % (iAssunto, iCount)
                         else:
                             iAssuntoLote= iAssunto
                         iDocumento  = Documento().salvaDocumento(vRequest.session['IDEmpresa'], iIDTipo_Documento, vRequest.session['IDPasta'], 
@@ -244,8 +246,7 @@ def importar(vRequest, vTitulo):
             form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
-        vRequest.session['Images'] = []
-        MultiuploaderImage().criaSemafaro(vRequest.user.id)
+        vRequest.session['IDGrupo_Upload']= MultiuploaderImage().obtemGrupoDeUpload()
                                            
     return render_to_response(
         'acao/importar.html',
