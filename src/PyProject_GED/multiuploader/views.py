@@ -12,6 +12,8 @@ from PyProject_GED                  import oControle
 from threading import BoundedSemaphore
 
 oListaUploads= {}
+iConexoesSimultaneas = 1
+iSemafaroGeral = BoundedSemaphore(value=iConexoesSimultaneas)
 
 @csrf_exempt
 @login_required 
@@ -32,7 +34,7 @@ def multiuploader(vRequest):
     
     if vRequest.method == 'POST':
         try:
-            print 4
+            iSemafaroGeral.acquire()
             if vRequest.FILES == None:
                 return HttpResponseBadRequest('Adicione um arquivo')
             file = vRequest.FILES[u'files[]'.encode('utf-8')]
@@ -57,6 +59,7 @@ def multiuploader(vRequest):
             vRequest.session['Images'].append(image.id)
             vRequest.session.modified = True
             iSemaforo.release()
+            iSemafaroGeral.release()
             return HttpResponse(response_data, mimetype=mimetype)
         except Exception, e:
                 oControle.getLogger().error('Nao foi possivel fazer upload - multiuploader: ' + str(e))
