@@ -236,7 +236,7 @@ class Importacao_FTP(models.Model):
             for Importar in iListaImportacoes:
                 iCaminho            = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz,
                                                     constantes.cntClasseMensagemImportacao,
-                                                    Importar.pasta_temporaria)
+                                                    str(Importar.pasta_temporaria).encode('utf-8'))
                 for (path, dirs,files) in os.walk(iCaminho):
                     for iFile in files:
                         iImportarAux= ImportarAuxiliar()
@@ -244,7 +244,7 @@ class Importacao_FTP(models.Model):
                         iImportarAux.numero         = iNumero
                         iImportarAux.caminho        = os.path.join(path, iFile)
                         iImportarAux.tamanho        = "%0.1f KB" % (os.path.getsize(iImportarAux.caminho)/(1024.0))
-                        iImportarAux.nomeArquivo    = os.path.basename(iImportarAux.caminho)
+                        iImportarAux.nomeArquivo    = str(os.path.basename(iImportarAux.caminho)).encode('utf-8')
                         iListaAuxiliar.append(iImportarAux)
             return iListaAuxiliar
         except Exception, e:
