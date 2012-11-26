@@ -21,7 +21,6 @@ from PyProject_GED.ocr.controle         import Controle as ControleOCR
 from PyProject_GED.imagem.controle      import Controle as ControleImagem
 
 import datetime
-import shutil
 
 @login_required     
 def importar_lote(vRequest, vTitulo):
@@ -30,7 +29,6 @@ def importar_lote(vRequest, vTitulo):
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
         iListaImportar, iEncontrouProblemas = Importacao_FTP().obtemListaImportacoes(iUsuario)
-        print iEncontrouProblemas
         if len(iListaImportar) != 0:
             if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
                 iListaIndices       = Indice_Pasta().obtemIndicesDaPasta(vRequest.session['IDPasta'])
@@ -118,7 +116,6 @@ def importar_lote(vRequest, vTitulo):
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
     
     if iEncontrouProblemas:
-        print 'Entrou!'
         messages.warning(vRequest, 'Não foi possível importar todos os arquivos solicitados! Verifique o nome dos arquivos!')
     
     return render_to_response(

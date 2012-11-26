@@ -506,8 +506,8 @@ def criaArvore(vRequest, vTitulo):
             iHtml=['<ul class="jqueryFileTree" style="display: none;">']
             for iPasta in os.listdir(iDiretorio):
                 iDiretorioFilho=os.path.join(iDiretorio, iPasta)
-                if not iPasta == 'temp' and not iPasta == 'ftp':
-                    if os.path.isdir(iDiretorioFilho):
+                if os.path.isdir(iDiretorioFilho):
+                    if ['temp', 'ftp'] not in iDiretorioFilho:
                         iNomePasta= Pasta().obtemNomeDaPasta(iPasta)
                         if Grupo_Pasta().possuiAcessoPasta(iUsuario, iPasta):
                             iHtml.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (iDiretorioFilho, iNomePasta))

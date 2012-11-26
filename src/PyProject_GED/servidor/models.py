@@ -242,7 +242,7 @@ class Importacao_FTP(models.Model):
                 for (path, dirs,files) in os.walk(iCaminho):
                     for iFile in files:
                         try:
-                            iFileLimpo= MultiuploaderImage().limpaNomeImagem(iFile.decode('utf-8'))
+                            iFileLimpo= MultiuploaderImage().limpaNomeImagem(iFile.decode('unicode-escape'))
                             os.rename(os.path.join(path, iFile), os.path.join(path, iFileLimpo))
                             iCaminho= os.path.join(path, iFileLimpo)
                             iImportarAux= ImportarAuxiliar()
@@ -253,10 +253,8 @@ class Importacao_FTP(models.Model):
                             iImportarAux.nomeArquivo    = str(os.path.basename(iImportarAux.caminho)).encode('utf-8')
                             iListaAuxiliar.append(iImportarAux)
                         except Exception, e:
-                            print 'opa!'
                             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alimentar a Lista de Importacoes: ' + str(e))
                             iEncontrouProblemas= True
-            print iEncontrouProblemas
             return iListaAuxiliar, iEncontrouProblemas
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar obtem Lista Importacoes: ' + str(e))
