@@ -19,6 +19,7 @@ import SocketServer
 import json
 import os
 import shutil
+from PyProject_GED.multiuploader.models import MultiuploaderImage
 
 
 class Servidor(models.Model):
@@ -233,22 +234,32 @@ class Importacao_FTP(models.Model):
             iListaImportacoes   = Importacao_FTP.objects.filter(usuario=vUsuario.id)
             iNumero = 0
             iListaAuxiliar      = []
+            iEncontrouProblemas = False
             for Importar in iListaImportacoes:
                 iCaminho            = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz,
                                                     constantes.cntClasseMensagemImportacao,
                                                     str(Importar.pasta_temporaria).encode('utf-8'))
                 for (path, dirs,files) in os.walk(iCaminho):
                     for iFile in files:
-                        iImportarAux= ImportarAuxiliar()
-                        iNumero                     = iNumero + 1
-                        iImportarAux.numero         = iNumero
-                        iImportarAux.caminho        = os.path.join(path, iFile)
-                        iImportarAux.tamanho        = "%0.1f KB" % (os.path.getsize(iImportarAux.caminho)/(1024.0))
-                        iImportarAux.nomeArquivo    = str(os.path.basename(iImportarAux.caminho)).encode('utf-8')
-                        iListaAuxiliar.append(iImportarAux)
-            return iListaAuxiliar
+                        try:
+                            iFileLimpo= MultiuploaderImage().limpaNomeImagem(iFile.decode('utf-8'))
+                            os.rename(os.path.join(path, iFile), os.path.join(path, iFileLimpo))
+                            iCaminho= os.path.join(path, iFileLimpo)
+                            iImportarAux= ImportarAuxiliar()
+                            iNumero                     = iNumero + 1
+                            iImportarAux.numero         = iNumero
+                            iImportarAux.caminho        = iCaminho
+                            iImportarAux.tamanho        = "%0.1f KB" % (os.path.getsize(iImportarAux.caminho)/(1024.0))
+                            iImportarAux.nomeArquivo    = str(os.path.basename(iImportarAux.caminho)).encode('utf-8')
+                            iListaAuxiliar.append(iImportarAux)
+                        except Exception, e:
+                            print 'opa!'
+                            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel alimentar a Lista de Importacoes: ' + str(e))
+                            iEncontrouProblemas= True
+            print iEncontrouProblemas
+            return iListaAuxiliar, iEncontrouProblemas
         except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar obtem obtem Lista Importacoes: ' + str(e))
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar obtem Lista Importacoes: ' + str(e))
             return False
 
 class Cadastro_Biometria(models.Model):

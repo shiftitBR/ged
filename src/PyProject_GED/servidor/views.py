@@ -29,7 +29,8 @@ def importar_lote(vRequest, vTitulo):
         iUser = vRequest.user
         if iUser:
             iUsuario= Usuario().obtemUsuario(iUser)
-        iListaImportar = Importacao_FTP().obtemListaImportacoes(iUsuario)
+        iListaImportar, iEncontrouProblemas = Importacao_FTP().obtemListaImportacoes(iUsuario)
+        print iEncontrouProblemas
         if len(iListaImportar) != 0:
             if not Pasta().ehPastaRaiz(vRequest.session['IDPasta'], vRequest.session['IDEmpresa']):
                 iListaIndices       = Indice_Pasta().obtemIndicesDaPasta(vRequest.session['IDPasta'])
@@ -41,8 +42,7 @@ def importar_lote(vRequest, vTitulo):
         
     except Exception, e:
             oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
-            messages.warning(vRequest, 'Não foi possível obter os arquivos solicitados!')
-            return HttpResponseRedirect('/importar_lote/')
+            return False
     
     if vRequest.POST:
         form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
@@ -106,6 +106,7 @@ def importar_lote(vRequest, vTitulo):
                                                    iUsuario.id, vRequest.session['IDEmpresa'])
                         Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoImportar, iUsuario.id, 
                                                   vRequest.session['IDEmpresa'], vIDVersao=iVersao.id_versao)
+                
                 return HttpResponseRedirect('/sucesso/' + str(constantes.cntFuncaoImportar) + '/')
             except Exception, e:
                 oControle.getLogger().error('Nao foi possivel get importar_lote: ' + str(e))
@@ -115,6 +116,11 @@ def importar_lote(vRequest, vTitulo):
             form = FormUploadDeArquivo(vRequest.POST, iIDEmpresa=vRequest.session['IDEmpresa'])
     else: 
         form = FormUploadDeArquivo(iIDEmpresa=vRequest.session['IDEmpresa'])
+    
+    if iEncontrouProblemas:
+        print 'Entrou!'
+        messages.warning(vRequest, 'Não foi possível importar todos os arquivos solicitados! Verifique o nome dos arquivos!')
+    
     return render_to_response(
         'importar/importar_lote.html',
         locals(),
