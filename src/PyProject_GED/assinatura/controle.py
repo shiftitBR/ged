@@ -23,7 +23,7 @@ class Controle(object):
             iCertificado = chilkat.CkCert()
             iCertificado.LoadPfxFile(str(vCertificado), str(vSenha))
             iCrypt = chilkat.CkCrypt2()
-            iSucesso = iCrypt.UnlockComponent("30-day trial")
+            iSucesso = iCrypt.UnlockComponent("BAYARDCrypt_JhZJemH3LEo2")
             if (iSucesso != True):
                 self.getLogger().error('Nao foi possivel assinar PFX: Componente Unlock')
                 return iSucesso
