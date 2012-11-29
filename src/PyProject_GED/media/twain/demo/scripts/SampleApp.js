@@ -28,7 +28,7 @@ function Pageonload() {
     obj.style.display = "none";
 	
     if (ExplorerType() == "IE" && navigator.userAgent.indexOf("Win64") != -1 && navigator.userAgent.indexOf("x64") != -1) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='Resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:FFC6F181-A5CF-4ec4-A441-093D7134FBF2' viewastext> " + strObject;
+        strObject = "<object id='mainDynamicWebTwainIE' codebase='Resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx64 = document.getElementById("maindivIEx64");
         objDivx64.style.display = "inline";
         objDivx64.innerHTML = strObject;
@@ -41,7 +41,7 @@ function Pageonload() {
         obj.style.display = "none";
     }
     else if (ExplorerType() == "IE" && (navigator.userAgent.indexOf("Win64") == -1 || navigator.userAgent.indexOf("x64") == -1)) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='Resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:FFC6F181-A5CF-4ec4-A441-093D7134FBF2' viewastext> " + strObject;
+        strObject = "<object id='mainDynamicWebTwainIE' codebase='Resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx86 = document.getElementById("maindivIEx86");
         objDivx86.style.display = "inline";
         objDivx86.innerHTML = strObject;
