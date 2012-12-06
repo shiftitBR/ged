@@ -20,7 +20,7 @@ function Pageonload() {
         document.getElementById("samplesource32bit").href = "http://www.dynamsoft.com/demo/DWT/Sources/twainkit.exe";
     }
     var strObjectFF = GetEventString(); 
-    strObjectFF += " class='divcontrol' pluginspage='resources/DynamicWebTwain.xpi'></embed>";
+    strObjectFF += " class='divcontrol' pluginspage='../../media/resources/DynamicWebTwain.xpi'></embed>";
 
     var strObject = GetObject();
 		
@@ -28,7 +28,7 @@ function Pageonload() {
     obj.style.display = "none";
 	
     if (ExplorerType() == "IE" && navigator.userAgent.indexOf("Win64") != -1 && navigator.userAgent.indexOf("x64") != -1) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+        strObject = "<object id='mainDynamicWebTwainIE' codebase='../../media/resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx64 = document.getElementById("maindivIEx64");
         objDivx64.style.display = "inline";
         objDivx64.innerHTML = strObject;
@@ -41,7 +41,7 @@ function Pageonload() {
         obj.style.display = "none";
     }
     else if (ExplorerType() == "IE" && (navigator.userAgent.indexOf("Win64") == -1 || navigator.userAgent.indexOf("x64") == -1)) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+        strObject = "<object id='mainDynamicWebTwainIE' codebase='../../media/resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx86 = document.getElementById("maindivIEx86");
         objDivx86.style.display = "inline";
         objDivx86.innerHTML = strObject;
@@ -244,6 +244,11 @@ function btnUpload_onclick_original(){
 function btnUpload_onclick()
 {
 	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>btnUpload_onclick');
+	
+	var grupoID;
+	var userID;
+	var empresaID;
+	var pastaID;
 	var strActionPage;
 	console.log(strActionPage);
 	var strHostIP;
@@ -254,7 +259,21 @@ function btnUpload_onclick()
 	var CurrentPath = CurrentPathName.substring(0, CurrentPathName.lastIndexOf("/") + 1); 
 	console.log(CurrentPath);
 	//strActionPage = CurrentPath + "upload"; //the ActionPage's file path
-	strActionPage = "/upload/"; //the ActionPage's file path
+	console.log('--------------destino');
+	userID= document.getElementById("user_id").value
+	console.log(userID)
+	
+	grupoID= document.getElementById("grupo_id").value
+	console.log(grupoID)
+	
+	empresaID= document.getElementById("empresa_id").value
+	console.log(empresaID)
+	
+	pastaID= document.getElementById("pasta_id").value
+	console.log(pastaID)
+	
+	
+	strActionPage = "/multiuploader_digitalizacao/"+userID+"/"+grupoID+"/"+empresaID+"/"+pastaID+"/"; //the ActionPage's file path
 	console.log(strActionPage);
 
 	strHostIP = "192.168.1.19"; //The host's IP or name
@@ -270,4 +289,52 @@ function btnUpload_onclick()
 	else{ //succeded
 		alert("Image Uploaded successfully!");
     }
+} 
+
+function btnUpload_onclick_terceiro()
+{
+	console.log('>>>>>>>>>>>>>>>>>bntupload');
+	// Grab the underlying form
+    var form = $("#btnUpload").parent('form');
+
+    console.log(form);
+    var ORIG_ACTION = form.attr('action');
+    console.log(ORIG_ACTION);
+    var ORIG_METHOD = form.attr('method');
+    console.log(ORIG_METHOD);
+            
+    var UID = null;
+    console.log(UID);
+
+    form.submit(function(){
+
+        /* First, post the form */
+        var data = $(this).serialize();
+        console.log(data);
+
+        $.ajax({
+            url: '/twain/form/?orig='+ORIG_ACTION,
+            method: ORIG_METHOD,
+            data: data,
+            dataType: 'json',
+            success: function(data){
+                UID = data.uid;
+                console.log(UID);
+                twain_instance.HTTPUploadAllThroughPostAsPDF(
+                    SERVER, 
+                    UPLOAD_PATH,
+                    "upload["+UID+"].pdf"
+                );
+
+                //window.location.href="/twain/redirect/?uid="+UID;
+                console.log('>>>>>>>>>>>>>>>>>>post');
+                $.post('/digitalizar/'+UID+'/', function(data){});
+                console.log('upou!');
+            }
+
+        });
+
+        return false;
+    });
+
 } 

@@ -38,18 +38,21 @@
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-
 		<div class="row">
 			<div class="span7">
-				{% load dynamictwain %}
+			     <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
+			      
+			        <input id='user_id' type="hidden" name="user_id" value="{{vRequest.user.id}}" />
+			        <input id='grupo_id' type="hidden" name="grupo_id" value="{{grupoID}}" />
+			        <input id='empresa_id' type="hidden" name="empresa_id" value="{{empresaID}}" />
+			        <input id='pasta_id' type="hidden" name="pasta_id" value="{{pastaID}}" />
 
-		        <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
+                    {% load documento %}
 
-		            {% scan_widget "400x450" "False" %}
+                    {% digitalizacao %}
 
-		            {% submit_form_with_scan %}
-
-		        </form>
+                </form>
+				
         	</div>
 			<div class="span5">
 				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}

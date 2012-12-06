@@ -1,5 +1,16 @@
 <!-- Placeholder for the scan widget -->
-<div id="twain_wrapper">
+
+<div id="mainControlPlugin" style="display:inline">
+    <div id="twain_wrapper">
+</div>
+</div>
+<div id="maindivIE">
+<object classid="clsid:5220cb21-c88d-11cf-b347-00aa00a28331" style="display:none;">
+    <param name="LPKPath" value="resources/DynamicWebTwain.lpk" />
+</object>
+<div id="maindivIEx86" >                                    
+</div>
+<div id="maindivIEx64" >                                  
 </div>
 
 <div id="twain_toolbox">
@@ -35,6 +46,7 @@
     var SERVER = "{{server}}";
     var UPLOAD_PATH = "{{upload_path}}";
     var MULTIPLE = {{multiple}};
+    var ua;
 
     /* URIs */
     var default_url = "{{base_url}}/DynamicWebTWAINPlugIn.exe";
@@ -104,6 +116,16 @@
         $("#TotalImage").val(twain_instance.HowManyImagesInBuffer);
         $("#CurrentImage").val(twain_instance.CurrentImageIndexInBuffer + 1);
     }
+    
+    function ExplorerType() {
+        ua = (navigator.userAgent.toLowerCase());
+        if (ua.indexOf("msie") != -1) {
+            return "IE";
+        }
+        else {
+            return "notIE";
+    }
+}
 
     /*
      * Callbacks overrides
@@ -228,6 +250,67 @@
      */
 
     $(document).ready(function(){
+        
+        
+        ua = (navigator.userAgent.toLowerCase());
+        if (ua.indexOf("wow64") == -1) {
+            document.getElementById("samplesource32bit").href = "http://www.dynamsoft.com/demo/DWT/Sources/twainkit.exe";
+        }
+        var strObjectFF = GetEventString(); 
+        strObjectFF += " class='divcontrol' pluginspage='{{base_url}}/DynamicWebTwain.xpi'></embed>";
+    
+        var strObject = GetObject();
+            
+        var obj = document.getElementById("maindivIElimit");
+        obj.style.display = "none";
+        
+        if (ExplorerType() == "IE" && navigator.userAgent.indexOf("Win64") != -1 && navigator.userAgent.indexOf("x64") != -1) {
+            strObject = "<object id='mainDynamicWebTwainIE' codebase='{{base_url}}/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+            var objDivx64 = document.getElementById("maindivIEx64");
+            objDivx64.style.display = "inline";
+            objDivx64.innerHTML = strObject;
+            var obj = document.getElementById("mainControlPluginNotInstalled");
+            obj.style.display = "none";
+            WebTWAIN = document.getElementById("mainDynamicWebTwainIE");
+            document.getElementById("samplesource64bit").style.display = "inline";
+            document.getElementById("samplesource32bit").style.display = "none";
+            var obj = document.getElementById("maindivIElimit");
+            obj.style.display = "none";
+        }
+        else if (ExplorerType() == "IE" && (navigator.userAgent.indexOf("Win64") == -1 || navigator.userAgent.indexOf("x64") == -1)) {
+            strObject = "<object id='mainDynamicWebTwainIE' codebase='{{base_url}}/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+            var objDivx86 = document.getElementById("maindivIEx86");
+            objDivx86.style.display = "inline";
+            objDivx86.innerHTML = strObject;
+            var obj = document.getElementById("mainControlPluginNotInstalled");
+            obj.style.display = "none";
+            WebTWAIN = document.getElementById("mainDynamicWebTwainIE");
+            var obj = document.getElementById("maindivIElimit");
+            obj.style.display = "none";
+        }
+        else if (ExplorerType() == "notIE" ){
+            var objDivFF = document.getElementById("mainControlPlugin");
+            objDivFF.innerHTML = strObjectFF;
+            var obj = document.getElementById("maindivIE");
+            obj.style.display = "none";
+            var obj = document.getElementById("maindivIElimit");
+            obj.style.display = "none";
+            WebTWAIN = document.getElementById("mainDynamicWebTWAINnotIE");
+        }
+        else{
+            var obj = document.getElementById("mainControlPluginNotInstalled");
+            obj.style.display = "none";
+            var obj = document.getElementById("maindivIE");
+            obj.style.display = "none";
+            var obj = document.getElementById("maindivIElimit");
+            obj.style.display = "none";
+        }
+        
+        
+        
+        
+        
+        
         /* Insert the snippet in the DOM */
         $("#twain_wrapper").html(snippet);
 

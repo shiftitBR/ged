@@ -68,3 +68,30 @@ def multi_show_uploaded(request, key):
     image = get_object_or_404(MultiuploaderImage, key_data=key)
     url = settings.MEDIA_URL+image.image.name
     return render_to_response('multiuploader/one_image.html', {"multi_single_url":url,})
+
+#@login_required 
+@csrf_exempt
+def multiuploader_digitalizacao(vRequest, vUserID, vGrupoID, vEmpresaID, vPastaID):   
+    if vRequest.method == 'POST':
+        try:
+            if vRequest.FILES == None:
+                return HttpResponseBadRequest('Adicione um arquivo')
+            file = vRequest.FILES['RemoteFile'.encode('utf-8')]
+            wrapped_file = UploadedFile(file)
+            filename = wrapped_file.name
+            file_size = wrapped_file.file.size
+            #salvar imagem - tabela multiuploader
+            image               = MultiuploaderImage()
+            image.filename      = image.limpaNomeImagem(filename)
+            image.image         = file
+            image.key_data      = image.key_generate
+            image.usuario       = Usuario().obtemUsuarioPeloID(vUserID)
+            image.grupo         = vGrupoID
+            image.save(vPastaID, vEmpresaID)
+            response_data = ''
+            mimetype = 'text/plain'
+            return HttpResponse(response_data, mimetype=mimetype)
+        except Exception, e:
+                oControle.getLogger().error('Nao foi possivel salvar a digitalizacao - multiuploader: ' + str(e))
+                vRequest.session['Images']= False
+                return False

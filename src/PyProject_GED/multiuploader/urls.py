@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     (r'^'+delete_url+'/(\d+)/$', 'multiuploader.views.multiuploader_delete'),
     url(r'^upload/$', 'multiuploader.views.multiuploader', name='multi'),
     (r'^'+image_url+'/(\d+)/$', 'multiuploader.views.multi_show_uploaded'),
+    url(r'^multiuploader_digitalizacao/(?P<vUserID>\d+)/(?P<vGrupoID>\d+)/(?P<vEmpresaID>\d+)/(?P<vPastaID>\d+)/$', 'multiuploader.views.multiuploader_digitalizacao', name='multiuploader_digitalizacao'),
 )

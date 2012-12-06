@@ -1,58 +1,7 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-    <title>Dynamic Web TWAIN Online Demo</title>
-    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="Content-Language" content="en-us"/>
-    <meta name="description"
-        content="Dynamic Web TWAIN is a TWAIN scanning SDK specifically optimized for web applications. 
-        You can control any TWAIN compatible device drivers - scanner, digital camera or capture card - 
-        in a web page to acquire images, edit and then upload to web servers using the TWAIN control." />
-    <meta name="keyword" content="Dynamsoft, TWAIN, Scanners, SDK, Scanning"/>
-    <link href="styles/style.css" type="text/css" rel="stylesheet" />
-</head>
-
-<body>
+﻿
+<link href="{{ MEDIA_URL }}css/twain/style.css" type="text/css" rel="stylesheet" />
 
 <div id="container" class="body_Broad_width" style="margin:0 auto;">
-
-<div id="headcontainer" class="body_Broad_width" style="background-color:#3a3a3a; border:0;">
-<br />
-
-<div class="body_Broad_width" style="background-image:url(images/adtopbackground.gif); height:120px; ">
-
-<div style="float:left; border:0px; padding-top:35px; width:198px; margin-left:75px;">
-    <a href="http://www.dynamsoft.com/Products/WebTWAIN_Overview.aspx">
-    <img alt = "DynamicWebTWAIN logo" border="0" src="images/DynamicWebTWAIN_logo.gif"/></a>
-</div>
-<div style="float:left; border:0px; padding-top:35px; width:242px; margin-left:-10px;">
-<a><img alt = "Online Demo" border="0" src="images/Online-Demo.gif"/></a>
-</div>
-<div style="float:left; border:0px; padding-top:20px; padding-left:50px; width:350px;">
-<ul>
-<li class="fontstyle">Supports 32-bit/64-bit TWAIN drivers (ActiveX Edition)</li>
-<li class="fontstyle">Supports IE (32-bit/64-bit), Firefox, Chrome, Safari,Opera...</li>
-<li class="fontstyle">Supports JavaScript, ASP.NET, VB.NET, ASP, PHP, JSP...</li>
-</ul>
-</div>
-
-</div>
-
-<div class="body_Broad_width" style="height:60px; background-image:url(images/adtop1background.gif);">
-<br />
-
-<div class="menudiv" style="width:280px;" >
-    <a class="menucolor" style="color: #FE8E14; margin-left: 35px;"><b>Online Demo </b></a>
-</div>
-
-</div>
-
-<div class="body_Broad_width" style="background-image:url(images/menu_back.gif); background-repeat:repeat; height:20px; background-color:#ffffff;">
-
-</div>
-
-</div>
 
 <div id="DWTcontainer" class="body_Broad_width" style="background-color:#ffffff; height:800px; border:0;">
 
@@ -313,8 +262,6 @@
 
 </div>
 
-<script type="text/javascript" language="javascript" src="scripts/SampleApp.js"></script>
-<script type="text/javascript" language="javascript" src="scripts/jCommon.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/twain/SampleApp.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/twain/jCommon.js"></script>
 
-</body>
-</html>
