@@ -81,21 +81,21 @@ div#DWTcontainer
 }
 .divcontrol
 {
-    width:580px; height:600px;
+    width:580px; height:400px;
 }
 
 .divcontrolthumbnail
 {
-    width:90px; height:560px;
+    width:90px; height:400px;
 }
 div#dwtcontrolContainer  
 {
-    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:100%; height:100%;
+    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:400px; height:400px;
 }
 
 div.dwtcontrolThumbnail
 {
-    padding:5px; padding-top:10px; text-align:center; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 580px; 
+    padding:5px; padding-top:10px; text-align:center; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 4000px; 
 	z-index: 1; background-color: #f0f0f0; width:100px;
 }
 
@@ -116,13 +116,13 @@ div#ImgSizeEditor
 
 div#MoreEditMethods
 {
-    padding:5px; padding-top:10px; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: auto;
+    padding:5px; padding-top:10px; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 400px;
 	z-index: 1; background-color: #f0f0f0; width:250px;  text-align:left;
 }
 
 div#divCapabilityNegotiation
 {
-    padding:5px; padding-top:10px; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: auto; 
+    padding:5px; padding-top:10px; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 400px; 
 	z-index: 2; background-color: #f0f0f0; width:auto;
 }
 
