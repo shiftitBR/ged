@@ -53,8 +53,8 @@
       <div class="object-tools">
       {% if has_add_permission %}
           {% block object-tools-items %}
-              <a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">
-                <span class="label success">
+              <a href="add/{% if is_popup %}?_popup=1{% endif %}" class="btn success">
+                <span>
                   {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
                 </span>
               </a>
