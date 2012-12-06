@@ -98,6 +98,7 @@
 	}
 
 	function clearPlaceholder(event, value) {
+		console.log('clear>>>>>>>>>>>>>>>>')
 		var input = this,
 		    $input = $(input);
 		if (input.value == $input.attr('placeholder') && $input.hasClass('placeholder')) {
