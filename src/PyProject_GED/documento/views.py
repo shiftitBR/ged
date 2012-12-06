@@ -269,9 +269,9 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
         form = FormCheckin(vRequest.POST)
         if form.is_valid():
             try:
-                if vRequest.session['Images'] != False  :
-                    iListaImages= str(vRequest.session['Images']).split(',')
-                    iImage      = MultiuploaderImage().obtemImagePeloId(iListaImages[0])
+                iListaImages= MultiuploaderImage().obtemListaDeUploadsDoUsuario(vRequest.user, vRequest.session['IDGrupo_Upload'])
+                if iListaImages == True or not iListaImages == None:
+                    iImage      = iListaImages[0]
                     iDescricao  = vRequest.POST.get('descricao')
                     iProtocolo  = Documento().gerarProtocolo(iDocumento.id_documento, int(iVersaoBase.versao)+1)
                     iVersao     = Versao().salvaVersao(iDocumento.id_documento, iUsuario.id, 
@@ -297,6 +297,7 @@ def checkin(vRequest, vTitulo, vIDVersao=None):
             iErro= True
     else: 
         form = FormCheckin()
+        vRequest.session['IDGrupo_Upload']= MultiuploaderImage().obtemGrupoDeUpload()
                                            
     return render_to_response(
         'documentos/checkin.html',
