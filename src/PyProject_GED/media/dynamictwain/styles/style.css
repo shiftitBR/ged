@@ -90,7 +90,7 @@ div#DWTcontainer
 }
 div#dwtcontrolContainer  
 {
-    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:600px; height:800px;
+    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:100%; height:100%;
 }
 
 div.dwtcontrolThumbnail
@@ -101,7 +101,7 @@ div.dwtcontrolThumbnail
 
 div#ScanWrapper 
 {
-    margin:0px; float:left; padding:0px; padding-top:5px; width:320px; height:800px;
+    margin:0px; float:left; padding:0px; padding-top:5px; width:320px; height:400px;
 }
 
 div#Crop {

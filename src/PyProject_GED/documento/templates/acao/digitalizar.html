@@ -38,80 +38,74 @@
   	
   	{% if iPossuiPermissao %}
 	<div class="container">
-		<div class="row">
-			<div class="span7">
-			     <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
-			      
-			        <input id='user_id' type="hidden" name="user_id" value="{{vRequest.user.id}}" />
-			        <input id='grupo_id' type="hidden" name="grupo_id" value="{{grupoID}}" />
-			        <input id='empresa_id' type="hidden" name="empresa_id" value="{{empresaID}}" />
-			        <input id='pasta_id' type="hidden" name="pasta_id" value="{{pastaID}}" />
+		     <form id='id_form_scanner' action="" method="post" accept-charset="utf-8">
+		      
+		        <input id='user_id' type="hidden" name="user_id" value="{{vRequest.user.id}}" />
+		        <input id='grupo_id' type="hidden" name="grupo_id" value="{{grupoID}}" />
+		        <input id='empresa_id' type="hidden" name="empresa_id" value="{{empresaID}}" />
+		        <input id='pasta_id' type="hidden" name="pasta_id" value="{{pastaID}}" />
 
-                    {% load documento %}
+                {% load documento %}
 
-                    {% digitalizacao %}
+                {% digitalizacao %}
 
-                </form>
+            </form>
 				
-        	</div>
-			<div class="span5">
-				<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
-				<h4>Índices</h4>
-				<div class="accordion" id="accordion2">
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-				        Inserir índices obrigatórios
-				      </a>
-				    </div>
-				    <div id="collapseOne" class="accordion-body collapse in">
-				      <div class="accordion-inner">
-				        <p><input id="id_assunto_digitalizar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
-				        <p>{{form.usr_responsavel}}</p>
-				        <p>{{form.tipo_documento}}</p>
-				      </div>
-				    </div>
-				  </div>
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-				        Inserir índices opcionais
-				      </a>
-				    </div>
-				    <div id="collapseTwo" class="accordion-body collapse">
-				      <div class="accordion-inner">
-						<p>{{form.data_validade}}</p>
-				        <p>{{form.data_descarte}}</p>
-				        <p><label>Associar Normas:</label></p>
-						{{form.norma}}
-				      </div>
-				    </div>
-				  </div>
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
-				        Inserir índices personalizados
-				      </a>
-				    </div>
-				    <div id="collapseThree" class="accordion-body collapse">
-				      <div class="accordion-inner">
-				        <p>{% for indice in iListaIndices %}
-					    <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
-					    {% empty %}
-					    {% endfor %}</p>
-				      </div>
-				    </div>
-				  </div>
-				</div>		
-
-				<div class="form-actions" style="float: right;">
-					<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+	</div>
+	<div class="container">
+		<form class="form-horizontal" action="" id="fancy" method="POST">{% csrf_token %}
+			<h4>Índices</h4>
+			<div class="accordion" id="accordion2">
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+			        Inserir índices obrigatórios
+			      </a>
 			    </div>
-			    </form>	
-			</div>
+			    <div id="collapseOne" class="accordion-body collapse in">
+			      <div class="accordion-inner">
+			        <p><input id="id_assunto_digitalizar" type="text" placeholder="Assunto *" name="assunto" maxlength="100"></p>
+			        <p>{{form.usr_responsavel}}</p>
+			        <p>{{form.tipo_documento}}</p>
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+			        Inserir índices opcionais
+			      </a>
+			    </div>
+			    <div id="collapseTwo" class="accordion-body collapse">
+			      <div class="accordion-inner">
+					<p>{{form.data_validade}}</p>
+			        <p>{{form.data_descarte}}</p>
+			        <p><label>Associar Normas:</label></p>
+					{{form.norma}}
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+			        Inserir índices personalizados
+			      </a>
+			    </div>
+			    <div id="collapseThree" class="accordion-body collapse">
+			      <div class="accordion-inner">
+			        <p>{% for indice in iListaIndices %}
+				    <input type="text" class="input-xlarge" id="assunto" placeholder="{{indice.descricao}}" name='indice_{{indice.id_indice}}'>
+				    {% empty %}
+				    {% endfor %}</p>
+			      </div>
+			    </div>
+			  </div>
+			</div>		
 
-		</div>
-
+			<div class="form-actions" style="float: right;">
+				<button id="fat-btn" data-loading-text="Carregando..." type="submit" class="btn btn-primary" >Importar Documentos</button>
+		    </div>
+	    </form>	
 	</div>
 	{% endif %}
   	
