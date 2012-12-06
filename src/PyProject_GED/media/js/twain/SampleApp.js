@@ -91,14 +91,14 @@ function ControlDetect() {
         WebTWAIN.OpenSourceManager();
 
         if (WebTWAIN.SourceCount != 0) {
-            document.getElementById("aNoScanner").innerHTML = "<strong>Don't want to scan anything?</strong>";
+            //document.getElementById("aNoScanner").innerHTML = "<strong>Don't want to scan anything?</strong>";
             document.getElementById("notformac1").style.display = "none";
             document.getElementById("notformac2").style.display = "none";
-            document.getElementById("tblLoadImage").style.height = "120px";
-            SetNoScanner();
+            //document.getElementById("tblLoadImage").style.height = "120px";
+            //SetNoScanner();
         }
         else {
-            SetNoScanner();
+            //SetNoScanner();
         }
         
         for (i = 0; i < WebTWAIN.SourceCount; i++) {
@@ -107,18 +107,18 @@ function ControlDetect() {
         WebTWAIN.MaxImagesInBuffer = 4096;
         WebTWAIN.MouseShape = false;
         
-        AddResolution();
+        //AddResolution();
 
-        AddInterpolationMethod();
+        //AddInterpolationMethod();
 
-        SetFileName();
+        //SetFileName();
 
-        document.getElementById("ADF").checked = true;
-        SetMultiPageInfo(); 
+        //document.getElementById("ADF").checked = true;
+        //SetMultiPageInfo(); 
 
-        AddPreviewMode();
+        //AddPreviewMode();
         
-        objEmessage = document.getElementById("emessage");
+        //objEmessage = document.getElementById("emessage");
 
         re = /^\d+$/;
         strre = /^\w+$/;
@@ -130,19 +130,19 @@ function ControlDetect() {
 
         SetShowOrCloseLoadImage();
         
-        var allinputs = document.getElementsByTagName("input");
-        var j = 0;
-        for (var i = 0; i < allinputs.length; i++) {
-            if (allinputs[i].type == "text") {
-                allinputs[i].onkeyup = function () {
-                    if (event.keyCode != 37 && event.keyCode != 39) value = value.replace(/\D/g, '');
-                }
-            }
-        }
-        objEmessage.ondblclick = function () {
-            em = "";
-            this.innerHTML = "";
-        }
+        //var allinputs = document.getElementsByTagName("input");
+        //var j = 0;
+        //for (var i = 0; i < allinputs.length; i++) {
+        //    if (allinputs[i].type == "text") {
+        //        allinputs[i].onkeyup = function () {
+        //            if (event.keyCode != 37 && event.keyCode != 39) value = value.replace(/\D/g, '');
+        //        }
+        //    }
+        //}
+        //objEmessage.ondblclick = function () {
+        //    em = "";
+        //    this.innerHTML = "";
+        //}
         if (ExplorerType() == "IE") {
             GetIEEventString();
         }

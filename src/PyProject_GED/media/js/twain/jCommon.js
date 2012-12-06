@@ -178,9 +178,9 @@ function CheckIfImagesInBuffer() {
 
 function CheckErrorString() {
     if (WebTWAIN.ErrorCode == 0) {
-        em = em + "<span style='color:#cE5E04'><b>" + WebTWAIN.ErrorString + "</b></span><br />";
-        objEmessage.innerHTML = em;
-        objEmessage.scrollTop = objEmessage.scrollHeight;
+        //em = em + "<span style='color:#cE5E04'><b>" + WebTWAIN.ErrorString + "</b></span><br />";
+        //objEmessage.innerHTML = em;
+        //objEmessage.scrollTop = objEmessage.scrollHeight;
         return true;
     }
     if (WebTWAIN.ErrorCode == -2115) //Cancel file dialog
@@ -190,9 +190,9 @@ function CheckErrorString() {
             var ErrorMessageWin = window.open("", "ErrorMessage", "height=500,width=750,top=0,left=0,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no");
             ErrorMessageWin.document.writeln(WebTWAIN.HTTPPostResponseString);
         }
-        em = em + "<span style='color:#cE5E04'><b>" + WebTWAIN.ErrorString + "</b></span><br />";
-        objEmessage.innerHTML = em;
-        objEmessage.scrollTop = objEmessage.scrollHeight;
+        //em = em + "<span style='color:#cE5E04'><b>" + WebTWAIN.ErrorString + "</b></span><br />";
+        //objEmessage.innerHTML = em;
+        //objEmessage.scrollTop = objEmessage.scrollHeight;
         return false;
     }
 }
@@ -300,16 +300,17 @@ function btnScan_onclick() {
     WebTWAIN.SelectSourceByIndex(document.getElementById("source").selectedIndex);
     WebTWAIN.CloseSource();
     WebTWAIN.OpenSource();
-    WebTWAIN.IfShowUI = document.getElementById("ShowUI").checked;
+    WebTWAIN.IfShowUI = false; //document.getElementById("ShowUI").checked;
 
-    var i;
-    for (i = 0; i < 3; i++) {
-        if (document.getElementsByName("PixelType").item(i).checked == true)
-            WebTWAIN.PixelType = i;
-    }
-    WebTWAIN.Resolution = Resolution.value;
-    WebTWAIN.IfFeederEnabled = document.getElementById("ADF").checked;
-    WebTWAIN.IfDuplexEnabled = document.getElementById("Duplex").checked;
+    //var i;
+    //for (i = 0; i < 3; i++) {
+    //    if (document.getElementsByName("PixelType").item(i).checked == true)
+    //        WebTWAIN.PixelType = i;
+    //}
+    WebTWAIN.PixelType = 2; //Color
+    WebTWAIN.Resolution = '150px';//Resolution.value;
+    WebTWAIN.IfFeederEnabled = true; //document.getElementById("ADF").checked;
+    WebTWAIN.IfDuplexEnabled = true; //document.getElementById("Duplex").checked;
     var strSCan = "Pixel Type: " + WebTWAIN.PixelType + "<br />Resolution: " + WebTWAIN.Resolution + "<br />";
     AppendMessage(strSCan);
     //objEmessage.innerHTML = em;
@@ -648,7 +649,7 @@ function rd_onclick() {
 /*------------------select menu response----------------------------*/
 
 function DynamicWebTwain_OnPostTransfer() {
-    if (document.getElementById("DiscardBlank").checked == true) {
+    //if (document.getElementById("DiscardBlank").checked == true) {
         var NewlyScannedImage = WebTWAIN.CurrentImageIndexInBuffer;
         if (WebTWAIN.IsBlankImage(NewlyScannedImage)) {
             WebTWAIN.RemoveImage(NewlyScannedImage);
@@ -658,7 +659,7 @@ function DynamicWebTwain_OnPostTransfer() {
             UpdatePageInfo();
             return;
         }
-    }
+    //}
     UpdatePageInfo();
 }
 
@@ -667,7 +668,7 @@ function DynamicWebTwain_OnPostLoadfunction(path, name, type) {
         //alert(WebTWAIN.ErrorString);
         ShowErrorInMessageBox(WebTWAIN.ErrorString);
     }
-    if (document.getElementById("DiscardBlank").checked == true) {
+    //if (document.getElementById("DiscardBlank").checked == true) {
         var NewlyScannedImage = WebTWAIN.CurrentImageIndexInBuffer;
         if (WebTWAIN.IsBlankImage(NewlyScannedImage)) {
             WebTWAIN.RemoveImage(NewlyScannedImage);
@@ -677,7 +678,7 @@ function DynamicWebTwain_OnPostLoadfunction(path, name, type) {
             UpdatePageInfo();
             return;
         }
-    }
+    //}
     UpdatePageInfo();
 }
 

@@ -60,17 +60,6 @@
     <input type="text" size="2" id="TotalImage" readonly="readonly" value="0"/>&nbsp;&nbsp;
     <input id="btnNextImage" onclick="return btnNextImage_onclick()" type="button" value=" &gt; "/>&nbsp;
     <input id="btnLastImage" onclick="return btnLastImage_onclick()" type="button" value=" &gt;| "/>
-    Preview Mode
-    <select size="1" id="PreviewMode" onchange ="slPreviewMode();">
-        <option value="0">1X1</option>
-    </select><br />
-    <input id="btnRemoveCurrentImage" onclick="return btnRemoveCurrentImage_onclick()" type="button" value="Remove Selected Images"/>
-    <input id="btnRemoveAllImages" onclick="return btnRemoveAllImages_onclick()" type="button" value="Remove All Images"/><br />
-    <div id="divMsg" style="text-align:left;">
-        Message:<br />
-        <div id="emessage" style="width:550px;height:80px; overflow:scroll; background-color:#ffffff; border:1px #303030; border-style:solid; text-align:left;" >
-        </div>
-    </div>
 </div>
 
 </div>
@@ -85,21 +74,6 @@
         <label for="source">Select Source<select size="1" id="source">
             <option value = ""></option>    
         </select></label></li>
-    <li style="display:none;" id="pNoScanner">
-               <a href="javascript: void(0)" class="ShowtblLoadImage" style="font-size: 11px;" id="aNoScanner"><strong>What if I don't have a scanner connected?</strong>
-    </a></li>
-    <li style="padding-left:12px;">
-        <label for = "ShowUI"><input type="checkbox" id="ShowUI" />If Show UI&nbsp;</label>
-        <label for = "ADF"><input type="checkbox" id="ADF" />ADF&nbsp;</label>
-        <label for = "Duplex"><input type="checkbox" id="Duplex" />Duplex</label></li>
-    <li style="padding-left:12px;">
-        <label for = "DiscardBlank"><input type="checkbox" id="DiscardBlank"/>If Discard Blank Images</label></li>
-    <li style="padding-left:15px;">Pixel Type
-        <label for="BW"><input type="radio" id="BW" name="PixelType"/>B&amp;W </label>
-        <label for="Gray"><input type="radio" checked="checked" id="Gray" name="PixelType"/>Gray</label>
-        <label for="RGB"><input type="radio" id="RGB" name="PixelType"/>Color</label></li>
-    <li style="padding-left:15px;">
-        <label for="Resolution">Resolution:<select size="1" id="Resolution"><option value = ""></option></select></label></li>
     <li style="text-align:center;">
         <input id="btnScan" class="bigbutton" type="button" value="Scan" onclick ="btnScan_onclick();"/></li>
 </ul>
@@ -134,81 +108,6 @@
 </div>
 </div>
 
-<div id ="divEdit" class="divinput">
-<ul>
-    <li><img alt="arrow" src="../media/twain/images/arrow.gif" width="9" height="12"/><b>Edit Image</b></li>
-    <li style="padding-left:9px;">
-        <input type="button" value="Show Image Editor" id="btnEditor" onclick="return btnShowImageEditor_onclick()"/></li>
-    <li style="padding-left:9px;">
-        <input type="button" value="Rotate Right" id="btnRotateR" onclick="return btnRotateRight_onclick()"/>
-        <input type="button" value="Rotate Left" id="btnRotateL" onclick="return btnRotateLeft_onclick()"/></li>
-    <li style="padding-left:9px;">
-        <input type="button" value="Mirror" id="btnMirror" onclick="return btnMirror_onclick()"/>
-        <input type="button" value="Flip" id="btnFlip" onclick="return btnFlip_onclick()"/>
-        <input type="button" value="Crop" id="btnCrop" onclick="btnCrop_onclick();"/></li>
-    <li style="padding-left:9px; height:20px;">
-        <input type="button" value="Change Image Size" id="btnChangeImageSize" onclick="return btnChangeImageSize_onclick();" style="float:left" /></li>
-</ul>
-<div id="ImgSizeEditor" style="visibility:hidden; text-align:left;">	
-<ul>
-    <li><label for="img_height"><b>New Height :</b>
-        <input type="text" id="img_height" style="width:50%;" size="10"/>pixel</label></li>
-    <li><label for="img_width"><b>New Width :</b>&nbsp;
-        <input type="text" id="img_width" style="width:50%;" size="10"/>pixel</label></li>
-    <li>Interpolation method:
-        <select size="1" id="InterpolationMethod"><option value = ""></option></select></li>
-    <li style="text-align:center;">
-        <input type="button" value="   OK   " id="btnChangeImageSizeOK" onclick ="return btnChangeImageSizeOK_onclick();"/>
-        <input type="button" value=" Cancel " id="btnCancelChange" onclick ="return btnCancelChange_onclick();"/></li>
-</ul>
-</div>
-<div id="Crop" style="visibility:hidden ;">	
-<div style="width:50%; height:100%; float:left; text-align:left;">
-<ul>
-    <li><label for="img_left"><b>left: </b>
-        <input type="text" id="img_left" style="width:50%;" size="4"/></label></li>
-    <li><label for="img_top"><b>top: </b>
-        <input type="text" id="img_top" style="width:50%;" size="4"/></label></li>
-    <li style="text-align:center;">
-        <input type="button" value="  OK  " id="btnCropOK" onclick ="return btnCropOK_onclick()"/></li>
-</ul>
-</div>
-<div style="width:50%; height:100%; float:left; text-align:right;">
-<ul>
-    <li><label for="img_right"><b>right : </b>
-        <input type="text" id="img_right" style="width:50%;" size="4"/></label></li>
-    <li><label for="img_bottom"><b>bottom:</b>
-        <input type="text" id="img_bottom" style="width:50%;" size="4"/></label></li>
-    <li style=" text-align:center;">
-        <input type="button" value="Cancel" id="cancelcrop" onclick ="return btnCropCancel_onclick()"/></li>
-</ul>
-</div>
-</div>
-</div>
-
-<div id="divSave" class="divinput">
-<ul>
-    <li><img alt="arrow" src="../media/twain/images/arrow.gif" width="9" height="12"/><b>Save Image</b></li>
-    <li style="padding-left:15px;">
-        <label for="txt_fileNameforSave">File Name:<input type="text" size="20" id="txt_fileNameforSave"/></label></li>
-    <li style="padding-left:12px;">
-        <label for="imgTypebmp">
-            <input type="radio" value="bmp" name="imgType_save" id="imgTypebmp" onclick ="rdsave_onclick();"/>BMP</label>
-	    <label for="imgTypejpeg">
-		    <input type="radio" value="jpg" name="imgType_save" id="imgTypejpeg" checked="checked" onclick ="rdsave_onclick();"/>JPEG</label>
-	    <label for="imgTypetiff">
-		    <input type="radio" value="tif" name="imgType_save" id="imgTypetiff" onclick ="rdTIFFsave_onclick();"/>TIFF</label>
-	    <label for="imgTypepng">
-		    <input type="radio" value="png" name="imgType_save" id="imgTypepng" onclick ="rdsave_onclick();"/>PNG</label>
-	    <label for="imgTypepdf">
-		    <input type="radio" value="pdf" name="imgType_save" id="imgTypepdf" onclick ="rdPDFsave_onclick();"/>PDF</label></li>
-    <li style="padding-left:12px;">
-        <label for="MultiPageTIFF_save"><input type="checkbox" id="MultiPageTIFF_save"/>Multi-Page TIFF</label>
-        <label for="MultiPagePDF_save"><input type="checkbox" id="MultiPagePDF_save"/>Multi-Page PDF </label></li>
-    <li style="text-align: center">
-        <input id="btnSave" type="button" value="Save Image" onclick ="return btnSave_onclick()"/></li>
-</ul>
-</div>
 
 <div id="divUpload" class="divinput">
 <ul style="display:none;">
@@ -218,22 +117,6 @@
 </ul>
 <ul style="display:inline;">
     <li><img alt="arrow" src="../media/twain/images/arrow.gif" width="9" height="12"/><b>Upload Image</b></li>
-    <li style="padding-left:9px;">
-        <label for="txt_fileName">File Name: <input type="text" size="20" id="txt_fileName"/></label></li>
-    <li style="padding-left:9px;">
-        <!--<label for="imgTypebmp2">
-            <input type="radio" value="bmp" name="ImageType" id="imgTypebmp2" onclick ="rd_onclick();"/>BMP</label>-->
-	    <label for="imgTypejpeg2">
-		    <input type="radio" value="jpg" name="ImageType" id="imgTypejpeg2" checked="checked" onclick ="rd_onclick();"/>JPEG</label>
-	    <label for="imgTypetiff2">
-		    <input type="radio" value="tif" name="ImageType" id="imgTypetiff2" onclick ="rdTIFF_onclick();"/>TIFF</label>
-	    <label for="imgTypepng2">
-		    <input type="radio" value="png" name="ImageType" id="imgTypepng2" onclick ="rd_onclick();"/>PNG</label>
-	    <label for="imgTypepdf2">
-		    <input type="radio" value="pdf" name="ImageType" id="imgTypepdf2" onclick ="rdPDF_onclick();"/>PDF</label></li>
-    <li style="padding-left:9px;">
-        <label for="MultiPageTIFF"><input type="checkbox" id="MultiPageTIFF"/>Multi-Page TIFF</label>
-        <label for="MultiPagePDF"><input type="checkbox" id="MultiPagePDF"/>Multi-Page PDF </label></li>
     <li style="text-align: center">
         <input id="btnUpload" type="button" value="Upload Image" onclick ="return btnUpload_onclick()"/></li>
 </ul>
