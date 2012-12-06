@@ -7,12 +7,12 @@
 
 <div id="dwtcontrolContainer">
 <div id="dwtcontrol">
-<div id="mainControlPluginNotInstalled" style="display:none">
+<div id="mainControlPluginNotInstalled" style="display:none; border:3;" >
 <table class="divcontrol">
     <tr>
     <td style="text-align: center; vertical-align: middle;">
-        <a href="../media/twain/resources/DynamicWebTWAINPlugIn.msi"><strong>Download and install the Plug-in Here</strong></a><br />
-        After the installation, please restart your browser.
+        <a href="../media/twain/resources/DynamicWebTWAINPlugIn.msi"><strong>Clique Aqui para fazer o Download e Instalação do Plugin</strong></a><br />
+        Após a instalação o seu Navegador deve ser Reiniciado.
     </td>
     </tr>
 </table>
@@ -21,8 +21,8 @@
 <table class="divcontrol">
     <tr>
     <td style="text-align: center; vertical-align: middle;">
-        <a href="../media/twain/resources/DynamicWebTWAINMacEditionTrial.pkg"><strong>Download and install the Plug-in Here</strong></a><br />
-        After the installation, please restart your browser.
+        <a href="../media/twain/resources/DynamicWebTWAINMacEditionTrial.pkg"><strong>Clique Aqui para fazer o Download e Instalação do Plugin</strong></a><br />
+        Após a instalação o seu Navegador deve ser Reiniciado.
     </td>
     </tr>
 </table>
@@ -69,19 +69,18 @@
 <div id="divScanner" class="divinput">
 <ul>
     <li><img alt="arrow" src="../media/twain/images/arrow.gif" style="width:9px; height:12px;"/>
-        <b>Custom Scan</b></li>
+        <b>Scanners Disponíveis</b></li>
     <li style="padding-left:15px;">
-        <label for="source">Select Source<select size="1" id="source">
+        <label for="source">Selecione o Scanner<select size="1" id="source">
             <option value = ""></option>    
         </select></label></li>
     <li style="text-align:center;">
-        <input id="btnScan" class="bigbutton" type="button" value="Scan" onclick ="btnScan_onclick();"/></li>
+        <input id="btnScan" class="bigbutton" type="button" value="Digitalizar" onclick ="btnScan_onclick();"/></li>
 </ul>
 </div>
 
 <div id="divBlank" style="height:20px">
 <ul>
-    <li></li>
 </ul>
 </div>
 
@@ -116,9 +115,9 @@
     <li style="padding-left:9px;">Please check out the Visual Studio sample.</li>
 </ul>
 <ul style="display:inline;">
-    <li><img alt="arrow" src="../media/twain/images/arrow.gif" width="9" height="12"/><b>Upload Image</b></li>
+    <li><img alt="arrow" src="../media/twain/images/arrow.gif" width="9" height="12"/><b>Enviar Arquivo</b></li>
     <li style="text-align: center">
-        <input id="btnUpload" type="button" value="Upload Image" onclick ="return btnUpload_onclick()"/></li>
+        <input id="btnUpload" type="button" value="Enviar Arquivo" onclick ="return btnUpload_onclick()"/></li>
 </ul>
 </div>
 
@@ -128,8 +127,7 @@
 
 </div>
 
-</div>
 
-<script type="text/javascript" language="javascript" src="../../media/js/twain/SampleApp.js"></script>
-<script type="text/javascript" language="javascript" src="../../media/js/twain/jCommon.js"></script>
+<script type="text/javascript" language="javascript" src="../../media/js/twain/SampleApp.js"> </script>
+<script type="text/javascript" language="javascript" src="../../media/js/twain/jCommon.js"> </script>
 

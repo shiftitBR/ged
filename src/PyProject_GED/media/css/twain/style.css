@@ -90,18 +90,18 @@ div#DWTcontainer
 }
 div#dwtcontrolContainer  
 {
-    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:600px; height:800px;
+    margin:0px; margin-left:22px; float:left; padding:0px; padding-top:10px; width:400px; height:400px;
 }
 
 div.dwtcontrolThumbnail
 {
-    padding:5px; padding-top:10px; text-align:center; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 580px; 
+    padding:5px; padding-top:10px; text-align:center; border-collapse:collapse;border:3px solid #cE5E04; position: absolute; height: 400px; 
 	z-index: 1; background-color: #f0f0f0; width:100px;
 }
 
 div#ScanWrapper 
 {
-    margin:0px; float:left; padding:0px; padding-top:5px; width:320px; height:800px;
+    margin:0px; float:left; padding:0px; padding-top:5px; width:320px; height:400px;
 }
 
 div#Crop {
@@ -252,8 +252,14 @@ a.grayunder:hover {
 	width: 964px;
 }
 .body_Broad_width {
-	width: 984px;
+	width: 800px;
 }
+
+#CurrentImage, #TotalImage
+{
+	width: 25px;
+}
+
 input{
     font:normal 11px verdana;
 }
