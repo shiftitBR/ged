@@ -1,7 +1,4 @@
-﻿body
-{
-    padding: 0px; margin: 0px; background-color:#ffffff; font-family: "verdana", "sans-serif"; font-size: 11px;
-}
+﻿
 
 a img
 {
@@ -64,7 +61,6 @@ ul li
 
 div.divinput 
 {
-    font-size: 11px; color: #222222; padding:10px; line-height: 14px; font-family: "verdana" , "sans-serif"; 
     margin:5px; margin-bottom:10px; background-color:#f0f0f0; text-align:left; 
 }
 
@@ -143,66 +139,7 @@ div#tblLoadImage
     padding:5px; padding-top:10px; text-align:left; border-collapse:collapse; border:3px solid #cE5E04; position: absolute; height: 170px; 
 	z-index: 1; background-color: #fefefe; width:280px
 }
-a:link {
-	color: #222222; line-height: 18px; text-decoration: underline
-}
-a:visited {
-	color: #222222; line-height: 18px; text-decoration: underline
-}
-a:active {
-	color: #666666; line-height: 18px; text-decoration: underline
-}
-a:hover {
-	color: #ff3300; line-height: 18px; text-decoration: underline
-}
-a.menu:link {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.menu:visited {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.menu:active {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.menu:hover {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.white:link {
-	color: #d9d9d9; line-height: 18px; text-decoration: underline
-}
-a.white:visited {
-	color: #d9d9d9; line-height: 18px; text-decoration: underline
-}
-a.white:active {
-	color: #d9d9d9; line-height: 18px; text-decoration: underline
-}
-a.white:hover {
-	color: #d9d9d9; line-height: 18px; text-decoration: none
-}
-a.gray:link {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.gray:visited {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.gray:active {
-	color: #222222; line-height: 18px; text-decoration: none
-}
-a.gray:hover {
-	color: #222222; line-height: 18px; text-decoration: underline
-}
-a.grayunder:link {
-	color: #454545; line-height: 18px; text-decoration: underline
-}
-a.grayunder:visited {
-	color: #454545; line-height: 18px; text-decoration: underline
-}
-a.grayunder:active {
-	color: #454545; line-height: 18px; text-decoration: underline
-}
-a.grayunder:hover {
-	color: #454545; line-height: 18px; text-decoration: none
-}
+
 .tableborder {
 	border-right: #cdcdcd 1px solid; border-top: #cdcdcd 1px solid; border-left: #cdcdcd 1px solid; border-bottom: #cdcdcd 1px solid
 }
@@ -225,7 +162,7 @@ a.grayunder:hover {
 	font-weight: bold; font-size: 14px; color: #fe8e14
 }
 .subtitle {
-	font-weight: 600; font-size: 11px; vertical-align: bottom; color: #fe8e14; FONT-FAMILY: Verdana; height: 20px; TEXT-ALIGN: left
+	font-weight: 600; font-size: 11px; vertical-align: bottom; color: #fe8e14;  height: 20px; TEXT-ALIGN: left
 }
 .menuout {
 	padding-bottom: 5px; color: #ffffff; background-color: #fe8e14
@@ -252,7 +189,7 @@ a.grayunder:hover {
 	width: 964px;
 }
 .body_Broad_width {
-	width: 800px;
+	width: 750px;
 }
 
 #CurrentImage, #TotalImage
@@ -260,63 +197,9 @@ a.grayunder:hover {
 	width: 25px;
 }
 
-input{
-    font:normal 11px verdana;
-}
-
 input.invalid {
 	background-color: #FF9;
 	border: 2px red inset;
-}
-
-a.menucolor:link
-{
-    font-weight: bold; font-family: Arial; font-size: 12px; margin-right: 5px;
-    color: #FFFFFF;
-    text-decoration: none;
-}
-a.menucolor:visited
-{
-    font-weight: bold; font-family: Arial; font-size: 12px; margin-right: 5px;
-    color: #FFFFFF;
-    text-decoration: none;
-}
-a.menucolor:hover
-{
-    font-weight: bold; font-family: Arial; font-size: 12px; margin-right: 5px;
-    color: #FE8E14;
-    text-decoration: none;
-}
-a.menucolor:active
-{
-    font-weight: bold; font-family: Arial; font-size: 12px; margin-right: 5px;
-    color: #FFFFFF;
-    text-decoration: none;
-}
-
-a.fontcolor:link
-{
-    color: #000000;
-    text-decoration: none;
-    line-height:14px;
-}
-a.fontcolor:visited
-{
-    color: #000000;
-    text-decoration: none;
-    line-height:14px;
-}
-a.fontcolor:hover
-{
-    color: #000000;
-    text-decoration: none;
-    line-height:14px;
-}
-a.fontcolor:active
-{
-    color: #000000;
-    text-decoration: none;
-    line-height:14px;
 }
 
 div#tblLoadImage2
