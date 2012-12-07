@@ -101,8 +101,15 @@ class Socket(SocketServer.BaseRequestHandler):
                 if iCadastroExistente == None:
                     iCadastro= Cadastro_Biometria().criaCadastroDeBiometria(iUsuario, vIPOrigem, False)
                     iPasta= '%s/%s' % (constantes.cntClasseMensagemCadastro, iCadastro.pasta_destino)
-                    iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
-                    iCadastro.clean()
+                    try:
+                        iDiretorioArquivo  = '%s/%s/%s' % (constantes.cntImportacaoFTPPastaRaiz, 
+                                                    constantes.cntClasseMensagemCadastro, 
+                                                    iCadastro.pasta_destino)
+                        os.system('mkdir %s' % iDiretorioArquivo) 
+                        os.system('chown trackdoc:trackdoc %s' % iDiretorioArquivo)
+                    finally:
+                        iJSONResposta= Servidor().criaRespostaEmJSON(iPasta, vIDUsuario= iCadastro.usuario.id)
+                        iCadastro.clean()
                 else:
                     iJSONResposta= '{"tipo": %s, "mensagem": "Usuario ja possui cadastro!"}' % constantes.cntTipoMensagemJSONErro
             else:
