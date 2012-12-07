@@ -156,7 +156,6 @@ INSTALLED_APPS = (
     'assinatura',
     'servidor',
     'loginurl',
-    'dynamictwain',
 )
 
 AUTHENTICATION_BACKENDS = (

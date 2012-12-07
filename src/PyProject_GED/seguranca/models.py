@@ -86,7 +86,7 @@ class Pasta(models.Model):
             iPasta = Pasta.objects.filter(id_pasta= vIDPasta)[0]
             return iPasta.nome
         except Exception, e:
-            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e))
+            logging.getLogger('PyProject_GED.controle').error('Nao foi possivel obter a lista de documentos: ' + str(e) + ' -- [' + str(vIDPasta) + ']')
             return False
         
     def obtemPastaPeloID(self, vIDPasta):
