@@ -147,9 +147,6 @@ function ControlDetect() {
             GetIEEventString();
         }
         
-        if (ua.match(/firefox\/([\d.]+)/) || ua.match(/version\/([\d.]+).*safari/)) {
-            document.getElementById("forFirefoxSafari").style.display = "inline";
-        }
         
         DoWithNoSource();
     }
@@ -276,7 +273,7 @@ function btnUpload_onclick()
 	strActionPage = "/multiuploader_digitalizacao/"+userID+"/"+grupoID+"/"+empresaID+"/"+pastaID+"/"; //the ActionPage's file path
 	console.log(strActionPage);
 
-	strHostIP = "192.168.1.19"; //The host's IP or name
+	strHostIP = "54.243.50.54"; //The host's IP or name
 	console.log(strHostIP);
 
 	WebTWAIN.HTTPPort = 80; 
@@ -287,7 +284,7 @@ function btnUpload_onclick()
 		alert(WebTWAIN.ErrorString);
     }
 	else{ //succeded
-		alert("Image Uploaded successfully!");
+		alert("Imagem enviado com sucesso!");
     }
 } 
 
