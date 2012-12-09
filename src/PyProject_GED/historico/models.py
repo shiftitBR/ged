@@ -147,7 +147,7 @@ class Historico(models.Model):
     
 class Log_Usuario(models.Model):
     id_log_usuario  = models.IntegerField(max_length=10, primary_key=True, blank=True)
-    usuario         = models.ForeignKey(Usuario, null= False)
+#    usuario         = models.ForeignKey(Usuario, null= False)
     versao          = models.ForeignKey(Versao, null= True)
     tipo_evento     = models.ForeignKey(Tipo_de_Evento, null= False)
     usuario         = models.ForeignKey(Usuario, null= False)

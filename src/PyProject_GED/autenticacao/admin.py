@@ -194,7 +194,7 @@ class AdminIndicePasta(MultiDBModelAdmin):
     
 class AdminLogUsuario(MultiDBModelAdmin): 
     list_display    = ('usuario', 'versao', 'tipo_evento', 'data')
-    search_fields   = ('id_log_usuario', 'data')
+    search_fields   = ('usuario__first_name', 'usuario__last_name',)
     ordering        = ('data',)
     readonly_fields = ('id_log_usuario', 'usuario', 'versao', 'tipo_evento', 'data', 'empresa')
     exclude         = ('id_log_usuario',)
