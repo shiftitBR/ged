@@ -217,68 +217,30 @@ function btnChangeImageSizeOK_onclick() {
 
 
 /*-----------------Upload Image Group---------------------*/
-function btnUpload_onclick_original(){
-
-	console.log('>>>>>>>>>>>>>>>>>>>bntUpload_onclick');
-    var CurrentPathName = unescape(location.pathname); // get current PathName in plain ASCII	
-    console.log(CurrentPathName);
-    var CurrentPath = CurrentPathName.substring(0, CurrentPathName.lastIndexOf("/") + 1);
-    console.log(CurrentPath);
-    var strActionPage = CurrentPath + "SaveToDB.aspx"; //the ActionPage's file path
-    console.log(strActionPage);
-    var redirectURLifOK = CurrentPath + "online_demo_list.aspx";
-    console.log(redirectURLifOK);
-
-    btnUploadInner("www.dynamsoft.com", 80, strActionPage, redirectURLifOK);
-   
-    if (CheckErrorString()) {
-    	console.log('>>>>>>>>>>>>>>01');
-        window.location = redirectURLifOK;
-        console.log(redirectURLifOK);
-    }	
-}
 
 function btnUpload_onclick()
 {
-	console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>btnUpload_onclick');
 	
 	var grupoID;
 	var userID;
 	var empresaID;
 	var pastaID;
 	var strActionPage;
-	console.log(strActionPage);
 	var strHostIP;
-	console.log(strHostIP);
 
 	var CurrentPathName = unescape(location.pathname); // get current PathName in plain ASCII 
-	console.log(CurrentPathName);
 	var CurrentPath = CurrentPathName.substring(0, CurrentPathName.lastIndexOf("/") + 1); 
-	console.log(CurrentPath);
 	//strActionPage = CurrentPath + "upload"; //the ActionPage's file path
-	console.log('--------------destino');
 	userID= document.getElementById("user_id").value
-	console.log(userID)
-	
 	grupoID= document.getElementById("grupo_id").value
-	console.log(grupoID)
-	
 	empresaID= document.getElementById("empresa_id").value
-	console.log(empresaID)
-	
 	pastaID= document.getElementById("pasta_id").value
-	console.log(pastaID)
-	
 	
 	strActionPage = "/multiuploader_digitalizacao/"+userID+"/"+grupoID+"/"+empresaID+"/"+pastaID+"/"; //the ActionPage's file path
-	console.log(strActionPage);
-
 	strHostIP = "54.243.50.54"; //The host's IP or name
-	console.log(strHostIP);
 
 	WebTWAIN.HTTPPort = 80; 
 	WebTWAIN.HTTPUploadAllThroughPostAsPDF(strHostIP,strActionPage,"imageData.pdf");
-	console.log('upou!')
 
 	if (WebTWAIN.ErrorCode != 0){
 		alert(WebTWAIN.ErrorString);
@@ -286,52 +248,4 @@ function btnUpload_onclick()
 	else{ //succeded
 		alert("Imagem enviado com sucesso!");
     }
-} 
-
-function btnUpload_onclick_terceiro()
-{
-	console.log('>>>>>>>>>>>>>>>>>bntupload');
-	// Grab the underlying form
-    var form = $("#btnUpload").parent('form');
-
-    console.log(form);
-    var ORIG_ACTION = form.attr('action');
-    console.log(ORIG_ACTION);
-    var ORIG_METHOD = form.attr('method');
-    console.log(ORIG_METHOD);
-            
-    var UID = null;
-    console.log(UID);
-
-    form.submit(function(){
-
-        /* First, post the form */
-        var data = $(this).serialize();
-        console.log(data);
-
-        $.ajax({
-            url: '/twain/form/?orig='+ORIG_ACTION,
-            method: ORIG_METHOD,
-            data: data,
-            dataType: 'json',
-            success: function(data){
-                UID = data.uid;
-                console.log(UID);
-                twain_instance.HTTPUploadAllThroughPostAsPDF(
-                    SERVER, 
-                    UPLOAD_PATH,
-                    "upload["+UID+"].pdf"
-                );
-
-                //window.location.href="/twain/redirect/?uid="+UID;
-                console.log('>>>>>>>>>>>>>>>>>>post');
-                $.post('/digitalizar/'+UID+'/', function(data){});
-                console.log('upou!');
-            }
-
-        });
-
-        return false;
-    });
-
 } 

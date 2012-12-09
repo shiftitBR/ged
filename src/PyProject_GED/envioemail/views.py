@@ -82,7 +82,6 @@ def email(vRequest, vTitulo):
                                 else:
                                     iCaminho, iEhOriginal = ImagemControle().converteExtencaoImagem(iVersao.id_versao, int(iExtensao), iUsuario.id)
                                     iNome = EnvioControle().obtemNovoNomeArquivo(iCaminho, int(iExtensao))
-                                print iCaminho
                                 iFileAnexo = iCaminho  
                                 iFile = open(str(iFileAnexo),"rb")
                                 email.attach(filename = iNome, content = iFile.read())

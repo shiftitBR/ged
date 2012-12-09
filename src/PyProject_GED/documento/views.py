@@ -547,7 +547,6 @@ def visualizar(vRequest, vTitulo, vIDVersao=None):
 
 @csrf_exempt
 def digitalizar(vRequest):
-    print '>>>>>>>>>>>>>>>>>>. digitalizar'
     try :
         iUser = vRequest.user
         if iUser:
