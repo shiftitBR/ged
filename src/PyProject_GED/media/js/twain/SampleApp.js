@@ -20,7 +20,7 @@ function Pageonload() {
         document.getElementById("samplesource32bit").href = "http://www.dynamsoft.com/demo/DWT/Sources/twainkit.exe";
     }
     var strObjectFF = GetEventString(); 
-    strObjectFF += " class='divcontrol' pluginspage='../../media/resources/DynamicWebTwain.xpi'></embed>";
+    strObjectFF += " class='divcontrol' pluginspage='../media/twain/resources/DynamicWebTwain.xpi'></embed>";
 
     var strObject = GetObject();
 		
@@ -28,7 +28,7 @@ function Pageonload() {
     obj.style.display = "none";
 	
     if (ExplorerType() == "IE" && navigator.userAgent.indexOf("Win64") != -1 && navigator.userAgent.indexOf("x64") != -1) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='../../media/resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+        strObject = "<object id='mainDynamicWebTwainIE' codebase='../media/twain/resources/DynamicWebTWAINx64.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx64 = document.getElementById("maindivIEx64");
         objDivx64.style.display = "inline";
         objDivx64.innerHTML = strObject;
@@ -41,7 +41,7 @@ function Pageonload() {
         obj.style.display = "none";
     }
     else if (ExplorerType() == "IE" && (navigator.userAgent.indexOf("Win64") == -1 || navigator.userAgent.indexOf("x64") == -1)) {
-        strObject = "<object id='mainDynamicWebTwainIE' codebase='../../media/resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
+    	strObject = "<object id='mainDynamicWebTwainIE' codebase='../media/twain/resources/DynamicWebTWAIN.cab#version=8,0,1' class='divcontrol' " + "classid='clsid:E7DA7F8D-27AB-4EE9-8FC0-3FEC9ECFE758' viewastext> " + strObject;
         var objDivx86 = document.getElementById("maindivIEx86");
         objDivx86.style.display = "inline";
         objDivx86.innerHTML = strObject;
