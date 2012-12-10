@@ -111,6 +111,9 @@ class AdminPasta(MultiDBModelAdmin):
         if iEmpresa != None:
             form.base_fields['pasta_pai'].queryset = Pasta.objects.filter(empresa=iEmpresa.id_empresa)
             form.base_fields['empresa'].queryset = Empresa.objects.filter(id_empresa=iEmpresa.id_empresa)
+        if obj != None:
+            form.base_fields['pasta_pai'].widget = forms.HiddenInput()
+        
         return form
     
 class AdminIndicePastaForm(forms.ModelForm):
