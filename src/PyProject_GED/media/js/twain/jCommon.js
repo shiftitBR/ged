@@ -307,7 +307,7 @@ function btnScan_onclick() {
     //    if (document.getElementsByName("PixelType").item(i).checked == true)
     //        WebTWAIN.PixelType = i;
     //}
-    WebTWAIN.PixelType = 2; //Color
+    WebTWAIN.PixelType = 0; //Color - (PB - Gray - RGB)
     WebTWAIN.Resolution = '150px';//Resolution.value;
     WebTWAIN.IfFeederEnabled = true; //document.getElementById("ADF").checked;
     WebTWAIN.IfDuplexEnabled = true; //document.getElementById("Duplex").checked;
