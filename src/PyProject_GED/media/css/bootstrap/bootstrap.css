@@ -5828,14 +5828,14 @@ div.shiftit {
 
 div.avancodigital {
 	position: absolute;
-	left: 3%; 
+	right: 3%; 
 	bottom: 8px;
 	background-image: url('../../img/projeto/avancodigitalfooter.png');
 	background-position: 0 0; width: 92px; height: 34px;  
 	height: 34px; 
 	width:220px;
 	cursor:pointer;
-	float: left;
+	float: right;
 }
 
 div.shiftit:hover {
