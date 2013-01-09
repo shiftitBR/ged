@@ -350,6 +350,8 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
+        print '---->>>>>>>>>>>>>>>>>>>>>>>>'
+        print vRequest.POST
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         iVersao = Versao().obtemVersao(vIDVersao)
         if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
