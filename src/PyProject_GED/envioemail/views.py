@@ -24,6 +24,12 @@ def email(vRequest, vTitulo):
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
         
+    iBrowser = vRequest.META['HTTP_USER_AGENT']
+    if 'MSIE' in iBrowser:
+        iIe = True
+    else:
+        iIe = False
+        
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoEmail):
         if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':
             iEmpresa= Empresa.objects.filter(id_empresa= vRequest.session['IDEmpresa'])[0] 
@@ -123,6 +129,12 @@ def publicar(vRequest, vTitulo):
     iUser = vRequest.user
     if iUser:
         iUsuario= Usuario().obtemUsuario(iUser)
+        
+    iBrowser = vRequest.META['HTTP_USER_AGENT']
+    if 'MSIE' in iBrowser:
+        iIe = True
+    else:
+        iIe = False
         
     if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoPublicar):
         if vRequest.session['ListaVersao'] != '' and vRequest.session['ListaVersao'] != '-':

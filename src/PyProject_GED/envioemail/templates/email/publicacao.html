@@ -53,12 +53,16 @@
 	<form action="" id="fancy" method="POST">{% csrf_token %}
 	<div class="container-fluid">
 		<div class="controls">
-          	<select id="destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]" style="width: 730px; height: 100px;">
-				{% for destinatario in iListaDestinatarios %}
-				<option value="{{destinatario.id}}">{{destinatario.nome}}</option>
-				{% empty %}
-				{% endfor %}
-			</select>
+		    {% if iIe %}
+            {{form.destinatarios}}
+            {% else %}
+            <select id="destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]" style="width: 730px; height: 100px;">
+                {% for destinatario in iListaDestinatarios %}
+                <option value="{{destinatario.id}}">{{destinatario.nome}}</option>
+                {% empty %}
+                {% endfor %}
+            </select>
+            {% endif %}
    		{% if iCadastraContato %}
     		<br />
     		<a class="fancybox fancybox.iframe btn btn-primary" href="/contato/1/"><i class="icon-retweet"></i> Adicionar novo contato</a><br />
