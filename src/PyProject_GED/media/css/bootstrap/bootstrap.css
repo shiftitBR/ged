@@ -1083,6 +1083,14 @@ select {
   border: 1px solid #cccccc;
 }
 
+select#id_destinatarios 
+{
+  width: 730px;
+  height: 100px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+}
+
 select[multiple],
 select[size] {
   height: auto;

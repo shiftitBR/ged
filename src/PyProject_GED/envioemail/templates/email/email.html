@@ -54,9 +54,10 @@
 	<div class="container-fluid">
 		<div class="controls">
 		    {% if iIe %}
+		    <b>Para adicionar mais de 1 contato clique no botão "Ctrl" do teclado e selecione os contatos desejados.</b>
 		    {{form.destinatarios}}
 		    {% else %}
-          	<select id="destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]" style="width: 730px; height: 100px;">
+          	<select id="id_destinatarios" name= 'destinatarios' class="multiselect" multiple="multiple" name="destinatarios[]">
 				{% for destinatario in iListaDestinatarios %}
 				<option value="{{destinatario.id}}">{{destinatario.nome}}</option>
 				{% empty %}
