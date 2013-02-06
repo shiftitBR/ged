@@ -249,8 +249,13 @@ class Importacao_FTP(models.Model):
                 for (path, dirs,files) in os.walk(iCaminho):
                     for iFile in files:
                         try:
-                            iFileLimpo= MultiuploaderImage().limpaNomeImagem(iFile.decode('unicode-escape'))
-                            os.rename(os.path.join(path, iFile), os.path.join(path, iFileLimpo))
+                            try:
+                                iFileLimpo= MultiuploaderImage().limpaNomeImagem(iFile.decode('unicode-escape'))
+                                os.rename(os.path.join(path, iFile), os.path.join(path, iFileLimpo))
+                            except Exception, e:
+                                logging.getLogger('PyProject_GED.controle').error('Nao foi possivel renomear arquivo importado: ' + str(e))
+                                iFileLimpo= 'arquivo_%s' % str(datetime.datetime.now())
+                                os.rename(os.path.join(path, iFile), os.path.join(path, iFileLimpo))
                             iCaminho= os.path.join(path, iFileLimpo)
                             iImportarAux= ImportarAuxiliar()
                             iNumero                     = iNumero + 1

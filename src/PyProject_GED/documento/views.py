@@ -350,8 +350,6 @@ def checkout(vRequest, vTitulo, vIDVersao=None):
 @login_required 
 def aprovar(vRequest, vTitulo, vIDVersao=None):
     try :
-        print '---->>>>>>>>>>>>>>>>>>>>>>>>'
-        print vRequest.POST
         iUsuario= Usuario().obtemUsuario(vRequest.user)
         iVersao = Versao().obtemVersao(vIDVersao)
         if DocumentoControle().podeExecutarFuncao(iVersao.estado.id_estado_da_versao, 
@@ -463,9 +461,14 @@ def excluir(vRequest, vTitulo, vIDVersao=None):
 
 def download(vRequest, vTitulo, vIDVersao=None):
     try :
-        iUsuario= Usuario().obtemUsuario(vRequest.user)
-        iVersao = Versao().obtemVersao(vIDVersao)
-        if Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload):
+        iEhPublicacao= vRequest.META['HTTP_REFERER'].rfind('publicacao') > 0
+        iUsuario    = Usuario().obtemUsuario(vRequest.user)
+        iVersao     = Versao().obtemVersao(vIDVersao)
+        if iEhPublicacao:
+            iPossuiAcesso= True
+        else:
+            iPossuiAcesso= Funcao_Grupo().possuiAcessoFuncao(iUsuario, constantes.cntFuncaoDownload)
+        if iPossuiAcesso:
             vIDFuncao = 0
             iArquivo = str(Versao().obtemCaminhoArquivo(vIDVersao))
             if iVersao.eh_assinado:
@@ -473,10 +476,11 @@ def download(vRequest, vTitulo, vIDVersao=None):
                 iArquivo= DocumentoControle().comprimiArquivoAssinado(iVersao, iListaAssinaturas)
             else:
                 iArquivo= iArquivo
-            Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
-                                       iUsuario.id, vRequest.session['IDEmpresa'])
-            Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDownload, iUsuario.id, 
-                                    vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
+            if not iEhPublicacao:
+                Historico().salvaHistorico(vIDVersao, constantes.cntEventoHistoricoDownload, 
+                                           iUsuario.id, vRequest.session['IDEmpresa'])
+                Log_Usuario().salvalogUsuario(constantes.cntEventoHistoricoDownload, iUsuario.id, 
+                                        vRequest.session['IDEmpresa'], vIDVersao=vIDVersao)
             iPossuiPermissao= True
             iFile = open(iArquivo,"r")
             iResponseP7s = HttpResponse(iFile.read())
