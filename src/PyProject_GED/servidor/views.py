@@ -70,7 +70,7 @@ def importar_lote(vRequest, vTitulo):
                 for i in range(len(iListaImportar)):
                     iCaminhoPasta = constantes.cntConfiguracaoDiretorioDocumentos%vRequest.session['IDEmpresa'] + "/" + iPasta.diretorio
                     iNomeArquivo_Original= Servidor().copiaArquivo(iListaImportar[i].caminho, iCaminhoPasta)
-                    iNomeArquivo= MultiuploaderImage().limpaNomeImagem(iNomeArquivo_Original)
+                    iNomeArquivo= MultiuploaderImage().limpaNomeImagem(iNomeArquivo_Original, True)
                     if iNomeArquivo == False:
                         raise
                     iImage               = MultiuploaderImage()
