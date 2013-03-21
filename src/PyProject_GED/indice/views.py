@@ -6,6 +6,7 @@ from PyProject_GED.documento.models     import Versao
 from PyProject_GED.indice.forms         import FormBuscaDocumento
 from PyProject_GED.indice.models        import Indice, Indice_Pasta
 from PyProject_GED                      import oControle, constantes
+import datetime
 
     
 def busca(vRequest, vIDTipoBusca, vTitulo):
@@ -16,6 +17,10 @@ def busca(vRequest, vIDTipoBusca, vTitulo):
     else:
         iIDPastaSelecionada= None
         iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
+    
+    print '>>>>>>>>>>>>>>>>>>..'
+    for iIndiceX in iListaIndices:
+        print iIndiceX.descricao
         
     try:
         iListaDoc = vRequest.session['ListaBusta']
@@ -52,6 +57,13 @@ def busca(vRequest, vIDTipoBusca, vTitulo):
             iConteudo= vRequest.POST.get('conteudo')
             iListaIDIndices= []
             iIDUsuario= vRequest.user.id
+            
+            if iDataInicio not in (None, ''):
+                iDataInicio= datetime.datetime.strptime(iDataInicio + ' 00:00:00', '%d/%m/%Y %H:%M:%S')
+                
+            if iDataFim not in (None, ''):
+                iDataFim= datetime.datetime.strptime(iDataFim + ' 23:59:59', '%d/%m/%Y %H:%M:%S')
+            
             if 'buscaAcancada' in vRequest.POST:
                 for i in range(len(iListaIndices)):
                     iIndice= vRequest.POST.get('indice_%s' % iListaIndices[i].id_indice)

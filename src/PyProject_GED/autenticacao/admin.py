@@ -243,6 +243,12 @@ class AdminGrupoPastaForm(forms.ModelForm):
         search_fields   = ('grupo',)
         ordering        = ('grupo',)  
         exclude         = ('pasta', 'id_grupo_pasta',)
+    
+    
+    class Media:
+        css = {
+            "all": ("../media/css/admin/grupo_pasta.css",)
+        }
 
     def __init__(self, *args, **kwargs):
         super(AdminGrupoPastaForm, self).__init__(*args, **kwargs)

@@ -3,6 +3,14 @@
 {% block conteudo %}
 
 <script src="{{ MEDIA_URL }}js/projeto/documentos.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/dateformat/jquery.maskedinput.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    jQuery(function($){
+        $("#id_data_criacao_inicial").mask("99/99/9999");
+        $("#id_data_criacao_final").mask("99/99/9999");
+    });
+</script>
 
 <div class="container">
   <h1>Buscar Documentos</h1>
@@ -162,10 +170,11 @@
 	  </div>
 	  <div class="modal-body">
 	    {% for indice in iListaIndices %}
+	    {{indice.descricao}}
 	    <div class="control-group">
 			<div class="controls">
 				<input type="text" class="input-xlarge" id="input_{{indice.id_indice}}" 
-				name= "indice_{{indice.id_indice}}" placeholder={{indice.descricao}} >
+				name= "indice_{{indice.id_indice}}">
 			</div>
 		</div>
 		{% endfor %}   
