@@ -17,7 +17,7 @@
     border: 1px solid #CCCCCC;
 }
 .selector .selector-available h2 {
-    background: url("../img/admin/nav-bg.gif") repeat-x scroll left bottom white;
+    background: url("/static/admin/img/admin/nav-bg.gif") repeat-x scroll left bottom white;
     color: #666666;
 }
 .selector .selector-filter {
@@ -43,7 +43,7 @@
     width: 230px;
 }
 .selector ul.selector-chooser {
-    background: url("../img/admin/chooser-bg.gif") no-repeat scroll center top transparent;
+    background: url("/static/admin/img/admin/chooser-bg.gif") no-repeat scroll center top transparent;
     float: left;
     height: 50px;
     margin: 8em 3px 0;
@@ -67,11 +67,11 @@
     width: 16px;
 }
 .selector-add {
-    background: url("../img/admin/selector-add.gif") no-repeat scroll center top transparent;
+    background: url("/static/admin/img/admin/selector-add.gif") no-repeat scroll center top transparent;
     margin-bottom: 2px;
 }
 .selector-remove {
-    background: url("../img/admin/selector-remove.gif") no-repeat scroll center top transparent;
+    background: url("/static/admin/img/admin/selector-remove.gif") no-repeat scroll center top transparent;
 }
 a.selector-chooseall, a.selector-clearall {
     color: #666666;
@@ -87,11 +87,11 @@ a.selector-chooseall:hover, a.selector-clearall:hover {
     color: #003366;
 }
 a.selector-chooseall {
-    background: url("../img/admin/selector-addall.gif") no-repeat scroll left center transparent;
+    background: url("/static/admin/img/admin/selector-addall.gif") no-repeat scroll left center transparent;
     width: 12em;
 }
 a.selector-clearall {
-    background: url("../img/admin/selector-removeall.gif") no-repeat scroll left center transparent;
+    background: url("/static/admin/img/admin/selector-removeall.gif") no-repeat scroll left center transparent;
 }
 .stacked {
     float: left;
@@ -111,7 +111,7 @@ a.selector-clearall {
     width: 442px;
 }
 .stacked ul.selector-chooser {
-    background: url("../img/admin/chooser_stacked-bg.gif") no-repeat scroll center top transparent;
+    background: url("/static/admin/img/admin/chooser_stacked-bg.gif") no-repeat scroll center top transparent;
     height: 22px;
     margin: 0 0 3px 40%;
     width: 50px;
@@ -124,10 +124,10 @@ a.selector-clearall {
     display: none;
 }
 .stacked .selector-add {
-    background-image: url("../img/admin/selector_stacked-add.gif");
+    background-image: url("/static/admin/img/admin/selector_stacked-add.gif");
 }
 .stacked .selector-remove {
-    background-image: url("../img/admin/selector_stacked-remove.gif");
+    background-image: url("/static/admin/img/admin/selector_stacked-remove.gif");
 }
 p.datetime {
     color: #666666;
@@ -197,7 +197,7 @@ span.clearable-file-input label {
     text-align: center;
 }
 .calendar th {
-    background: url("../img/admin/nav-bg.gif") repeat-x scroll 0 50% #E1E1E1;
+    background: url("/static/admin/img/admin/nav-bg.gif") repeat-x scroll 0 50% #E1E1E1;
     border-bottom: 1px solid #DDDDDD;
     color: #666666;
     font-size: 10px;
@@ -254,7 +254,7 @@ span.clearable-file-input label {
     padding: 3px 0 4px;
 }
 .calendarbox .calendarnav-previous, .calendarbox .calendarnav-next {
-    background: url("../img/admin/default-bg.gif") repeat-x scroll left bottom #C9DBED;
+    background: url("/static/admin/img/admin/default-bg.gif") repeat-x scroll left bottom #C9DBED;
     color: white;
     display: block;
     font-size: 12px;
@@ -274,7 +274,7 @@ span.clearable-file-input label {
     top: 0;
 }
 .calendar-cancel {
-    background: url("../img/admin/nav-bg.gif") repeat-x scroll 0 50% #E1E1E1;
+    background: url("/static/admin/img/admin/nav-bg.gif") repeat-x scroll 0 50% #E1E1E1;
     border-top: 1px solid #DDDDDD;
     font-size: 10px;
     margin: 0 !important;
@@ -303,7 +303,7 @@ ul.orderer li {
     -moz-border-left-colors: none;
     -moz-border-right-colors: none;
     -moz-border-top-colors: none;
-    background: url("../img/admin/nav-bg-grabber.gif") repeat-y scroll 0 0 #E2E2E2;
+    background: url("/static/admin/img/admin/nav-bg-grabber.gif") repeat-y scroll 0 0 #E2E2E2;
     border-color: #BBBBBB;
     border-image: none;
     border-style: solid;
@@ -339,19 +339,19 @@ ul.orderer li.selected {
     border-right-color: #F8F8F8;
 }
 ul.orderer li.deleted {
-    background: url("../img/admin/deleted-overlay.gif") repeat scroll 0 0 #BBBBBB;
+    background: url("/static/admin/img/admin/deleted-overlay.gif") repeat scroll 0 0 #BBBBBB;
 }
 ul.orderer li.deleted a:link, ul.orderer li.deleted a:visited {
     color: #888888;
 }
 ul.orderer li.deleted .inline-deletelink {
-    background-image: url("../img/admin/inline-restore.png");
+    background-image: url("/static/admin/img/admin/inline-restore.png");
 }
 ul.orderer li.deleted:hover, ul.orderer li.deleted a.selector:hover {
     cursor: default;
 }
 .inline-deletelink {
-    background: url("../img/admin/inline-delete.png") no-repeat scroll 0 0 transparent;
+    background: url("/static/admin/img/admin/inline-delete.png") no-repeat scroll 0 0 transparent;
     border: 0 none;
     float: right;
     height: 15px;
@@ -385,10 +385,10 @@ ul.orderer li.deleted:hover, ul.orderer li.deleted a.selector:hover {
     border-left: medium none;
 }
 .editinline tr.deleted {
-    background: url("../img/admin/deleted-overlay.gif") repeat scroll 0 0 #DDDDDD;
+    background: url("/static/admin/img/admin/deleted-overlay.gif") repeat scroll 0 0 #DDDDDD;
 }
 .editinline tr.deleted .inline-deletelink {
-    background-image: url("../img/admin/inline-restore.png");
+    background-image: url("/static/admin/img/admin/inline-restore.png");
 }
 .editinline tr.deleted td:hover {
     cursor: default;
@@ -409,13 +409,13 @@ ul.orderer li.deleted:hover, ul.orderer li.deleted a.selector:hover {
     width: 200px;
 }
 .editinline-stacked .inline-splitter {
-    background: url("../img/admin/inline-splitter-bg.gif") no-repeat scroll 50% 50% #F8F8F8;
+    background: url("/static/admin/img/admin/inline-splitter-bg.gif") no-repeat scroll 50% 50% #F8F8F8;
     border-right: 1px solid #CCCCCC;
     float: left;
     width: 9px;
 }
 .editinline-stacked .controls {
-    background: url("../img/admin/nav-bg.gif") repeat-x scroll left top #E1E1E1;
+    background: url("/static/admin/img/admin/nav-bg.gif") repeat-x scroll left top #E1E1E1;
     border-top: 1px solid #DDDDDD;
     clear: both;
     font-size: 11px;
