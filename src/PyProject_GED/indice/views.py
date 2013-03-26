@@ -17,10 +17,6 @@ def busca(vRequest, vIDTipoBusca, vTitulo):
     else:
         iIDPastaSelecionada= None
         iListaIndices= Indice().obtemListaIndices(iIDEmpresa)
-    
-    print '>>>>>>>>>>>>>>>>>>..'
-    for iIndiceX in iListaIndices:
-        print iIndiceX.descricao
         
     try:
         iListaDoc = vRequest.session['ListaBusta']
