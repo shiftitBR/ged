@@ -16,6 +16,7 @@ from PyProject_GED.seguranca.models     import Pasta, Grupo, Grupo_Usuario
 from PyProject_GED.historico.models     import Historico
 from PyProject_GED                      import constantes
 from PyProject_GED.documento.controle   import Controle as DocumentoControle
+from PyProject_GED.envioemail.models    import Email
 
 import logging
 import datetime
@@ -329,6 +330,9 @@ class Pendencia(models.Model):
                 self.criaPendencia(iVersaoAtual.usr_criador, iListaDestinatarios, iVersaoAtual, 
                                         iEtapa.descricao, iEtapa.tipo_de_pendencia, 
                                         iWorkflow, iEtapa)
+                for iDestinatario in iListaDestinatarios:
+                    Email().enviaEmailPorTipo(constantes.cntConfiguracaoEmailAlerta, iDestinatario.email, 
+                                              constantes.cntTipoEmailPendenciaRecebida)
             return True
         except Exception, e:
             logging.getLogger('PyProject_GED.controle').error('Nao foi possivel criar a pendencia do workflow: ' + str(e))
